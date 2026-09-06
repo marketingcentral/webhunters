@@ -1,0 +1,88 @@
+# Extract Hunters - Apache 2.4 e OpenLiteSpeed.
+# Funciona na RAIZ do dominio, em subpasta (WAMP, /extracthunters/) e em /unreal/:
+# nao ha RewriteBase, entao o servidor resolve os alvos relativos a pasta deste arquivo.
+# Fixar RewriteBase /extracthunters/ quebrava a producao com 404 em toda rota amigavel.
+#
+# ATENCAO - a producao roda OpenLiteSpeed com autoLoadHtaccess. O OLS le este arquivo,
+# mas so honra um SUBCONJUNTO do Apache: mod_rewrite funciona, e <FilesMatch>, Header,
+# Options e AddType NAO. Medido em producao: composer.json da 403 (regra de rewrite),
+# enquanto os arquivos estaticos chegam sem X-Content-Type-Options (diretiva Header
+# ignorada). Por isso TODO bloqueio de verdade aqui e feito por RewriteRule; o que
+# depende de <FilesMatch>/Header e reforco para o Apache, nunca a unica defesa.
+Options -Indexes -MultiViews
+DirectoryIndex index.php
+AddDefaultCharset UTF-8
+ServerSignature Off
+
+<IfModule mod_mime.c>
+    AddType font/woff2 .woff2
+    AddType font/woff .woff
+    AddType model/gltf-binary .glb
+    AddType text/javascript .js .mjs
+    AddType image/webp .webp
+    AddType image/svg+xml .svg
+</IfModule>
+
+# ---------------------------------------------------------------- bloqueios
+# app/, tools/, captures/ nunca sao servidos diretamente
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteRule ^(app|tools|captures|db|docs|O-QUE-VAMOS-CRIAR)(/|$) - [F,L]
+
+    # Arquivos ocultos: .env, .git*, .htaccess, .DS_Store...
+    # Isto E o bloqueio - o <FilesMatch> la embaixo nao vale no OpenLiteSpeed.
+    RewriteRule (^|/)\.[^/]+$ - [F,L]
+
+    # Extensoes que nunca devem ser servidas, em qualquer pasta.
+    # `fix` esta aqui porque sobrou rascunho tipo habilidades.css.fix dentro de assets/:
+    # arquivo de rascunho ao lado do original e um jeito facil de vazar codigo antigo.
+    RewriteRule \.(md|lock|log|sql|ini|sh|bak|orig|dist|example|fix|yml|yaml|toml)$ - [F,L]
+
+    # *.json fora de assets/ (manifests de ferramentas).
+    # A condicao usa /assets/ sem ancora para valer na raiz e em subpasta.
+    RewriteCond %{REQUEST_URI} !/assets/ [NC]
+    RewriteRule \.json$ - [F,L]
+
+    # Arquivos e pastas existentes sao servidos diretamente
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Tudo o mais passa pelo front controller
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# REFORCO para Apache. As mesmas negacoes ja foram feitas por RewriteRule la em cima,
+# que e o que vale no OpenLiteSpeed. Mantido para o caso de mod_rewrite estar ausente.
+<FilesMatch "^\.(env|git|ht)|\.(md|lock|log|sql|ini|sh|bak|orig|dist|example)$">
+    Require all denied
+</FilesMatch>
+<FilesMatch "^(composer|package|package-lock)\.json$">
+    Require all denied
+</FilesMatch>
+
+# ---------------------------------------------------------------- cache de assets
+# ?v=<mtime> vem de asset(): imutavel por 1 ano; sem versao, 1 dia.
+<FilesMatch "\.(css|js|mjs|woff2?|png|jpe?g|webp|gif|svg|ico|glb|json)$">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "public, max-age=86400"
+        Header set Cache-Control "public, max-age=31536000, immutable" "expr=%{QUERY_STRING} =~ /(^|&)v=[0-9]+/"
+        # Cabecalhos estaticos de seguranca para respostas que nao passam pelo PHP
+        Header always set X-Content-Type-Options "nosniff"
+        Header always set X-Frame-Options "DENY"
+        Header always set Referrer-Policy "strict-origin-when-cross-origin"
+        Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+        Header always set Cross-Origin-Resource-Policy "same-origin"
+    </IfModule>
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header unset X-Powered-By
+    Header always unset X-Powered-By
+    Header unset Server
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>

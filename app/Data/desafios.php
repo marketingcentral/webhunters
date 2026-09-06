@@ -1,0 +1,127 @@
+<?php declare(strict_types=1);
+
+/**
+ * Desafios diários / semanais / de temporada.
+ *
+ * FASE 2 — a tela /desafios NÃO lê os números daqui: catálogo e progresso vêm do banco
+ * (`challenges`, `challenge_bonuses`, `seasons`, `player_challenges`, `player_season`),
+ * conciliados por user_id em App\Repo\ChallengeRepo. Este arquivo passou a servir para:
+ *  - RÓTULOS de layout da tela /desafios (title, intro, CTAs, títulos dos painéis);
+ *  - a semente do banco (db/seed_challenges.php lê daqui os desafios e a temporada);
+ *  - o fallback de emergência quando o banco está fora do ar
+ *    (ChallengesController::offline(), para a HUD seguir navegável);
+ *  - PlayController (painel "DESAFIOS DIÁRIOS" da tela /jogar: usa `daily` — os 4
+ *    primeiros itens, na ordem e com os números da referência 02 — e `reset_in`).
+ *
+ * Não reordene nem altere `daily[0..3]` (label/cur/max/xp) sem revisar a tela JOGAR.
+ * Alterou algum desafio aqui? Rode a semente de novo para o banco acompanhar.
+ */
+return [
+    'title'       => 'DESAFIOS',
+    'tag'         => 'TEMPORADA 04',
+    'intro'       => 'Cumpra objetivos e converta cada partida em XP, créditos e níveis do passe.',
+    'action'       => 'VER TODOS OS DESAFIOS',
+    'board_action' => 'VER CONQUISTAS',
+
+    /* ---- cabeçalho: contagem regressiva viva ---------------------------- */
+    'reset_label' => 'REINICIA EM',
+    'reset_in'    => '12h 45m',
+
+    /* ---- abas ----------------------------------------------------------- */
+    'tabs' => [
+        ['key' => 'diarios',   'label' => 'DIÁRIOS',   'count' => '1/4', 'reset_label' => 'REINICIA EM', 'reset_in' => '12h 45m'],
+        ['key' => 'semanais',  'label' => 'SEMANAIS',  'count' => '1/5', 'reset_label' => 'REINICIA EM', 'reset_in' => '4d 06h'],
+        ['key' => 'temporada', 'label' => 'TEMPORADA', 'count' => '1/6', 'reset_label' => 'TERMINA EM',  'reset_in' => '18d 04h'],
+    ],
+    'active_tab' => 'diarios',
+
+    /* ---- destaque (evento da temporada) --------------------------------- */
+    'featured' => [
+        'tag'         => 'EVENTO DE TEMPORADA',
+        'title'       => 'CAÇA NA FLORESTA',
+        'desc'        => 'Objetivos exclusivos da Temporada 04. As recompensas somem quando o evento terminar.',
+        'image'       => 'missions/mission-cacada-ao-cacador.jpg',
+        'ends_label'  => 'TERMINA EM',
+        'ends_in'     => '3d 12h',
+        'meta_label'  => 'PROGRESSO DO EVENTO',
+        'cur'         => 1,
+        'max'         => 6,
+        'href'        => 'missoes',
+        'cta'         => 'VER MISSÕES DO EVENTO',
+    ],
+
+    /* ---- DIÁRIOS (os 4 itens da referência 02) -------------------------- */
+    'daily_title' => 'DESAFIOS DIÁRIOS',
+    'daily' => [
+        ['slug' => 'elimine-20',     'label' => 'Elimine 20 inimigos',               'desc' => 'Em qualquer modo com outros jogadores.', 'icon' => 'skull',                   'cur' => 10, 'max' => 20, 'xp' => 2500, 'credits' => 1200],
+        ['slug' => 'colete-5-raros', 'label' => 'Colete 5 itens raros',              'desc' => 'Raridade épica ou superior.',            'icon' => 'inventory_2',             'cur' => 3,  'max' => 5,  'xp' => 2500, 'credits' => 900],
+        ['slug' => 'sobreviva-30',   'label' => 'Sobreviva por 30 minutos',          'desc' => 'Tempo acumulado sem ser eliminado.',     'icon' => 'schedule',                'cur' => 18, 'max' => 30, 'xp' => 2500, 'credits' => 1000],
+        ['slug' => 'conclua-todos',  'label' => 'Conclua todos os desafios diários', 'desc' => 'Bônus por limpar o quadro do dia.',      'icon' => 'local_fire_department',   'cur' => 1,  'max' => 3,  'xp' => 5000, 'credits' => 2500, 'hot' => true],
+    ],
+
+    /* ---- SEMANAIS -------------------------------------------------------- */
+    'weekly_title' => 'DESAFIOS SEMANAIS',
+    'weekly_reset' => '4d 06h',
+    'weekly' => [
+        ['slug' => 'extraia-10',    'label' => 'Extraia com sucesso 10 vezes',     'desc' => 'Saia do mapa com o saque intacto.',    'icon' => 'flag',              'cur' => 6,  'max' => 10, 'xp' => 10000, 'credits' => 4000],
+        ['slug' => 'headshots-25',  'label' => 'Realize 25 tiros na cabeça',       'desc' => 'Vale para qualquer arma de fogo.',     'icon' => 'my_location',      'cur' => 9,  'max' => 25, 'xp' => 7500,  'credits' => 3000],
+        ['slug' => 'missoes-5',     'label' => 'Conclua 5 missões da Resistência', 'desc' => 'Contratos do quadro de missões.',      'icon' => 'handshake',        'cur' => 2,  'max' => 5,  'xp' => 12000, 'credits' => 5000, 'hot' => true],
+        ['slug' => 'cure-aliados',  'label' => 'Cure aliados 15 vezes',            'desc' => 'Kit médico ou bandagem em esquadrão.', 'icon' => 'medical_services', 'cur' => 4,  'max' => 15, 'xp' => 6000,  'credits' => 2200],
+        ['slug' => 'venda-itens',   'label' => 'Venda 30 itens a comerciantes',    'desc' => 'Qualquer comerciante da Zona.',        'icon' => 'shopping_cart',    'cur' => 30, 'max' => 30, 'xp' => 5000,  'credits' => 1800, 'done' => true],
+    ],
+
+    /* ---- TEMPORADA (evento CAÇA NA FLORESTA) ---------------------------- */
+    'event_title' => 'DESAFIOS DE TEMPORADA',
+    'event_ends'  => '18d 04h',
+    'event' => [
+        ['slug' => 'lobos-20',        'label' => 'Elimine 20 lobos na Floresta Verde', 'desc' => 'Matilhas aparecem ao anoitecer.',        'icon' => 'pets',                 'cur' => 20, 'max' => 20, 'xp' => 4000,  'credits' => 1500, 'done' => true],
+        ['slug' => 'acampamentos-3',  'label' => 'Limpe 3 acampamentos inimigos',      'desc' => 'Marcados no mapa como zona de risco.',   'icon' => 'local_fire_department', 'cur' => 1,  'max' => 3,  'xp' => 6000,  'credits' => 2400],
+        ['slug' => 'entrega-aerea',   'label' => 'Recupere 2 entregas aéreas',         'desc' => 'Sinalizadores caem a cada 12 minutos.',  'icon' => 'inventory_2',          'cur' => 0,  'max' => 2,  'xp' => 8000,  'credits' => 3200],
+        ['slug' => 'passe-nivel-25',  'label' => 'Alcance o nível 25 do passe',        'desc' => 'Qualquer XP da temporada conta.',        'icon' => 'military_tech',        'cur' => 18, 'max' => 25, 'xp' => 15000, 'credits' => 6000],
+        ['slug' => 'extracao-noite',  'label' => 'Extraia 5 vezes durante a noite',    'desc' => 'Entre 22h e 5h no ciclo do mapa.',       'icon' => 'dark_mode',            'cur' => 3,  'max' => 5,  'xp' => 9000,  'credits' => 3600],
+        ['slug' => 'cacador-alfa',    'label' => 'Derrote o Caçador Alfa',             'desc' => 'Chefe regional da Floresta Verde.',      'icon' => 'skull',                'cur' => 0,  'max' => 1,  'xp' => 20000, 'credits' => 8000, 'hot' => true],
+    ],
+
+    /* ---- faixa de bônus por aba ----------------------------------------- */
+    'bonus' => [
+        'diarios'   => ['label' => 'BÔNUS DIÁRIO',    'title' => 'CAIXA DE SUPRIMENTOS',  'desc' => 'Conclua os 4 desafios do dia.',        'image' => 'items/supply-crate.png', 'cur' => 1, 'max' => 4, 'xp' => 5000,  'credits' => 2500],
+        'semanais'  => ['label' => 'BÔNUS SEMANAL',   'title' => 'ESTOJO DE ARMA',        'desc' => 'Conclua 5 desafios semanais.',         'image' => 'items/weapon-case.png',  'cur' => 1, 'max' => 5, 'xp' => 15000, 'credits' => 9000],
+        'temporada' => ['label' => 'BÔNUS DA CAÇADA', 'title' => 'CAMUFLAGEM MATA FECHADA', 'desc' => 'Conclua 6 desafios de temporada.',   'image' => 'items/skin-camo.png',    'cur' => 1, 'max' => 6, 'xp' => 30000, 'credits' => 20000],
+    ],
+    'bonus_cta' => 'RESGATAR',
+
+    /* ---- painel direito: anel semanal ------------------------------------ */
+    'ring' => [
+        'title'      => 'PROGRESSO SEMANAL',
+        'done'       => 7,
+        'total'      => 12,
+        'caption'    => 'DESAFIOS CONCLUÍDOS',
+        'reset_label' => 'REINICIA EM',
+        'reset_in'   => '4d 06h',
+        'stats' => [
+            ['label' => 'XP DA SEMANA', 'value' => '24.500', 'icon' => 'bolt',   'color' => 'lime'],
+            ['label' => 'SEQUÊNCIA',    'value' => '5 DIAS', 'icon' => 'local_fire_department', 'color' => 'amber'],
+        ],
+    ],
+
+    /* ---- painel direito: prévia do passe de temporada -------------------- */
+    'pass' => [
+        'title'      => 'PASSE DE TEMPORADA',
+        'name'       => 'MATA FECHADA',
+        'season'     => 'TEMPORADA 04',
+        'image'      => 'ui/season-pass.jpg',
+        'level'      => 18,
+        'xp'         => 7400,
+        'xp_next'    => 10000,
+        'ends_label' => 'TERMINA EM',
+        'ends_in'    => '18d 04h',
+        'next_label' => 'PRÓXIMAS RECOMPENSAS',
+        'tiers' => [
+            ['level' => 19, 'name' => 'CAMUFLAGEM',      'image' => 'items/skin-camo.png',    'rarity' => 'raro',     'state' => 'next'],
+            ['level' => 20, 'name' => 'SUPRIMENTOS',     'image' => 'items/supply-crate.png', 'rarity' => 'epico',    'state' => 'locked'],
+            ['level' => 22, 'name' => 'CHAVE DE ACESSO', 'image' => 'items/keycard.png',      'rarity' => 'lendario', 'state' => 'locked'],
+        ],
+        'cta'  => 'VER PASSE COMPLETO',
+        'href' => 'loja',
+    ],
+];

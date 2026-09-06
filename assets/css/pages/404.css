@@ -1,0 +1,580 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — tela de ERRO 404/405/419/500 (layout auth)
+   Sem referência própria. Âncora de estilo: 00-login-tela-inicial-do-jogador.png
+   (1672x941 => 1rem = 16px): cartão centrado de duas colunas, divisória vertical,
+   aresta superior quente, borda cáqui quase neutra e verde só nos acentos.
+     cartão            58rem x 30rem (min)     | igual à largura do cartão de login
+     coluna esquerda   21.5rem                 | divisória no limite direito
+     código            9.6rem mono, tremulação | marca d'água do emblema atrás
+   Tudo escopado em .page-404 para não vazar para as outras telas.
+   ========================================================================== */
+
+/* ---- acento por status HTTP --------------------------------------------- */
+.page-404 .err {
+  --acc: var(--c-lime);
+  --acc-rgb: 155, 224, 74;
+  --warn: var(--c-amber);
+  --warn-rgb: 245, 166, 35;
+}
+.page-404 .err[data-accent="cyan"]  { --acc: var(--c-cyan);  --acc-rgb: 62, 201, 240; --warn: var(--c-cyan);  --warn-rgb: 62, 201, 240; }
+.page-404 .err[data-accent="amber"] { --acc: var(--c-amber); --acc-rgb: 245, 166, 35; --warn: var(--c-amber); --warn-rgb: 245, 166, 35; }
+.page-404 .err[data-accent="red"]   { --acc: var(--c-red);   --acc-rgb: 229, 72, 77;  --warn: var(--c-red);   --warn-rgb: 229, 72, 77; }
+
+/* ==========================================================================
+   ENQUADRAMENTO E FUNDO
+   ========================================================================== */
+.page-404 .auth-main > .panel { max-width: 58rem; }
+
+/* bg/forest-generic.jpg é escuro e muito verde; o mesmo tratamento cinematográfico
+   da tela de login (levantar, dessaturar e esquentar) para o cartão descolar do fundo. */
+.page-404 .bg__img { filter: saturate(.62) contrast(1.08) brightness(1.16) sepia(.34); }
+.page-404 .bg__overlay {
+  background:
+    radial-gradient(78% 62% at 50% 40%, rgba(0, 0, 0, .58), rgba(0, 0, 0, .30) 62%, transparent 100%),
+    radial-gradient(120% 90% at 62% 6%, rgba(255, 236, 198, .10), transparent 56%),
+    linear-gradient(0deg, rgba(70, 62, 42, .20), transparent 30%);
+}
+.page-404 .bg__vignette {
+  background: radial-gradient(ellipse 90% 82% at 50% 46%,
+    rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, .34) 84%, rgba(0, 0, 0, .62) 100%);
+}
+
+/* ==========================================================================
+   CARTÃO
+   ========================================================================== */
+.page-404 .err {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: 30rem;
+  border-radius: .5rem;
+  border-color: rgba(186, 190, 132, .20);
+  background: linear-gradient(100deg,
+    rgba(9, 12, 10, .975) 0%, rgba(10, 13, 11, .972) 40%, rgba(20, 20, 18, .962) 100%);
+  box-shadow:
+    0 26px 60px rgba(0, 0, 0, .70),
+    0 0 0 1px rgba(0, 0, 0, .35),
+    inset 0 1px 0 rgba(244, 236, 200, .34),
+    inset -1px 0 0 rgba(186, 198, 128, .26);
+}
+
+/* marca d'água do emblema, atrás da coluna esquerda */
+.page-404 .err__wm {
+  position: absolute;
+  left: 10.75rem;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  display: block;
+  line-height: 0;
+  pointer-events: none;
+  color: var(--acc);
+  opacity: .075;
+  -webkit-mask-image: radial-gradient(closest-side, #000 52%, transparent 88%);
+          mask-image: radial-gradient(closest-side, #000 52%, transparent 88%);
+  animation: err-wm-breathe 11s var(--ease) infinite;
+}
+.page-404 .err__wm .ic {
+  width: 23rem;
+  height: 23rem;
+  filter: drop-shadow(0 0 12px rgba(var(--acc-rgb), .16));
+}
+
+/* cantoneiras finas do cartão — detalhe de HUD, 1px no acento */
+.page-404 .err__scan::before {
+  content: "";
+  position: absolute;
+  inset: .6rem;
+  pointer-events: none;
+  opacity: .30;
+  background:
+    linear-gradient(var(--acc), var(--acc)) left    top    / 1.5rem 1px no-repeat,
+    linear-gradient(var(--acc), var(--acc)) left    top    / 1px 1.5rem no-repeat,
+    linear-gradient(var(--acc), var(--acc)) right   top    / 1.5rem 1px no-repeat,
+    linear-gradient(var(--acc), var(--acc)) right   top    / 1px 1.5rem no-repeat,
+    linear-gradient(var(--acc), var(--acc)) left    bottom / 1.5rem 1px no-repeat,
+    linear-gradient(var(--acc), var(--acc)) left    bottom / 1px 1.5rem no-repeat,
+    linear-gradient(var(--acc), var(--acc)) right   bottom / 1.5rem 1px no-repeat,
+    linear-gradient(var(--acc), var(--acc)) right   bottom / 1px 1.5rem no-repeat;
+}
+
+/* varredura horizontal muito discreta sobre todo o cartão + textura de linhas */
+.page-404 .err__scan {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, .016) 0 1px, transparent 1px 4px);
+}
+.page-404 .err__scan::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 8rem;
+  background: linear-gradient(180deg, transparent, rgba(var(--acc-rgb), .045) 55%, transparent);
+  animation: err-scan 7.5s linear infinite;
+}
+
+/* ==========================================================================
+   CABEÇALHO
+   ========================================================================== */
+.page-404 .err__head {
+  position: relative;
+  z-index: 2;
+  gap: .9rem;
+  padding: .82rem 1.35rem .72rem 1.25rem;
+  border-bottom: 1px solid rgba(186, 190, 132, .14);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .022), transparent);
+}
+
+.page-404 .err__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  height: 1.75rem;
+  padding: 0 .7rem 0 .6rem;
+  border: 1px solid rgba(var(--warn-rgb), .45);
+  border-radius: var(--r-1);
+  background: rgba(var(--warn-rgb), .09);
+  font-family: var(--font-cond);
+  font-size: .88rem;
+  font-weight: 500;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--warn);
+  text-shadow: 0 0 10px rgba(var(--warn-rgb), .35);
+}
+.page-404 .err__badge-num { letter-spacing: .06em; }
+.page-404 .err__led {
+  width: .4rem;
+  height: .4rem;
+  border-radius: 50%;
+  background: var(--warn);
+  box-shadow: 0 0 8px rgba(var(--warn-rgb), .9);
+  animation: err-led 1.9s var(--ease) infinite;
+}
+
+.page-404 .err__status {
+  margin-right: auto;
+  font-family: var(--font-cond);
+  font-size: .82rem;
+  font-weight: 400;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.page-404 .err__status::before {
+  content: "";
+  display: inline-block;
+  width: 1.4rem;
+  height: 1px;
+  margin: 0 .6rem .28rem 0;
+  background: rgba(186, 190, 132, .35);
+  vertical-align: middle;
+}
+
+.page-404 .err__head-right {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+}
+.page-404 .err__meter {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: .95rem;
+}
+.page-404 .err__meter i {
+  width: 3px;
+  border-radius: 1px;
+  background: rgba(160, 172, 150, .18);
+}
+.page-404 .err__meter i:nth-child(1) { height: 35%; background: rgba(var(--warn-rgb), .75); animation: err-led 1.9s var(--ease) infinite; }
+.page-404 .err__meter i:nth-child(2) { height: 55%; }
+.page-404 .err__meter i:nth-child(3) { height: 78%; }
+.page-404 .err__meter i:nth-child(4) { height: 100%; }
+.page-404 .err__meter-lbl {
+  font-family: var(--font-cond);
+  font-size: .78rem;
+  letter-spacing: .1em;
+  color: var(--c-dim);
+}
+.page-404 .err__meter-lbl .num { color: var(--c-muted); margin-left: .15rem; }
+.page-404 .err__emblem {
+  width: 1.9rem;
+  height: 1.9rem;
+  margin-left: .5rem;
+  color: var(--acc);
+  opacity: .8;
+  filter: drop-shadow(0 0 9px rgba(var(--acc-rgb), .45));
+}
+
+/* ==========================================================================
+   CORPO — duas colunas
+   ========================================================================== */
+.page-404 .err__body {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  min-height: 0;
+}
+
+/* ---- coluna esquerda: código + flatline --------------------------------- */
+.page-404 .err__glyph {
+  position: relative;
+  flex: 0 0 21.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6rem;
+  padding: 2.4rem 1.5rem 2.6rem;
+  min-width: 0;
+}
+/* divisória — mesmo perfil da tela de login (nasce invisível, pico a ~30%) */
+.page-404 .err__glyph::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg,
+    transparent 0 8%,
+    rgba(190, 196, 148, .11) 14%,
+    rgba(190, 196, 148, .32) 30%,
+    rgba(190, 196, 148, .24) 46%,
+    rgba(190, 196, 148, .25) 62%,
+    rgba(190, 196, 148, .14) 78%,
+    rgba(190, 196, 148, .08) 88%,
+    transparent 96%);
+}
+
+.page-404 .err__code {
+  position: relative;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 9.6rem;
+  line-height: .86;
+  letter-spacing: .045em;
+  user-select: none;
+  color: transparent;
+  background: linear-gradient(180deg, rgba(var(--acc-rgb), .30) 0%, rgba(var(--acc-rgb), .10) 62%, rgba(var(--acc-rgb), .03) 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-stroke: 1px rgba(var(--acc-rgb), .62);
+  text-shadow: 0 0 34px rgba(var(--acc-rgb), .22);
+  animation: err-flicker 6.5s steps(1, end) infinite;
+}
+/* duas camadas fantasma para o glitch: deslocamento sub-pixel e recortes horizontais */
+.page-404 .err__code::before,
+.page-404 .err__code::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  background: none;
+  pointer-events: none;
+}
+.page-404 .err__code::before {
+  -webkit-text-stroke: 1px rgba(var(--acc-rgb), .55);
+  animation: err-glitch-a 5.4s steps(1, end) infinite;
+}
+.page-404 .err__code::after {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, .30);
+  animation: err-glitch-b 4.3s steps(1, end) infinite;
+}
+
+/* flatline: linha morta com um pulso que atravessa */
+.page-404 .err__flatline {
+  position: relative;
+  display: block;
+  width: 13.5rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--acc-rgb), .30) 12%, rgba(var(--acc-rgb), .30) 88%, transparent);
+  overflow: visible;
+}
+.page-404 .err__flatline i {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 3.5rem;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--acc), transparent);
+  box-shadow: 0 0 10px rgba(var(--acc-rgb), .75);
+  opacity: .9;
+  animation: err-blip 4.2s linear infinite;
+}
+
+/* ---- coluna direita: texto e ações -------------------------------------- */
+.page-404 .err__main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 2.5rem 2.75rem 2.5rem 2.5rem;
+}
+
+.page-404 .err__kicker {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin: 0 0 .55rem;
+  font-family: var(--font-cond);
+  font-size: .8rem;
+  font-weight: 500;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-shadow: 0 0 12px rgba(var(--acc-rgb), .35);
+}
+.page-404 .err__kicker::before {
+  content: "";
+  width: 1.7rem;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(var(--acc-rgb), .9), rgba(var(--acc-rgb), .15));
+}
+
+.page-404 .err__title {
+  margin: 0;
+  font-size: 2.55rem;
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: .055em;
+  color: #f4f7f2;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .6);
+}
+
+.page-404 .err__msg {
+  margin: .75rem 0 0;
+  max-width: 28.5rem;
+  font-family: var(--font-body);
+  font-size: .96rem;
+  line-height: 1.62;
+  color: var(--c-text-2);
+}
+
+/* ---- telemetria ---------------------------------------------------------- */
+.page-404 .err__meta {
+  margin: 1.5rem 0 0;
+  border-top: 1px solid rgba(186, 190, 132, .13);
+}
+.page-404 .err__meta-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: .52rem 0;
+  border-bottom: 1px solid rgba(186, 190, 132, .13);
+}
+.page-404 .err__meta-row dt {
+  flex: 0 0 10.25rem;
+  font-family: var(--font-cond);
+  font-size: .78rem;
+  font-weight: 400;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--c-dim);
+}
+.page-404 .err__meta-row dd {
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  font-size: .86rem;
+  color: var(--c-text-2);
+  overflow: hidden;
+}
+.page-404 .err__path {
+  display: block;
+  max-width: 22rem;
+  padding: .16rem .5rem;
+  border: 1px solid rgba(var(--acc-rgb), .28);
+  border-radius: var(--r-1);
+  background: rgba(0, 0, 0, .45);
+  color: var(--acc);
+  font-family: var(--font-mono);
+  font-size: .86rem;
+  letter-spacing: .01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.page-404 .err__clock {
+  color: var(--warn);
+  letter-spacing: .08em;
+  font-variant-numeric: tabular-nums;
+}
+.page-404 .err__node {
+  font-family: var(--font-cond);
+  font-size: .92rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--c-text-2);
+}
+.page-404 .err__ping { color: var(--c-muted); }
+
+/* ---- registro técnico (500 em localhost) --------------------------------- */
+.page-404 .err__detail-lbl {
+  margin: 1.1rem 0 .35rem;
+  font-family: var(--font-cond);
+  font-size: .76rem;
+  letter-spacing: .16em;
+  color: var(--c-dim);
+}
+.page-404 .err__detail {
+  margin: 0;
+  max-height: 7.5rem;
+  padding: .7rem .9rem;
+  border: 1px solid rgba(229, 72, 77, .3);
+  border-left: 2px solid var(--c-red);
+  border-radius: var(--r-2);
+  background: rgba(0, 0, 0, .55);
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  line-height: 1.5;
+  color: #f0c9cb;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---- ações --------------------------------------------------------------- */
+.page-404 .err__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem;
+  margin-top: 1.65rem;
+}
+.page-404 .err__btn {
+  min-height: 3.1rem;
+  padding: 0 1.25rem;
+  border-radius: var(--r-2);
+  font-size: 1.02rem;
+  font-weight: 400;
+  letter-spacing: .07em;
+}
+.page-404 .err__btn .ms { font-size: 1.25em; }
+.page-404 .err__btn.btn--primary {
+  --_bg: linear-gradient(180deg, #3b4c23 0%, #374520 55%, #31411b 100%);
+  --_bc: rgba(152, 180, 66, .5);
+  padding: 0 1.5rem;
+  font-size: 1.1rem;
+  border-bottom-color: rgba(92, 110, 52, .9);
+  box-shadow:
+    0 0 10px rgba(155, 224, 74, .07),
+    inset 0 1px 0 rgba(198, 232, 146, .07),
+    inset 0 -1px 0 rgba(0, 0, 0, .3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .55);
+}
+.page-404 .err__btn.btn--primary:hover,
+.page-404 .err__btn.btn--primary:focus-visible {
+  --_bg: linear-gradient(180deg, #4b6a2c 0%, #3e5424 45%, #354622 100%);
+  --_bc: var(--c-lime);
+  box-shadow:
+    0 0 0 1px rgba(155, 224, 74, .38),
+    0 0 30px rgba(155, 224, 74, .36),
+    inset 0 1px 0 rgba(198, 240, 140, .34),
+    inset 0 -1px 0 rgba(0, 0, 0, .4);
+}
+.page-404 .err__btn.btn--outline {
+  --_bc: rgba(198, 190, 166, .13);
+  color: #dfe5db;
+}
+.page-404 .err__btn.btn--outline:hover,
+.page-404 .err__btn.btn--outline:focus-visible {
+  --_bc: rgba(155, 224, 74, .7);
+  color: #f2f6ee;
+}
+.page-404 .err__btn.btn--outline:hover .ms { color: var(--c-lime); }
+
+.page-404 .err__hint {
+  margin: .95rem 0 0;
+  font-family: var(--font-body);
+  font-size: .8rem;
+  line-height: 1.4;
+  color: var(--c-dim);
+}
+
+/* ==========================================================================
+   MOVIMENTO
+   ========================================================================== */
+@keyframes err-wm-breathe {
+  0%, 100% { opacity: .075; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: .105; transform: translate(-50%, -50%) scale(1.015); }
+}
+@keyframes err-scan {
+  0%   { top: -8rem; }
+  100% { top: 100%; }
+}
+@keyframes err-led {
+  0%, 62%, 100% { opacity: 1; }
+  70%, 84%      { opacity: .22; }
+}
+/* tremulação: o código perde brilho por 1 ou 2 quadros, como um sinal fraco */
+@keyframes err-flicker {
+  0%, 41%, 43.6%, 47%, 88%, 89.4%, 100% { opacity: 1; }
+  42%, 46%, 88.6%                        { opacity: .55; }
+  43%                                    { opacity: .82; }
+}
+@keyframes err-glitch-a {
+  0%, 39%, 43%, 100% { opacity: 0; transform: none; clip-path: inset(0 0 0 0); }
+  40%  { opacity: .85; transform: translate(-2px, 1px); clip-path: inset(16% 0 58% 0); }
+  41%  { opacity: .7;  transform: translate(3px, -1px); clip-path: inset(62% 0 14% 0); }
+  42%  { opacity: .5;  transform: translate(-1px, 0);   clip-path: inset(38% 0 42% 0); }
+}
+@keyframes err-glitch-b {
+  0%, 71%, 74%, 100% { opacity: 0; transform: none; clip-path: inset(0 0 0 0); }
+  72%  { opacity: .5; transform: translate(2px, -1px); clip-path: inset(28% 0 52% 0); }
+  73%  { opacity: .35; transform: translate(-3px, 1px); clip-path: inset(66% 0 10% 0); }
+}
+@keyframes err-blip {
+  0%   { left: -3.5rem; opacity: 0; }
+  8%   { opacity: .9; }
+  92%  { opacity: .9; }
+  100% { left: 13.5rem; opacity: 0; }
+}
+
+/* rajada extra disparada pelo js/pages/404.js */
+.page-404 .err.is-glitching .err__code            { animation: err-burst 320ms steps(1, end) 1; }
+.page-404 .err.is-glitching .err__code::before    { animation: err-glitch-a 320ms steps(1, end) 1; animation-delay: -128ms; }
+.page-404 .err.is-glitching .err__code::after     { animation: err-glitch-b 320ms steps(1, end) 1; animation-delay: -230ms; }
+@keyframes err-burst {
+  0%, 100%   { opacity: 1; transform: none; }
+  22%        { opacity: .5; transform: translateX(-2px); }
+  46%        { opacity: 1; transform: translateX(2px); }
+  70%        { opacity: .68; transform: none; }
+}
+
+/* entrada: a coluna esquerda inteira (para não sobrescrever a animação do código)
+   e os blocos da direita em stagger (hud.js escreve --i em [data-stagger]) */
+body.is-booted .page-404 .err__glyph {
+  animation: fade-up 520ms var(--ease-out) backwards;
+  animation-delay: 220ms;
+}
+body.is-booted .page-404 .err__main > * {
+  animation: fade-up 480ms var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 55ms + 260ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-404 .err__wm,
+  .page-404 .err__scan::after,
+  .page-404 .err__led,
+  .page-404 .err__meter i:nth-child(1),
+  .page-404 .err__code,
+  .page-404 .err__code::before,
+  .page-404 .err__code::after,
+  .page-404 .err__flatline i,
+  .page-404 .err.is-glitching .err__code,
+  body.is-booted .page-404 .err__glyph,
+  body.is-booted .page-404 .err__main > * { animation: none; }
+  .page-404 .err__flatline i { opacity: .6; left: 5rem; }
+}

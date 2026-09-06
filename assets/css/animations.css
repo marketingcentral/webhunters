@@ -1,0 +1,152 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — animations. Keyframes + boot stagger + hooks.
+   Stagger: elements get --i (hud.js) -> animation-delay: calc(var(--i) * 60ms)
+   ========================================================================== */
+
+@keyframes hud-in{
+  0%  {opacity:0;transform:translateY(8px);clip-path:inset(0 100% 0 0);border-color:rgba(155,224,74,.55)}
+  45% {opacity:1;clip-path:inset(0 0 0 0)}
+  100%{opacity:1;transform:translateY(0);clip-path:inset(-40px -40px -40px -40px)}
+}
+@keyframes fade-up{
+  from{opacity:0;transform:translateY(10px)}
+  to  {opacity:1;transform:translateY(0)}
+}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+@keyframes pulse-lime{
+  0%,100%{box-shadow:0 0 0 1px rgba(155,224,74,.55),0 0 14px rgba(155,224,74,.25)}
+  50%    {box-shadow:0 0 0 1px rgba(155,224,74,.9),0 0 28px rgba(155,224,74,.55)}
+}
+@keyframes glow-text{
+  0%,100%{text-shadow:0 0 8px rgba(155,224,74,.35)}
+  50%    {text-shadow:0 0 18px rgba(155,224,74,.75)}
+}
+@keyframes shimmer{
+  from{transform:translateX(-120%)}
+  to  {transform:translateX(320%)}
+}
+@keyframes sweep{
+  from{transform:translateX(-160%) skewX(-22deg)}
+  to  {transform:translateX(420%) skewX(-22deg)}
+}
+@keyframes blink{
+  0%,100%{opacity:1}
+  50%{opacity:.35}
+}
+@keyframes scan{
+  from{transform:translateY(-100%)}
+  to  {transform:translateY(100vh)}
+}
+@keyframes scan-x{
+  from{transform:translateX(-30%)}
+  to  {transform:translateX(130%)}
+}
+@keyframes progress-fill{
+  from{width:0}
+  to  {width:var(--v)}
+}
+@keyframes pop{
+  0%{transform:scale(.6);opacity:0}
+  70%{transform:scale(1.08);opacity:1}
+  100%{transform:scale(1)}
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float-y{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+@keyframes wipe-in{
+  from{clip-path:inset(0 100% 0 0)}
+  to  {clip-path:inset(0 0 0 0)}
+}
+
+/* ---- boot sequence ------------------------------------------------------
+   Before body.is-booted the page-transition overlay hides everything, so a
+   non-animated frame is never seen. When booted, panels/[data-boot] play
+   hud-in with a stagger driven by --i (set by hud.js; 0 by default).      */
+body.is-booted .panel,
+body.is-booted [data-boot]{
+  animation:hud-in 560ms var(--ease-out) backwards;
+  animation-delay:calc(var(--i,0) * 60ms + 40ms);
+}
+body.is-booted .panel > *,
+body.is-booted [data-boot] > *{
+  animation:fade-up 480ms var(--ease-out) backwards;
+  animation-delay:calc(var(--i,0) * 60ms + 180ms);
+}
+body.is-booted .page-title,
+body.is-booted .page-subtitle{
+  animation:fade-up 520ms var(--ease-out) backwards;
+}
+body.is-booted .page-subtitle{animation-delay:80ms}
+body.is-booted [data-boot-late]{
+  animation:fade-in 600ms var(--ease-out) backwards;
+  animation-delay:calc(var(--i,0) * 60ms + 400ms);
+}
+
+/* progress fill on load */
+.progress--anim .progress__bar,
+[data-anim="progress"] .progress__bar,
+.progress[data-anim] .progress__bar{
+  animation:progress-fill 900ms var(--ease-out) backwards;
+  animation-delay:calc(var(--i,0) * 60ms + 320ms);
+}
+/* progress shimmer (light streak across the fill) */
+.progress__bar::after{
+  content:"";
+  position:absolute;
+  top:0;bottom:0;
+  left:0;
+  width:40%;
+  background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.35) 50%, rgba(255,255,255,0) 100%);
+  animation:shimmer 2.6s var(--ease) 1.2s infinite;
+  opacity:.6;
+}
+
+/* online dot */
+.blink,.dot--live{animation:blink 1.8s ease-in-out infinite}
+
+/* pulse for hot/active items that must attract attention */
+.pulse{animation:pulse-lime 2.4s ease-in-out infinite}
+.glow-text{animation:glow-text 2.8s ease-in-out infinite}
+.float{animation:float-y 4s ease-in-out infinite}
+.spin{animation:spin 1s linear infinite}
+
+/* thin scanline moving across the topbar background (topbar owner adds .scanline to header) */
+.scanline{position:relative;overflow:hidden}
+.scanline::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;
+  top:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(155,224,74,.5), transparent);
+  opacity:.35;
+  animation:scan 7s linear infinite;
+  pointer-events:none;
+}
+.scanline--x::after{
+  left:0;top:0;bottom:0;right:auto;width:30%;height:auto;
+  background:linear-gradient(90deg, transparent, rgba(155,224,74,.08), transparent);
+  animation:scan-x 9s linear infinite;
+}
+
+/* generic stagger helpers for lists (children get --i via hud.js [data-stagger]) */
+body.is-booted [data-stagger] > *{
+  animation:fade-up 460ms var(--ease-out) backwards;
+  animation-delay:calc(var(--i,0) * 60ms + 240ms);
+}
+
+/* ---- reduced motion ------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    animation-delay:0ms!important;
+    transition-duration:.001ms!important;
+    scroll-behavior:auto!important;
+  }
+  .page-transition{display:none}
+  #atmosphere,.bg__fx{display:none}
+  .progress__bar::after{display:none}
+}

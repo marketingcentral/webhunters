@@ -1,0 +1,60 @@
+<?php declare(strict_types=1);
+
+/**
+ * Textos da tela de ERRO (404 / 405 / 419 / 500), renderizada por ErrorsController
+ * em app/Views/pages/_404.php dentro de layouts/auth.php.
+ *
+ * `codes` sobrescreve o par [título, mensagem] do controller por status HTTP.
+ * `status` é a etiqueta de telemetria do cabeçalho; `accent` escolhe a cor do painel.
+ */
+return [
+    'kicker' => 'DIAGNÓSTICO DE ROTA',
+
+    'codes' => [
+        404 => [
+            'title'   => 'SINAL PERDIDO',
+            'message' => 'A coordenada que você tentou acessar não existe ou foi evacuada. '
+                       . 'Nenhum nó respondeu à varredura. Volte à base e retome a operação por um ponto conhecido.',
+            'status'  => 'ROTA NÃO MAPEADA',
+            'accent'  => 'lime',
+        ],
+        405 => [
+            'title'   => 'MANOBRA INVÁLIDA',
+            'message' => 'Este ponto existe, mas não aceita esse tipo de requisição. '
+                       . 'Volte e use os controles da interface para chegar até ele.',
+            'status'  => 'MÉTODO RECUSADO',
+            'accent'  => 'cyan',
+        ],
+        419 => [
+            'title'   => 'SESSÃO EXPIRADA',
+            'message' => 'Seu token de segurança venceu ou foi invalidado. '
+                       . 'Recarregue a página e envie o formulário novamente para restabelecer o canal.',
+            'status'  => 'TOKEN VENCIDO',
+            'accent'  => 'amber',
+        ],
+        500 => [
+            'title'   => 'FALHA NO SISTEMA',
+            'message' => 'Ocorreu um erro interno no núcleo. A equipe já foi notificada. '
+                       . 'Tente novamente em instantes ou avise o suporte com a coordenada abaixo.',
+            'status'  => 'NÚCLEO INSTÁVEL',
+            'accent'  => 'red',
+        ],
+    ],
+
+    'labels' => [
+        'path'   => 'COORDENADA',
+        'signal' => 'TEMPO SEM SINAL',
+        'node'   => 'NÓ DE OPERAÇÃO',
+        'detail' => 'REGISTRO TÉCNICO',
+        'meter'  => 'SINAL',
+    ],
+
+    'meter' => '0%',
+    'hint'  => 'Se a falha persistir, informe a coordenada acima ao suporte.',
+
+    'links' => [
+        ['label' => 'VOLTAR AO INÍCIO', 'href' => 'inicio',  'icon' => 'flag'],
+        ['label' => 'JOGAR',            'href' => 'jogar',   'icon' => 'sports_esports'],
+        ['label' => 'SUPORTE',          'href' => 'suporte', 'icon' => 'headset_mic'],
+    ],
+];

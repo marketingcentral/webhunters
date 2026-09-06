@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview F3 · Topbar / Footer / Logo · Extract Hunters</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/components.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/hud.css">
+<link rel="stylesheet" href="../css/topbar.css">
+<link rel="stylesheet" href="../css/footer.css">
+<link rel="stylesheet" href="../css/logo.css">
+<style>
+  /* preview-only scaffolding (the real page gets .bg/.hud from hud.css + layouts/hud.php) */
+  .dev-panel{position:absolute;right:2rem;top:2rem;width:24rem;padding:2.5rem 2rem;background:rgba(8,12,8,.86);border:1px solid var(--c-line);border-radius:var(--r-3);display:grid;place-items:center}
+  .dev-hero{position:absolute;left:4.5rem;top:5.5rem}
+  .dev-mark{position:absolute;left:4.5rem;bottom:2rem;display:flex;gap:1.5rem;align-items:center}
+</style>
+</head>
+<body class="page-inventario" data-page="inventario">
+
+
+<div class="bg">
+  <img class="bg__img" src="../img/bg/inventario.jpg" alt="">
+  <div class="bg__overlay"></div>
+  <div class="bg__grain"></div>
+  <div class="bg__vignette"></div>
+</div>
+
+<div class="hud">
+<!-- ======================= partials/topbar.php (INVENTÁRIO active, back = VOLTAR) ======================= -->
+<header class="topbar" role="banner">
+  <a class="topbar__player" href="/extracthunters/perfil" aria-label="Perfil de HUNTER_07">
+      <span class="hex hex--md hex--hot"><span class="hex__in"><span class="ms " aria-hidden="true">skull</span></span></span>
+    <span class="topbar__id">
+      <span class="topbar__name">HUNTER_07</span>
+      <span class="topbar__lvl">
+        <span class="topbar__lvl-txt">Nível <span class="num">23</span></span>
+        <span class="topbar__xp" style="--v:68.4%" role="progressbar" aria-label="Experiência" aria-valuemin="0" aria-valuemax="18200" aria-valuenow="12456"><span class="topbar__xp-bar"></span></span>
+      </span>
+      <span class="topbar__xpnum num">12.456 / 18.200 XP</span>
+    </span>
+  </a>
+
+  <nav class="topbar__nav" aria-label="Menu principal">
+      <a class="topbar__link" href="/extracthunters/inicio">INÍCIO</a>
+      <a class="topbar__link is-active" href="/extracthunters/inventario" aria-current="page">INVENTÁRIO</a>
+      <a class="topbar__link" href="/extracthunters/saude">SAÚDE</a>
+      <a class="topbar__link" href="/extracthunters/habilidades">HABILIDADES</a>
+      <a class="topbar__link" href="/extracthunters/mapa">MAPA</a>
+      <a class="topbar__link" href="/extracthunters/missoes">MISSÕES</a>
+      <a class="topbar__link" href="/extracthunters/conquistas">CONQUISTAS</a>
+  </nav>
+
+  <a class="btn btn--gold topbar__shop" href="/extracthunters/loja"><span class="ms " aria-hidden="true">shopping_cart</span> Loja</a>
+
+  <div class="topbar__right">
+    <a class="topbar__cur topbar__cur--lime" href="/extracthunters/loja" title="Créditos"><svg class="ic "><use href="../icons/sprite.svg#coin-credit"/></svg><span class="num">125.500</span></a>
+    <a class="topbar__cur topbar__cur--cyan" href="/extracthunters/loja" title="Dinheiro"><svg class="ic "><use href="../icons/sprite.svg#coin-cash"/></svg><span class="num">2.450</span></a>
+    <a class="topbar__cur topbar__cur--amber" href="/extracthunters/loja" title="Pontos"><svg class="ic "><use href="../icons/sprite.svg#coin-points"/></svg><span class="num">1.250</span></a>
+    <span class="topbar__sep" aria-hidden="true"></span>
+    <a class="topbar__ico topbar__friends" href="/extracthunters/amigos" title="Amigos online"><span class="ms fill" aria-hidden="true">group</span><span class="num">8</span></a>
+    <a class="topbar__ico topbar__mail has-unread" href="/extracthunters/mensagens" title="3 mensagens não lidas"><span class="ms fill" aria-hidden="true">mail</span></a>
+    <a class="topbar__ico topbar__settings" href="/extracthunters/configuracoes" title="Configurações"><span class="ms fill" aria-hidden="true">settings</span></a>
+      <a class="topbar__back" href="/extracthunters/inicio"><span class="ms " aria-hidden="true">undo</span><span>VOLTAR</span></a>
+  </div>
+</header>
+<!-- ======================= /topbar ======================= -->
+
+<main class="hud-main" id="main" style="position:relative">
+  <!-- component('logo', ['variant' => 'hero']) -->
+  <div class="dev-hero">
+    <div class="logo logo--hero" role="img" aria-label="Extract Hunters">
+      <span class="logo__word" aria-hidden="true">Extract<span class="logo__mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 12 4l8 16" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><path d="M8 20 12 12l4 8" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round" opacity=".7"/></svg></span></span>
+      <span class="logo__sub" aria-hidden="true"><span>H</span><span>U</span><span>N</span><span>T</span><span>E</span><span>R</span><span>S</span></span>
+      <span class="logo__tag" aria-hidden="true"><span>Sobreviva. Extraia. Evolua.</span></span>
+    </div>
+  </div>
+  <!-- component('logo', ['variant' => 'auth']) -->
+  <div class="dev-panel">
+    <div class="logo logo--auth" role="img" aria-label="Extract Hunters">
+      <span class="logo__emblem" aria-hidden="true"></span>
+      <span class="logo__word" aria-hidden="true">Extract</span>
+      <span class="logo__sub" aria-hidden="true"><span>Hunters</span></span>
+    </div>
+  </div>
+  <!-- component('logo', ['variant' => 'mark']) -->
+  <div class="dev-mark">
+    <div class="logo logo--mark" role="img" aria-label="Extract Hunters"><span class="logo__emblem" aria-hidden="true"></span></div>
+    <div class="logo logo--mark logo--white" role="img" aria-label="Extract Hunters"><span class="logo__emblem" aria-hidden="true"></span></div>
+  </div>
+</main>
+
+<!-- ======================= partials/footer.php ======================= -->
+<footer class="footer" role="contentinfo">
+  <div class="footer__social">
+    <span class="footer__label">Siga-nos</span>
+      <a class="footer__soc" href="https://discord.com/" target="_blank" rel="noopener noreferrer" title="Discord" aria-label="Discord"><svg class="ic "><use href="../icons/sprite.svg#discord"/></svg></a>
+      <a class="footer__soc" href="https://twitter.com/" target="_blank" rel="noopener noreferrer" title="Twitter" aria-label="Twitter"><svg class="ic "><use href="../icons/sprite.svg#twitter"/></svg></a>
+      <a class="footer__soc" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube"><svg class="ic "><use href="../icons/sprite.svg#youtube"/></svg></a>
+      <a class="footer__soc" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram"><svg class="ic "><use href="../icons/sprite.svg#instagram"/></svg></a>
+  </div>
+
+  <div class="footer__actions">
+    <a class="btn btn--ghost footer__btn" href="/extracthunters/suporte"><span class="ms " aria-hidden="true">headset_mic</span> Suporte</a>
+    <a class="btn btn--ghost footer__btn" href="/extracthunters/relatorio-de-bug"><span class="ms " aria-hidden="true">bug_report</span> Relatório de bug</a>
+  </div>
+
+  <div class="footer__server">
+    <span class="footer__server-lbl">Servidor: AMÉRICA DO SUL</span>
+    <span class="footer__bars" aria-label="Qualidade da conexão" role="img"><i class="is-on"></i><i class="is-on"></i><i class="is-on"></i><i></i></span>
+    <span class="footer__ping num">32ms</span>
+    <span class="footer__dot" title="Online" aria-label="Servidor online" role="img"></span>
+  </div>
+</footer>
+<!-- ======================= /footer ======================= -->
+</div>
+</body>
+</html>

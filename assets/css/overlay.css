@@ -1,0 +1,39 @@
+/* ==========================================================================
+   OVERLAY — base do HUD in-game. Substitui base.css/hud.css nesta camada.
+   Regra de ouro: NADA pinta fundo. O que não é desenho tem de ser buraco, senão
+   o overlay tapa o jogo (e o hit-through por alfa do plugin para de funcionar).
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html.overlay,
+body.overlay-body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;      /* o jogo aparece atrás */
+  overflow: hidden;
+  color: var(--c-text, #e8ede6);
+  font-family: var(--font-body, "Barlow", system-ui, sans-serif);
+  /* clique atravessa por padrão; quem precisa de mouse reativa em si mesmo */
+  pointer-events: none;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+/* o cursor do jogo é o do jogo: nada aqui pede cursor de UI */
+body.overlay-body * { cursor: inherit; }
+
+.num { font-family: var(--font-mono, "Share Tech Mono", monospace); font-variant-numeric: tabular-nums; }
+
+/* Texto sobre cena clara (o jogo pode ser um saguão ensolarado) precisa de contorno
+   próprio — não dá para contar com o fundo. */
+.ov-shadow {
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, .95),
+    0 0 10px rgba(0, 0, 0, .7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

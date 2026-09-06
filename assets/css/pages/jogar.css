@@ -1,0 +1,591 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — tela JOGAR SOLO / MULTIPLAYER (referência 02).
+   Tudo escopado em body.page-jogar. Medidas derivadas da referência 1672x941
+   (1rem = 16px): bordas 23|359 / 375|1280 / 1308|1646.
+   ========================================================================== */
+
+/* símbolos locais (defs) — nunca renderizam */
+body.page-jogar .jogar-defs{position:absolute;width:0;height:0;overflow:hidden}
+
+/* ---- fundo: a referência é praticamente preta atrás da HUD --------------- */
+body.page-jogar .bg__img{opacity:.15;filter:saturate(.55) contrast(1.05) brightness(.72)}
+body.page-jogar .bg__overlay{
+  background:
+    linear-gradient(180deg, rgba(4,7,4,.92) 0%, rgba(4,7,4,.86) 30%, rgba(4,7,4,.88) 70%, rgba(4,7,4,.95) 100%);
+}
+body.page-jogar #atmosphere{opacity:.5}
+
+/* bordas dos painéis: cinza neutro (a referência não tem tom esverdeado) */
+body.page-jogar .panel,
+body.page-jogar .map-card{border-color:rgba(170,180,170,.10)}
+
+/* ---- grade de 3 colunas -------------------------------------------------- */
+body.page-jogar .layout-3.jogar{
+  --col-l:21rem;      /* 336px */
+  --col-r:21.125rem;  /* 338px */
+  gap:1rem;
+  margin-left:-.3125rem;
+  margin-right:-.1875rem;
+}
+body.page-jogar .jogar-left{gap:.7rem;margin-bottom:-.25rem}
+body.page-jogar .jogar-mid{gap:.5rem}      /* vãos iguais: 16px de cada lado da coluna central */
+body.page-jogar .jogar-right{gap:1.125rem;margin-top:-.1875rem}
+
+/* ==========================================================================
+   COLUNA ESQUERDA
+   ========================================================================== */
+body.page-jogar .jogar-head{padding:.3rem 0 .45rem;padding-left:.375rem;flex:0 0 auto}
+/* a referência traça o título com muito tracking (mancha 170px para "JOGAR SOLO"
+   e 102px para a tag); o corpo (2.1rem/500, font-cond) segue a SPEC §6. */
+body.page-jogar .jogar-head .page-title{gap:1.15rem;letter-spacing:.091em}
+body.page-jogar .jogar-head .page-title__tag{font-size:1.1rem;letter-spacing:.121em}
+body.page-jogar .jogar-head .page-subtitle{margin-top:.6rem;font-size:.775rem;line-height:1.35;white-space:nowrap}
+
+/* ---- MODO DE JOGO ------------------------------------------------------- */
+body.page-jogar .jogar-modes .panel__body{padding:1rem .55rem .35rem}
+body.page-jogar .panel__section{
+  font-size:.95rem;
+  font-weight:400;
+  letter-spacing:.055em;
+  color:#f0f4ec;
+  margin:0 0 .68rem;
+  display:block;
+}
+body.page-jogar .jogar-modes .panel__section{padding-left:.5rem;letter-spacing:.088em}
+/* linhas em grid de 5 faixas iguais: nunca transborda o corpo do painel */
+body.page-jogar .jogar-modes__list{
+  display:grid;
+  grid-template-rows:repeat(5,minmax(0,1fr));
+  gap:.125rem;
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+}
+
+body.page-jogar .jogar-mode{
+  min-height:0;
+  padding:.45rem .75rem;
+  gap:.6rem;
+  background:rgba(12,17,12,.5);
+  border-color:transparent;
+  border-radius:var(--r-1);
+  width:100%;
+  text-align:left;
+  font:inherit;
+}
+body.page-jogar .jogar-mode::before{opacity:.16}
+/* brasões vazados: contorno + detalhe interno, sem glow */
+body.page-jogar .jogar-mode__crest{
+  display:grid;place-items:center;
+  width:2rem;height:2rem;
+  flex-shrink:0;
+  color:#cfd6c9;
+}
+body.page-jogar .jogar-mode__crest .ic{width:2rem;height:2rem;filter:none}
+body.page-jogar .jogar-mode .row__text strong{font-size:1.04rem;font-weight:400;letter-spacing:.045em;color:#e9efe4}
+body.page-jogar .jogar-mode .row__text small{font-size:.73rem;font-weight:400;color:var(--c-muted)}
+body.page-jogar .jogar-mode .row__chev{font-size:1.45rem}
+body.page-jogar .jogar-mode .row__lock{
+  font-size:1.28rem;
+  color:#c3cabe;
+  opacity:1;
+  font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;
+}
+body.page-jogar button.jogar-mode:hover{border-color:rgba(155,224,74,.45);background:var(--c-panel-hi)}
+body.page-jogar button.jogar-mode:hover .jogar-mode__crest{color:#eef4e7}
+body.page-jogar .jogar-mode.is-active{
+  background:linear-gradient(180deg, rgba(48,60,22,.96) 0%, rgba(33,45,16,.96) 100%);
+  border-color:rgba(155,224,74,.8);
+  box-shadow:var(--glow-soft),inset 0 0 20px rgba(155,224,74,.07);
+}
+body.page-jogar .jogar-mode.is-active .jogar-mode__crest{color:#fff}
+body.page-jogar .jogar-mode.is-active .row__chev{color:var(--c-lime)}
+body.page-jogar .jogar-mode.is-active .row__text small{color:#dbe8cd}
+/* bloqueado: texto claro como na referência; só o cadeado apaga */
+body.page-jogar .jogar-mode.is-locked{opacity:1}
+body.page-jogar .jogar-mode.is-locked .row__text strong{color:#d4dbce}
+body.page-jogar .jogar-mode.is-locked .row__text small{color:#98a394}
+body.page-jogar .jogar-mode.is-locked .jogar-mode__crest{color:#c4ccbe}
+body.page-jogar button.jogar-mode:active{transform:scale(.995)}
+
+/* ---- PREFERÊNCIAS DE PARTIDA -------------------------------------------- */
+body.page-jogar .jogar-prefs{flex:0 0 auto}
+body.page-jogar .jogar-prefs .panel__body{padding:.75rem 0 0}
+body.page-jogar .jogar-prefs .panel__section{padding-left:1.1rem;margin-bottom:.35rem}
+body.page-jogar .pref-list{display:flex;flex-direction:column}
+body.page-jogar .pref{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:.75rem;
+  min-height:2.1rem;
+  padding:0 1.15rem 0 1.1rem;
+}
+body.page-jogar .pref__label{
+  font-family:var(--font-cond);
+  font-size:.8rem;
+  font-weight:400;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:#dde3d7;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+body.page-jogar .pref__toggle{gap:1.06rem}
+body.page-jogar .pref__toggle .toggle__label{
+  font-family:var(--font-body);
+  font-size:.69rem;
+  font-weight:400;
+  letter-spacing:0;
+  text-transform:none;
+  min-width:0;
+  color:var(--c-lime);
+}
+/* toggles foscos: sem halo, trilho baixo (referência) */
+body.page-jogar .pref__toggle .toggle__track{width:2.1rem;height:1.12rem;border-radius:1rem}
+body.page-jogar .pref__toggle .toggle__track::after{width:.88rem;height:.88rem;top:.11rem;left:.11rem}
+body.page-jogar .pref__toggle input:checked ~ .toggle__track{
+  background:linear-gradient(180deg,#7fb03c,#5f8f2c);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.3);
+}
+body.page-jogar .pref__toggle input:checked ~ .toggle__track::after{transform:translateX(1rem);background:#fff}
+body.page-jogar .pref__toggle:hover .toggle__track{box-shadow:inset 0 1px 2px rgba(0,0,0,.3),0 0 0 1px rgba(155,224,74,.35)}
+body.page-jogar .pref__stepper{
+  grid-template-columns:minmax(0,1fr) auto;
+  min-width:0;
+  gap:1.54rem;
+}
+body.page-jogar .pref__stepper .stepper__btn:first-of-type{display:none}
+body.page-jogar .pref__stepper .stepper__val{
+  font-family:var(--font-body);
+  font-size:.69rem;
+  font-weight:400;
+  letter-spacing:0;
+  word-spacing:.12em;
+  text-transform:none;
+  text-align:right;
+  color:#a8c840;
+}
+body.page-jogar .pref__stepper .stepper__btn{
+  width:1.62rem;height:1.62rem;
+  font-size:1.62rem;
+  font-variation-settings:'FILL' 0,'wght' 600,'GRAD' 0,'opsz' 24;
+  color:var(--c-text);
+}
+body.page-jogar .pref__stepper .stepper__btn:hover{color:var(--c-lime);background:transparent;text-shadow:none}
+
+/* ---- BUSCAR PARTIDA ----------------------------------------------------- */
+body.page-jogar .jogar-cta{flex:0 0 auto}
+body.page-jogar .jogar-cta .panel__body{padding:.45rem .45rem .7rem}
+body.page-jogar .jogar-cta__btn{
+  position:relative;
+  min-height:3.44rem;
+  font-size:1.46rem;font-weight:400;letter-spacing:.045em;
+  --_bg:linear-gradient(180deg,#43551f 0%,#2c3b12 100%);
+  --_bc:rgba(163,232,80,.85);
+  box-shadow:0 0 0 1px rgba(155,224,74,.16),0 0 14px rgba(155,224,74,.18),inset 0 1px 0 rgba(255,255,255,.08),inset 0 -1px 0 rgba(0,0,0,.4);
+  text-shadow:0 1px 2px rgba(0,0,0,.55);
+}
+body.page-jogar .jogar-cta__btn:hover{
+  --_bg:linear-gradient(180deg,#43571e 0%,#2f4013 100%);
+  --_bc:var(--c-lime);
+  box-shadow:0 0 0 1px rgba(155,224,74,.35),0 0 18px rgba(155,224,74,.25),inset 0 1px 0 rgba(255,255,255,.1);
+}
+/* rótulo centrado no botão: o chevron sai do fluxo */
+body.page-jogar .jogar-cta__btn .btn__label{flex:1 1 auto;text-align:center}
+body.page-jogar .jogar-cta__btn .btn__chev{
+  position:absolute;right:1.4rem;top:50%;
+  margin:0;
+  transform:translateY(-50%);
+  color:var(--c-lime-2);
+}
+body.page-jogar .jogar-eta{
+  display:flex;align-items:center;justify-content:center;gap:.4rem;
+  margin-top:1.05rem;
+  font-family:var(--font-cond);
+  font-size:.82rem;
+  font-weight:400;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--c-text-2);
+}
+body.page-jogar .jogar-eta .ms{font-size:1.05rem;color:var(--c-muted)}
+body.page-jogar .jogar-eta .num{color:var(--c-text);word-spacing:-.3em}
+
+/* ==========================================================================
+   COLUNA CENTRAL — banner + seleção de mapas
+   ========================================================================== */
+body.page-jogar .jogar-banner{
+  position:relative;
+  flex:0 0 auto;
+  margin-top:-1.5rem;
+  height:14.4rem;
+  overflow:hidden;
+  border:1px solid rgba(160,175,155,.16);
+  border-radius:var(--r-2);
+  background:#050805;
+  isolation:isolate;
+}
+body.page-jogar .jogar-banner__img{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:center 42%;
+  filter:saturate(1.1) contrast(1.14) brightness(1.2);
+  transform:scale(1.01);
+  transition:transform 1.2s var(--ease-out);
+}
+body.page-jogar .jogar-banner:hover .jogar-banner__img{transform:scale(1.035)}
+body.page-jogar .jogar-banner__shade{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(90deg, rgba(4,7,4,.97) 0%, rgba(4,7,4,.84) 14%, rgba(4,7,4,.38) 30%, rgba(4,7,4,0) 47%),
+    linear-gradient(0deg, rgba(4,7,4,.5) 0%, rgba(4,7,4,0) 38%);
+}
+body.page-jogar .jogar-banner__body{
+  position:absolute;
+  left:2.06rem;right:2rem;bottom:1.3rem;
+  display:flex;align-items:center;gap:1.6rem;
+}
+/* hexágono VAZADO (SVG): só traço claro, a imagem aparece atrás do glifo */
+body.page-jogar .jg-hex{display:block;flex-shrink:0;color:#fff;overflow:visible}
+body.page-jogar .jg-hex__frame{
+  fill:none;
+  stroke:rgba(235,240,230,.82);
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;
+}
+body.page-jogar .jg-hex__dots circle{fill:rgba(235,240,230,.75)}
+body.page-jogar .jg-hex use{fill:currentColor}
+body.page-jogar .jogar-banner__hex{width:3.9rem;height:4.5rem}
+body.page-jogar .jogar-banner__hex .jg-hex__frame{stroke-width:1.8;stroke:rgba(240,244,236,.9)}
+body.page-jogar .jogar-banner__text{display:grid;gap:.5rem;min-width:0}
+body.page-jogar .jogar-banner__title{
+  font-family:var(--font-cond);
+  font-size:1.5rem;
+  font-weight:300;
+  letter-spacing:.115em;
+  text-transform:uppercase;
+  line-height:1;
+  color:#f2f6ee;
+  text-shadow:0 2px 10px rgba(0,0,0,.8);
+}
+body.page-jogar .jogar-banner__desc{
+  font-family:var(--font-body);
+  font-size:.85rem;
+  font-weight:400;
+  line-height:1.5;
+  max-width:14rem;
+  color:#dde4d8;
+  text-shadow:0 1px 8px rgba(0,0,0,.85);
+}
+
+/* ---- painel SELEÇÃO DE MAPAS -------------------------------------------- */
+body.page-jogar .jogar-maps .panel__body{padding:.75rem .7rem .7rem;gap:0}
+body.page-jogar .jogar-maps .panel__section{font-size:1.05rem;font-weight:400;letter-spacing:.082em;padding-left:.9rem;margin:0 0 .75rem}
+body.page-jogar .map-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+  gap:1.07rem;
+  flex:1 1 auto;
+  min-height:0;
+}
+body.page-jogar .map-card{
+  position:relative;
+  cursor:pointer;
+  border-radius:var(--r-2);
+  overflow:hidden;
+  min-height:0;
+}
+body.page-jogar .map-card .card__media{position:absolute;inset:0;aspect-ratio:auto;z-index:0}
+body.page-jogar .map-card .card__media img,
+body.page-jogar .map-card.is-selected .card__media img{filter:saturate(1.38) contrast(1.3) brightness(1.18)}
+/* a referência corta a foto numa faixa preta chapada atrás do texto */
+body.page-jogar .map-card .card__media::after{
+  background:
+    linear-gradient(180deg, rgba(4,7,4,.18) 0%, rgba(4,7,4,.07) 16%, rgba(4,7,4,0) 34%),
+    linear-gradient(180deg,
+      rgba(4,7,4,0) 36%, rgba(4,7,4,.45) 48%, rgba(4,7,4,.86) 56%,
+      rgba(4,7,4,1) 62%, rgba(4,7,4,1) 100%);
+}
+/* card escolhido: lavagem lime sobre a foto, como na referência */
+body.page-jogar .map-card.is-selected .card__media::before{
+  content:"";
+  position:absolute;inset:0;
+  z-index:1;
+  background:linear-gradient(180deg, rgba(126,190,52,.11) 0%, rgba(126,190,52,.05) 55%, rgba(126,190,52,0) 72%);
+  pointer-events:none;
+}
+body.page-jogar .map-card .card__body{
+  position:static;
+  z-index:2;
+  flex:0 0 auto;
+  margin-top:auto;
+  padding:0 .8rem .8rem;
+  gap:.7rem;
+  align-items:center;
+}
+body.page-jogar .map-card__lines{gap:.1rem}
+/* hexágono vazado do card (31px na referência) */
+body.page-jogar .map-card__hex{width:2.2rem;height:2.62rem;color:#f6f9f2}
+body.page-jogar .map-card__hex .jg-hex__frame{stroke-width:1.65}
+body.page-jogar .map-card .card__title{font-size:1rem;font-weight:400;letter-spacing:.03em;color:#f7faf4;text-shadow:0 1px 4px rgba(0,0,0,.85)}
+body.page-jogar .map-card .card__sub{font-size:.9rem;font-weight:400;letter-spacing:.03em;color:#cdd5c8;text-shadow:0 1px 4px rgba(0,0,0,.85)}
+body.page-jogar .map-card .card__meta{font-family:var(--font-body);font-size:.89rem;font-weight:400;color:#b3bcaf;text-shadow:0 1px 4px rgba(0,0,0,.85)}
+body.page-jogar .map-card:hover{border-color:rgba(155,224,74,.6);transform:translateY(-1px)}
+body.page-jogar .map-card:hover .card__media img{filter:saturate(1.2) contrast(1.26) brightness(1);transform:scale(1.05)}
+body.page-jogar .map-card.is-selected{border-color:var(--c-lime);box-shadow:none}
+body.page-jogar .map-card.is-selected:hover{box-shadow:var(--glow-soft)}
+body.page-jogar .map-card.is-selected::after{content:none}
+/* selo do card selecionado: quadrado semitransparente + disco fosco */
+body.page-jogar .map-card__check{
+  position:absolute;
+  top:0;right:0;
+  z-index:3;
+  width:2.45rem;height:2.45rem;
+  display:none;
+  place-items:center;
+  background:linear-gradient(150deg, rgba(126,186,52,.62) 0%, rgba(74,122,38,.45) 100%);
+  border-radius:0 var(--r-2) 0 .4rem;
+}
+body.page-jogar .map-card.is-selected .map-card__check{display:grid;animation:pop 300ms var(--ease-out) backwards}
+body.page-jogar .map-card__check .ms{
+  display:grid;place-items:center;
+  width:1.3rem;height:1.3rem;
+  border-radius:50%;
+  background:linear-gradient(180deg, var(--c-lime-2), var(--c-lime));
+  color:#0d1408;
+  font-size:1rem;
+  font-variation-settings:'FILL' 0,'wght' 700,'GRAD' 0,'opsz' 24;
+  box-shadow:none;
+}
+body.page-jogar .jogar-maps__foot{display:flex;justify-content:center;margin-top:.85rem;flex:0 0 auto}
+body.page-jogar .jogar-maps__all{min-height:2.5rem;min-width:16.9rem;font-size:1.06rem;font-weight:400;letter-spacing:.045em}
+
+/* ==========================================================================
+   COLUNA DIREITA
+   ========================================================================== */
+body.page-jogar .jogar-right .panel__head{padding:1.04rem 1.1rem .75rem}
+body.page-jogar .jogar-right .panel__title{font-weight:400;letter-spacing:.05em}
+body.page-jogar .jogar-right .panel__meta{font-size:.88rem;font-weight:400;letter-spacing:.04em}
+body.page-jogar .jogar-right .panel__meta .num,
+body.page-jogar .jogar-right .panel__meta.num{color:var(--c-text-2);word-spacing:-.3em}
+
+/* ---- ESQUADRÃO ---------------------------------------------------------- */
+body.page-jogar .jogar-squad{flex:0 0 auto}
+body.page-jogar .jogar-squad .panel__meta{font-family:var(--font-mono);font-size:.75rem;color:var(--c-text-2)}
+body.page-jogar .jogar-squad .panel__body{padding:.5rem 1.1rem .74rem}
+body.page-jogar .squad-member{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:.7rem;
+  padding:.15rem 0;
+  border-radius:var(--r-2);
+  transition:background var(--t-fast) var(--ease);
+}
+body.page-jogar .squad-member:hover{background:rgba(155,224,74,.06)}
+/* retrato 3:4 de corpo inteiro -> busto: recorte com zoom real */
+body.page-jogar .squad-member__pic{
+  display:block;
+  width:2.7rem;height:2.7rem;
+  border-radius:50%;
+  overflow:hidden;
+  border:1px solid rgba(190,180,140,.45);
+  background:#0b100b;
+  flex-shrink:0;
+  box-shadow:inset 0 0 10px rgba(0,0,0,.85);
+}
+body.page-jogar .squad-member__avatar{
+  display:block;
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:50% 0%;
+  transform:scale(5);
+  transform-origin:50% 10.5%;
+  filter:brightness(1.12) contrast(1.04) saturate(.95);
+}
+body.page-jogar .squad-member__text{display:grid;gap:.2rem;min-width:0}
+body.page-jogar .squad-member__text strong{
+  font-family:var(--font-cond);
+  font-size:1rem;
+  font-weight:400;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  line-height:1;
+  color:var(--c-text);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body.page-jogar .squad-member__text small{
+  display:flex;align-items:center;gap:.22rem;
+  font-family:var(--font-body);
+  font-size:.85rem;
+  color:var(--c-text-2);
+  line-height:1.1;
+}
+body.page-jogar .squad-member__crown{width:1.05rem;height:1.05rem;margin-left:.3rem;color:var(--c-gold);filter:none}
+body.page-jogar .squad-member__dot{
+  width:.5rem;height:.5rem;
+  align-self:start;
+  margin-top:.55rem;
+  box-shadow:none;
+}
+body.page-jogar .squad-slots{display:flex;gap:.5rem;margin-top:1.28rem}
+body.page-jogar .squad-slot{
+  display:grid;place-items:center;
+  width:3.2rem;height:2.875rem;
+  border:1px solid var(--c-line);
+  border-radius:var(--r-2);
+  background:rgba(10,14,10,.5);
+  color:var(--c-text-2);
+  transition:border-color var(--t-fast) var(--ease),color var(--t-fast) var(--ease),background var(--t-fast) var(--ease),box-shadow var(--t-fast) var(--ease);
+}
+body.page-jogar .squad-slot .ms{font-size:1.6rem}
+body.page-jogar .squad-slot:hover{border-color:rgba(155,224,74,.6);color:var(--c-lime);background:rgba(155,224,74,.07);box-shadow:var(--glow-soft)}
+
+/* ---- DESAFIOS DIÁRIOS ---------------------------------------------------- */
+body.page-jogar .jogar-challenges .panel__head{padding:1.05rem 1.1rem .675rem}
+body.page-jogar .jogar-challenges .panel__body{padding:.15rem .55rem .15rem 1.1rem;min-height:0}
+body.page-jogar .chal-list{
+  position:relative;
+  display:grid;
+  grid-template-rows:repeat(4,minmax(0,1fr));
+  flex:1 1 auto;
+  min-height:0;
+  list-style:none;
+  margin:0;padding:0;
+}
+body.page-jogar .chal{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 3.4rem;
+  column-gap:.6rem;
+  align-items:center;
+}
+body.page-jogar .chal__main{display:grid;gap:.55rem;min-width:0}
+body.page-jogar .chal__head{display:flex;align-items:baseline;justify-content:space-between;gap:.75rem}
+body.page-jogar .chal__label{
+  font-family:var(--font-body);
+  font-size:.71rem;
+  font-weight:400;
+  color:var(--c-text);
+  line-height:1.1;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body.page-jogar .chal__count{font-family:var(--font-mono);font-size:.8rem;letter-spacing:-.01em;word-spacing:-.34em;color:var(--c-text-2);white-space:nowrap}
+/* trilho quase invisível + preenchimento chapado (referência) */
+body.page-jogar .chal__bar{height:.125rem;background:rgba(196,206,190,.20);box-shadow:none}
+body.page-jogar .chal__bar .progress__bar{background:var(--c-lime-2);box-shadow:none}
+body.page-jogar .xp-chip{
+  display:grid;
+  justify-items:center;
+  gap:.12rem;
+  --_c:var(--c-lime);
+  --_rgb:var(--c-lime-rgb);
+}
+body.page-jogar .xp-chip--purple{--_c:var(--c-purple);--_rgb:var(--c-purple-rgb)}
+body.page-jogar .xp-chip__badge{
+  display:grid;place-items:center;
+  width:1.2rem;height:1.2rem;
+  border:1.5px solid var(--c-lime-dim);
+  border-radius:50%;
+  background:rgba(6,10,6,.6);
+  color:var(--_c);
+  font-family:var(--font-cond);
+  font-size:.8rem;
+  font-weight:500;
+  letter-spacing:.01em;
+  line-height:1;
+  text-shadow:none;
+  box-shadow:none;
+}
+body.page-jogar .xp-chip--purple .xp-chip__badge{border-color:#6f39a8}
+body.page-jogar .xp-chip__val{font-family:var(--font-mono);font-size:.75rem;letter-spacing:-.02em;color:var(--_c);line-height:1}
+body.page-jogar .jogar-challenges .panel__foot{justify-content:center;padding:.56rem 1.1rem .28rem}
+body.page-jogar .chal-all{font-size:1.06rem;font-weight:400;letter-spacing:.045em}
+
+/* ---- RECOMPENSA DIÁRIA --------------------------------------------------- */
+body.page-jogar .jogar-reward{flex:0 0 auto}
+body.page-jogar .jogar-reward .panel__body{padding:.85rem 1.1rem .6rem}
+body.page-jogar .reward__title{font-size:1rem;font-weight:400;margin:0}
+body.page-jogar .reward__next{
+  margin-top:.18rem;
+  font-family:var(--font-cond);
+  font-size:.82rem;
+  font-weight:400;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+}
+body.page-jogar .reward__next .num{color:var(--c-lime);word-spacing:-.12em}
+/* caixa única envolvendo miniatura + texto, como na referência */
+body.page-jogar .reward__item{
+  display:grid;
+  grid-template-columns:6.2rem minmax(0,1fr);
+  align-items:center;
+  gap:.35rem;
+  margin-top:.93rem;
+  padding:0 .7rem 0 0;
+  overflow:hidden;
+  border:1px solid rgba(170,180,170,.10);
+  border-radius:var(--r-2);
+  background:linear-gradient(180deg, rgba(12,17,11,.5), rgba(6,10,6,.55));
+}
+body.page-jogar .reward__thumb{
+  display:grid;place-items:center;
+  height:5.6rem;
+  background:radial-gradient(ellipse 62% 42% at 50% 84%, rgba(0,0,0,.65), transparent 72%);
+}
+body.page-jogar .reward__thumb img{
+  width:88%;height:80%;
+  object-fit:contain;
+  filter:saturate(.86) brightness(.95) contrast(1.08) drop-shadow(0 6px 10px rgba(0,0,0,.7));
+  transition:transform var(--t-med) var(--ease-out);
+}
+body.page-jogar .jogar-reward:hover .reward__thumb img{transform:scale(1.05)}
+body.page-jogar .reward__text{display:grid;gap:.4rem;min-width:0}
+body.page-jogar .reward__text strong{
+  font-family:var(--font-body);
+  font-size:.82rem;
+  font-weight:400;
+  color:var(--c-text);
+  line-height:1.1;
+}
+body.page-jogar .reward__text small{font-family:var(--font-body);font-size:.73rem;color:var(--c-text-2);line-height:1.3;white-space:nowrap}
+body.page-jogar .reward__btn{
+  --_bg:transparent;
+  min-height:2.69rem;
+  margin-top:.25rem;
+  font-size:1.08rem;
+  font-weight:400;
+  letter-spacing:.045em;
+  border-style:solid;
+  text-shadow:none;
+}
+body.page-jogar .reward__btn:hover,
+body.page-jogar .reward__btn:focus-visible{--_bg:rgba(155,224,74,.10);--_bc:var(--c-lime)}
+body.page-jogar .reward__btn.is-claimed{
+  --_bg:rgba(155,224,74,.05);
+  --_fg:var(--c-muted);
+  --_bc:var(--c-line);
+  pointer-events:none;
+  text-shadow:none;
+}
+
+/* ---- boot / motion ------------------------------------------------------- */
+body.page-jogar .jogar-banner{animation:none}
+body.is-booted.page-jogar .map-card{animation:fade-up 380ms var(--ease-out) backwards}
+body.is-booted.page-jogar .map-card:nth-child(1){animation-delay:120ms}
+body.is-booted.page-jogar .map-card:nth-child(2){animation-delay:160ms}
+body.is-booted.page-jogar .map-card:nth-child(3){animation-delay:200ms}
+body.is-booted.page-jogar .map-card:nth-child(4){animation-delay:240ms}
+body.is-booted.page-jogar .map-card:nth-child(5){animation-delay:280ms}
+body.is-booted.page-jogar .map-card:nth-child(6){animation-delay:320ms}
+body.is-booted.page-jogar .map-card:nth-child(7){animation-delay:360ms}
+body.is-booted.page-jogar .map-card:nth-child(8){animation-delay:400ms}
+
+@media (prefers-reduced-motion: reduce){
+  body.is-booted.page-jogar .map-card{animation:none}
+  body.page-jogar .jogar-banner:hover .jogar-banner__img{transform:scale(1.01)}
+}

@@ -1,0 +1,490 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — tela AMIGOS. Tudo sob body.page-amigos.
+   Grade (1672x941, 1rem = 16px): conteúdo 101rem x 47rem
+     esquerda 1fr | gap 1.75rem | direita 27rem
+     cabeçalho ~4.3rem | abas 2.85rem | painel de lista preenche o resto
+   ========================================================================== */
+
+body.page-amigos .hud-main{overflow:hidden}
+
+/* Toast de feedback do POST: por padrão nasce centrado no topo, bem em cima do campo
+   de busca. Aqui ele é ancorado à faixa livre entre o título e as ferramentas do
+   cabeçalho, para não cobrir a busca nem o botão MENSAGENS.
+   folga(.75) + ferramentas(~26.35) + gap(1.75) + coluna direita(27) + gutter(1.75) */
+.page-amigos .flash-stack{
+  left:auto;
+  right:calc(.75rem + 26.35rem + 1.75rem + 27rem + 1.75rem);
+  transform:none;
+  align-items:flex-end;
+  max-width:19rem;
+}
+.page-amigos .flash-stack .flash{padding:.45rem .75rem;gap:.5rem}
+.page-amigos .flash-stack .flash__text{font-size:.82rem;letter-spacing:.03em;line-height:1.25;overflow-wrap:anywhere}
+.page-amigos .flash-stack .flash__icon{font-size:1.05rem}
+
+.page-amigos .friends{
+  flex:1 1 auto;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 27rem;
+  gap:1.75rem;
+  min-height:0;
+}
+
+/* ---- coluna esquerda ----------------------------------------------------- */
+.page-amigos .friends__main{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  min-height:0;
+}
+.page-amigos .friends-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:1.5rem;
+  flex:0 0 auto;
+  margin-bottom:.95rem;
+}
+.page-amigos .friends-head__id{min-width:0}
+.page-amigos .page-title{font-size:2.1rem;line-height:1;letter-spacing:.025em}
+.page-amigos .page-title small{
+  font-size:.95rem;
+  letter-spacing:.1em;
+  padding:.15rem .5rem .1rem;
+  border:1px solid rgba(155,224,74,.35);
+  border-radius:var(--r-1);
+  background:rgba(155,224,74,.08);
+  align-self:center;
+}
+.page-amigos .page-subtitle{margin-top:.42rem;font-size:.92rem;color:var(--c-text-2)}
+
+.page-amigos .friends-head__tools{display:flex;align-items:center;gap:.6rem;flex:0 0 auto}
+
+/* busca */
+.page-amigos .fsearch{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  width:16.5rem;
+}
+.page-amigos .fsearch__ic{
+  position:absolute;
+  left:.65rem;
+  font-size:1.15rem;
+  color:var(--c-muted);
+  pointer-events:none;
+  transition:color var(--t-med) var(--ease);
+}
+.page-amigos .fsearch__input{
+  width:100%;
+  height:2.35rem;
+  padding:0 .7rem 0 2.35rem;
+  background:linear-gradient(180deg, rgba(14,20,14,.86), rgba(8,12,8,.9));
+  border:1px solid var(--c-line-2);
+  border-radius:var(--r-2);
+  color:var(--c-text);
+  font-family:var(--font-cond);
+  font-size:.95rem;
+  letter-spacing:.04em;
+  transition:border-color var(--t-med) var(--ease),box-shadow var(--t-med) var(--ease);
+}
+.page-amigos .fsearch__input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+.page-amigos .fsearch__input:focus{
+  outline:0;
+  border-color:rgba(155,224,74,.6);
+  box-shadow:var(--glow-soft),var(--shadow-inset);
+}
+.page-amigos .fsearch:focus-within .fsearch__ic{color:var(--c-lime)}
+
+/* ---- botão de linha / ferramenta ---------------------------------------- */
+.page-amigos .fbtn{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.4rem;
+  height:2.05rem;
+  padding:0 .8rem;
+  background:linear-gradient(180deg, rgba(18,25,17,.9), rgba(9,13,9,.92));
+  border:1px solid var(--c-line-2);
+  border-radius:var(--r-2);
+  color:var(--c-text-2);
+  font-family:var(--font-cond);
+  font-size:.85rem;
+  font-weight:500;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  cursor:pointer;
+  overflow:hidden;
+  transition:color var(--t-fast) var(--ease),border-color var(--t-fast) var(--ease),
+             background var(--t-fast) var(--ease),box-shadow var(--t-fast) var(--ease),
+             transform var(--t-fast) var(--ease);
+}
+.page-amigos .fbtn__ic{font-size:1.1rem;line-height:1}
+.page-amigos .fbtn::after{
+  content:"";position:absolute;top:-30%;bottom:-30%;left:0;width:34%;
+  background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.14), rgba(255,255,255,0));
+  transform:translateX(-170%) skewX(-22deg);pointer-events:none;
+}
+.page-amigos .fbtn:hover,
+.page-amigos .fbtn:focus-visible{
+  color:var(--c-text);
+  border-color:rgba(155,224,74,.55);
+  box-shadow:var(--glow-soft);
+  transform:translateY(-1px);
+}
+.page-amigos .fbtn:hover::after{animation:sweep 620ms var(--ease) both}
+.page-amigos .fbtn:active{transform:scale(.985)}
+.page-amigos .fbtn--go:hover{
+  color:#0d1508;
+  background:linear-gradient(180deg, var(--c-lime-2), var(--c-lime-dim));
+  border-color:var(--c-lime-2);
+}
+.page-amigos .fbtn--deny:hover{color:#ffd9da;border-color:rgba(229,72,77,.7);box-shadow:0 0 12px rgba(229,72,77,.28)}
+.page-amigos .fbtn--tool{height:2.35rem;padding:0 .95rem;font-size:.9rem}
+.page-amigos .fbtn__badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:1.05rem;height:1.05rem;padding:0 .2rem;margin-left:.1rem;
+  border-radius:999px;
+  background:var(--c-lime);color:#0d1508;
+  font-size:.68rem;font-style:normal;line-height:1;
+  box-shadow:0 0 10px rgba(155,224,74,.5);
+}
+
+/* ---- abas ---------------------------------------------------------------- */
+.page-amigos .friends-tabs{flex:0 0 auto;border-bottom-color:var(--c-line)}
+.page-amigos .friends-tabs .tab{min-width:9.5rem;padding:.6rem 1.4rem;font-size:1rem}
+
+/* ---- painel da lista ----------------------------------------------------- */
+.page-amigos .friends-panel{
+  flex:1 1 auto;
+  min-height:0;
+  border-top-left-radius:0;
+  border-top-right-radius:0;
+}
+.page-amigos .friends-panel::before{display:none}
+.page-amigos .friends-panel__body{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  padding:.5rem .55rem .5rem .6rem;
+}
+.page-amigos .flist{
+  display:flex;
+  flex-direction:column;
+  gap:.4rem;
+  min-height:0;
+  flex:1 1 auto;
+  list-style:none;
+  margin:0;
+  padding:0 .2rem 0 0;
+}
+.page-amigos .flist__empty{
+  padding:2.4rem 1rem;
+  text-align:center;
+  font-family:var(--font-cond);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+}
+
+/* ---- linha de amigo ------------------------------------------------------ */
+.page-amigos .frow{
+  --_dot:var(--c-muted);
+  position:relative;
+  display:grid;
+  grid-template-columns:3.55rem 2.1rem minmax(8rem,13.5rem) minmax(11rem,17rem) minmax(1.5rem,1fr) auto;
+  align-items:center;
+  gap:.85rem;
+  height:4.3rem;
+  flex:0 0 auto;
+  padding:0 .85rem 0 0;
+  background:linear-gradient(90deg, rgba(16,22,15,.62), rgba(10,14,10,.5));
+  border:1px solid var(--c-line-2);
+  border-radius:var(--r-2);
+  overflow:hidden;
+  transition:border-color var(--t-med) var(--ease),background var(--t-med) var(--ease),
+             box-shadow var(--t-med) var(--ease),transform var(--t-fast) var(--ease);
+}
+.page-amigos .frow::before{
+  content:"";
+  position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--_dot);
+  opacity:.55;
+  box-shadow:0 0 10px var(--_dot);
+  transition:opacity var(--t-med) var(--ease);
+}
+.page-amigos .frow::after{
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(90deg, rgba(var(--c-lime-rgb),.10), rgba(var(--c-lime-rgb),0) 45%);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity var(--t-med) var(--ease);
+}
+.page-amigos .frow:hover{
+  border-color:rgba(155,224,74,.55);
+  box-shadow:var(--glow-soft),0 8px 20px rgba(0,0,0,.4);
+  transform:translateX(2px);
+}
+.page-amigos .frow:hover::after{opacity:1}
+.page-amigos .frow:hover::before{opacity:1}
+.page-amigos .frow:hover .frow__portrait{transform:translateX(-50%) scale(1.06)}
+.page-amigos .frow:hover .frow__name{color:#fff;text-shadow:0 0 14px rgba(155,224,74,.35)}
+
+.page-amigos .frow--online{--_dot:var(--c-lime)}
+.page-amigos .frow--lobby{--_dot:var(--c-cyan)}
+.page-amigos .frow--ingame{--_dot:var(--c-amber)}
+.page-amigos .frow--offline{--_dot:var(--c-dim)}
+.page-amigos .frow--in{--_dot:var(--c-lime)}
+.page-amigos .frow--out{--_dot:var(--c-purple)}
+.page-amigos .frow--dim{background:linear-gradient(90deg, rgba(12,16,12,.5), rgba(9,12,9,.42))}
+.page-amigos .frow--dim .frow__thumb{filter:grayscale(.75) brightness(.7)}
+.page-amigos .frow--dim .frow__name{color:var(--c-text-2)}
+.page-amigos .frow--dim:hover .frow__thumb{filter:grayscale(.25) brightness(.9)}
+
+/* miniatura de retrato */
+.page-amigos .frow__thumb{
+  position:relative;
+  display:block;
+  width:3.55rem;
+  height:4.3rem;
+  overflow:hidden;
+  isolation:isolate;
+  border-right:1px solid var(--c-line-2);
+  background:#0a0e0a;
+  transition:filter var(--t-med) var(--ease);
+}
+.page-amigos .frow__portrait{
+  position:absolute;
+  top:3%;
+  left:50%;
+  width:265%;
+  max-width:none;
+  height:auto;
+  transform:translateX(-50%);
+  transform-origin:50% 0;
+  filter:saturate(.9) contrast(1.06) brightness(1.16);
+  transition:transform var(--t-slow) var(--ease-out);
+}
+.page-amigos .frow__thumb-fade{
+  position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(180deg, rgba(5,8,5,.3) 0%, rgba(5,8,5,0) 42%),
+    linear-gradient(180deg, rgba(6,9,6,0) 60%, rgba(6,9,6,.62) 100%),
+    radial-gradient(ellipse 88% 82% at 50% 42%, rgba(4,7,4,0) 45%, rgba(3,5,3,.42) 100%);
+  pointer-events:none;
+}
+
+/* hexágono de nível */
+.page-amigos .frow__hex{justify-self:center}
+
+/* nome + classe */
+.page-amigos .frow__id{display:flex;flex-direction:column;gap:.12rem;min-width:0}
+.page-amigos .frow__name{
+  font-family:var(--font-cond);
+  font-size:1.15rem;
+  font-weight:500;
+  letter-spacing:.03em;
+  color:var(--c-text);
+  line-height:1.1;
+  transition:color var(--t-med) var(--ease),text-shadow var(--t-med) var(--ease);
+}
+.page-amigos .frow__class{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  font-family:var(--font-cond);
+  font-size:.76rem;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+}
+.page-amigos .frow__class-ic{width:.95rem;height:.95rem;opacity:.85}
+
+/* status + atividade */
+.page-amigos .frow__state{display:flex;flex-direction:column;gap:.14rem;min-width:0}
+.page-amigos .frow__status{
+  display:inline-flex;
+  align-items:center;
+  gap:.42rem;
+  font-family:var(--font-cond);
+  font-size:.8rem;
+  font-weight:500;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--_dot);
+}
+.page-amigos .fdot{
+  width:.44rem;height:.44rem;
+  border-radius:50%;
+  background:var(--_dot);
+  box-shadow:0 0 8px var(--_dot);
+  flex:0 0 auto;
+}
+.page-amigos .frow--online .fdot{animation:pulse-lime 2.6s var(--ease) infinite}
+.page-amigos .frow--ingame .fdot{animation:blink 2.2s steps(1,end) infinite}
+.page-amigos .frow__activity{
+  font-family:var(--font-body);
+  font-size:.84rem;
+  color:var(--c-text-2);
+}
+.page-amigos .frow--dim .frow__activity{color:var(--c-muted)}
+
+/* meta (tempo / partidas) */
+.page-amigos .frow__meta{
+  justify-self:end;
+  font-size:.72rem;
+  letter-spacing:.08em;
+  color:var(--c-dim);
+  white-space:nowrap;
+}
+
+/* ações */
+.page-amigos .frow__actions{
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  opacity:.72;
+  transition:opacity var(--t-med) var(--ease);
+}
+.page-amigos .frow:hover .frow__actions,
+.page-amigos .frow:focus-within .frow__actions{opacity:1}
+.page-amigos .frow--offline .fbtn{opacity:.9}
+
+/* ---- coluna direita ------------------------------------------------------ */
+.page-amigos .friends__side{
+  display:flex;
+  flex-direction:column;
+  gap:1.1rem;
+  min-height:0;
+  min-width:0;
+}
+.page-amigos .panel__title-ic{font-size:1.15rem;color:var(--c-lime);opacity:.9}
+
+/* ADICIONAR AMIGO */
+.page-amigos .fadd{flex:0 0 auto}
+.page-amigos .fadd .panel__body{padding:1rem 1.1rem 1.05rem}
+.page-amigos .fadd__form{gap:.8rem}
+.page-amigos .fadd .field--icon .ms{bottom:.72rem;font-size:1.15rem}
+.page-amigos .fadd .input{height:2.6rem;padding-right:2.6rem;font-family:var(--font-cond);letter-spacing:.05em}
+.page-amigos .fadd__submit{min-height:2.85rem;font-size:1rem;letter-spacing:.08em}
+.page-amigos .fadd__hint{margin-top:-.15rem;line-height:1.4}
+.page-amigos .fadd__rule{margin:.95rem 0 .8rem}
+.page-amigos .fadd__id{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+  padding:.5rem .7rem;
+  background:rgba(10,14,10,.62);
+  border:1px dashed rgba(150,190,100,.28);
+  border-radius:var(--r-2);
+}
+.page-amigos .fadd__id-label{
+  font-family:var(--font-cond);
+  font-size:.78rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+}
+.page-amigos .fadd__id-val{
+  font-size:.92rem;
+  letter-spacing:.06em;
+  color:var(--c-lime);
+  text-shadow:0 0 12px rgba(155,224,74,.35);
+}
+
+/* ESQUADRÃO RECENTE */
+.page-amigos .fsquad{min-height:0}
+.page-amigos .fsquad .panel__body{padding:.5rem .55rem;min-height:0;display:flex}
+.page-amigos .squad-list{
+  list-style:none;margin:0;padding:0;
+  display:flex;flex-direction:column;gap:.4rem;
+  width:100%;
+}
+.page-amigos .srow{
+  position:relative;
+  display:grid;
+  grid-template-columns:2.7rem minmax(0,1fr) auto 1.9rem;
+  align-items:center;
+  gap:.65rem;
+  height:3.3rem;
+  padding-right:.35rem;
+  background:linear-gradient(90deg, rgba(16,22,15,.55), rgba(10,14,10,.45));
+  border:1px solid var(--c-line-2);
+  border-radius:var(--r-2);
+  overflow:hidden;
+  transition:border-color var(--t-med) var(--ease),box-shadow var(--t-med) var(--ease);
+}
+.page-amigos .srow:hover{border-color:rgba(155,224,74,.5);box-shadow:var(--glow-soft)}
+.page-amigos .srow:hover .srow__portrait{transform:translateX(-50%) scale(1.06)}
+.page-amigos .srow__thumb{
+  position:relative;display:block;
+  width:2.7rem;height:3.3rem;
+  overflow:hidden;isolation:isolate;
+  border-right:1px solid var(--c-line-2);
+  background:#0a0e0a;
+}
+.page-amigos .srow__portrait{
+  position:absolute;top:-2%;left:50%;
+  width:215%;max-width:none;height:auto;
+  transform:translateX(-50%);
+  transform-origin:50% 0;
+  filter:saturate(.85) contrast(1.08);
+  transition:transform var(--t-slow) var(--ease-out);
+}
+.page-amigos .srow__thumb-fade{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg, rgba(5,8,5,.35) 0%, rgba(5,8,5,0) 45%, rgba(6,9,6,.7) 100%);
+  pointer-events:none;
+}
+.page-amigos .srow__id{display:flex;flex-direction:column;gap:.1rem;min-width:0}
+.page-amigos .srow__name{
+  font-family:var(--font-cond);
+  font-size:1rem;font-weight:500;letter-spacing:.03em;
+  color:var(--c-text);line-height:1.1;
+}
+.page-amigos .srow__map{
+  font-family:var(--font-cond);
+  font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--c-muted);
+}
+.page-amigos .srow__right{display:flex;flex-direction:column;align-items:flex-end;gap:.1rem}
+.page-amigos .srow__result{
+  font-family:var(--font-cond);
+  font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--c-lime);
+}
+.page-amigos .srow__result.is-ko{color:var(--c-red)}
+.page-amigos .srow__when{font-size:.68rem;letter-spacing:.06em;color:var(--c-dim)}
+.page-amigos .srow__add{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:1.9rem;height:1.9rem;
+  border:1px solid var(--c-line-2);
+  border-radius:var(--r-2);
+  color:var(--c-muted);
+  background:rgba(10,14,10,.6);
+  transition:color var(--t-fast) var(--ease),border-color var(--t-fast) var(--ease),box-shadow var(--t-fast) var(--ease);
+}
+.page-amigos .srow__add .ms{font-size:1.1rem}
+.page-amigos .srow__add:hover{color:var(--c-lime);border-color:rgba(155,224,74,.6);box-shadow:var(--glow-soft)}
+.page-amigos .srow--empty{
+  display:block;
+  padding:1.8rem 1rem;
+  text-align:center;
+  font-family:var(--font-cond);
+  font-size:.72rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  background:none;
+  border:0;
+}
+
+/* ---- movimento reduzido -------------------------------------------------- */
+@media (prefers-reduced-motion:reduce){
+  .page-amigos .fdot{animation:none!important}
+  .page-amigos .frow,.page-amigos .srow,.page-amigos .fbtn{transition:none}
+}

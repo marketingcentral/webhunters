@@ -1,0 +1,187 @@
+<?php declare(strict_types=1);
+
+/**
+ * Tela MISSÕES / CONTRATOS (sem referência direta; identidade das telas 01 e 03).
+ *
+ * Chaves consumidas pela view `pages/missoes.php`:
+ *   title, subtitle, intro, filters[], filters_title, types[], types_title,
+ *   reset{}, board{}, items[], empty{}, cta, cta_href, detail_title.
+ *
+ * `status` de um item: active | available | done | locked.
+ * `type`   de um item: principal | contrato | diaria.
+ */
+return [
+    'title'         => 'MISSÕES',
+    'title_tag'     => 'CONTRATOS',
+    'subtitle'      => 'Contratos e operações da Resistência disponíveis nesta região.',
+    'intro'         => 'Contratos e operações da Resistência disponíveis nesta região.',
+    'list_title'    => 'QUADRO DE CONTRATOS',
+    'detail_title'  => 'MISSÃO SELECIONADA',
+    'filters_title' => 'FILTROS',
+    'types_title'   => 'TIPO DE CONTRATO',
+
+    /* --- coluna esquerda: filtros de estado -------------------------------- */
+    'filters' => [
+        ['slug' => 'todas',        'label' => 'TODAS',        'icon' => 'list',         'count' => 5],
+        ['slug' => 'ativas',       'label' => 'ATIVAS',       'icon' => 'radar',        'count' => 1],
+        ['slug' => 'disponiveis',  'label' => 'DISPONÍVEIS',  'icon' => 'flag',         'count' => 2],
+        ['slug' => 'concluidas',   'label' => 'CONCLUÍDAS',   'icon' => 'check_circle', 'count' => 1],
+        ['slug' => 'diarias',      'label' => 'DIÁRIAS',      'icon' => 'schedule',     'count' => 2],
+    ],
+
+    /* --- coluna esquerda: chips de tipo ------------------------------------ */
+    'types' => [
+        ['slug' => 'principal', 'label' => 'PRINCIPAL', 'color' => 'lime'],
+        ['slug' => 'contrato',  'label' => 'CONTRATO',  'color' => 'cyan'],
+        ['slug' => 'diaria',    'label' => 'DIÁRIA',    'color' => 'amber'],
+    ],
+
+    /* --- coluna esquerda: reset diário + progresso da temporada ------------ */
+    'reset' => [
+        'title'   => 'DIÁRIAS REINICIAM EM',
+        'seconds' => 16332,
+        'note'    => 'Novos contratos entram no quadro a cada ciclo.',
+    ],
+    'board' => [
+        'title'  => 'PROGRESSO DO QUADRO',
+        'label'  => 'CONTRATOS DA TEMPORADA',
+        'done'   => 12,
+        'total'  => 30,
+        'streak' => ['label' => 'SEQUÊNCIA', 'value' => '4 DIAS'],
+    ],
+
+    'summary' => [
+        ['label' => 'ATIVAS',      'value' => 1],
+        ['label' => 'DISPONÍVEIS', 'value' => 2],
+        ['label' => 'DIÁRIAS',     'value' => 2],
+    ],
+
+    /* --- rótulos de progresso por missão (layout; o valor vem do banco) ----- */
+    'progress_labels' => [
+        'sinal-perdido' => 'INIMIGOS ELIMINADOS',
+        'carga-valiosa' => 'CAIXAS ENTREGUES',
+    ],
+
+    /* --- quadro de missões -------------------------------------------------- */
+    'items' => [
+        [
+            'slug' => 'sinal-perdido', 'level_req' => 18, 'title' => 'SINAL PERDIDO', 'faction' => 'BASE DA RESISTÊNCIA',
+            'type' => 'principal', 'type_label' => 'PRINCIPAL', 'image' => 'missions/mission-sinal-perdido.jpg',
+            'difficulty' => 'MÉDIA', 'difficulty_level' => 2, 'duration' => '35 MIN', 'players' => 5,
+            'region' => 'FLORESTA VERDE', 'status' => 'active', 'status_label' => 'EM ANDAMENTO', 'selected' => true,
+            'summary' => 'Reative o terminal de comunicação do posto avançado norte.',
+            'objective' => 'Restaure a comunicação do posto avançado norte. Reative o terminal de comunicação e proteja o técnico.',
+            'objective_lines' => [
+                'Restaure a comunicação do posto avançado norte.',
+                'Reative o terminal de comunicação e proteja o técnico.',
+            ],
+            'progress' => ['label' => 'INIMIGOS ELIMINADOS', 'cur' => 3, 'max' => 8, 'current' => 3, 'total' => 8],
+            'rewards' => [
+                ['type' => 'xp',     'icon' => 'xp',           'value' => 6500, 'text' => '+6.500 XP'],
+                ['type' => 'cash',   'icon' => 'coin-cash',    'value' => 2400, 'text' => '+2.400'],
+                ['type' => 'points', 'icon' => 'coin-points',  'value' => 1200, 'text' => '+1.200'],
+            ],
+            'reward_item' => ['name' => 'AK-103', 'desc' => 'FUZIL DE ASSALTO', 'image' => 'items/ak103.png'],
+            'cta' => 'CONTINUAR CONTRATO', 'cta_href' => 'lobby',
+        ],
+        [
+            'slug' => 'suprimentos-medicos', 'level_req' => 12, 'title' => 'SUPRIMENTOS MÉDICOS', 'faction' => 'BASE DA RESISTÊNCIA',
+            'type' => 'diaria', 'type_label' => 'DIÁRIA', 'image' => 'missions/mission-suprimentos-medicos.jpg',
+            'difficulty' => 'FÁCIL', 'difficulty_level' => 1, 'duration' => '25 MIN', 'players' => 4,
+            'region' => 'FLORESTA VERDE', 'status' => 'available', 'status_label' => 'DISPONÍVEL', 'selected' => false,
+            'summary' => 'Recupere 3 kits médicos no hospital de campanha abandonado.',
+            'objective' => 'Recupere 3 kits médicos no hospital de campanha abandonado e entregue-os ao médico da base.',
+            'objective_lines' => [
+                'Recupere 3 kits médicos no hospital de campanha abandonado.',
+                'Entregue a carga ao médico da base antes da extração.',
+            ],
+            'expires_in' => 16332,
+            'rewards' => [
+                ['type' => 'xp',   'icon' => 'xp',        'value' => 3200, 'text' => '+3.200 XP'],
+                ['type' => 'cash', 'icon' => 'coin-cash', 'value' => 1100, 'text' => '+1.100'],
+            ],
+            'reward_item' => ['name' => 'KIT CIRÚRGICO', 'desc' => 'MÉDICO', 'image' => 'items/surgical-kit.png'],
+            'cta' => 'ACEITAR CONTRATO', 'cta_href' => 'lobby',
+        ],
+        [
+            'slug' => 'cacada-ao-cacador', 'level_req' => 26, 'title' => 'CAÇADA AO CAÇADOR', 'faction' => 'CAÇADORES',
+            'type' => 'diaria', 'type_label' => 'DIÁRIA', 'image' => 'missions/mission-cacada-ao-cacador.jpg',
+            'difficulty' => 'DIFÍCIL', 'difficulty_level' => 3, 'duration' => '45 MIN', 'players' => 5,
+            'region' => 'FLORESTA VERDE', 'status' => 'available', 'status_label' => 'DISPONÍVEL', 'selected' => false,
+            'summary' => 'Elimine o franco-atirador que domina a passagem da cordilheira.',
+            'objective' => 'Localize e elimine o franco-atirador que controla a passagem da cordilheira. Recupere seu rifle.',
+            'objective_lines' => [
+                'Localize e elimine o franco-atirador da cordilheira.',
+                'Recupere o rifle dele e extraia pela rota leste.',
+            ],
+            'expires_in' => 16332,
+            'rewards' => [
+                ['type' => 'xp',     'icon' => 'xp',          'value' => 8000, 'text' => '+8.000 XP'],
+                ['type' => 'points', 'icon' => 'coin-points', 'value' => 900,  'text' => '+900'],
+            ],
+            'reward_item' => ['name' => 'M4A1', 'desc' => 'FUZIL DE ASSALTO', 'image' => 'items/m4a1.png'],
+            'cta' => 'ACEITAR CONTRATO', 'cta_href' => 'lobby',
+        ],
+        [
+            'slug' => 'carga-valiosa', 'level_req' => 20, 'title' => 'CARGA VALIOSA', 'faction' => 'COMERCIANTES',
+            'type' => 'contrato', 'type_label' => 'CONTRATO', 'image' => 'missions/mission-carga-valiosa.jpg',
+            'difficulty' => 'MÉDIA', 'difficulty_level' => 2, 'duration' => '30 MIN', 'players' => 3,
+            'region' => 'FLORESTA VERDE', 'status' => 'done', 'status_label' => 'CONCLUÍDA', 'selected' => false,
+            'summary' => 'Escolte o comboio de suprimentos até a plataforma de extração.',
+            'objective' => 'Escolte o comboio de suprimentos até a plataforma de extração sem perder nenhuma caixa.',
+            'objective_lines' => [
+                'Escolte o comboio até a plataforma de extração.',
+                'Nenhuma caixa foi perdida no trajeto — bônus pago.',
+            ],
+            'progress' => ['label' => 'CAIXAS ENTREGUES', 'cur' => 6, 'max' => 6, 'current' => 6, 'total' => 6],
+            'completed_at' => '02/09/2024',
+            'rewards' => [
+                ['type' => 'cash', 'icon' => 'coin-cash', 'value' => 4500, 'text' => '+4.500'],
+            ],
+            'reward_item' => ['name' => 'MALETA DE ARMA', 'desc' => 'CONTÊINER', 'image' => 'items/weapon-case.png'],
+            'cta' => 'RECOMPENSA RESGATADA', 'cta_href' => null,
+        ],
+        [
+            'slug' => 'tecnologia-recuperada', 'level_req' => 40, 'title' => 'TECNOLOGIA RECUPERADA', 'faction' => 'BASE DA RESISTÊNCIA',
+            'type' => 'principal', 'type_label' => 'PRINCIPAL', 'image' => 'missions/mission-tecnologia-recuperada.jpg',
+            'difficulty' => 'EXTREMO', 'difficulty_level' => 4, 'duration' => '60 MIN', 'players' => 5,
+            'region' => 'ZONA INDUSTRIAL', 'status' => 'locked', 'status_label' => 'BLOQUEADA', 'selected' => false,
+            'summary' => 'Recupere o servidor de dados no complexo industrial.',
+            'objective' => 'Infiltre-se no complexo industrial e recupere o servidor de dados antes que seja destruído.',
+            'objective_lines' => [
+                'Infiltre-se no complexo industrial da zona leste.',
+                'Recupere o servidor de dados antes que seja destruído.',
+            ],
+            'rewards' => [
+                ['type' => 'xp',     'icon' => 'xp',          'value' => 15000, 'text' => '+15.000 XP'],
+                ['type' => 'points', 'icon' => 'coin-points', 'value' => 2500,  'text' => '+2.500'],
+            ],
+            'reward_item' => ['name' => 'CARTÃO DE ACESSO', 'desc' => 'CHAVE', 'image' => 'items/keycard.png'],
+            'unlock_hint' => 'Conclua SINAL PERDIDO e alcance o nível 40.',
+            'cta' => 'REQUISITOS NÃO CUMPRIDOS', 'cta_href' => null,
+        ],
+    ],
+
+    'empty' => [
+        'title' => 'NENHUM CONTRATO NESTE FILTRO',
+        'desc'  => 'Ajuste os filtros à esquerda ou aguarde o próximo ciclo de contratos.',
+    ],
+
+    'labels' => [
+        'difficulty' => 'DIFICULDADE',
+        'duration'   => 'DURAÇÃO ESTIMADA',
+        'players'    => 'JOGADORES MÁX.',
+        'objective'  => 'OBJETIVO',
+        'rewards'    => 'RECOMPENSAS',
+        'progress'   => 'PROGRESSO',
+        'expires'    => 'EXPIRA EM',
+        'region'     => 'REGIÃO',
+        'locked'     => 'DESBLOQUEIO',
+        'map'        => 'VER NO MAPA',
+        'type'       => 'TIPO',
+        'level'      => 'NÍVEL REC.',
+    ],
+
+    'cta'      => 'ACEITAR CONTRATO',
+    'cta_href' => 'lobby',
+];

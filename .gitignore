@@ -1,0 +1,49 @@
+# ============================================================== SEGREDOS
+# Estes dois NUNCA podem entrar no histórico. Uma vez publicados no GitHub,
+# considerar as credenciais queimadas mesmo depois de removidos: o histórico e
+# os forks guardam cópia.
+.env
+.env.*
+!.env.example
+app/db.local.php
+
+# ========================================================= DEPENDÊNCIAS
+node_modules/
+tools/node_modules/
+
+# ======================================================= REGENERÁVEIS
+# Saem porque o repositório os reconstrói: são resultado de ferramenta, não fonte.
+
+# Intermediários do pipeline de arte (magenta/keyed). 81 MB gerados a partir de
+# assets/assets/ por tools/prep_assets.mjs.
+assets/img/_gen/
+
+# Capturas de QA visual (tools/capture.mjs). 248 MB de PNG que se refaz a qualquer hora.
+captures/
+tools/captures/
+
+# Dumps de banco. Além de pesados, guardam dados de jogador.
+db/backups/
+
+# ============================================================== PESSOAL
+# Permissões da máquina de quem está mexendo — não vale para o time.
+# A skill de deploy (.claude/skills/) FICA: é procedimento do projeto.
+.claude/settings.local.json
+
+# ============================================================== SOBRAS
+# Rascunhos de sessão. O prefixo "_" em tools/ marca script de uso único, recorte
+# temporário e a pasta _legacy/ (scripts de outro projeto, guardados de lado).
+# Sem o curinga amplo escapam _tmp_*.png, _tmp_*.php e o _legacy/ inteiro.
+tools/_*
+_router_test.php
+*.fix
+*.bak
+*.orig
+*.tmp
+*.log
+nul
+
+# =============================================================== SISTEMA
+Thumbs.db
+.DS_Store
+desktop.ini

@@ -1,0 +1,49 @@
+<?php declare(strict_types=1);
+
+/** Textos das telas de autenticação (login, criar-conta, recuperar-senha). */
+return [
+    'brand' => [
+        'title'   => 'EXTRACT',
+        'sub'     => 'HUNTERS',
+        'tagline' => 'SOBREVIVA. EXTRAIA. EVOLUA.',
+        'emblem'  => 'logo/emblem.png',
+    ],
+    'login' => [
+        'title'       => 'ENTRAR NA CONTA',
+        'subtitle'    => 'Acesse sua conta para continuar sua jornada',
+        'user_label'  => 'E-MAIL OU NOME DE USUÁRIO',
+        'user_ph'     => 'Digite seu e-mail ou usuário',
+        'pass_label'  => 'SENHA',
+        'pass_ph'     => 'Digite sua senha',
+        'forgot'      => 'Esqueceu sua senha?',
+        'submit'      => 'ENTRAR',
+        'or'          => 'OU',
+        'steam'       => 'ENTRAR COM STEAM',
+        'no_account'  => 'Não tem uma conta?',
+        'create'      => 'CRIAR CONTA',
+    ],
+    'register' => [
+        'title'    => 'CRIAR CONTA',
+        'subtitle' => 'Junte-se à Resistência e comece sua caçada',
+        'submit'   => 'CRIAR CONTA',
+        'has_account' => 'Já tem uma conta?',
+        'login'    => 'ENTRAR',
+        'terms'    => 'Li e aceito os Termos de Uso e a Política de Privacidade.',
+    ],
+    'recover' => [
+        'title'    => 'RECUPERAR SENHA',
+        'subtitle' => 'Informe o e-mail da conta e enviaremos as instruções',
+        'submit'   => 'ENVIAR INSTRUÇÕES',
+        'sent'     => 'Se o e-mail estiver cadastrado, você receberá as instruções em alguns minutos.',
+        'back'     => 'VOLTAR PARA O LOGIN',
+    ],
+    'tips' => [
+        'title' => 'DICAS DE SOBREVIVÊNCIA',
+        'items' => [
+            'Trabalhe em equipe, gerencie seus recursos e esteja sempre preparado.',
+            'Extraia antes do fim do ciclo: o que não sai com você fica no campo.',
+            'Marque pontos de extração no mapa antes de entrar na zona de risco.',
+            'Bandagens param sangramentos; kits médicos restauram saúde.',
+        ],
+    ],
+];

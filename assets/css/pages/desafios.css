@@ -1,0 +1,763 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — tela DESAFIOS (layout hud, 2 colunas).
+   Sem referência própria; âncoras de estilo: 02-jogar-solo-multplayer.png
+   (painel "DESAFIOS DIÁRIOS": trilho fino, chip XP redondo, rótulos discretos).
+   Base 1672x941 => 1rem = 16px. Tudo escopado em body.page-desafios.
+   ========================================================================== */
+
+/* ---- fundo: quase preto atrás da HUD, como nas telas aprovadas ----------- */
+body.page-desafios .bg__img{opacity:.16;filter:saturate(.6) contrast(1.05) brightness(.7)}
+body.page-desafios .bg__overlay{
+  background:
+    linear-gradient(180deg, rgba(4,7,4,.92) 0%, rgba(4,7,4,.84) 30%, rgba(4,7,4,.86) 70%, rgba(4,7,4,.95) 100%);
+}
+body.page-desafios #atmosphere{opacity:.5}
+body.page-desafios .panel{border-color:rgba(170,180,170,.11)}
+body.page-desafios .panel--hot{border-color:rgba(155,224,74,.5)}
+
+/* spans usados como barras de progresso precisam de caixa */
+body.page-desafios .progress{display:block}
+body.page-desafios .progress__bar{display:block}
+
+/* ---- grade -------------------------------------------------------------- */
+body.page-desafios .layout-2.desafios{
+  --col-r:22.5rem;      /* 360px */
+  gap:1.15rem;
+}
+body.page-desafios .des-main{gap:.8rem}
+body.page-desafios .des-side{gap:.95rem}
+
+/* ==========================================================================
+   CABEÇALHO
+   ========================================================================== */
+body.page-desafios .des-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:1.5rem;
+  flex:0 0 auto;
+  padding:.1rem .25rem .1rem .375rem;
+}
+body.page-desafios .des-head .page-title{letter-spacing:.088em;gap:1.05rem}
+body.page-desafios .des-head .page-title__tag{font-size:1.05rem;letter-spacing:.12em}
+body.page-desafios .des-head .page-subtitle{margin-top:.5rem;font-size:.78rem;line-height:1.3}
+
+body.page-desafios .des-clock{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  padding:.42rem .85rem .42rem .7rem;
+  border:1px solid rgba(155,224,74,.26);
+  border-radius:var(--r-2);
+  background:linear-gradient(180deg, rgba(20,28,16,.75), rgba(9,13,9,.7));
+  box-shadow:inset 0 0 18px rgba(155,224,74,.06);
+}
+body.page-desafios .des-clock__ic{font-size:1.4rem;color:var(--c-lime);opacity:.85}
+body.page-desafios .des-clock__text{display:grid;gap:.1rem;justify-items:end}
+body.page-desafios .des-clock__label{
+  font-family:var(--font-cond);
+  font-size:.66rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  line-height:1;
+}
+body.page-desafios .des-clock__val{
+  /* largura fixa: o valor muda a cada segundo e ao trocar de aba ("6h 07m 12s" ->
+     "18d 06h 28m"); sem isso a caixa do relógio ficaria pulando de tamanho */
+  min-width:7.1rem;
+  text-align:right;
+  font-family:var(--font-mono);
+  font-size:1.12rem;
+  line-height:1;
+  color:var(--c-lime);
+  letter-spacing:-.01em;
+  text-shadow:0 0 14px rgba(155,224,74,.45);
+  font-variant-numeric:tabular-nums;
+}
+
+/* ==========================================================================
+   DESTAQUE DO EVENTO
+   ========================================================================== */
+body.page-desafios .des-banner{
+  position:relative;
+  flex:0 0 auto;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:1.5rem;
+  height:7rem;
+  padding:.75rem 1.05rem .75rem 1.35rem;
+  border:1px solid rgba(170,180,170,.13);
+  border-radius:var(--r-2);
+  overflow:hidden;
+  background:var(--c-panel);
+  box-shadow:var(--shadow-panel);
+}
+body.page-desafios .des-banner__img{
+  position:absolute;
+  inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:center 38%;
+  filter:saturate(.85) contrast(1.05) brightness(.72);
+}
+body.page-desafios .des-banner__shade{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg, rgba(5,9,5,.94) 0%, rgba(5,9,5,.8) 38%, rgba(5,9,5,.58) 62%, rgba(5,9,5,.92) 100%),
+    linear-gradient(180deg, rgba(5,9,5,.25), rgba(5,9,5,.55));
+}
+body.page-desafios .des-banner__body{position:relative;min-width:0}
+body.page-desafios .des-banner__tag{
+  display:inline-block;
+  font-family:var(--font-cond);
+  font-size:.66rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--c-lime);
+  text-shadow:0 0 12px rgba(155,224,74,.5);
+}
+body.page-desafios .des-banner__title{
+  margin-top:.15rem;
+  font-family:var(--font-cond);
+  font-size:1.55rem;
+  font-weight:500;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  line-height:1.05;
+  color:#f2f6ee;
+  text-shadow:0 2px 14px rgba(0,0,0,.8);
+}
+body.page-desafios .des-banner__desc{
+  margin-top:.3rem;
+  font-family:var(--font-body);
+  font-size:.76rem;
+  line-height:1.3;
+  color:var(--c-text-2);
+  max-width:34rem;
+  text-shadow:0 1px 6px rgba(0,0,0,.8);
+}
+body.page-desafios .des-banner__side{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:1.35rem;
+}
+body.page-desafios .des-banner__clock{display:grid;gap:.18rem;justify-items:end}
+body.page-desafios .des-banner__clock-label{
+  font-family:var(--font-cond);
+  font-size:.64rem;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  line-height:1;
+}
+body.page-desafios .des-banner__clock-val{
+  font-family:var(--font-mono);
+  font-size:1.05rem;
+  line-height:1;
+  color:var(--c-amber);
+  text-shadow:0 0 12px rgba(245,166,35,.4);
+}
+body.page-desafios .des-banner__prog{width:11.5rem;display:grid;gap:.4rem}
+body.page-desafios .des-banner__prog-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;
+  font-family:var(--font-cond);
+  font-size:.65rem;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  line-height:1;
+}
+body.page-desafios .des-banner__prog-head .num{font-family:var(--font-mono);font-size:.78rem;color:var(--c-text-2);letter-spacing:-.02em}
+body.page-desafios .des-banner__bar{height:.2rem}
+body.page-desafios .des-banner__cta{font-size:.8rem;letter-spacing:.09em}
+
+/* ==========================================================================
+   QUADRO DE DESAFIOS (abas + listas)
+   ========================================================================== */
+body.page-desafios .des-board__head{
+  padding:0 1.05rem 0 0;
+  align-items:stretch;
+  gap:1rem;
+}
+body.page-desafios .des-tabs{border-bottom:0;margin-bottom:-1px}
+body.page-desafios .des-tabs .tab{
+  min-width:9.5rem;
+  padding:.62rem 1.35rem;
+  font-size:.98rem;
+  letter-spacing:.09em;
+  border-color:transparent;
+  background:transparent;
+}
+body.page-desafios .des-tabs .tab:first-child{border-top-left-radius:0}
+body.page-desafios .des-tabs .tab__count{font-size:.72rem;letter-spacing:-.02em}
+body.page-desafios .des-tabs .tab.is-active{
+  background:linear-gradient(180deg, rgba(155,224,74,.13), rgba(155,224,74,.02));
+}
+body.page-desafios .des-board__all{align-self:center;font-size:.78rem;letter-spacing:.1em}
+body.page-desafios .des-board__all .ms{font-size:1rem}
+
+body.page-desafios .des-board__body{padding:.8rem .95rem .85rem}
+body.page-desafios .des-pane{
+  display:flex;
+  flex-direction:column;
+  gap:.6rem;
+  flex:1 1 auto;
+  min-height:0;
+}
+body.page-desafios .chal-list{
+  display:grid;
+  grid-auto-rows:minmax(3.5rem,5.4rem);
+  align-content:space-between;
+  gap:.4rem;
+  flex:1 1 auto;
+  min-height:0;
+  list-style:none;
+  margin:0;padding:0;
+}
+body.page-desafios .chal-item{min-height:0;display:flex}
+
+/* 6 linhas (aba TEMPORADA) só cabem no quadro na versão compacta: sem isso o
+   contador "1 / 3" e a barra ficam cortados pelo overflow:hidden da linha. */
+body.page-desafios .chal-list--dense{grid-auto-rows:minmax(3.1rem,5.4rem);gap:.34rem}
+body.page-desafios .chal-list--dense .chal{padding-top:.3rem;padding-bottom:.3rem}
+body.page-desafios .chal-list--dense .chal__main{gap:.16rem}
+body.page-desafios .chal-list--dense .chal__label{font-size:.88rem}
+body.page-desafios .chal-list--dense .chal__desc{font-size:.7rem;line-height:1.05}
+body.page-desafios .chal-list--dense .chal__prog{margin-top:.02rem}
+body.page-desafios .chal-list--dense .chal__icon{width:2.5rem;height:2.5rem}
+body.page-desafios .chal-list--dense .chal{grid-template-columns:2.5rem minmax(0,1fr) 6.5rem 1.5rem}
+
+/* ---- linha de desafio ---------------------------------------------------- */
+body.page-desafios .chal{
+  --_acc:var(--c-lime);
+  --_rgb:var(--c-lime-rgb);
+  position:relative;
+  flex:1 1 auto;
+  display:grid;
+  grid-template-columns:2.7rem minmax(0,1fr) 6.5rem 1.5rem;
+  align-items:center;
+  column-gap:.95rem;
+  padding:.45rem .8rem .45rem .7rem;
+  border:1px solid rgba(170,180,170,.09);
+  border-left:2px solid rgba(170,180,170,.14);
+  border-radius:var(--r-2);
+  background:var(--c-panel-3);
+  overflow:hidden;
+  transition:border-color var(--t-fast) var(--ease),background var(--t-fast) var(--ease),box-shadow var(--t-fast) var(--ease),transform var(--t-fast) var(--ease);
+}
+body.page-desafios .chal::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg, rgba(var(--_rgb),.10) 0%, rgba(var(--_rgb),0) 42%);
+  opacity:0;
+  transition:opacity var(--t-med) var(--ease);
+  pointer-events:none;
+}
+body.page-desafios .chal:hover{
+  border-color:rgba(var(--_rgb),.45);
+  border-left-color:var(--_acc);
+  background:var(--c-panel-hi);
+  box-shadow:0 0 14px rgba(var(--_rgb),.14),inset 0 0 22px rgba(var(--_rgb),.05);
+  transform:translateX(2px);
+}
+body.page-desafios .chal:hover::after{opacity:1}
+body.page-desafios .chal:focus-visible{outline:1px solid var(--_acc);outline-offset:2px}
+
+body.page-desafios .chal__icon{
+  display:grid;place-items:center;
+  width:2.7rem;height:2.7rem;
+  border:1px solid rgba(170,180,170,.16);
+  border-radius:var(--r-2);
+  background:rgba(6,10,6,.55);
+  color:var(--c-text-2);
+  transition:color var(--t-fast) var(--ease),border-color var(--t-fast) var(--ease),box-shadow var(--t-fast) var(--ease);
+}
+body.page-desafios .chal__icon .ms{font-size:1.35rem}
+body.page-desafios .chal:hover .chal__icon{
+  color:var(--_acc);
+  border-color:rgba(var(--_rgb),.45);
+  box-shadow:0 0 12px rgba(var(--_rgb),.2),inset 0 0 14px rgba(var(--_rgb),.08);
+}
+
+body.page-desafios .chal__main{display:grid;gap:.26rem;min-width:0}
+body.page-desafios .chal__prog{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:.85rem;
+  margin-top:.16rem;
+}
+body.page-desafios .chal__label{
+  font-family:var(--font-body);
+  font-size:.92rem;
+  font-weight:500;
+  line-height:1.1;
+  color:var(--c-text);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body.page-desafios .chal__count{
+  font-family:var(--font-mono);
+  font-size:.92rem;
+  line-height:1;
+  letter-spacing:-.02em;
+  color:var(--c-text);
+  white-space:nowrap;
+}
+body.page-desafios .chal__count small{font-size:.82em;color:var(--c-muted)}
+body.page-desafios .chal__desc{
+  font-family:var(--font-body);
+  font-size:.73rem;
+  line-height:1.15;
+  color:var(--c-muted);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body.page-desafios .chal__bar{
+  height:.2rem;
+  background:rgba(196,206,190,.16);
+  box-shadow:none;
+}
+body.page-desafios .chal__bar .progress__bar{
+  background:linear-gradient(90deg, var(--c-lime-dim), var(--_acc));
+  box-shadow:0 0 8px rgba(var(--_rgb),.45);
+}
+
+/* ---- chips de recompensa ------------------------------------------------- */
+body.page-desafios .chal__rw{display:grid;gap:.28rem;justify-items:stretch}
+body.page-desafios .rw{
+  --_c:var(--c-lime);
+  --_crgb:var(--c-lime-rgb);
+  display:flex;
+  align-items:center;
+  gap:.35rem;
+  height:1.32rem;
+  padding:0 .45rem 0 .3rem;
+  border:1px solid rgba(var(--_crgb),.28);
+  border-radius:var(--r-1);
+  background:rgba(var(--_crgb),.06);
+}
+body.page-desafios .rw__badge{
+  display:grid;place-items:center;
+  width:1.05rem;height:1.05rem;
+  border:1px solid rgba(var(--_crgb),.55);
+  border-radius:50%;
+  font-family:var(--font-cond);
+  font-size:.6rem;
+  font-weight:500;
+  letter-spacing:.01em;
+  line-height:1;
+  color:var(--_c);
+  background:rgba(4,8,4,.6);
+}
+body.page-desafios .rw__ic{width:1rem;height:1rem;color:var(--_c);flex:0 0 auto}
+body.page-desafios .rw__val{
+  font-family:var(--font-mono);
+  font-size:.76rem;
+  line-height:1;
+  letter-spacing:-.02em;
+  color:var(--_c);
+  margin-left:auto;
+}
+body.page-desafios .rw--cr{--_c:var(--c-text-2);--_crgb:196,206,190}
+body.page-desafios .rw--cr .rw__ic{color:var(--c-lime)}
+body.page-desafios .rw--gold{--_c:var(--c-gold);--_crgb:var(--c-gold-rgb)}
+body.page-desafios .chal.is-hot .rw--xp{--_c:var(--c-purple);--_crgb:var(--c-purple-rgb)}
+
+/* ---- estado da linha ----------------------------------------------------- */
+body.page-desafios .chal__state{display:grid;place-items:center;justify-self:end}
+body.page-desafios .chal__chev{
+  font-size:1.35rem;
+  color:var(--c-dim);
+  transition:color var(--t-fast) var(--ease),transform var(--t-med) var(--ease);
+}
+body.page-desafios .chal:hover .chal__chev{color:var(--_acc);transform:translateX(3px)}
+body.page-desafios .chal__check{font-size:1.35rem;color:var(--c-lime);text-shadow:0 0 12px rgba(155,224,74,.6)}
+
+body.page-desafios .chal.is-done{
+  border-color:rgba(155,224,74,.22);
+  border-left-color:rgba(155,224,74,.65);
+  background:linear-gradient(90deg, rgba(51,84,26,.30) 0%, rgba(10,15,10,.62) 55%);
+}
+body.page-desafios .chal.is-done .chal__icon{color:var(--c-lime);border-color:rgba(155,224,74,.3)}
+body.page-desafios .chal.is-done .chal__desc{color:var(--c-lime-dim)}
+body.page-desafios .chal.is-hot{--_acc:var(--c-gold);--_rgb:var(--c-gold-rgb);border-left-color:rgba(245,197,24,.5)}
+body.page-desafios .chal.is-hot .chal__icon{color:var(--c-gold)}
+body.page-desafios .chal.is-hot.is-done{--_acc:var(--c-lime);--_rgb:var(--c-lime-rgb)}
+
+/* ---- faixa de bônus ------------------------------------------------------ */
+body.page-desafios .des-bonus{
+  flex:0 0 auto;
+  display:grid;
+  grid-template-columns:3.4rem minmax(0,1fr) 11rem 6.5rem auto;
+  align-items:center;
+  column-gap:1rem;
+  padding:.5rem .8rem .5rem .6rem;
+  border:1px solid rgba(245,197,24,.24);
+  border-radius:var(--r-2);
+  background:
+    linear-gradient(90deg, rgba(60,45,8,.42) 0%, rgba(12,14,9,.72) 46%),
+    var(--c-panel-3);
+  box-shadow:inset 0 0 24px rgba(245,197,24,.05);
+}
+body.page-desafios .des-bonus__thumb{
+  display:grid;place-items:center;
+  width:3.4rem;height:3.4rem;
+  border:1px solid rgba(245,197,24,.22);
+  border-radius:var(--r-2);
+  background:rgba(6,8,4,.6);
+  overflow:hidden;
+}
+body.page-desafios .des-bonus__thumb img{
+  width:88%;height:88%;
+  object-fit:contain;
+  filter:drop-shadow(0 3px 8px rgba(0,0,0,.7));
+  transition:transform var(--t-med) var(--ease-out);
+}
+body.page-desafios .des-bonus:hover .des-bonus__thumb img{transform:scale(1.07)}
+body.page-desafios .des-bonus__text{display:grid;gap:.1rem;min-width:0}
+body.page-desafios .des-bonus__label{
+  font-family:var(--font-cond);
+  font-size:.63rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--c-gold);
+  line-height:1;
+}
+body.page-desafios .des-bonus__title{
+  font-family:var(--font-cond);
+  font-size:1rem;
+  font-weight:500;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:#f2f6ee;
+  line-height:1.15;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body.page-desafios .des-bonus__desc{
+  font-family:var(--font-body);
+  font-size:.72rem;
+  color:var(--c-muted);
+  line-height:1.1;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body.page-desafios .des-bonus__prog{display:grid;gap:.38rem}
+body.page-desafios .des-bonus__prog-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;
+  font-family:var(--font-cond);
+  font-size:.64rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  line-height:1;
+}
+body.page-desafios .des-bonus__prog-head .num{font-family:var(--font-mono);font-size:.78rem;letter-spacing:-.02em;color:var(--c-text-2)}
+body.page-desafios .des-bonus__bar{height:.2rem;background:rgba(196,206,190,.16);box-shadow:none}
+body.page-desafios .des-bonus__bar .progress__bar{background:linear-gradient(90deg, #8a6a10, var(--c-gold));box-shadow:0 0 8px rgba(245,197,24,.45)}
+body.page-desafios .des-bonus__btn{
+  min-width:7rem;
+  font-size:.78rem;
+  letter-spacing:.1em;
+}
+/* trancado enquanto o quadro não estiver limpo (ou o bônus já resgatado no período) */
+body.page-desafios .des-bonus__btn:disabled{opacity:.55;cursor:not-allowed}
+body.page-desafios .des-bonus__btn.is-busy{opacity:.7;cursor:progress}
+
+/* bônus liberado: a faixa acende e o botão pulsa devagar */
+body.page-desafios .des-bonus.is-ready{
+  border-color:rgba(245,197,24,.55);
+  box-shadow:0 0 18px rgba(245,197,24,.12),inset 0 0 26px rgba(245,197,24,.08);
+}
+body.page-desafios .des-bonus.is-ready .des-bonus__bar .progress__bar{box-shadow:0 0 12px rgba(245,197,24,.7)}
+body.page-desafios .des-bonus.is-ready .des-bonus__btn{animation:des-bonus-pulse 2.4s var(--ease) infinite}
+body.page-desafios .des-bonus.is-claimed{border-color:rgba(155,224,74,.28)}
+body.page-desafios .des-bonus.is-claimed .des-bonus__label{color:var(--c-lime)}
+@keyframes des-bonus-pulse{
+  0%,100%{box-shadow:0 0 0 rgba(245,197,24,0)}
+  50%{box-shadow:0 0 16px rgba(245,197,24,.45)}
+}
+
+/* ==========================================================================
+   COLUNA DIREITA — ANEL SEMANAL
+   ========================================================================== */
+body.page-desafios .des-ring{flex:0 0 auto}
+body.page-desafios .des-ring .panel__head{padding:.72rem 1rem .6rem}
+body.page-desafios .des-ring .panel__title{font-size:1rem;letter-spacing:.07em}
+body.page-desafios .des-ring .panel__meta{font-size:.68rem;letter-spacing:.11em}
+body.page-desafios .des-ring .panel__meta .num{font-family:var(--font-mono);font-size:.8rem;color:var(--c-lime)}
+body.page-desafios .des-ring__body{padding:.75rem 1rem .75rem;align-items:center;gap:.45rem}
+
+body.page-desafios .ring{position:relative;width:8.6rem;height:8.6rem}
+body.page-desafios .ring__svg{width:100%;height:100%;transform:rotate(-1deg)}
+body.page-desafios .ring__seg{
+  fill:none;
+  stroke:rgba(196,206,190,.18);
+  stroke-width:7;
+  stroke-linecap:butt;
+}
+body.page-desafios .ring__seg.is-on{
+  stroke:var(--c-lime);
+  filter:drop-shadow(0 0 3px rgba(155,224,74,.75));
+  opacity:0;
+  animation:des-seg 420ms var(--ease-out) forwards;
+  animation-delay:calc(240ms + var(--i) * 70ms);
+}
+@keyframes des-seg{from{opacity:0;stroke-width:3}to{opacity:1;stroke-width:7}}
+
+body.page-desafios .ring__mid{
+  position:absolute;
+  inset:0;
+  display:grid;
+  align-content:center;
+  justify-items:center;
+  gap:.05rem;
+}
+body.page-desafios .ring__val{
+  font-family:var(--font-mono);
+  font-size:2.25rem;
+  line-height:1;
+  color:var(--c-lime);
+  text-shadow:0 0 18px rgba(155,224,74,.45);
+}
+body.page-desafios .ring__total{
+  font-family:var(--font-mono);
+  font-size:.9rem;
+  line-height:1;
+  color:var(--c-muted);
+  letter-spacing:-.02em;
+}
+body.page-desafios .ring__cap{
+  margin-top:.3rem;
+  max-width:6.2rem;
+  font-family:var(--font-cond);
+  font-size:.63rem;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  text-align:center;
+  line-height:1.15;
+  color:var(--c-muted);
+}
+body.page-desafios .ring__pct{
+  display:inline-flex;
+  align-items:center;
+  height:1.35rem;
+  padding:0 .6rem;
+  border:1px solid rgba(155,224,74,.3);
+  border-radius:999px;
+  background:rgba(155,224,74,.07);
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  line-height:1;
+  color:var(--c-lime);
+}
+
+body.page-desafios .ring__stats{
+  list-style:none;
+  margin:.3rem 0 0;padding:0;
+  width:100%;
+  display:grid;
+  gap:.05rem;
+}
+body.page-desafios .ring__stat{
+  --_c:var(--c-lime);
+  display:grid;
+  grid-template-columns:1.7rem minmax(0,1fr) auto;
+  align-items:center;
+  gap:.6rem;
+  padding:.36rem .15rem;
+  border-top:1px solid var(--c-line-2);
+}
+body.page-desafios .ring__stat--amber{--_c:var(--c-amber)}
+body.page-desafios .ring__stat-ic{display:grid;place-items:center;color:var(--_c)}
+body.page-desafios .ring__stat-ic .ms{font-size:1.15rem}
+body.page-desafios .ring__stat-label{
+  font-family:var(--font-cond);
+  font-size:.75rem;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  line-height:1;
+}
+body.page-desafios .ring__stat-val{
+  font-family:var(--font-mono);
+  font-size:.88rem;
+  line-height:1;
+  letter-spacing:-.01em;
+  color:var(--_c);
+}
+
+/* ==========================================================================
+   COLUNA DIREITA — PASSE DE TEMPORADA
+   ========================================================================== */
+body.page-desafios .des-pass{overflow:hidden}
+body.page-desafios .des-pass__art{
+  position:relative;
+  height:7.1rem;
+  flex:0 0 auto;
+  overflow:hidden;
+  border-bottom:1px solid rgba(155,224,74,.22);
+}
+body.page-desafios .des-pass__img{
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:center 26%;
+  filter:saturate(.95) contrast(1.05) brightness(.86);
+  transition:transform var(--t-slow) var(--ease-out);
+}
+body.page-desafios .des-pass:hover .des-pass__img{transform:scale(1.04)}
+body.page-desafios .des-pass__shade{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(180deg, rgba(5,9,5,.78) 0%, rgba(5,9,5,.12) 42%, rgba(5,9,5,.9) 100%);
+}
+body.page-desafios .des-pass__season,
+body.page-desafios .des-pass__ends{
+  position:absolute;top:.55rem;
+  font-family:var(--font-cond);
+  font-size:.63rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  line-height:1;
+}
+body.page-desafios .des-pass__season{
+  left:.65rem;
+  padding:.24rem .45rem;
+  border:1px solid rgba(155,224,74,.4);
+  border-radius:var(--r-1);
+  background:rgba(6,10,6,.7);
+  color:var(--c-lime);
+}
+body.page-desafios .des-pass__ends{
+  right:.65rem;
+  color:var(--c-muted);
+  text-shadow:0 1px 6px rgba(0,0,0,.9);
+}
+body.page-desafios .des-pass__ends .num{font-family:var(--font-mono);font-size:.76rem;color:var(--c-gold);letter-spacing:-.02em}
+body.page-desafios .des-pass__name{
+  position:absolute;
+  left:.75rem;bottom:.5rem;
+  font-family:var(--font-cond);
+  font-size:1.35rem;
+  font-weight:500;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  line-height:1;
+  color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.9);
+}
+
+body.page-desafios .des-pass__body{padding:.8rem .95rem .85rem;gap:.7rem}
+body.page-desafios .des-pass__top{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:.8rem}
+body.page-desafios .des-pass__hex{--hex-w:3.1rem;flex:0 0 auto}
+body.page-desafios .des-pass__hex .hex__in{font-size:1.5rem;letter-spacing:-.03em}
+body.page-desafios .des-pass__lines{display:grid;gap:.34rem;min-width:0}
+body.page-desafios .des-pass__title{
+  font-family:var(--font-cond);
+  font-size:.95rem;
+  font-weight:500;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  line-height:1;
+  color:var(--c-text);
+}
+body.page-desafios .des-pass__bar{height:.25rem;background:rgba(196,206,190,.16);box-shadow:none}
+body.page-desafios .des-pass__xp{
+  font-family:var(--font-mono);
+  font-size:.76rem;
+  line-height:1;
+  letter-spacing:-.01em;
+  color:var(--c-muted);
+}
+body.page-desafios .des-pass__xp .lime{color:var(--c-lime)}
+
+body.page-desafios .des-pass__next{
+  font-family:var(--font-cond);
+  font-size:.68rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  padding-top:.5rem;
+  border-top:1px solid var(--c-line-2);
+}
+body.page-desafios .tier-list{
+  list-style:none;
+  margin:0;padding:0;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:.5rem;
+}
+body.page-desafios .tier{display:grid;gap:.3rem;justify-items:center;min-width:0}
+body.page-desafios .tier__box{
+  position:relative;
+  width:100%;
+  height:4.4rem;
+  display:grid;place-items:center;
+  border:1px solid rgba(170,180,170,.14);
+  border-radius:var(--r-2);
+  background:linear-gradient(180deg, rgba(16,22,14,.7), rgba(7,11,7,.75));
+  overflow:hidden;
+  transition:border-color var(--t-fast) var(--ease),box-shadow var(--t-fast) var(--ease);
+}
+body.page-desafios .tier__img{
+  width:74%;height:74%;
+  object-fit:contain;
+  filter:drop-shadow(0 3px 8px rgba(0,0,0,.75)) grayscale(.5) brightness(.72);
+  transition:filter var(--t-med) var(--ease),transform var(--t-med) var(--ease-out);
+}
+body.page-desafios .tier__lvl{
+  position:absolute;top:.2rem;left:.28rem;
+  font-family:var(--font-mono);
+  font-size:.66rem;
+  line-height:1;
+  color:var(--c-muted);
+}
+body.page-desafios .tier__lock{
+  position:absolute;right:.22rem;bottom:.22rem;
+  font-size:.85rem;
+  color:var(--c-dim);
+}
+body.page-desafios .tier__name{
+  font-family:var(--font-cond);
+  font-size:.61rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  line-height:1;
+  max-width:100%;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body.page-desafios .tier.is-next .tier__box{
+  border-color:rgba(155,224,74,.45);
+  box-shadow:var(--glow-soft),inset 0 0 18px rgba(155,224,74,.07);
+}
+body.page-desafios .tier.is-next .tier__img{filter:drop-shadow(0 3px 10px rgba(0,0,0,.75));}
+body.page-desafios .tier.is-next .tier__lvl{color:var(--c-lime)}
+body.page-desafios .tier.is-next .tier__name{color:var(--c-text-2)}
+body.page-desafios .tier.is-owned .tier__box{border-color:rgba(155,224,74,.3);background:linear-gradient(180deg, rgba(30,45,18,.62), rgba(7,11,7,.75))}
+body.page-desafios .tier.is-owned .tier__img{filter:drop-shadow(0 3px 10px rgba(0,0,0,.75))}
+body.page-desafios .tier.is-owned .tier__lvl{color:var(--c-lime)}
+body.page-desafios .tier.is-owned .tier__name{color:var(--c-text-2)}
+body.page-desafios .tier__lock--owned{color:var(--c-lime)}
+body.page-desafios .tier:hover .tier__box{border-color:rgba(155,224,74,.5)}
+body.page-desafios .tier:hover .tier__img{transform:scale(1.07);filter:drop-shadow(0 3px 10px rgba(0,0,0,.75))}
+
+body.page-desafios .des-pass__cta{margin-top:auto;letter-spacing:.09em}
+
+/* ---- entrada dos painéis / linhas ---------------------------------------- */
+body.is-booted .des-pane[data-tab-panel].is-shown .chal-item{animation:fade-up 320ms var(--ease-out) both}
+body.is-booted .des-pane[data-tab-panel].is-shown .chal-item:nth-child(2){animation-delay:45ms}
+body.is-booted .des-pane[data-tab-panel].is-shown .chal-item:nth-child(3){animation-delay:90ms}
+body.is-booted .des-pane[data-tab-panel].is-shown .chal-item:nth-child(4){animation-delay:135ms}
+body.is-booted .des-pane[data-tab-panel].is-shown .chal-item:nth-child(5){animation-delay:180ms}
+body.is-booted .des-pane[data-tab-panel].is-shown .chal-item:nth-child(6){animation-delay:225ms}
+body.is-booted .des-pane[data-tab-panel].is-shown .des-bonus{animation:fade-up 340ms var(--ease-out) 200ms both}
+
+@media (prefers-reduced-motion:reduce){
+  body.page-desafios .ring__seg.is-on{animation:none;opacity:1}
+  body.is-booted .des-pane[data-tab-panel].is-shown .chal-item,
+  body.is-booted .des-pane[data-tab-panel].is-shown .des-bonus{animation:none}
+  body.page-desafios .chal:hover{transform:none}
+}

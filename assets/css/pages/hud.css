@@ -1,0 +1,117 @@
+/* ==========================================================================
+   HUD IN-GAME — bloco de armas no canto inferior direito.
+   Sobre um saguão ensolarado ou uma noite fechada o mesmo pixel precisa se ler:
+   por isso texto com contorno próprio e placas escuras semitransparentes em vez
+   de painéis opacos. Nada aqui pode virar uma parede sólida sobre o jogo.
+   ========================================================================== */
+.ov {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;              /* herdado do overlay-body, explícito aqui */
+}
+
+.ov-guns {
+  position: absolute;
+  right: 1.6rem;
+  bottom: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  align-items: flex-end;
+}
+
+.ov-guns__empty {
+  font-family: var(--font-cond, "Barlow Condensed", sans-serif);
+  font-size: .95rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(232, 237, 230, .75);
+}
+
+/* --- um cartão de arma ---------------------------------------------------- */
+.ov-gun {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "info  ammo"
+    "art   ammo"
+    "bar   bar";
+  align-items: center;
+  gap: .1rem .9rem;
+  width: 20rem;
+  padding: .5rem .7rem .55rem;
+  border-right: 2px solid var(--c-lime, #9be04a);
+  border-radius: 2px;
+  /* placa que escurece o cenário sem tapá-lo: o alfa deixa o hit-through do plugin
+     continuar funcionando em volta do cartão */
+  background: linear-gradient(90deg, rgba(6, 9, 6, 0) 0%, rgba(6, 9, 6, .58) 38%, rgba(6, 9, 6, .74) 100%);
+}
+.ov-gun.is-empty { border-right-color: var(--c-red, #e5484d); }
+
+.ov-gun__info { grid-area: info; display: flex; flex-direction: column; gap: .05rem; min-width: 0; }
+.ov-gun__slot {
+  font-family: var(--font-cond, "Barlow Condensed", sans-serif);
+  font-size: .64rem; line-height: 1; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(155, 224, 74, .9);
+}
+.ov-gun__name {
+  font-family: var(--font-cond, "Barlow Condensed", sans-serif);
+  font-size: 1.12rem; font-weight: 500; line-height: 1.05; letter-spacing: .03em;
+  text-transform: uppercase; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.ov-gun__art {
+  grid-area: art;
+  width: 100%; max-height: 2.9rem;
+  object-fit: contain; object-position: left center;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, .85));
+}
+
+/* --- contador -------------------------------------------------------------- */
+.ov-gun__ammo {
+  grid-area: ammo;
+  display: flex; align-items: baseline; gap: .22rem;
+  justify-self: end;
+}
+.ov-gun__cur { font-size: 2.15rem; line-height: 1; color: #fff; }
+.ov-gun__sep { font-family: var(--font-mono, monospace); font-size: 1.1rem; color: rgba(232, 237, 230, .45); }
+.ov-gun__res { font-size: 1.05rem; line-height: 1; color: rgba(232, 237, 230, .72); }
+.ov-gun__nomag {
+  font-family: var(--font-cond, "Barlow Condensed", sans-serif);
+  font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--c-red, #e5484d);
+}
+
+/* pulso curto quando o número muda — chama o olho sem distrair */
+.ov-gun__cur.is-hit { animation: ov-hit 180ms ease-out; }
+@keyframes ov-hit {
+  from { transform: scale(1.16); color: var(--c-lime, #9be04a); }
+  to   { transform: scale(1); color: #fff; }
+}
+/* carregador quase vazio: o número avisa antes de acabar */
+.ov-gun.is-low  .ov-gun__cur { color: var(--c-amber, #f5a623); }
+.ov-gun.is-crit .ov-gun__cur { color: var(--c-red, #e5484d); }
+
+/* --- barra do carregador --------------------------------------------------- */
+.ov-gun__bar {
+  grid-area: bar;
+  height: 2px; margin-top: .3rem;
+  background: rgba(0, 0, 0, .55);
+  overflow: hidden;
+}
+.ov-gun__bar i {
+  display: block; height: 100%; width: var(--v, 100%);
+  background: var(--c-lime, #9be04a);
+  transition: width 120ms linear;
+}
+.ov-gun.is-low  .ov-gun__bar i { background: var(--c-amber, #f5a623); }
+.ov-gun.is-crit .ov-gun__bar i { background: var(--c-red, #e5484d); }
+
+.ov-gun__cal {
+  position: absolute; right: .7rem; bottom: -.02rem;
+  font-family: var(--font-mono, monospace);
+  font-size: .6rem; letter-spacing: .04em;
+  color: rgba(232, 237, 230, .45);
+}

@@ -1,0 +1,356 @@
+{
+  "login": {
+    "id": "login",
+    "category": "backgrounds",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/backgrounds/login.png"
+  },
+  "menu": {
+    "id": "menu",
+    "category": "backgrounds",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/backgrounds/menu.png"
+  },
+  "inventory": {
+    "id": "inventory",
+    "category": "backgrounds",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/backgrounds/inventory.png"
+  },
+  "forest-generic": {
+    "id": "forest-generic",
+    "category": "backgrounds",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/backgrounds/forest-generic.png"
+  },
+  "lobby": {
+    "id": "lobby",
+    "category": "backgrounds",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/backgrounds/lobby.png"
+  },
+  "settings": {
+    "id": "settings",
+    "category": "backgrounds",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/backgrounds/settings.png"
+  },
+  "admin": {
+    "id": "admin",
+    "category": "backgrounds",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/backgrounds/admin.png"
+  },
+  "map-island": {
+    "id": "map-island",
+    "category": "backgrounds",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/backgrounds/map-island.png"
+  },
+  "ak103": {
+    "id": "ak103",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/ak103.png"
+  },
+  "m4a1": {
+    "id": "m4a1",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/m4a1.png"
+  },
+  "glock17": {
+    "id": "glock17",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/glock17.png"
+  },
+  "knife-bayonet": {
+    "id": "knife-bayonet",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/knife-bayonet.png"
+  },
+  "ak-mag": {
+    "id": "ak-mag",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/ak-mag.png"
+  },
+  "m4-mag": {
+    "id": "m4-mag",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/m4-mag.png"
+  },
+  "ammo-box": {
+    "id": "ammo-box",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/ammo-box.png"
+  },
+  "m67-grenade": {
+    "id": "m67-grenade",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/m67-grenade.png"
+  },
+  "flashbang": {
+    "id": "flashbang",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/flashbang.png"
+  },
+  "helmet-fast": {
+    "id": "helmet-fast",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/helmet-fast.png"
+  },
+  "gasmask-gp7": {
+    "id": "gasmask-gp7",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/gasmask-gp7.png"
+  },
+  "glasses-aviator": {
+    "id": "glasses-aviator",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/glasses-aviator.png"
+  },
+  "vest-83": {
+    "id": "vest-83",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/vest-83.png"
+  },
+  "tactical-rig": {
+    "id": "tactical-rig",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/tactical-rig.png"
+  },
+  "clothing-tactical": {
+    "id": "clothing-tactical",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/clothing-tactical.png"
+  },
+  "armband-usec": {
+    "id": "armband-usec",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/armband-usec.png"
+  },
+  "backpack-45l": {
+    "id": "backpack-45l",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/backpack-45l.png"
+  },
+  "medkit": {
+    "id": "medkit",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/medkit.png"
+  },
+  "bandage": {
+    "id": "bandage",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/bandage.png"
+  },
+  "analgesic": {
+    "id": "analgesic",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/analgesic.png"
+  },
+  "surgical-kit": {
+    "id": "surgical-kit",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/surgical-kit.png"
+  },
+  "water-bottle": {
+    "id": "water-bottle",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/water-bottle.png"
+  },
+  "canned-food": {
+    "id": "canned-food",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/canned-food.png"
+  },
+  "dried-meat": {
+    "id": "dried-meat",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/dried-meat.png"
+  },
+  "cereal-bar": {
+    "id": "cereal-bar",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/cereal-bar.png"
+  },
+  "coffee": {
+    "id": "coffee",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/coffee.png"
+  },
+  "rope": {
+    "id": "rope",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/rope.png"
+  },
+  "tools-wrench": {
+    "id": "tools-wrench",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/tools-wrench.png"
+  },
+  "tools-generic": {
+    "id": "tools-generic",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/tools-generic.png"
+  },
+  "jerrycan": {
+    "id": "jerrycan",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/jerrycan.png"
+  },
+  "radio": {
+    "id": "radio",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/radio.png"
+  },
+  "multitool": {
+    "id": "multitool",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/multitool.png"
+  },
+  "compass": {
+    "id": "compass",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/compass.png"
+  },
+  "sleeping-bag": {
+    "id": "sleeping-bag",
+    "category": "items",
+    "aspectRatio": "1:1",
+    "path": "assets/generated/items/sleeping-bag.png"
+  },
+  "op-assault": {
+    "id": "op-assault",
+    "category": "portraits",
+    "aspectRatio": "3:4",
+    "path": "assets/generated/portraits/op-assault.png"
+  },
+  "op-scout": {
+    "id": "op-scout",
+    "category": "portraits",
+    "aspectRatio": "3:4",
+    "path": "assets/generated/portraits/op-scout.png"
+  },
+  "op-support": {
+    "id": "op-support",
+    "category": "portraits",
+    "aspectRatio": "3:4",
+    "path": "assets/generated/portraits/op-support.png"
+  },
+  "op-sniper": {
+    "id": "op-sniper",
+    "category": "portraits",
+    "aspectRatio": "3:4",
+    "path": "assets/generated/portraits/op-sniper.png"
+  },
+  "region-floresta-verde": {
+    "id": "region-floresta-verde",
+    "category": "maps",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/maps/region-floresta-verde.png"
+  },
+  "region-pantano-cinzento": {
+    "id": "region-pantano-cinzento",
+    "category": "maps",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/maps/region-pantano-cinzento.png"
+  },
+  "region-montanhas-gelidas": {
+    "id": "region-montanhas-gelidas",
+    "category": "maps",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/maps/region-montanhas-gelidas.png"
+  },
+  "region-deserto-abandonado": {
+    "id": "region-deserto-abandonado",
+    "category": "maps",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/maps/region-deserto-abandonado.png"
+  },
+  "region-zona-industrial": {
+    "id": "region-zona-industrial",
+    "category": "maps",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/maps/region-zona-industrial.png"
+  },
+  "mission-sinal-perdido": {
+    "id": "mission-sinal-perdido",
+    "category": "missions",
+    "aspectRatio": "4:3",
+    "path": "assets/generated/missions/mission-sinal-perdido.png"
+  },
+  "mission-suprimentos-medicos": {
+    "id": "mission-suprimentos-medicos",
+    "category": "missions",
+    "aspectRatio": "4:3",
+    "path": "assets/generated/missions/mission-suprimentos-medicos.png"
+  },
+  "mission-cacada-ao-cacador": {
+    "id": "mission-cacada-ao-cacador",
+    "category": "missions",
+    "aspectRatio": "4:3",
+    "path": "assets/generated/missions/mission-cacada-ao-cacador.png"
+  },
+  "mission-carga-valiosa": {
+    "id": "mission-carga-valiosa",
+    "category": "missions",
+    "aspectRatio": "4:3",
+    "path": "assets/generated/missions/mission-carga-valiosa.png"
+  },
+  "mission-tecnologia-recuperada": {
+    "id": "mission-tecnologia-recuperada",
+    "category": "missions",
+    "aspectRatio": "4:3",
+    "path": "assets/generated/missions/mission-tecnologia-recuperada.png"
+  },
+  "news-atualizacao": {
+    "id": "news-atualizacao",
+    "category": "news",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/news/news-atualizacao.png"
+  },
+  "news-evento-caca": {
+    "id": "news-evento-caca",
+    "category": "news",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/news/news-evento-caca.png"
+  },
+  "news-manutencao": {
+    "id": "news-manutencao",
+    "category": "news",
+    "aspectRatio": "16:9",
+    "path": "assets/generated/news/news-manutencao.png"
+  }
+}

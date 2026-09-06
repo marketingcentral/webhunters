@@ -1,0 +1,181 @@
+/* ==========================================================================
+   Navegação sem recarga (assets/js/spa.js)
+
+   Duas coisas: o estado "trocando de tela" e o preloader.
+
+   O preloader NÃO aparece em toda navegação — o spa.js só o mostra depois de 180ms.
+   Numa troca rápida (o caso comum, ainda mais em localhost dentro do jogo) ele nunca
+   chega a ser visto; ele existe para a espera longa, quando a alternativa seria o
+   jogador olhando para uma tela parada sem saber se clicou.
+   ========================================================================== */
+
+/* ---- estado de saída: o miolo recua um pouco enquanto a próxima tela vem ---- */
+body.is-navigating .hud-main {
+  opacity: .45;
+  transform: translateY(-2px);
+  transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+  pointer-events: none;   /* nada de clicar duas vezes na tela que já está saindo */
+}
+.hud-main {
+  transition: opacity var(--t-med) var(--ease-out), transform var(--t-med) var(--ease-out);
+}
+
+/* A topbar continua clicável durante a troca: trocar de ideia no meio é legítimo. */
+body.is-navigating .topbar { opacity: .82; transition: opacity var(--t-fast) var(--ease); }
+
+/* ---- preloader ------------------------------------------------------------ */
+.spa-load {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-transition);
+  display: grid;
+  place-items: center;
+  background: radial-gradient(120% 100% at 50% 45%, rgba(7, 9, 7, .72) 0%, rgba(7, 9, 7, .93) 70%);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--t-med) var(--ease), visibility var(--t-med) linear;
+}
+.spa-load.is-on {
+  opacity: 1;
+  visibility: visible;
+}
+
+.spa-load__box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-4);
+  transform: translateY(6px);
+  transition: transform var(--t-slow) var(--ease-out);
+}
+.spa-load.is-on .spa-load__box { transform: none; }
+
+/* marca: dois hexágonos girando em sentidos opostos + núcleo pulsando */
+.spa-load__mark {
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+  display: grid;
+  place-items: center;
+}
+.spa-load__ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-top-color: var(--c-lime);
+  border-right-color: rgba(var(--c-lime-rgb), .35);
+  /* hexágono, não círculo: é a forma que a HUD usa em toda parte */
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  animation: spa-gira 1.15s linear infinite;
+}
+.spa-load__ring--2 {
+  inset: .7rem;
+  border-top-color: transparent;
+  border-bottom-color: rgba(var(--c-lime-rgb), .55);
+  border-left-color: rgba(var(--c-lime-rgb), .2);
+  animation-duration: 1.75s;
+  animation-direction: reverse;
+}
+.spa-load__core {
+  width: .5rem;
+  height: .5rem;
+  background: var(--c-lime);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  box-shadow: var(--glow-soft);
+  animation: spa-pulsa 1.15s var(--ease) infinite;
+}
+
+.spa-load__txt {
+  margin: 0;
+  font-family: var(--font-cond);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--c-text-2);
+  text-align: center;
+  /* O rótulo muda de tamanho conforme a tela de destino; largura fixa evita o texto
+     "pular" para os lados enquanto as reticências animam. */
+  min-width: 16rem;
+}
+
+/* Reticências que contam sozinhas: mostram que a espera está viva mesmo se a barra
+   passar despercebida no canto do olho. `ch` para não mexer no comprimento da linha. */
+.spa-load__pontos {
+  display: inline-block;
+  width: 1.6ch;
+  text-align: left;
+  font-weight: 600;
+}
+.spa-load__pontos::after {
+  content: '';
+  animation: spa-pontos 1.2s steps(1, end) infinite;
+}
+
+/* barra indeterminada: não mentimos um percentual que não temos */
+.spa-load__bar {
+  position: relative;
+  width: 11rem;
+  height: 2px;
+  overflow: hidden;
+  background: var(--c-track);
+}
+.spa-load__bar > i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40%;
+  background: linear-gradient(90deg, rgba(var(--c-lime-rgb), 0), var(--c-lime), rgba(var(--c-lime-rgb), 0));
+  animation: spa-corre 1.1s var(--ease) infinite;
+}
+
+/* Varredura que atravessa a marca, no espírito das bordas da HUD. */
+.spa-load__mark::after {
+  content: '';
+  position: absolute;
+  inset: -12%;
+  background: linear-gradient(105deg, transparent 42%, rgba(var(--c-lime-rgb), .16) 50%, transparent 58%);
+  animation: spa-varre 2.4s var(--ease) infinite;
+  pointer-events: none;
+}
+
+@keyframes spa-gira { to { transform: rotate(360deg); } }
+@keyframes spa-varre {
+  0%, 100% { transform: translateX(-120%); opacity: 0; }
+  35%      { opacity: 1; }
+  70%      { transform: translateX(120%); opacity: 0; }
+}
+@keyframes spa-pontos {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+}
+@keyframes spa-pulsa {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(.55); opacity: .5; }
+}
+@keyframes spa-corre {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+
+/* ---- acessibilidade ------------------------------------------------------- */
+/*
+ * Sem movimento: o preloader continua aparecendo (a informação "está carregando" é
+ * necessária), só que parado — e o miolo troca sem deslizar.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .spa-load__ring,
+  .spa-load__core,
+  .spa-load__bar > i,
+  .spa-load__mark::after { animation: none; }
+  .spa-load__mark::after { display: none; }
+  /* As reticências param num estado legível em vez de sumirem. */
+  .spa-load__pontos::after { animation: none; content: '...'; }
+  .spa-load__bar > i { width: 100%; opacity: .5; }
+  .spa-load__box { transform: none; }
+  body.is-navigating .hud-main { transform: none; opacity: .6; }
+  .hud-main { transition: opacity var(--t-fast) linear; }
+}

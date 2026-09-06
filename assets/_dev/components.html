@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EH · Design system preview</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/hud.css">
+<link rel="stylesheet" href="../css/components.css">
+<link rel="stylesheet" href="../css/animations.css">
+<style>
+  /* preview-only chrome */
+  body{overflow:auto}
+  .hud{height:auto;min-height:100dvh}
+  .hud-main{overflow:visible}
+  .fake-topbar{height:var(--topbar-h);display:flex;align-items:center;gap:2rem;padding:0 1.5rem;background:linear-gradient(180deg,rgba(6,9,6,.92),rgba(6,9,6,.7));border-bottom:1px solid var(--c-line-2)}
+  .fake-topbar .brand{display:flex;align-items:center;gap:.75rem}
+  .fake-topbar .brand .ic{width:2.75rem;height:2.75rem;color:var(--c-lime)}
+  .fake-nav{display:flex;gap:2rem;font-family:var(--font-cond);text-transform:uppercase;letter-spacing:.05em;font-size:1.05rem;color:var(--c-text-2)}
+  .fake-nav .is-active{color:var(--c-text);position:relative}
+  .fake-nav .is-active::after{content:"";position:absolute;left:-1rem;right:-1rem;bottom:-1.6rem;height:2px;background:var(--c-lime);box-shadow:0 0 10px var(--c-lime)}
+  .demo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.25rem;align-items:start}
+  .demo-grid > .panel{min-height:0}
+  .demo-label{font-family:var(--font-mono);font-size:.7rem;color:var(--c-dim);text-transform:uppercase;letter-spacing:.1em;margin:.9rem 0 .4rem}
+  .demo-label:first-child{margin-top:0}
+  .swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:.4rem}
+  .sw{height:2rem;border-radius:var(--r-1);border:1px solid var(--c-line-2);display:grid;place-items:end start;padding:.2rem .3rem;font-family:var(--font-mono);font-size:.6rem;color:#000}
+  .ic-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:.5rem}
+  .ic-grid > div{display:grid;place-items:center;gap:.25rem;padding:.4rem 0;border:1px solid var(--c-line-2);border-radius:var(--r-1);background:rgba(10,14,10,.5)}
+  .ic-grid .ic{width:1.6rem;height:1.6rem;color:var(--c-text)}
+  .ic-grid span{font-family:var(--font-mono);font-size:.55rem;color:var(--c-muted)}
+  .row-demo{display:grid;gap:.4rem}
+  .hover-sim{border-color:rgba(155,224,74,.8)!important;box-shadow:var(--glow-soft),var(--shadow-inset),0 6px 16px rgba(0,0,0,.35)!important;transform:translateY(-1px)}
+</style>
+</head>
+<body class="page-preview" data-page="preview">
+<div class="bg" aria-hidden="true" style="--bg-pos:center">
+  <picture>
+    <source srcset="../img/bg/saude.webp" type="image/webp">
+    <img class="bg__img" src="../img/bg/saude.jpg" alt="">
+  </picture>
+  <div class="bg__overlay"></div>
+  <canvas id="atmosphere" class="bg__fx"></canvas>
+  <div class="bg__grain"></div>
+  <div class="bg__vignette"></div>
+</div>
+
+<div class="hud">
+  <header class="fake-topbar scanline">
+    <div class="brand"><svg class="ic"><use href="../icons/sprite.svg#emblem-hex"/></svg>
+      <div><div class="cond uc" style="font-size:1rem">HUNTER_07</div><div class="fs-xs muted">NÍVEL <span class="num">23</span></div></div></div>
+    <nav class="fake-nav"><span class="is-active">Início</span><span>Inventário</span><span>Saúde</span><span>Mapa</span></nav>
+    <div class="flex gap-4 ml-auto">
+      <span class="currency currency--credits"><svg class="ic"><use href="../icons/sprite.svg#coin-credit"/></svg><span class="lime" data-count="125500">0</span></span>
+      <span class="currency currency--cash"><svg class="ic"><use href="../icons/sprite.svg#coin-cash"/></svg><span class="cyan" data-count="2450">0</span></span>
+      <span class="currency currency--points"><svg class="ic"><use href="../icons/sprite.svg#coin-points"/></svg><span class="amber" data-count="1250">0</span></span>
+      <a class="btn btn--gold" href="#"><span class="ms">shopping_cart</span> Loja</a>
+    </div>
+  </header>
+
+  <main class="hud-main" id="main">
+    <div class="page-head">
+      <h1 class="page-title">Design system <small>Componentes</small></h1>
+    </div>
+    <p class="page-subtitle" style="margin:-.5rem 0 1.25rem">Todos os componentes do SPEC §7 em estados padrão / hover / ativo.</p>
+
+    <div class="demo-grid">
+
+      <!-- ===================== column 1 ===================== -->
+      <section class="panel">
+        <header class="panel__head"><h2 class="panel__title">Botões</h2><a class="panel__action" href="#">Ver todos <span class="ms">add</span></a></header>
+        <div class="panel__body">
+          <div class="demo-label">primary / hover / lg</div>
+          <div class="flex gap-3 wrap">
+            <a class="btn btn--primary" href="#"><span class="ms">login</span> Entrar</a>
+            <a class="btn btn--primary hover-sim" href="#">Hover</a>
+            <a class="btn btn--primary btn--sm" href="#">Usar</a>
+          </div>
+          <div class="mt-3"><a class="btn btn--primary btn--lg btn--block" href="#">Buscar partida <span class="ms btn__chev">chevron_right</span></a></div>
+          <div class="demo-label">default / outline / ghost / lime / danger / gold</div>
+          <div class="flex gap-3 wrap">
+            <button class="btn"><span class="ms">refresh</span> Restaurar padrões</button>
+            <button class="btn btn--outline">Realizar</button>
+            <button class="btn btn--ghost">Ghost</button>
+            <button class="btn btn--lime">Ver todos os mapas</button>
+            <button class="btn btn--danger"><span class="ms">logout</span> Sair</button>
+            <button class="btn btn--gold"><span class="ms">shopping_cart</span> Loja</button>
+            <button class="btn is-active">Ativo</button>
+            <button class="btn" disabled>Desativado</button>
+            <button class="btn btn--icon"><span class="ms">add</span></button>
+            <button class="btn btn--sm"><span class="ms">mail</span> Mensagens <span class="btn__badge num">3</span></button>
+          </div>
+          <div class="demo-label">menu-btn (home)</div>
+          <div class="grid gap-3">
+            <a class="menu-btn is-active" href="#"><span class="menu-btn__icon ms">landscape</span><span class="menu-btn__text"><strong>Jogar solo</strong><small>Entre sozinho no campo e extraia.</small></span><span class="ms menu-btn__chev">chevron_right</span></a>
+            <a class="menu-btn" href="#"><span class="menu-btn__icon ms">group</span><span class="menu-btn__text"><strong>Jogar com amigos</strong><small>Forme um esquadrão e enfrente juntos.</small></span><span class="ms menu-btn__chev">chevron_right</span></a>
+            <a class="menu-btn" href="#"><span class="menu-btn__icon ms">settings</span><span class="menu-btn__text"><strong>Configurações</strong><small>Ajustes e opções do jogo.</small></span><span class="ms menu-btn__chev">chevron_right</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <header class="panel__head"><h2 class="panel__title">Linhas (row)</h2><span class="panel__meta"><span class="num">45/98</span></span></header>
+        <div class="panel__body">
+          <div class="list" data-select-group>
+            <a class="row is-active" href="#"><span class="row__icon ms">skull</span><span class="row__text"><strong>Partida rápida</strong><small>Mapa e modo aleatório.</small></span><span class="row__meta num"></span><span class="ms row__chev">chevron_right</span></a>
+            <a class="row is-locked" href="#"><span class="row__icon ms">group</span><span class="row__text"><strong>Mata-mata em equipe</strong><small>6v6 - Elimine a equipe inimiga.</small></span><span class="row__meta num"></span><span class="ms row__lock">lock</span></a>
+            <a class="row" href="#"><span class="row__icon ms">explore</span><span class="row__text"><strong>Exploração</strong><small></small></span><span class="row__meta num">8/17</span><span class="ms row__chev">chevron_right</span></a>
+            <a class="row" href="#"><span class="row__icon"><span class="hex hex--sm hex--muted"><span class="hex__in"><span class="ms">backpack</span></span></span></span><span class="row__text"><strong>Equipamento</strong></span><span class="row__meta num">5/12</span><span class="ms row__chev">chevron_right</span></a>
+          </div>
+          <div class="demo-label">row--setting (configurações)</div>
+          <div class="list list--tight">
+            <div class="row row--setting is-active"><span class="row__label">Dificuldade</span><span class="row__ctrl">
+              <div class="stepper" data-options="FÁCIL|NORMAL|MÉDIA|DIFÍCIL|EXTREMO" data-value="MÉDIA"><button class="stepper__btn ms" type="button">chevron_left</button><span class="stepper__val">MÉDIA</span><button class="stepper__btn ms" type="button">chevron_right</button></div></span></div>
+            <div class="row row--setting"><span class="row__label">Dicas</span><span class="row__ctrl">
+              <label class="toggle"><input type="checkbox" checked><span class="toggle__track"></span><span class="toggle__label">ATIVADO</span></label></span></div>
+            <div class="row row--setting"><span class="row__label">Pular introduções</span><span class="row__ctrl">
+              <label class="toggle"><input type="checkbox"><span class="toggle__track"></span><span class="toggle__label">DESATIVADO</span></label></span></div>
+            <div class="row row--setting"><span class="row__label">Assistência de mira</span><span class="row__ctrl">
+              <span class="range-wrap"><input type="range" class="range" min="0" max="100" value="60" style="--v:60%"><span class="range__val num">60%</span></span></span></div>
+            <div class="row row--setting"><span class="row__label">Assistência de mira - Veículos</span><span class="row__ctrl">
+              <span class="range-wrap"><input type="range" class="range" min="0" max="100" value="40" style="--v:40%"><span class="range__val num">40%</span></span></span></div>
+          </div>
+          <div class="demo-label">toggle lime (jogar) · stepper boxed</div>
+          <div class="flex gap-5 wrap">
+            <label class="toggle toggle--lime" data-on="Ativado" data-off="Desativado"><input type="checkbox" checked><span class="toggle__track"></span><span class="toggle__label">Ativado</span></label>
+            <label class="toggle toggle--sm"><input type="checkbox" checked><span class="toggle__track"></span><span class="toggle__label">ATIVADO</span></label>
+            <div class="stepper stepper--boxed" data-options="BAIXA|MÉDIA|ALTA|ULTRA"><button class="stepper__btn ms" type="button">chevron_left</button><span class="stepper__val">ALTA</span><button class="stepper__btn ms" type="button">chevron_right</button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== column 2 ===================== -->
+      <section class="panel panel--hot">
+        <header class="panel__head"><h2 class="panel__title"><span class="ms">military_tech</span>Painel hot · Tabs · Progresso</h2><a class="panel__action panel__action--lime" href="#">Ver todas <span class="ms">add</span></a></header>
+        <div class="panel__body" data-tabs-scope>
+          <nav class="tabs">
+            <a class="tab is-active" href="#" data-tab="trat">Tratamento</a>
+            <a class="tab" href="#" data-tab="status">Status <span class="tab__count num">3</span></a>
+            <a class="tab" href="#" data-tab="hist">Histórico</a>
+          </nav>
+          <div data-tab-panel="trat" class="mt-4">
+            <div class="demo-label">progress · variants · anim</div>
+            <div class="grid gap-3">
+              <div class="progress-row"><div class="progress-row__head"><span class="progress-row__label">Saúde</span><span class="progress-row__val num">100<small>/100</small></span></div><div class="progress progress--anim" style="--v:100%"><div class="progress__bar"></div></div></div>
+              <div class="progress-row"><div class="progress-row__head"><span class="progress-row__label">Energia</span><span class="progress-row__val num">78<small>/100</small></span></div><div class="progress progress--anim" style="--v:78%"><div class="progress__bar"></div></div></div>
+              <div class="progress progress--cyan progress--anim" style="--v:56%"><div class="progress__bar"></div></div>
+              <div class="progress progress--amber progress--anim" style="--v:62%"><div class="progress__bar"></div></div>
+              <div class="progress progress--red progress--thick" style="--v:24%"><div class="progress__bar"></div></div>
+              <div class="progress progress--gold progress--xl progress--seg" style="--v:45%"><div class="progress__bar"></div></div>
+              <div class="progress progress--white progress--thin" style="--v:70%"><div class="progress__bar"></div></div>
+            </div>
+          </div>
+          <div data-tab-panel="status" class="mt-4" hidden><p class="text-2">Painel STATUS.</p></div>
+          <div data-tab-panel="hist" class="mt-4" hidden><p class="text-2">Painel HISTÓRICO.</p></div>
+          <div class="demo-label">tabs--pills</div>
+          <nav class="tabs tabs--pills"><a class="tab" href="#">Todas</a><a class="tab is-active" href="#">Combate</a><a class="tab" href="#">Sobrevivência</a></nav>
+          <hr class="divider">
+          <div class="demo-label">chips</div>
+          <div class="flex gap-2 wrap">
+            <span class="chip chip--lime">Líder</span><span class="chip chip--gold"><span class="ms">star</span>Raro</span><span class="chip chip--cyan">Hidratado</span><span class="chip chip--amber">Faminto</span><span class="chip chip--red chip--dot">Infecção</span><span class="chip chip--purple">Lendário</span><span class="chip">Neutro</span><span class="chip chip--muted">Bloqueada</span><span class="chip chip--lime chip--solid">Novo</span><span class="chip chip--lime chip--lg">Concluída</span>
+          </div>
+          <div class="divider divider--text">ou</div>
+          <div class="demo-label">hex badges</div>
+          <div class="flex gap-4 wrap baseline">
+            <span class="hex hex--sm"><span class="hex__in"><span class="num">7</span></span></span>
+            <span class="hex hex--md hex--text"><span class="hex__in"><span class="num">23</span></span></span>
+            <span class="hex hex--lg hex--text"><span class="hex__in"><span class="num">45</span></span></span>
+            <span class="hex hex--lg"><span class="hex__in"><span class="ms">skull</span></span></span>
+            <span class="hex hex--xl hex--ring hex--hot"><span class="hex__in"><span class="ms">cell_tower</span></span></span>
+            <span class="hex hex--xl hex--ring hex--gold"><span class="hex__in"><span class="ms">skull</span></span></span>
+            <span class="hex hex--xl hex--ring hex--muted"><span class="hex__in"><span class="ms">lock</span></span></span>
+            <span class="hex hex--md hex--cyan"><span class="hex__in"><svg class="ic"><use href="../icons/sprite.svg#coin-cash"/></svg></span></span>
+            <span class="hex hex--md hex--amber"><span class="hex__in"><svg class="ic"><use href="../icons/sprite.svg#coin-points"/></svg></span></span>
+            <span class="hex hex--md"><span class="hex__in"><svg class="ic"><use href="../icons/sprite.svg#xp"/></svg></span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <header class="panel__head"><h2 class="panel__title">Stats</h2></header>
+        <div class="panel__body">
+          <div class="grid gap-4">
+            <div class="stat"><span class="stat__icon ms">medical_services</span><span class="stat__label">Saúde</span><span class="stat__val num">100<small>/100</small></span><div class="stat__bar"><div class="progress progress--anim" style="--v:100%"><div class="progress__bar"></div></div></div><span class="stat__cap">Totalmente saudável</span></div>
+            <div class="stat"><span class="stat__icon ms">bolt</span><span class="stat__label">Energia</span><span class="stat__val num">78<small>/100</small></span><div class="stat__bar"><div class="progress progress--anim" style="--v:78%"><div class="progress__bar"></div></div></div><span class="stat__cap">Boa disposição</span></div>
+            <div class="stat stat--cyan"><span class="stat__icon ms">water_drop</span><span class="stat__label">Hidratação</span><span class="stat__val num">56<small>/100</small></span><div class="stat__bar"><div class="progress progress--cyan progress--anim" style="--v:56%"><div class="progress__bar"></div></div></div><span class="stat__cap">Hidratado</span></div>
+            <div class="stat stat--amber"><span class="stat__icon ms">restaurant</span><span class="stat__label">Fome</span><span class="stat__val num">62<small>/100</small></span><div class="stat__bar"><div class="progress progress--amber progress--anim" style="--v:62%"><div class="progress__bar"></div></div></div><span class="stat__cap">Levemente faminto</span></div>
+            <div class="stat stat--white"><span class="stat__icon ms">thermostat</span><span class="stat__label">Temperatura</span><span class="stat__val num">36,6<small>°C</small></span><div class="stat__bar"><div class="progress progress--white" style="--v:50%"><div class="progress__bar"></div></div></div><span class="stat__cap">Normal</span></div>
+          </div>
+          <div class="demo-label">stat--inline · stat--tile</div>
+          <div class="cols-2 gap-2">
+            <div class="stat stat--inline"><span class="stat__icon ms">medical_services</span><span class="stat__label">Saúde</span><span class="stat__val num">100<small>/100</small></span></div>
+            <div class="stat stat--inline"><span class="stat__icon ms">shield</span><span class="stat__label">Resistência</span><span class="stat__val num">100<small>/100</small></span></div>
+            <div class="stat stat--inline"><span class="stat__icon ms">speed</span><span class="stat__label">Velocidade</span><span class="stat__val num">36,5<small> kg</small></span></div>
+            <div class="stat stat--inline"><span class="stat__icon ms">radar</span><span class="stat__label">Detecção</span><span class="stat__val num">85<small>%</small></span></div>
+          </div>
+          <div class="cols-4 gap-2 mt-4">
+            <div class="stat stat--tile"><span class="stat__icon ms">forest</span><span class="stat__label">Energia</span><span class="stat__val num lime">78<small>/100</small></span></div>
+            <div class="stat stat--tile stat--cyan"><span class="stat__icon ms">water_drop</span><span class="stat__label">Hidratação</span><span class="stat__val num">56<small>/100</small></span></div>
+            <div class="stat stat--tile stat--amber"><span class="stat__icon ms">restaurant</span><span class="stat__label">Fome</span><span class="stat__val num">62<small>/100</small></span></div>
+            <div class="stat stat--tile stat--red"><span class="stat__icon ms">thermostat</span><span class="stat__label">Temperatura</span><span class="stat__val num" style="color:var(--c-text)">36,6<small>°C</small></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== column 3 ===================== -->
+      <section class="panel">
+        <header class="panel__head"><h2 class="panel__title">Cards</h2><span class="panel__meta">Seleção de mapas</span></header>
+        <div class="panel__body">
+          <div class="card-grid card-grid--2" data-select-group>
+            <article class="card is-selected"><div class="card__media"><img src="../img/maps/vale-do-eco.jpg" alt=""></div><div class="card__body card__body--row"><span class="hex hex--md hex--white hex--flat"><span class="hex__in"><span class="ms">skull</span></span></span><div class="grid gap-1 min-0"><h3 class="card__title">Vale do Eco</h3><span class="card__sub">Mata-mata em equipe</span><span class="card__meta num">6v6</span></div></div></article>
+            <article class="card"><div class="card__media"><img src="../img/maps/base-artica.jpg" alt=""></div><div class="card__body card__body--row"><span class="hex hex--md hex--white hex--flat"><span class="hex__in"><span class="ms">shield</span></span></span><div class="grid gap-1 min-0"><h3 class="card__title">Base Ártica</h3><span class="card__sub">Dominação</span><span class="card__meta num">6v6</span></div></div></article>
+          </div>
+          <div class="demo-label">card--ach (conquistas)</div>
+          <div class="card-grid card-grid--2">
+            <article class="card card--ach is-done card--hot"><div class="card__body"><span class="hex hex--xl hex--ring hex--hot"><span class="hex__in"><span class="ms">cell_tower</span></span></span><h3 class="card__title">Sinal perdido</h3><p class="card__desc">Restaure a comunicação do posto avançado norte.</p><div class="card__foot"><span class="card__status">Concluída</span><span class="card__meta num">12/05/2024</span></div></div></article>
+            <article class="card card--ach"><div class="card__body"><span class="hex hex--xl hex--ring hex--muted"><span class="hex__in"><span class="ms">map</span></span></span><h3 class="card__title">Explorador</h3><p class="card__desc">Descubra 50 pontos de interesse.</p><div class="card__foot"><div class="w-full progress-row"><div class="progress-row__head"><span class="progress-row__val num lime">32/50</span></div><div class="progress progress--anim" style="--v:64%"><div class="progress__bar"></div></div></div></div></div></article>
+          </div>
+          <div class="demo-label">card--h (notícia) · carousel</div>
+          <div class="carousel" data-carousel data-interval="4000">
+            <div class="carousel__track">
+              <div class="carousel__slide"><a class="card card--h" href="#"><div class="card__media"><img src="../img/news/news-atualizacao.jpg" alt=""></div><div class="card__body"><h3 class="card__title">Atualização 0.8.1</h3><p class="card__desc">Novas missões, armas e ajustes de desempenho.</p><span class="card__meta num">30/05/2024</span></div></a></div>
+              <div class="carousel__slide"><a class="card card--h" href="#"><div class="card__media"><img src="../img/news/news-evento-caca.jpg" alt=""></div><div class="card__body"><h3 class="card__title">Evento: caça na floresta</h3><p class="card__desc">Participe do evento especial e ganhe recompensas exclusivas.</p><span class="card__meta num">28/05/2024</span></div></a></div>
+              <div class="carousel__slide"><a class="card card--h" href="#"><div class="card__media"><img src="../img/news/news-manutencao.jpg" alt=""></div><div class="card__body"><h3 class="card__title">Manutenção programada</h3><p class="card__desc">Servidores ficarão offline para manutenção.</p><span class="card__meta num">27/05/2024</span></div></a></div>
+            </div>
+            <div class="carousel__dots"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <header class="panel__head"><h2 class="panel__title">Slots</h2><span class="panel__meta">Colete tático <span class="num">8/23</span></span></header>
+        <div class="panel__body">
+          <div class="slot-grid" style="--cols:4">
+            <div class="slot slot--wide slot--tall"><span class="slot__name">RIG-03</span><img class="slot__img" src="../img/items/tactical-rig.png" alt=""><span class="slot__count">8/23</span></div>
+            <div class="slot"><span class="slot__name">AK-103</span><img class="slot__img" src="../img/items/ak-mag.png" alt=""><span class="slot__count">30/30</span></div>
+            <div class="slot"><span class="slot__name">M67</span><img class="slot__img" src="../img/items/m67-grenade.png" alt=""><span class="slot__count">2/5</span></div>
+            <div class="slot slot--amber"><span class="slot__name">Analgésico</span><img class="slot__img" src="../img/items/analgesic.png" alt=""><span class="slot__count">3/3</span></div>
+            <div class="slot slot--cyan"><span class="slot__name">Água</span><img class="slot__img" src="../img/items/water-bottle.png" alt=""><span class="slot__count">60/60</span></div>
+          </div>
+          <div class="demo-label">slot rápido (key) · vazio · hover</div>
+          <div class="slot-grid" style="--cols:5">
+            <div class="slot"><span class="slot__key num">1</span><span class="slot__name"></span><img class="slot__img" src="../img/items/ak103.png" alt=""></div>
+            <div class="slot"><span class="slot__key num">2</span><img class="slot__img" src="../img/items/glock17.png" alt=""></div>
+            <div class="slot is-active"><span class="slot__key num">4</span><img class="slot__img" src="../img/items/medkit.png" alt=""><span class="slot__count">3/3</span></div>
+            <div class="slot slot--red"><span class="slot__key num">5</span><img class="slot__img" src="../img/items/bandage.png" alt=""><span class="slot__count">3/3</span></div>
+            <div class="slot slot--empty"><span class="slot__key num">0</span></div>
+          </div>
+          <div class="demo-label">arma (slot--wide com sub/meta)</div>
+          <div class="slot slot--wide" style="aspect-ratio:3/1.1"><span class="slot__name">AK-103</span><span class="slot__sub">7.62x39</span><span class="slot__meta">02</span><img class="slot__img" src="../img/items/ak103.png" alt="" style="width:80%;height:60%"><span class="slot__count" style="font-size:1.2rem">30<small>/120</small></span></div>
+          <div class="demo-label">sprite icons</div>
+          <div class="ic-grid">
+            <div><svg class="ic"><use href="../icons/sprite.svg#emblem"/></svg><span>emblem</span></div>
+            <div><svg class="ic"><use href="../icons/sprite.svg#emblem-hex"/></svg><span>emblem-hex</span></div>
+            <div><svg class="ic lime"><use href="../icons/sprite.svg#coin-credit"/></svg><span>credit</span></div>
+            <div><svg class="ic cyan"><use href="../icons/sprite.svg#coin-cash"/></svg><span>cash</span></div>
+            <div><svg class="ic amber"><use href="../icons/sprite.svg#coin-points"/></svg><span>points</span></div>
+            <div><svg class="ic lime"><use href="../icons/sprite.svg#xp"/></svg><span>xp</span></div>
+            <div><svg class="ic"><use href="../icons/sprite.svg#class-assault"/></svg><span>assault</span></div>
+            <div><svg class="ic"><use href="../icons/sprite.svg#class-scout"/></svg><span>scout</span></div>
+            <div><svg class="ic"><use href="../icons/sprite.svg#class-support"/></svg><span>support</span></div>
+            <div><svg class="ic"><use href="../icons/sprite.svg#class-sniper"/></svg><span>sniper</span></div>
+            <div><svg class="ic lime"><use href="../icons/sprite.svg#mk-extraction"/></svg><span>extraction</span></div>
+            <div><svg class="ic"><use href="../icons/sprite.svg#mk-base"/></svg><span>base</span></div>
+            <div><svg class="ic"><use href="../icons/sprite.svg#mk-camp"/></svg><span>camp</span></div>
+            <div><svg class="ic red"><use href="../icons/sprite.svg#mk-enemy"/></svg><span>enemy</span></div>
+            <div><svg class="ic gold"><use href="../icons/sprite.svg#mk-loot"/></svg><span>loot</span></div>
+            <div><svg class="ic purple"><use href="../icons/sprite.svg#mk-event"/></svg><span>event</span></div>
+            <div><svg class="ic amber"><use href="../icons/sprite.svg#mk-risk"/></svg><span>risk</span></div>
+            <div><svg class="ic"><use href="../icons/sprite.svg#discord"/></svg><span>discord</span></div>
+            <div><svg class="ic"><use href="../icons/sprite.svg#twitter"/></svg><span>twitter</span></div>
+            <div><svg class="ic"><use href="../icons/sprite.svg#youtube"/></svg><span>youtube</span></div>
+            <div><svg class="ic"><use href="../icons/sprite.svg#instagram"/></svg><span>instagram</span></div>
+            <div><svg class="ic"><use href="../icons/sprite.svg#steam"/></svg><span>steam</span></div>
+            <div><svg class="ic gold"><use href="../icons/sprite.svg#crown"/></svg><span>crown</span></div>
+            <div><svg class="ic lime"><use href="../icons/sprite.svg#check-badge"/></svg><span>check</span></div>
+          </div>
+          <div class="demo-label">misc: pager · select · key · dot · currency</div>
+          <div class="flex gap-3 wrap">
+            <div class="pager"><button class="pager__btn"><span class="ms">chevron_left</span></button><button class="pager__btn is-active">1</button><button class="pager__btn">2</button><button class="pager__btn">3</button><span class="muted num">...</span><button class="pager__btn">13</button><button class="pager__btn"><span class="ms">chevron_right</span></button></div>
+            <button class="select">Ordenar: mais recentes <span class="ms">expand_more</span></button>
+            <span class="key">R</span><span class="dot dot--live"></span>
+            <span class="currency currency--xp"><svg class="ic"><use href="../icons/sprite.svg#xp"/></svg>7.500</span>
+            <button class="btn btn--sm" data-tip="Tooltip de exemplo">Tooltip</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer style="height:var(--footer-h);border-top:1px solid var(--c-line-2);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;background:rgba(6,9,6,.8)">
+    <div class="flex gap-4 cond uc">Siga-nos <svg class="ic lg"><use href="../icons/sprite.svg#discord"/></svg><svg class="ic lg"><use href="../icons/sprite.svg#twitter"/></svg><svg class="ic lg"><use href="../icons/sprite.svg#youtube"/></svg><svg class="ic lg"><use href="../icons/sprite.svg#instagram"/></svg></div>
+    <div class="flex gap-4 cond uc">Servidor: América do Sul <svg class="ic lg lime"><use href="../icons/sprite.svg#signal"/></svg><span class="num">32ms</span><span class="dot dot--live"></span></div>
+  </footer>
+</div>
+<div class="page-transition" aria-hidden="true"></div>
+
+<script type="importmap">{"imports":{"three":"../vendor/three/build/three.module.js","three/addons/":"../vendor/three/examples/jsm/"}}</script>
+<script type="module" src="../js/hud.js"></script>
+<script type="module" src="../js/three/atmosphere.js"></script>
+</body>
+</html>

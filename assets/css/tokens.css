@@ -1,0 +1,47 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — design tokens (SPEC §6). Names are a contract: never rename.
+   Additional tokens (below the SPEC block) may be added, never removed.
+   ========================================================================== */
+:root{
+  /* escala: a referência é 1672×941; 1rem = 16px nesse tamanho, proporcional em qualquer viewport 16:9 */
+  font-size: clamp(9px, min(0.95694vw, 1.70032vh), 24px);
+
+  --c-bg:#070907; --c-bg-2:#0b0f0b; --c-panel:rgba(8,12,8,.78); --c-panel-2:rgba(14,19,14,.86); --c-panel-solid:#0c110c;
+  --c-line:rgba(150,190,100,.22); --c-line-2:rgba(150,190,100,.12); --c-line-hot:#9be04a;
+  --c-lime:#9be04a; --c-lime-2:#b6f25a; --c-lime-dim:#6f9f34; --c-green-btn:#3f6b1f; --c-green-btn-2:#2c4d15;
+  --c-cyan:#3ec9f0; --c-amber:#f5a623; --c-gold:#f5c518; --c-red:#e5484d; --c-purple:#a855f7; --c-blue:#4c8dff;
+  --c-text:#e8ede6; --c-text-2:#c2cabf; --c-muted:#8f998d; --c-dim:#5d675b;
+  --glow-lime:0 0 0 1px rgba(155,224,74,.55), 0 0 18px rgba(155,224,74,.35), inset 0 0 22px rgba(155,224,74,.08);
+  --glow-gold:0 0 0 1px rgba(245,197,24,.6), 0 0 16px rgba(245,197,24,.35);
+  --glow-soft:0 0 12px rgba(155,224,74,.25);
+  --shadow-panel:0 10px 30px rgba(0,0,0,.45);
+  --font-cond:'Barlow Condensed',system-ui,sans-serif; --font-body:'Barlow',system-ui,sans-serif;
+  --font-mono:'Share Tech Mono',ui-monospace,monospace; --font-display:'Anton','Barlow Condensed',sans-serif;
+  --r-1:.1875rem; --r-2:.25rem; --r-3:.375rem;
+  --sp-1:.25rem; --sp-2:.5rem; --sp-3:.75rem; --sp-4:1rem; --sp-5:1.5rem; --sp-6:2rem;
+  --t-fast:120ms; --t-med:220ms; --t-slow:420ms; --ease:cubic-bezier(.2,.7,.2,1); --ease-out:cubic-bezier(.16,1,.3,1);
+  --topbar-h:5rem; --footer-h:3.75rem;
+
+  /* ---- additions (F2) ------------------------------------------------- */
+  --c-lime-rgb:155,224,74;          /* for rgba() compositions */
+  --c-gold-rgb:245,197,24;
+  --c-cyan-rgb:62,201,240;
+  --c-amber-rgb:245,166,35;
+  --c-red-rgb:229,72,77;
+  --c-purple-rgb:168,85,247;
+  --c-panel-3:rgba(10,14,10,.62);   /* rows / nested boxes inside a panel */
+  --c-panel-hi:rgba(22,30,20,.72);  /* hovered rows */
+  --c-active-grad:linear-gradient(100deg, rgba(74,122,38,.55) 0%, rgba(52,88,26,.42) 45%, rgba(30,52,14,.35) 100%);
+  --c-primary-grad:linear-gradient(180deg, #52862a 0%, #3f6b1f 48%, #2c4d15 100%);
+  --c-primary-grad-hover:linear-gradient(180deg, #62a032 0%, #4a7c24 48%, #345b18 100%);
+  --c-track:rgba(255,255,255,.12);
+  --line-hi:linear-gradient(90deg, rgba(155,224,74,0) 0%, rgba(155,224,74,.42) 50%, rgba(155,224,74,0) 100%);
+  --glow-lime-strong:0 0 0 1px rgba(155,224,74,.75), 0 0 26px rgba(155,224,74,.45), inset 0 0 28px rgba(155,224,74,.12);
+  --glow-cyan:0 0 0 1px rgba(62,201,240,.5), 0 0 14px rgba(62,201,240,.35);
+  --glow-red:0 0 0 1px rgba(229,72,77,.5), 0 0 14px rgba(229,72,77,.35);
+  --shadow-inset:inset 0 1px 0 rgba(255,255,255,.06), inset 0 -1px 0 rgba(0,0,0,.35);
+  --blur-panel:10px;
+  --col-l:24%; --col-r:27%;          /* .layout-3 side columns (pages may override) */
+  --fs-xs:.75rem; --fs-sm:.85rem; --fs-md:1rem; --fs-lg:1.2rem; --fs-xl:1.5rem;
+  --z-bg:0; --z-hud:1; --z-float:50; --z-transition:100; --z-tip:120;
+}

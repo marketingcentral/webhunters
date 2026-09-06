@@ -1,0 +1,39 @@
+{
+  "styleSuffix": "Dark desaturated military survival extraction-shooter aesthetic, deep temperate pine forest, muted olive greens and cold blacks, overcast volumetric haze and mist, cinematic AAA video game key art, photorealistic, extremely detailed, no text, no watermark, no UI, no logo, no letters.",
+  "iconSuffix": "Single object perfectly centered on a pure solid black background (#000000), dramatic cool top-left rim lighting with a faint lime-green edge glow, dark military survival game inventory icon, photorealistic product render, sharp focus, entire object visible with margin, no text, no watermark, no floor shadow, no background scenery.",
+  "defaults": { "model": "gemini-3-pro-image", "aspectRatio": "16:9" },
+  "jobs": [
+    { "file": "bg/home-hero.jpg", "prompt": "Rear three-quarter view of a lone operator in dark olive camouflage with a large tactical backpack and a scoped rifle held low, standing at the right of frame on a mossy ridge, looking down into a vast green pine forest valley with a shallow rocky stream, a derelict industrial radio outpost with steel lattice towers and scaffolding glowing faintly in the middle distance, a military helicopter small in the stormy sky, snow-capped mountains behind, dramatic overcast dusk, god rays through the fog" },
+    { "file": "bg/jogar-banner.jpg", "prompt": "Wide establishing shot of an abandoned forest military camp at sunset, three tall wooden watchtowers among dense pine trees, wooden huts and canvas tents along a muddy road, a helicopter flying over, warm orange sunlight breaking through heavy clouds, mist in the valley", "aspectRatio": "16:9" },
+    { "file": "bg/lobby.jpg", "prompt": "Abandoned forest outpost seen from above a muddy road, a tall wooden watchtower on a hill, dense pine forest, wooden cabins, military supply crates and a parked olive truck at the bottom right, dramatic overcast sky with sun breaking through, mist" },
+    { "file": "bg/inventario.jpg", "prompt": "Vast misty pine forest valley with a distant wooden watchtower on a hill, a winding mossy trail, soft golden light through the mist, snow capped mountains far away, calm and cinematic" },
+    { "file": "bg/saude.jpg", "prompt": "Dark dense pine forest interior at dusk, thick fog between tall trunks, cold blue-green tones, very low key lighting, deep shadows" },
+    { "file": "bg/conquistas.jpg", "prompt": "Pine forest ridge at dawn seen from a hilltop, layered misty valleys, cold soft light, panoramic" },
+
+    { "file": "ui/season-pass.jpg", "prompt": "Portrait of an elite soldier wearing a black gas mask and a hooded olive camouflage jacket with a chest rig, night forest background with a distant lime-green glow, dramatic cool side rim light, waist-up, facing slightly left", "aspectRatio": "3:4" },
+    { "file": "ui/skill-preview.jpg", "prompt": "First-person view down a red dot sight of a black assault rifle, aiming across a wall of sandbags at a distant pine forest treeline with a wooden target, shallow depth of field, overcast daylight" },
+    { "file": "ui/difficulty-preview.jpg", "prompt": "Two tall wooden watchtowers over an abandoned forest outpost of scattered huts and supply crates, wide establishing shot, dramatic overcast sunset sky, mist" },
+    { "file": "ui/mission-sinal-perdido.jpg", "prompt": "A tall wooden watchtower on a forested hill with a small radio antenna, wooden cabins below, pine forest, misty morning light", "aspectRatio": "16:9" },
+
+    { "file": "maps/vale-do-eco.jpg",          "prompt": "A green pine forest valley with a rocky river and a wooden watchtower, snowy mountains behind, misty", "aspectRatio": "4:3" },
+    { "file": "maps/base-artica.jpg",          "prompt": "An abandoned arctic research base with snow-covered prefab buildings and antennas, blizzard, grey sky", "aspectRatio": "4:3" },
+    { "file": "maps/porto-industrial.jpg",     "prompt": "A derelict industrial harbour with rusted cranes, a beached cargo ship and stacked containers, fog over dark water", "aspectRatio": "4:3" },
+    { "file": "maps/cidade-em-ruinas.jpg",     "prompt": "Ruined city street with bombed-out concrete apartment blocks, burnt vehicles, overcast, dust", "aspectRatio": "4:3" },
+    { "file": "maps/fabrica-abandonada.jpg",   "prompt": "An abandoned factory complex with tall rusted chimneys and broken pipelines under a stormy sky", "aspectRatio": "4:3" },
+    { "file": "maps/deserto-seco.jpg",         "prompt": "A dry desert canyon village with sandstone ruins and a crashed truck, dusty warm light", "aspectRatio": "4:3" },
+    { "file": "maps/favela.jpg",               "prompt": "A dense hillside favela of stacked brick houses and tangled power lines, muted colours, overcast", "aspectRatio": "4:3" },
+    { "file": "maps/complexo-militar.jpg",     "prompt": "A fortified military complex with concrete bunkers, radar dishes and watchtowers behind barbed wire, overcast", "aspectRatio": "4:3" },
+
+    { "file": "items/xray.png",       "prompt": "A medical chest x-ray film sheet showing a glowing pale blue ribcage, front view", "icon": true },
+    { "file": "items/blood-test.png", "prompt": "Three glass laboratory test tubes filled with dark red blood standing in a small metal rack, front view", "icon": true },
+    { "file": "items/clipboard.png",  "prompt": "A wooden clipboard holding a printed medical report form with a pen, front view, slightly tilted", "icon": true },
+    { "file": "items/supply-crate.png", "prompt": "A closed olive drab military supply crate with metal corner reinforcements and a lime-green stencil stripe, three-quarter view", "icon": true },
+    { "file": "items/keycard.png",    "prompt": "A scratched dark grey security keycard with a lime-green stripe and chip, front view", "icon": true },
+    { "file": "items/weapon-case.png", "prompt": "A closed black hard-shell rifle case with silver latches, three-quarter view", "icon": true },
+    { "file": "items/skin-camo.png",  "prompt": "A folded roll of olive woodland camouflage fabric wrap, three-quarter view", "icon": true },
+    { "file": "items/xp-token.png",   "prompt": "A hexagonal dark metal coin with an embossed glowing lime-green star emblem, front view", "icon": true },
+
+    { "file": "keyed/body-wireframe.png", "prompt": "Full anatomical human male body standing in T-pose seen from the front, rendered as a glowing pale green translucent holographic wireframe with visible muscle contours, dark green inner glow, on a pure solid black background, symmetrical, full body head to feet visible with margin", "icon": true, "aspectRatio": "9:16" },
+    { "file": "logo/emblem.png", "prompt": "A military unit emblem: a stylised human skull in front of two swept angular eagle wings above a five-point star, flat off-white matte vector-style insignia with subtle grunge distressing, centered on a pure solid black background", "icon": true }
+  ]
+}

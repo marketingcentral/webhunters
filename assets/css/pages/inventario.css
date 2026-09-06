@@ -1,0 +1,529 @@
+/* ==========================================================================
+   INVENTÁRIO estilo Tarkov — grade com drag-drop, rotação e attachments.
+   Tudo escopado sob body.page-inventario. As zonas são shells; o JS injeta os itens.
+   ========================================================================== */
+body.page-inventario .hud-main{overflow:hidden;padding:1.5rem 1.4rem 1rem}
+
+.inv2{
+  --cell:3.3rem;              /* lado de uma célula da grade */
+  --gap:.28rem;
+  --rar-comum:#5d675b; --rar-incomum:#4c8dff; --rar-raro:#a855f7; --rar-epico:#f5a623; --rar-lendario:#f5c518;
+  position:relative;
+  flex:1 1 auto;
+  display:grid;
+  grid-template-columns:13rem 25.5rem max-content minmax(0,1fr);
+  gap:1.15rem;
+  min-height:0;
+}
+.inv2-col{display:flex;flex-direction:column;min-height:0;min-width:0}
+
+
+.gslot{
+  position:relative;
+  min-height:6.1rem;
+  border:1px solid var(--c-line);
+  border-radius:var(--r-2);
+  background:linear-gradient(160deg,rgba(20,27,18,.6),rgba(8,12,8,.72));
+  box-shadow:var(--shadow-inset);
+  transition:border-color var(--t-med) var(--ease),box-shadow var(--t-med) var(--ease),background var(--t-med) var(--ease);
+}
+.gslot__label{position:absolute;top:.34rem;left:.5rem;z-index:2;font-family:var(--font-cond);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--c-muted);pointer-events:none}
+.gslot__ph{position:absolute;inset:0;margin:auto;width:2.4rem;height:2.4rem;display:grid;place-items:center;font-size:2.2rem;color:rgba(150,170,120,.16);pointer-events:none}
+.gslot.is-filled .gslot__ph{display:none}
+.gslot.is-drop-ok{border-color:var(--c-lime);box-shadow:0 0 0 1px var(--c-lime),0 0 16px rgba(155,224,74,.4)}
+.gslot.is-drop-no{border-color:var(--c-red);box-shadow:0 0 0 1px var(--c-red),0 0 14px rgba(229,72,77,.35)}
+
+/* ---- painéis de container / stash --------------------------------------- */
+.inv2-panel{border:1px solid var(--c-line);border-radius:var(--r-2);background:rgba(8,12,8,.55);backdrop-filter:blur(2px);margin-bottom:.9rem;overflow:hidden}
+.inv2-panel__head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.55rem .8rem;border-bottom:1px solid var(--c-line-2);background:linear-gradient(180deg,rgba(155,224,74,.05),rgba(0,0,0,0))}
+.inv2-panel__head--stash{margin-bottom:.75rem;border:1px solid var(--c-line);border-radius:var(--r-2)}
+.inv2-panel__title{font-family:var(--font-cond);font-size:1.02rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--c-text)}
+.inv2-panel__meta{font-family:var(--font-mono);font-size:.9rem;color:var(--c-lime)}
+.inv2-empty{margin-top:1rem;padding:1.4rem;border:1px dashed var(--c-line-2);border-radius:var(--r-2);color:var(--c-muted);font-size:.95rem;text-align:center}
+
+.inv2-wallet{display:flex;gap:1rem;align-items:center}
+.w-cur{display:inline-flex;align-items:center;gap:.34rem;font-family:var(--font-mono);font-size:1rem}
+.w-cur .ic{width:1.05rem;height:1.05rem}
+.w-cur--credits{color:var(--c-lime)} .w-cur--cash{color:var(--c-cyan)} .w-cur--points{color:var(--c-amber)}
+
+/* ---- a grade ------------------------------------------------------------- */
+/* hugga a grade: esticando, sobrava um retângulo de fundo vazio embaixo dela */
+.stash{flex:0 0 auto;min-height:0}
+.grid{
+  position:relative;
+  width:calc(var(--cols) * var(--cell) + (var(--cols) - 1) * var(--gap));
+  height:calc(var(--rows) * var(--cell) + (var(--rows) - 1) * var(--gap));
+  display:grid;
+  grid-template-columns:repeat(var(--cols),var(--cell));
+  grid-template-rows:repeat(var(--rows),var(--cell));
+  gap:var(--gap);
+  padding:.1rem;
+}
+.grid--stash{margin:0 auto}
+.grid__cell{border:1px solid rgba(150,170,110,.12);border-radius:2px;background:rgba(10,14,9,.4)}
+.grid.is-drop-ok .grid__cell{background:rgba(12,18,10,.5)}
+
+/* item posicionado por variáveis --x/--y/--w/--h (em células) */
+.item{
+  position:absolute;
+  left:calc(var(--x) * (var(--cell) + var(--gap)) + .1rem);
+  top:calc(var(--y) * (var(--cell) + var(--gap)) + .1rem);
+  width:calc(var(--w) * var(--cell) + (var(--w) - 1) * var(--gap));
+  height:calc(var(--h) * var(--cell) + (var(--h) - 1) * var(--gap));
+  border:1px solid var(--rar,#5d675b);
+  border-radius:3px;
+  background:
+    radial-gradient(120% 120% at 50% 20%, rgba(255,255,255,.04), rgba(0,0,0,0) 60%),
+    linear-gradient(160deg,rgba(24,30,20,.94),rgba(10,14,9,.96));
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.5);
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+  overflow:hidden;
+  transition:box-shadow var(--t-fast) var(--ease),transform var(--t-fast) var(--ease);
+}
+.item::before{content:"";position:absolute;inset:0;border-top:2px solid var(--rar,#5d675b);opacity:.55;pointer-events:none}
+.item:hover{box-shadow:inset 0 0 0 1px var(--rar,#5d675b),0 0 14px rgba(155,224,74,.22),0 3px 8px rgba(0,0,0,.55);z-index:3}
+.item.is-dragging{opacity:.28}
+.item__img{position:absolute;inset:.9rem .28rem .28rem;width:auto;height:auto;max-width:calc(100% - .56rem);max-height:calc(100% - 1.18rem);margin:auto;object-fit:contain;filter:drop-shadow(0 3px 5px rgba(0,0,0,.6));pointer-events:none}
+.item__name{position:absolute;top:.16rem;left:.3rem;right:.3rem;font-family:var(--font-cond);font-size:.66rem;letter-spacing:.02em;line-height:1;color:var(--c-text-2);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.item__count{position:absolute;bottom:.14rem;right:.3rem;font-family:var(--font-mono);font-size:.82rem;color:#fff;text-shadow:0 1px 3px #000;pointer-events:none}
+.item__dur{position:absolute;bottom:0;left:0;right:0;height:2px;background:rgba(0,0,0,.5);pointer-events:none}
+.item__dur i{display:block;height:100%;background:var(--c-lime);width:var(--d,100%)}
+.item__dur.is-low i{background:var(--c-amber)} .item__dur.is-crit i{background:var(--c-red)}
+.item__rot{position:absolute;top:.14rem;right:.24rem;font-size:.8rem;color:var(--c-lime);opacity:0;transition:opacity var(--t-fast)}
+.item.is-rotatable:hover .item__rot{opacity:.7}
+.item--attachable::after{content:"";position:absolute;bottom:.14rem;left:.28rem;width:.5rem;height:.5rem;border:1px solid var(--c-lime);border-radius:50%;opacity:.6}
+
+/* fantasma seguindo o cursor durante o arraste */
+.drag-ghost{position:fixed;z-index:9999;pointer-events:none;border:1px solid var(--c-lime);border-radius:3px;
+  background:linear-gradient(160deg,rgba(24,30,20,.96),rgba(10,14,9,.98));box-shadow:0 6px 20px rgba(0,0,0,.6);opacity:.92}
+.drag-ghost img{width:100%;height:100%;object-fit:contain;padding:.5rem}
+.drag-ghost.is-no{border-color:var(--c-red);box-shadow:0 0 0 1px var(--c-red),0 6px 20px rgba(0,0,0,.6)}
+
+.inv2-foot{display:flex;align-items:center;gap:.9rem;margin-top:.7rem;padding-top:.6rem;border-top:1px solid var(--c-line-2)}
+.inv2-foot__lbl{font-family:var(--font-cond);font-size:.85rem;letter-spacing:.05em;color:var(--c-muted);text-transform:uppercase}
+.inv2-foot__val{font-family:var(--font-mono);font-size:1.15rem;color:var(--c-lime)}
+.inv2-hint{margin-left:auto;font-size:.82rem;color:var(--c-muted)}
+.inv2-hint kbd{font-family:var(--font-mono);background:rgba(150,170,110,.14);border:1px solid var(--c-line);border-radius:3px;padding:0 .3rem;color:var(--c-text-2)}
+
+/* ---- painel de acessórios da arma --------------------------------------- */
+.wpanel{position:absolute;inset:0;z-index:20;display:grid;place-items:center;background:rgba(2,4,2,.66);backdrop-filter:blur(3px)}
+.wpanel__box{width:40rem;max-width:92%;border:1px solid var(--c-line-hot);border-radius:var(--r-3);background:linear-gradient(180deg,rgba(14,20,12,.98),rgba(8,12,8,.99));box-shadow:var(--glow-lime),0 20px 50px rgba(0,0,0,.6)}
+.wpanel__head{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;border-bottom:1px solid var(--c-line-2)}
+.wpanel__title{font-family:var(--font-cond);font-size:1.25rem;font-weight:500;letter-spacing:.04em;color:var(--c-text)}
+.wpanel__close{font-size:1.4rem;color:var(--c-muted);background:none;border:0;cursor:pointer;transition:color var(--t-fast)}
+.wpanel__close:hover{color:var(--c-red)}
+.wpanel__body{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;padding:1.1rem}
+.att-slot{position:relative;min-height:5rem;border:1px solid var(--c-line);border-radius:var(--r-2);background:rgba(10,14,9,.6)}
+.att-slot__label{position:absolute;top:.36rem;left:.5rem;font-family:var(--font-cond);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--c-muted)}
+.att-slot.is-filled{border-color:var(--c-line-hot)}
+.att-slot.is-drop-ok{border-color:var(--c-lime);box-shadow:0 0 0 1px var(--c-lime),0 0 14px rgba(155,224,74,.4)}
+.att-slot.is-drop-no{border-color:var(--c-red)}
+.att-slot .item{position:absolute;inset:.5rem .5rem .5rem;left:.5rem;top:1.3rem;width:auto;height:auto}
+
+/* toast de erro (ex.: "não cabe aqui") */
+.inv2-toast{position:absolute;left:50%;bottom:1.2rem;transform:translateX(-50%);z-index:30;
+  padding:.6rem 1.1rem;border:1px solid var(--c-red);border-radius:var(--r-2);background:rgba(30,10,10,.94);
+  color:#ffd9d9;font-size:.95rem;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:toast-in var(--t-med) var(--ease)}
+@keyframes toast-in{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+
+@media (prefers-reduced-motion:reduce){.item,.drag-ghost{transition:none}}
+
+/* ---- ajustes pós-crítica Tarkov: contraste, grade contínua, raridade ------ */
+/* fundo decorativo bem mais escuro para os itens gritarem (stash Tarkov é escuro) */
+body.page-inventario .bg__img{filter:brightness(.34) saturate(.72) contrast(1.05)}
+body.page-inventario .bg__overlay{background:linear-gradient(180deg,rgba(4,6,4,.86),rgba(4,6,4,.82))}
+body.page-inventario .bg__fx{opacity:.12}
+
+/* painéis com base escura sólida (sem vazar cenário) + leve bevel */
+.inv2-panel,.inv2-panel__head--stash{background:linear-gradient(180deg,rgba(11,15,10,.94),rgba(6,9,6,.96));box-shadow:inset 0 1px 0 rgba(155,224,74,.06),inset 0 0 0 1px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.5)}
+.stash{background:linear-gradient(180deg,rgba(9,13,9,.92),rgba(5,8,5,.95));border:1px solid var(--c-line);border-radius:var(--r-2);padding:.5rem}
+
+/* grade contínua: células mais visíveis, itens translúcidos deixam a malha aparecer */
+.grid__cell{border-color:rgba(150,170,110,.16);background:rgba(6,9,6,.55);box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)}
+.item{background:
+    radial-gradient(120% 120% at 50% 15%, rgba(255,255,255,.05), rgba(0,0,0,0) 55%),
+    linear-gradient(160deg,rgba(20,26,17,.82),rgba(9,13,9,.86))}
+
+/* slot de equipamento preenchido: fundo aceso + borda de raridade nítida */
+.gslot.is-filled{background: linear-gradient(160deg,rgba(28,36,22,.92),rgba(10,14,9,.95));border-color: rgba(0, 0, 0, 0.5);box-shadow: 0 0 0 1px rgba(108, 113, 117, 0.52),inset 0 0 22px rgba(155,224,74,.08)}
+.gslot.is-filled .gslot__label{color:var(--c-lime)}
+
+/* contador de pilha e munição mais destacados */
+.item__count{background:rgba(4,6,4,.75);border-radius:2px;padding:0 .18rem}
+
+
+/* ---- bocais de acessório na coluna central (sempre visíveis ao clicar na arma) ---- */
+.wmods__grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;padding:.75rem}
+.wmods__hint{padding:0 .75rem .75rem;font-size:.82rem;color:var(--c-muted)}
+.att-slot{position:relative;min-height:5.2rem;border:1px dashed rgba(150,190,100,.28);border-radius:var(--r-2);background:rgba(8,12,8,.6)}
+.att-slot.is-filled{border-style:solid;border-color:rgba(155,224,74,.5);background:linear-gradient(160deg,rgba(26,34,20,.9),rgba(9,13,9,.94))}
+
+
+/* ==========================================================================
+   ARMA EQUIPADA — painel completo (referência 10): nome + calibre à esquerda,
+   badge à direita, arte grande, mini-slots de acessório embaixo e munição.
+   Um tile quadradinho não comunica nada; a arma ocupa o slot inteiro.
+   ========================================================================== */
+.gslot--weapon{min-height:7.15rem}
+.wslot{position:absolute;inset:0;display:block;cursor:grab;touch-action:none;user-select:none}
+.wslot__id{position:absolute;top:1.55rem;left:.7rem;z-index:3;display:flex;flex-direction:column;gap:.16rem}
+.wslot__name{font-family:var(--font-cond);font-size:1.02rem;font-weight:500;letter-spacing:.02em;line-height:1;color:#eef2ec;text-shadow:0 1px 4px rgba(0,0,0,.85)}
+.wslot__cal{font-family:var(--font-cond);font-size:.74rem;letter-spacing:.02em;line-height:1;color:var(--c-muted);text-shadow:0 1px 3px rgba(0,0,0,.85)}
+.wslot__key{position:absolute;top:1.55rem;right:.75rem;z-index:3;font-family:var(--font-mono);font-size:1rem;line-height:1;color:#eef2ec;text-shadow:0 1px 4px rgba(0,0,0,.85)}
+.wslot__img{
+  position:absolute;right:-.15rem;top:52%;
+  width:88%;height:auto;max-height:74%;
+  object-fit:contain;transform:translateY(-52%);
+  filter:drop-shadow(0 7px 10px rgba(0,0,0,.7));
+  transition:transform var(--t-med) var(--ease-out),filter var(--t-med) var(--ease);
+  z-index:1;pointer-events:none;
+}
+.wslot:hover .wslot__img{transform:translateY(-52%) scale(1.03);filter:drop-shadow(0 9px 12px rgba(0,0,0,.75)) brightness(1.05)}
+.wslot__atts{position:absolute;left:.5rem;bottom:.375rem;display:flex;gap:.375rem;z-index:3}
+.wslot .att{
+  position:relative;display:grid;place-items:center;
+  width:2.3125rem;height:2.6875rem;
+  border:1px solid rgba(170,186,116,.32);border-radius:2px;
+  background:linear-gradient(160deg,rgba(20,26,18,.72),rgba(6,10,6,.8));
+  transition:border-color var(--t-med) var(--ease),box-shadow var(--t-med) var(--ease);
+}
+.wslot .att--empty{border-style:dashed;border-color:rgba(170,186,116,.2)}
+.wslot .att__img{width:74%;height:70%;object-fit:contain;filter:drop-shadow(0 3px 4px rgba(0,0,0,.7));transition:transform var(--t-med) var(--ease-out)}
+.wslot .att__ph{font-size:1.05rem;color:rgba(150,170,120,.3)}
+.wslot .att:hover{border-color:rgba(155,224,74,.7);box-shadow:var(--glow-soft)}
+.wslot .att:hover .att__img{transform:scale(1.08)}
+.wslot .att.is-drop-ok{border-color:var(--c-lime);box-shadow:0 0 0 1px var(--c-lime),0 0 12px rgba(155,224,74,.4)}
+.wslot .att.is-drop-no{border-color:var(--c-red)}
+.wslot__ammo{
+  position:absolute;right:.7rem;bottom:.3rem;z-index:3;
+  font-family:var(--font-mono);font-size:1.38rem;line-height:1;color:#fff;
+  text-shadow:0 2px 6px rgba(0,0,0,.9);
+}
+.wslot__ammo small{font-size:.58em;color:var(--c-text-2)}
+
+/* ---- menu de contexto do HUD (substitui o menu do navegador) ------------- */
+.ctxmenu{
+  position:fixed;z-index:10000;min-width:11rem;
+  padding:.3rem;
+  border:1px solid var(--c-line-hot);border-radius:var(--r-2);
+  background:linear-gradient(180deg,rgba(14,20,12,.98),rgba(8,12,8,.99));
+  box-shadow:var(--glow-lime),0 12px 32px rgba(0,0,0,.6);
+  animation:ctx-in 110ms var(--ease-out);
+}
+@keyframes ctx-in{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
+.ctxmenu__head{
+  padding:.4rem .6rem .45rem;margin-bottom:.25rem;
+  border-bottom:1px solid var(--c-line-2);
+  font-family:var(--font-cond);font-size:.82rem;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--c-lime);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.ctxmenu__item{
+  display:flex;align-items:center;gap:.55rem;width:100%;
+  padding:.45rem .6rem;border:0;border-radius:var(--r-1);
+  background:none;color:var(--c-text);
+  font-family:var(--font-cond);font-size:.95rem;letter-spacing:.04em;
+  text-transform:uppercase;text-align:left;cursor:pointer;
+  transition:background var(--t-fast) var(--ease),color var(--t-fast) var(--ease);
+}
+.ctxmenu__item .ms{font-size:1.1rem;color:var(--c-muted);transition:color var(--t-fast) var(--ease)}
+.ctxmenu__item:hover{background:rgba(155,224,74,.12);color:#fff}
+.ctxmenu__item:hover .ms{color:var(--c-lime)}
+.ctxmenu__item[disabled]{opacity:.45;cursor:default}
+.ctxmenu__item[disabled]:hover{background:none;color:var(--c-text)}
+
+.wslot__id{top:1.4rem}
+.wslot__key{top:1.4rem}
+
+/* ==========================================================================
+   MODAL DE ESCOLHA — varre todo o inventário (stash, colete, mochila, equipados)
+   e lista o que serve para o slot escolhido, ou os acessórios de um bocal.
+   Substitui os mini-grids que ficavam na arma.
+   ========================================================================== */
+.pick{position:fixed;inset:0;z-index:9500;display:grid;place-items:center;
+  background:rgba(2,4,2,.72);backdrop-filter:blur(4px);animation:pick-fade 140ms var(--ease)}
+@keyframes pick-fade{from{opacity:0}to{opacity:1}}
+.pick__box{
+  width:56rem;max-width:94vw;max-height:82vh;display:flex;flex-direction:column;
+  border:1px solid var(--c-line-hot);border-radius:var(--r-3);
+  background:linear-gradient(180deg,rgba(14,20,12,.99),rgba(7,11,7,1));
+  box-shadow:var(--glow-lime),0 24px 60px rgba(0,0,0,.7);
+  animation:pick-in 160ms var(--ease-out);
+}
+@keyframes pick-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+.pick__head{display:flex;align-items:baseline;gap:.85rem;padding:.95rem 1.15rem;border-bottom:1px solid var(--c-line-2)}
+.pick__title{font-family:var(--font-cond);font-size:1.3rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--c-text)}
+.pick__sub{font-family:var(--font-mono);font-size:.9rem;color:var(--c-lime)}
+.pick__close{margin-left:auto;font-size:1.45rem;color:var(--c-muted);background:none;border:0;cursor:pointer;transition:color var(--t-fast)}
+.pick__close:hover{color:var(--c-red)}
+
+/* abas dos bocais (modal de acessório) */
+.pick__slots{display:flex;flex-wrap:wrap;gap:.45rem;padding:.75rem 1.15rem 0}
+.pick__slot{
+  display:inline-flex;align-items:center;gap:.45rem;
+  padding:.4rem .8rem;border:1px solid var(--c-line);border-radius:var(--r-2);
+  background:rgba(10,14,9,.7);color:var(--c-text-2);
+  font-family:var(--font-cond);font-size:.9rem;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;
+  transition:border-color var(--t-fast) var(--ease),color var(--t-fast) var(--ease),background var(--t-fast) var(--ease);
+}
+.pick__slot:hover{border-color:rgba(155,224,74,.55);color:#fff}
+.pick__slot.is-active{border-color:var(--c-lime);color:#fff;background:rgba(155,224,74,.12);box-shadow:var(--glow-soft)}
+.pick__slot small{font-family:var(--font-body);font-size:.78rem;color:var(--c-muted)}
+.pick__slot.is-filled small{color:var(--c-lime)}
+
+.pick__grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr));gap:.7rem;
+  padding:1rem 1.15rem;overflow-y:auto;min-height:0;
+}
+.pick-card{
+  position:relative;display:flex;flex-direction:column;gap:.35rem;
+  padding:.6rem;border:1px solid var(--rar,var(--c-line));border-radius:var(--r-2);
+  background:linear-gradient(160deg,rgba(22,28,18,.9),rgba(9,13,9,.95));
+  cursor:pointer;text-align:left;
+  transition:border-color var(--t-fast) var(--ease),box-shadow var(--t-fast) var(--ease),transform var(--t-fast) var(--ease);
+}
+.pick-card:hover{border-color:var(--c-lime);box-shadow:var(--glow-soft);transform:translateY(-2px)}
+.pick-card__img{width:100%;height:4.2rem;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
+.pick-card__name{font-family:var(--font-cond);font-size:.92rem;letter-spacing:.02em;color:var(--c-text);line-height:1.1}
+.pick-card__meta{display:flex;justify-content:space-between;gap:.4rem;font-family:var(--font-mono);font-size:.78rem;color:var(--c-muted)}
+.pick-card__where{font-family:var(--font-cond);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--c-muted)}
+.pick-card.is-current{border-color:var(--c-lime);box-shadow:0 0 0 1px rgba(155,224,74,.4)}
+.pick-card.is-current::after{content:"EQUIPADO";position:absolute;top:.4rem;right:.4rem;
+  font-family:var(--font-cond);font-size:.62rem;letter-spacing:.06em;color:#0b1206;
+  background:var(--c-lime);border-radius:2px;padding:0 .28rem}
+.pick__empty{padding:2.2rem 1.15rem;text-align:center;color:var(--c-muted)}
+.pick__foot{display:flex;align-items:center;gap:1rem;padding:.8rem 1.15rem;border-top:1px solid var(--c-line-2)}
+.pick__hint{margin-left:auto;font-size:.82rem;color:var(--c-muted)}
+
+/* contador de acessórios instalados no painel da arma (substitui os mini-grids) */
+.wslot__mods{
+  position:absolute;left:.7rem;bottom:.4rem;z-index:3;
+  display:inline-flex;align-items:center;gap:.3rem;
+  padding:.12rem .42rem;border:1px solid rgba(155,224,74,.35);border-radius:2px;
+  background:rgba(8,12,8,.7);color:var(--c-lime);
+  font-family:var(--font-mono);font-size:.8rem;line-height:1.25;
+}
+.wslot__mods::before{content:"MODS";font-family:var(--font-cond);font-size:.62rem;letter-spacing:.06em;color:var(--c-muted)}
+
+/* ==========================================================================
+   ARTE DO ITEM — ocupa a célula inteira e gira junto com a peça
+   ========================================================================== */
+/* A imagem é dimensionada pela caixa NÃO girada (--iw x --ih em células) e então
+   rotacionada; assim capacete, máscara, colete etc. preenchem o slot e um item
+   girado aparece deitado de verdade, não só a moldura. */
+.item__img{
+  position:absolute;
+  /* inset primeiro: é atalho de top/right/bottom/left e zeraria o left/top abaixo */
+  inset:auto;
+  left:50%;top:calc(50% + .38rem);
+  width:calc(var(--iw,1) * var(--cell) + (var(--iw,1) - 1) * var(--gap) - .3rem);
+  height:calc(var(--ih,1) * var(--cell) + (var(--ih,1) - 1) * var(--gap) - .92rem);
+  max-width:none;max-height:none;
+  margin:0;
+  transform:translate(-50%,-50%) rotate(var(--rot,0deg));
+  transform-origin:center;
+  object-fit:contain;
+}
+/* item girado: o rótulo continua legível na horizontal (só a arte gira) */
+.item.is-rotated .item__name,
+.item.is-rotated .item__count{transform:none}
+
+/* peças de proteção/vestuário aproveitam quase toda a célula */
+.item[data-cat="helmet"] .item__img,
+.item[data-cat="mask"] .item__img,
+.item[data-cat="glasses"] .item__img,
+.item[data-cat="armor"] .item__img,
+.item[data-cat="clothing"] .item__img,
+.item[data-cat="rig"] .item__img,
+.item[data-cat="backpack"] .item__img,
+.item[data-cat="armband"] .item__img{
+  width:calc(var(--iw,1) * var(--cell) + (var(--iw,1) - 1) * var(--gap) - .12rem);
+  height:calc(var(--ih,1) * var(--cell) + (var(--ih,1) - 1) * var(--gap) - .78rem);
+}
+
+
+/* glifo do slot vazio: agora é um SVG do sprite, não uma ligadura */
+.gslot__ph{display:grid;place-items:center;color:rgba(150,170,120,.18)}
+.gslot__ph .ic{width:2.6rem;height:2.6rem;fill:currentColor}
+.gslot--wide .gslot__ph .ic,
+.gslot--weapon .gslot__ph .ic{width:3rem;height:3rem}
+
+/* ==========================================================================
+   LAYOUT GEAR (Tarkov): personagem | contêineres | stash
+   ========================================================================== */
+/* rótulo em "aba de pasta" que abre cada bloco */
+.gear__tab,.bag__tab{
+  position:relative;display:flex;align-items:center;gap:.6rem;
+  align-self:flex-start;max-width:100%;
+  margin-bottom:-1px;padding:.3rem .95rem .28rem;
+  border:1px solid var(--c-line);border-bottom-color:transparent;
+  border-radius:var(--r-1) var(--r-1) 0 0;
+  background:linear-gradient(180deg,rgba(24,32,20,.95),rgba(11,15,10,.95));
+  font-family:var(--font-cond);font-size:.92rem;font-weight:500;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--c-text-2);white-space:nowrap;
+}
+.gear__tab--stash{align-self:stretch;justify-content:space-between}
+.bag__meta{font-family:var(--font-mono);font-size:.76rem;color:var(--c-lime)}
+
+/* ---- coluna 1: paperdoll sobre a silhueta ------------------------------- */
+.gear{
+  position:relative;flex:0 0 auto;
+  padding:.9rem .85rem;
+  border:1px solid var(--c-line);border-radius:0 var(--r-2) var(--r-2) var(--r-2);
+  background:linear-gradient(180deg,rgba(11,15,10,.94),rgba(6,9,6,.96));
+  box-shadow:inset 0 1px 0 rgba(155,224,74,.06),0 8px 22px rgba(0,0,0,.5);
+}
+
+/* 3 colunas: os dois slots de arma ocupam duas colunas cada, como no GEAR */
+.gear__slots{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:.42rem;
+}
+.gslot--weapon{grid-column:span 2}
+.gslot{
+  position:relative;
+  min-height:5.05rem;
+  border:1px solid var(--c-line);
+  border-radius:var(--r-1);
+  background:linear-gradient(160deg,rgba(20,27,18,.55),rgba(8,12,8,.72));
+  box-shadow:var(--shadow-inset);
+  transition:border-color var(--t-med) var(--ease),box-shadow var(--t-med) var(--ease),background var(--t-med) var(--ease);
+}
+.gslot--panel{min-height:6.4rem}
+.gslot__label{
+  position:absolute;top:.3rem;left:.45rem;right:.45rem;z-index:2;
+  font-family:var(--font-cond);font-size:.66rem;letter-spacing:.07em;line-height:1;
+  text-transform:uppercase;color:var(--c-muted);pointer-events:none;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.gslot__ph{position:absolute;inset:0;display:grid;place-items:center;color:rgba(150,170,120,.18);pointer-events:none}
+.gslot__ph .ic{width:2.3rem;height:2.3rem;fill:currentColor}
+.gslot--weapon .gslot__ph .ic{width:3rem;height:3rem}
+.gslot.is-filled .gslot__ph{display:none}
+.gslot.is-filled{background: linear-gradient(160deg,rgba(28,36,22,.92),rgba(10,14,9,.95));border-color: rgba(0, 0, 0, 0.5);box-shadow: 0 0 0 1px rgba(108, 113, 117, 0.52),inset 0 0 22px rgba(155,224,74,.08);}
+.gslot.is-filled .gslot__label{color:var(--c-lime)}
+.gslot.is-drop-ok{border-color:var(--c-lime);box-shadow:0 0 0 1px var(--c-lime),0 0 16px rgba(155,224,74,.4)}
+.gslot.is-drop-no{border-color:var(--c-red);box-shadow:0 0 0 1px var(--c-red),0 0 14px rgba(229,72,77,.35)}
+
+/* barra de vitais sob o boneco */
+.vitals{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;
+  margin-top:.55rem;padding:.5rem .3rem;
+  border:1px solid var(--c-line);border-radius:var(--r-2);
+  background:linear-gradient(180deg,rgba(11,15,10,.94),rgba(6,9,6,.96));
+}
+.vitals__i{display:flex;align-items:center;justify-content:center;gap:.34rem;color:var(--c-text-2)}
+.vitals__i .ic{width:1.05rem;height:1.05rem;fill:currentColor;flex:0 0 auto}
+.vitals__i--hp{color:#e5484d} .vitals__i--hyd{color:var(--c-cyan)} .vitals__i--nrg{color:var(--c-amber)}
+.vitals__v{font-family:var(--font-mono);font-size:.92rem;line-height:1;color:var(--c-text);white-space:nowrap}
+.vitals__v i{font-style:normal;font-size:.76em;color:var(--c-muted)}
+
+/* ---- coluna 2: contêineres --------------------------------------------- */
+.inv2-col--bags{gap:.9rem;overflow-y:auto;overflow-x:hidden;padding-right:.35rem;scrollbar-width:thin}
+.inv2-col--bags::-webkit-scrollbar{width:6px}
+.inv2-col--bags::-webkit-scrollbar-thumb{background:rgba(155,224,74,.25);border-radius:3px}
+.bag{display:flex;flex-direction:column;flex:0 0 auto}
+.bag__body{
+  display:flex;align-items:flex-start;gap:.5rem;
+  padding:.55rem;
+  border:1px solid var(--c-line);border-radius:0 var(--r-2) var(--r-2) var(--r-2);
+  background:linear-gradient(180deg,rgba(11,15,10,.94),rgba(6,9,6,.96));
+  box-shadow:inset 0 1px 0 rgba(155,224,74,.06),0 8px 22px rgba(0,0,0,.5);
+}
+/* célula do próprio contêiner: quadrada, do tamanho de uma célula da grade */
+.gslot--bag{
+  flex:0 0 auto;width:calc(var(--cell) * 1.6);height:calc(var(--cell) * 1.6);min-height:0;
+  border-style:dashed;
+}
+.gslot--bag .gslot__ph .ic{width:2rem;height:2rem}
+.bag__grid{flex:0 0 auto}
+.bag__empty{flex:1 1 auto;align-self:center;padding:.6rem;color:var(--c-muted);font-size:.85rem;line-height:1.35}
+.bag--pockets .bag__body{justify-content:flex-start}
+
+/* ---- coluna 3: stash com trilha de filtros ------------------------------ */
+.inv2-col--stash{min-width:0}
+.stash{display:flex;align-items:flex-start;gap:.55rem;border-radius:0 var(--r-2) var(--r-2) var(--r-2)}
+.stash__rail{display:flex;flex-direction:column;gap:.28rem;flex:0 0 auto}
+.stash__filter{
+  display:grid;place-items:center;width:2.35rem;height:2.35rem;
+  border:1px solid var(--c-line);border-radius:var(--r-1);
+  background:rgba(8,12,8,.7);color:rgba(180,196,150,.45);cursor:pointer;
+  transition:border-color var(--t-fast) var(--ease),color var(--t-fast) var(--ease),background var(--t-fast) var(--ease);
+}
+.stash__filter .ic{width:1.25rem;height:1.25rem;fill:currentColor}
+.stash__filter:hover{border-color:rgba(155,224,74,.55);color:#cfe3b0}
+.stash__filter.is-on{border-color:var(--c-lime);color:var(--c-lime);background:rgba(155,224,74,.12);box-shadow:var(--glow-soft)}
+.grid--stash{margin:0}
+/* filtro ativo: o que não pertence à categoria some de vista, mas não sai do lugar */
+.item.is-dimmed{opacity:.18;filter:grayscale(1)}
+.item.is-dimmed:hover{opacity:.5}
+
+/* o modal de acessórios e o menu de contexto seguem iguais */
+@media (prefers-reduced-motion:reduce){.item.is-dimmed{transition:none}}
+
+/* ---- item equipado num slot do GEAR ------------------------------------- */
+/* Preenche a célula inteira: sem moldura própria (o slot já é a moldura) e com a
+   arte em contain, que preserva a proporção sem deixar o tile estreito. */
+.item--equipped{
+  position:absolute;inset:0;
+  width:auto;height:auto;
+  border:0;border-radius:inherit;background:none;box-shadow:none;
+}
+.item--equipped::before{display:none}
+.item--equipped:hover{box-shadow:none}
+.item--equipped .item__name{font-size:.62rem;color:var(--c-lime)}
+.item--equipped .item__count{font-size:.72rem}
+.item--equipped .item__img{
+  inset:auto;left:50%;top:calc(50% + .3rem);
+  width:calc(100% - .5rem);height:calc(100% - 1.35rem);
+  transform:translate(-50%,-50%) rotate(var(--rot,0deg));
+}
+
+/* Slot preenchido: quem nomeia a célula é o item, não o slot — senão "COMTAC" e
+   "FONE" se sobrepõem. O painel da arma tem layout próprio e mantém os dois. */
+.gslot.is-filled:not(.gslot--panel) .gslot__label{display:none}
+.gslot--bag.is-filled{border-style:solid}
+
+/* "100/300" não cabia numa célula de 1 coluna e aparecia cortado ("00/300"):
+   fonte menor e a caixa ocupando a largura toda, alinhada à direita. */
+.item__count{
+  left:.16rem;right:.16rem;
+  font-size:.72rem;letter-spacing:-.02em;
+  text-align:right;
+  padding:0 .12rem;
+}
+
+/* ---- coluna 0: box do PERSONAGEM ---------------------------------------- */
+/* Só a silhueta por enquanto — é o espaço reservado para o boneco 3D do jogador. */
+.char{
+  position:relative;flex:0 0 auto;          /* acompanha a arte em vez de esticar até o rodapé */
+  display:grid;place-items:center;
+  padding:1rem .7rem;
+  border:1px solid var(--c-line);border-radius:0 var(--r-2) var(--r-2) var(--r-2);
+  background:linear-gradient(180deg,rgba(11,15,10,.94),rgba(6,9,6,.96));
+  box-shadow:inset 0 1px 0 rgba(155,224,74,.06),0 8px 22px rgba(0,0,0,.5);
+  overflow:hidden;
+}
+/* malha de fundo discreta, no espírito do resto da HUD */
+.char::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(155,224,74,.05) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(155,224,74,.05) 1px,transparent 1px);
+  background-size:var(--cell) var(--cell);
+  mask-image:radial-gradient(120% 90% at 50% 45%,#000 35%,transparent 78%);
+}
+/* piso sob os pés: dá chão à silhueta em vez de deixá-la flutuando */
+.char::after{
+  content:"";position:absolute;left:50%;bottom:.7rem;translate:-50% 0;
+  width:62%;height:.45rem;border-radius:50%;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(155,224,74,.2),transparent 70%);
+}
+/* A silhueta vem do mesmo render de corpo usado na tela SAÚDE (proporções reais),
+   chapada numa cor só; aqui só o brilho é regulado. */
+.char__body{
+  position:relative;display:block;width:100%;height:auto;
+  opacity:.28;
+  filter:drop-shadow(0 0 14px rgba(155,224,74,.14));
+}

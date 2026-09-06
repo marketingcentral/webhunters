@@ -1,0 +1,540 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — tela RECUPERAR SENHA (layout auth)
+   Referência: O-QUE-VAMOS-CRIAR/Telas do jogador/00-login-tela-inicial-do-jogador.png (1672x941)
+
+   É o MESMO cartão do login (mesma moldura, mesma coluna esquerda, mesmos campos e
+   mesmo botão verde): as medidas abaixo vêm da mesma leitura da referência usada em
+   pages/login.css — 1rem = 16px em 1672x941.
+     cartão            930 x 631   -> 58.25rem x 39.4rem (min-height)
+     coluna esquerda   406         -> 25.375rem   | divisória em x=754
+     campos e botões   424 de larg -> 26.5rem     | recuo 42 à esquerda, 60 à direita
+     input             53 de alt   -> 3.35rem     | botão verde 63 -> 3.95rem
+   A coluna direita troca "SENHA + OU + Steam" por "COMO FUNCIONA + 3 passos", mantendo
+   o mesmo ritmo vertical (formulário -> divisória com rótulo -> bloco -> linha final).
+   Tudo escopado em .page-recuperar-senha.
+   ========================================================================== */
+
+/* ---- enquadramento -------------------------------------------------------
+   Mesmo centro do cartão do login (y=478,5, 30px abaixo do centro da área útil). */
+.page-recuperar-senha .auth-main { padding-top: 5.25rem; }
+.page-recuperar-senha .auth-main > .panel { max-width: 58.25rem; }
+
+/* ---- fundo ---------------------------------------------------------------
+   bg/login.jpg é noturno e a referência é de crepúsculo: mesma mitigação escopada
+   já aprovada no login, para que as duas telas de autenticação sejam idênticas. */
+.page-recuperar-senha .bg__overlay {
+  background:
+    radial-gradient(120% 90% at 78% 18%, rgba(255, 232, 190, .12), transparent 58%),
+    linear-gradient(0deg, rgba(78, 66, 42, .22), transparent 24%),
+    linear-gradient(90deg, rgba(0, 0, 0, .18), transparent 34%);
+}
+.page-recuperar-senha .bg__img { filter: saturate(.68) contrast(1.06) brightness(.90) sepia(.50); }
+.page-recuperar-senha .bg__vignette {
+  background: radial-gradient(ellipse 92% 84% at 52% 44%,
+    rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, .26) 86%, rgba(0, 0, 0, .52) 100%);
+}
+
+/* ---- cartão --------------------------------------------------------------- */
+.page-recuperar-senha .recover-card {
+  flex-direction: row;
+  background: linear-gradient(100deg,
+    rgba(9, 12, 10, .93) 0%, rgba(9, 12, 10, .93) 42%, rgba(20, 19, 17, .90) 100%);
+  align-items: stretch;
+  min-height: 39.4rem;
+  border-radius: .5rem;
+  overflow: hidden;
+  box-shadow:
+    0 26px 60px rgba(0, 0, 0, .7),
+    inset 0 1px 0 rgba(244, 236, 200, .40),
+    inset -1px 0 0 rgba(186, 198, 128, .32);
+}
+
+/* ==========================================================================
+   COLUNA ESQUERDA — logo + dicas (idêntica ao login)
+   ========================================================================== */
+.page-recuperar-senha .recover-card__aside {
+  position: relative;
+  flex: 0 0 25.375rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  min-width: 0;
+  padding: 5.95rem 2rem 4.9rem;
+  background: linear-gradient(160deg, rgba(155, 224, 74, .035), rgba(0, 0, 0, 0) 55%);
+}
+
+/* divisória vertical: nasce invisível, pico a ~30% da altura, some antes do rodapé */
+.page-recuperar-senha .recover-card__aside::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg,
+    transparent 0 8%,
+    rgba(190, 196, 148, .11) 14%,
+    rgba(190, 196, 148, .33) 29%,
+    rgba(190, 196, 148, .24) 45%,
+    rgba(190, 196, 148, .26) 61%,
+    rgba(190, 196, 148, .15) 77%,
+    rgba(190, 196, 148, .07) 85%,
+    rgba(190, 196, 148, .10) 94%,
+    transparent 97%);
+}
+
+.page-recuperar-senha .logo--auth { width: 100%; }
+.page-recuperar-senha .logo--auth .logo__emblem {
+  width: 12.25rem;
+  margin-bottom: .85rem;
+  background: linear-gradient(180deg, #ffffff 0%, #eaf0e4 78%, #dde5d5 100%);
+  animation: float-y 9s var(--ease) infinite;
+}
+.page-recuperar-senha .logo--auth .logo__word { font-size: 3.95rem; }
+.page-recuperar-senha .logo--auth .logo__sub { margin-top: .55rem; font-size: 1.4rem; }
+.page-recuperar-senha .logo--auth .logo__sub::before,
+.page-recuperar-senha .logo--auth .logo__sub::after { width: 2.24rem; }
+
+/* ---- painel de dicas (caixa 342x131 px na referência) ---------------------- */
+.page-recuperar-senha .recover-tips {
+  width: 100%;
+  padding: 1.05rem .5rem 1.25rem .9rem;
+  border: 1px solid rgba(190, 196, 110, .22);
+  border-bottom-color: rgba(190, 196, 110, .36);
+  border-radius: var(--r-3);
+  background: linear-gradient(180deg, rgba(10, 14, 9, .28) 0%, rgba(13, 18, 10, .55) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .03);
+  transition: border-color var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease);
+}
+.page-recuperar-senha .recover-tips:hover {
+  border-color: rgba(155, 224, 74, .5);
+  box-shadow: var(--glow-soft), inset 0 -1px 0 rgba(155, 224, 74, .3);
+}
+.page-recuperar-senha .recover-tips__head {
+  display: flex;
+  align-items: center;
+  gap: .42rem;
+  margin: 0;
+}
+.page-recuperar-senha .recover-tips__icon {
+  position: relative;
+  top: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 2.6rem;
+  height: 2.2rem;
+  line-height: 1;
+}
+.page-recuperar-senha .recover-tips__icon .ms {
+  font-size: 2.6rem;
+  color: #e9eee5;
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+  text-shadow: 0 0 8px rgba(155, 224, 74, .28);
+}
+.page-recuperar-senha .recover-tips__icon .recover-tips__star {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -56%);
+  font-size: 1.08rem !important;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  color: var(--c-lime) !important;
+  text-shadow: 0 0 6px rgba(155, 224, 74, .45) !important;
+}
+.page-recuperar-senha .recover-tips__title {
+  font-family: var(--font-cond);
+  font-weight: 400;
+  font-size: 1.12rem;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+.page-recuperar-senha .recover-tips__stack {
+  display: grid;
+  min-height: 3.25rem;
+  margin: 4px 0 0 3.15rem;
+}
+.page-recuperar-senha .recover-tips__text {
+  grid-area: 1 / 1;
+  margin: 0;
+  max-width: 17.3rem;
+  font-family: var(--font-body);
+  font-size: .86rem;
+  line-height: 1.885;
+  color: var(--c-text-2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity var(--t-slow) var(--ease), transform var(--t-slow) var(--ease-out), visibility var(--t-slow);
+}
+.page-recuperar-senha .recover-tips__text.is-current {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+/* ==========================================================================
+   COLUNA DIREITA
+   ========================================================================== */
+.page-recuperar-senha .recover-card__main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 2.29rem 3.75rem 1.95rem 2.65rem;
+}
+
+.page-recuperar-senha .recover__title {
+  margin: 0;
+  font-size: 2.1rem;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: .06em;
+  color: #f4f7f2;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .55);
+}
+.page-recuperar-senha .recover__sub {
+  margin: .1rem 0 0;
+  font-family: var(--font-body);
+  font-size: 1.02rem;
+  line-height: 1.4;
+  color: var(--c-text-2);
+}
+
+.page-recuperar-senha .recover__form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1.6rem;
+}
+
+/* o erro é a primitiva .field__error (compacta, logo abaixo do campo): um banner
+   acima do formulário empurraria o cartão para fora da altura do login. */
+.page-recuperar-senha .recover__error {
+  gap: .35rem;
+  margin-top: .1rem;
+  font-size: .88rem;
+  letter-spacing: .045em;
+  color: #ff9ea1;
+  animation: recover-shake 380ms var(--ease);
+}
+/* .field--icon .ms é absoluto (base.css) e apanharia também o glifo do erro. */
+.page-recuperar-senha .recover__error .ms { position: static; font-size: 1.05rem; color: var(--c-red); }
+.page-recuperar-senha .recover__field.is-invalid .input {
+  border-color: rgba(229, 72, 77, .7);
+  box-shadow: 0 0 0 1px rgba(229, 72, 77, .3), 0 0 14px rgba(229, 72, 77, .18), inset 0 1px 3px rgba(0, 0, 0, .55);
+}
+.page-recuperar-senha .recover__field.is-invalid .recover__field-icon { color: var(--c-red); }
+
+/* o estado de erro acrescenta uma linha ao campo: a coluna se aperta o equivalente
+   para o cartão continuar com a altura exata do login. */
+.page-recuperar-senha .recover-card__main--error .recover__form { margin-top: 1.45rem; }
+.page-recuperar-senha .recover-card__main--error .recover__submit { margin-top: 1.2rem; }
+.page-recuperar-senha .recover-card__main--error .recover__steps-title { margin-top: 1.15rem; }
+.page-recuperar-senha .recover-card__main--error .recover-steps { gap: .34rem; }
+.page-recuperar-senha .recover-card__main--error .recover-step { padding-top: .22rem; padding-bottom: .22rem; }
+.page-recuperar-senha .recover-card__main--error .recover__note { margin-top: .8rem; }
+.page-recuperar-senha .recover-card__main--error .recover__back { padding-top: .7rem; }
+
+/* ---- campo de e-mail (mesma caixa do login) -------------------------------- */
+.page-recuperar-senha .recover__field { gap: .4rem; }
+.page-recuperar-senha .field__label {
+  font-weight: 400;
+  font-size: 1.11rem;
+  letter-spacing: .055em;
+  line-height: 1.2;
+  color: #ffffff;
+}
+.page-recuperar-senha .recover__field .input {
+  min-height: 3.35rem;
+  padding: .6rem 3.1rem .6rem 1.3rem;
+  border-color: rgba(182, 184, 112, .38);
+  border-bottom-color: rgba(182, 184, 112, .28);
+  border-radius: var(--r-2);
+  background: rgba(14, 18, 15, .74);
+  font-size: 1.1rem;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .55);
+}
+.page-recuperar-senha .recover__field .input::placeholder { color: #9fa09a; }
+.page-recuperar-senha .recover__field .input:hover {
+  border-color: rgba(155, 224, 74, .62);
+  background: rgba(21, 29, 19, .88);
+  box-shadow: 0 0 12px rgba(155, 224, 74, .18), inset 0 1px 3px rgba(0, 0, 0, .5);
+}
+.page-recuperar-senha .recover__field:hover .recover__field-icon { color: #b4bdaa; }
+.page-recuperar-senha .recover__field .input:focus {
+  border-color: var(--c-lime);
+  box-shadow: 0 0 0 1px rgba(155, 224, 74, .35), 0 0 16px rgba(155, 224, 74, .22), inset 0 1px 3px rgba(0, 0, 0, .55);
+  background: rgba(16, 22, 15, .86);
+}
+.page-recuperar-senha .recover__field .input:focus ~ .recover__field-icon { color: var(--c-lime); }
+/* o ícone é ancorado pelo TOPO (rótulo 1.11rem + gap .4rem + meio do input de 3.35rem):
+   preso ao rodapé do .field ele descia junto com a linha de erro. */
+.page-recuperar-senha .field--icon .recover__field-icon {
+  color: #8d958a;
+  font-size: 1.5rem;
+  right: 1.08rem;
+  top: 2.68rem;
+  bottom: auto;
+  transition: color var(--t-med) var(--ease);
+}
+
+/* ---- botão verde ENVIAR LINK (idêntico ao ENTRAR do login) ------------------ */
+.page-recuperar-senha .recover__submit {
+  --_bg: linear-gradient(180deg, #3b4c23 0%, #374520 55%, #31411b 100%);
+  --_bc: rgba(152, 180, 66, .46);
+  border-bottom-color: rgba(92, 110, 52, .90);
+  margin-top: 1.35rem;
+  min-height: 3.95rem;
+  gap: .85rem;
+  padding: 0 1.4rem;
+  border-radius: var(--r-2);
+  font-size: 1.56rem;
+  font-weight: 400;
+  letter-spacing: .075em;
+  box-shadow:
+    0 0 8px rgba(155, 224, 74, .045),
+    inset 0 1px 0 rgba(198, 232, 146, .06),
+    inset 0 -1px 0 rgba(0, 0, 0, .30);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .55);
+}
+.page-recuperar-senha .recover__submit .ms {
+  font-size: 1.22em;
+  font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
+  transition: transform var(--t-med) var(--ease-out);
+}
+.page-recuperar-senha .recover__submit:hover,
+.page-recuperar-senha .recover__submit:focus-visible {
+  --_bg: linear-gradient(180deg, #4b6a2c 0%, #3e5424 45%, #354622 100%);
+  --_bc: var(--c-lime);
+  box-shadow:
+    0 0 0 1px rgba(155, 224, 74, .38),
+    0 0 30px rgba(155, 224, 74, .38),
+    inset 0 1px 0 rgba(198, 240, 140, .38),
+    inset 0 -1px 0 rgba(0, 0, 0, .4);
+}
+/* o avião de papel avança um pouco no hover — movimento discreto */
+.page-recuperar-senha .recover__submit:hover .ms { transform: translateX(3px); }
+.page-recuperar-senha .recover__submit:active {
+  box-shadow: inset 0 3px 12px rgba(0, 0, 0, .5), 0 0 0 1px rgba(155, 224, 74, .5);
+}
+.page-recuperar-senha .recover__submit[disabled] {
+  --_bg: linear-gradient(180deg, #262c1e 0%, #212618 100%);
+  --_bc: rgba(152, 180, 66, .22);
+  color: var(--c-muted);
+  cursor: progress;
+  box-shadow: inset 0 1px 0 rgba(198, 232, 146, .04);
+}
+.page-recuperar-senha .recover__submit[disabled] .ms { color: var(--c-muted); }
+.page-recuperar-senha .recover__submit[disabled]:hover .ms { transform: none; }
+.page-recuperar-senha .recover__clock { font-size: .92em; letter-spacing: .04em; color: var(--c-text-2); }
+
+/* ---- estado ENVIADO -------------------------------------------------------- */
+/* o estado enviado troca 1 campo por um painel de confirmação: as medidas abaixo
+   mantêm a coluna na MESMA altura do formulário, para o cartão não crescer. */
+.page-recuperar-senha .recover__done {
+  margin-top: 1rem;
+  padding: .85rem 1.1rem .9rem;
+  border: 1px solid rgba(155, 224, 74, .34);
+  border-left: 2px solid var(--c-lime);
+  border-radius: var(--r-2);
+  background: linear-gradient(180deg, rgba(24, 40, 16, .55), rgba(12, 18, 10, .55));
+  box-shadow: inset 0 1px 0 rgba(198, 240, 140, .10), 0 0 22px rgba(155, 224, 74, .10);
+}
+.page-recuperar-senha .recover__done-head { display: flex; align-items: center; gap: .5rem; margin: 0; }
+.page-recuperar-senha .recover__done-icon .ms {
+  font-size: 1.55rem;
+  color: var(--c-lime);
+  text-shadow: 0 0 12px rgba(155, 224, 74, .55);
+  animation: pop 420ms var(--ease-out) backwards;
+}
+.page-recuperar-senha .recover__done-title {
+  font-family: var(--font-cond);
+  font-size: 1.25rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: #f3f8ee;
+}
+.page-recuperar-senha .recover__done-text {
+  margin: .35rem 0 0;
+  font-family: var(--font-body);
+  font-size: .95rem;
+  line-height: 1.55;
+  color: var(--c-text-2);
+}
+.page-recuperar-senha .recover__done-to {
+  display: flex;
+  align-items: baseline;
+  gap: .6rem;
+  margin: .5rem 0 0;
+  padding-top: .45rem;
+  border-top: 1px solid var(--c-line-2);
+}
+.page-recuperar-senha .recover__done-label {
+  font-family: var(--font-cond);
+  font-size: .82rem;
+  letter-spacing: .09em;
+  color: var(--c-muted);
+}
+.page-recuperar-senha .recover__done-mail { font-size: .95rem; color: var(--c-lime); }
+.page-recuperar-senha .recover__form--resend { margin-top: 0; }
+.page-recuperar-senha .recover__form--resend .recover__submit { margin-top: 1.1rem; min-height: 3.2rem; font-size: 1.42rem; }
+.page-recuperar-senha .recover-card__main--sent .recover__steps-title { margin-top: 1.05rem; }
+.page-recuperar-senha .recover-card__main--sent .recover-steps { gap: .34rem; }
+.page-recuperar-senha .recover-card__main--sent .recover-step { padding-top: .24rem; padding-bottom: .24rem; }
+
+/* ---- divisória COMO FUNCIONA (lugar do "OU" do login) ---------------------- */
+.page-recuperar-senha .recover__steps-title {
+  margin: 1.3rem 0 0;
+  gap: 1rem;
+  font-size: 1.02rem;
+  font-weight: 400;
+  letter-spacing: .11em;
+  color: #ffffff;
+}
+.page-recuperar-senha .recover__steps-title::before { background: linear-gradient(90deg, rgba(178, 196, 150, .26), rgba(178, 196, 150, .20)); }
+.page-recuperar-senha .recover__steps-title::after  { background: linear-gradient(90deg, rgba(178, 196, 150, .28), rgba(178, 196, 150, .22)); }
+
+/* ---- 3 passos -------------------------------------------------------------- */
+.page-recuperar-senha .recover-steps {
+  display: flex;
+  flex-direction: column;
+  gap: .42rem;
+  margin: .9rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+.page-recuperar-senha .recover-step {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  padding: .3rem .7rem .3rem .55rem;
+  border: 1px solid transparent;
+  border-radius: var(--r-2);
+  transition: border-color var(--t-med) var(--ease), background var(--t-med) var(--ease);
+}
+.page-recuperar-senha .recover-step.is-current {
+  border-color: rgba(155, 224, 74, .28);
+  background: linear-gradient(90deg, rgba(40, 62, 24, .45), rgba(12, 18, 10, 0) 82%);
+}
+.page-recuperar-senha .recover-step:hover {
+  border-color: rgba(155, 224, 74, .38);
+  background: linear-gradient(90deg, rgba(40, 62, 24, .32), rgba(12, 18, 10, 0) 86%);
+}
+/* o número do passo é dirigido pelo estado da linha (o JS troca is-current/is-done),
+   nunca por props do componente — assim hex e texto nunca divergem. */
+.page-recuperar-senha .recover-step__hex {
+  flex: 0 0 auto;
+  --hex-c: var(--c-dim);
+  --hex-rgb: 93, 103, 91;
+  color: var(--c-text-2);
+  transition: transform var(--t-med) var(--ease-out), filter var(--t-med) var(--ease);
+}
+.page-recuperar-senha .recover-step__hex::before { background: linear-gradient(180deg, rgba(150, 160, 145, .55), rgba(95, 105, 93, .35)); }
+.page-recuperar-senha .recover-step.is-current .recover-step__hex {
+  --hex-c: var(--c-lime);
+  --hex-rgb: 155, 224, 74;
+  color: #eef7e2;
+  filter: drop-shadow(0 0 6px rgba(155, 224, 74, .55));
+}
+.page-recuperar-senha .recover-step.is-current .recover-step__hex::before { background: linear-gradient(180deg, rgba(155, 224, 74, .95), rgba(155, 224, 74, .55)); }
+.page-recuperar-senha .recover-step.is-current .recover-step__hex .hex__in { background: linear-gradient(160deg, rgba(60, 96, 30, .9) 0%, rgba(18, 30, 12, .98) 100%); }
+.page-recuperar-senha .recover-step.is-done .recover-step__hex { --hex-c: var(--c-lime-dim); --hex-rgb: 111, 159, 52; opacity: .8; }
+.page-recuperar-senha .recover-step:hover .recover-step__hex { transform: translateY(-1px); }
+.page-recuperar-senha .recover-step__hex .num { font-size: .92rem; }
+.page-recuperar-senha .recover-step__text {
+  display: flex;
+  flex-direction: column;
+  gap: .05rem;
+  min-width: 0;
+}
+.page-recuperar-senha .recover-step__text strong {
+  font-family: var(--font-cond);
+  font-weight: 400;
+  font-size: 1.02rem;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+  color: #e9eee5;
+  transition: color var(--t-med) var(--ease);
+}
+.page-recuperar-senha .recover-step.is-current .recover-step__text strong,
+.page-recuperar-senha .recover-step:hover .recover-step__text strong { color: #ffffff; }
+.page-recuperar-senha .recover-step__text small {
+  font-family: var(--font-body);
+  font-size: .84rem;
+  line-height: 1.35;
+  color: var(--c-muted);
+}
+.page-recuperar-senha .recover-step.is-current .recover-step__text small { color: var(--c-text-2); }
+.page-recuperar-senha .recover-step.is-done .recover-step__text strong,
+.page-recuperar-senha .recover-step.is-done .recover-step__text small { opacity: .62; }
+
+/* ---- observação + volta para ENTRAR ---------------------------------------- */
+.page-recuperar-senha .recover__note {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  margin: .95rem 0 0;
+  font-family: var(--font-body);
+  font-size: .88rem;
+  line-height: 1.45;
+  color: var(--c-muted);
+}
+.page-recuperar-senha .recover__note-icon { font-size: 1.05rem; color: var(--c-dim); position: relative; top: 2px; }
+.page-recuperar-senha .recover__note-link {
+  font-family: var(--font-cond);
+  font-size: .95rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.page-recuperar-senha .recover__back {
+  margin: auto 0 0;
+  padding-top: .85rem;
+  font-family: var(--font-body);
+  font-size: 1.04rem;
+  line-height: 1.4;
+  color: #f1f4f2;
+}
+.page-recuperar-senha .recover__back-link {
+  font-family: var(--font-cond);
+  font-weight: 400;
+  font-size: 1.1rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   MOVIMENTO
+   ========================================================================== */
+@keyframes recover-shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-4px); }
+  75%      { transform: translateX(4px); }
+}
+
+/* stagger dos filhos das duas colunas (hud.js escreve --i via [data-stagger]) */
+body.is-booted .page-recuperar-senha .recover-card__aside > *,
+body.is-booted .page-recuperar-senha .recover-card__main > * {
+  animation: fade-up 480ms var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 55ms + 260ms);
+}
+/* os passos entram um a um, depois da coluna */
+body.is-booted .page-recuperar-senha .recover-step {
+  animation: fade-up 420ms var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 70ms + 620ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-recuperar-senha .logo--auth .logo__emblem { animation: none; }
+  .page-recuperar-senha .recover-tips__text { transition: none; }
+  .page-recuperar-senha .recover__error { animation: none; }
+  .page-recuperar-senha .recover__done-icon .ms { animation: none; }
+  body.is-booted .page-recuperar-senha .recover-card__aside > *,
+  body.is-booted .page-recuperar-senha .recover-card__main > *,
+  body.is-booted .page-recuperar-senha .recover-step { animation: none; }
+}

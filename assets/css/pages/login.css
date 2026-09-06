@@ -1,0 +1,429 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — tela LOGIN (layout auth)
+   Referência: O-QUE-VAMOS-CRIAR/Telas do jogador/00-login-tela-inicial-do-jogador.png (1672x941)
+   Medidas tiradas da referência em px e convertidas para rem (1rem = 16px em 1672x941):
+     cartão            930 x 631   -> 58.25rem x 39.4rem (min-height)
+     coluna esquerda   406         -> 25.375rem   | divisória em x=754
+     campos e botões   424 de larg -> 26.5rem     | recuo 42 à esquerda, 60 à direita
+     input             53 de alt   -> 3.35rem     | ENTRAR 63 -> 3.95rem | STEAM 59 -> 3.7rem
+   Tudo escopado em .page-login para não vazar para as outras telas.
+   ========================================================================== */
+
+/* ---- enquadramento -------------------------------------------------------
+   .auth-main centraliza; a referência coloca o centro do cartão em y=478,5
+   (30px abaixo do centro da área útil) — o padding-top extra faz esse ajuste. */
+.page-login .auth-main { padding-top: 5.25rem; }
+.page-login .auth-main > .panel { max-width: 58.25rem; }
+
+/* ---- fundo ---------------------------------------------------------------
+   bg/login.jpg é uma cena noturna; a referência é de crepúsculo. Mitigação escopada
+   até o asset diurno chegar: média do quadro alinhada com a referência
+   (REF [48,9 48,6 42,4] / nosso [49,5 51,4 42,7], G-R 1,9). */
+.page-login .bg__overlay {
+  background:
+    radial-gradient(120% 90% at 78% 18%, rgba(255, 232, 190, .12), transparent 58%),
+    linear-gradient(0deg, rgba(78, 66, 42, .22), transparent 24%),
+    linear-gradient(90deg, rgba(0, 0, 0, .18), transparent 34%);
+}
+/* A referência é cinematográfica (média do quadro [49,49,42], R = G) enquanto a
+   vinheta compartilhada + o filtro de .bg__img comiam a luz do asset
+   (bg/login.jpg tem média [68,77,74]) e deixavam o quadro verde e subexposto.
+   Correção escopada — hud.css não é tocado. */
+.page-login .bg__img { filter: saturate(.68) contrast(1.06) brightness(.90) sepia(.50); }
+.page-login .bg__vignette {
+  background: radial-gradient(ellipse 92% 84% at 52% 44%,
+    rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, .26) 86%, rgba(0, 0, 0, .52) 100%);
+}
+
+/* ---- cartão ---------------------------------------------------------------
+   A referência tem aresta superior iluminada (lum 94, cáqui quente), direita 61,
+   esquerda 41, e arco de canto de ~8-9px. */
+.page-login .login-card {
+  flex-direction: row;
+  /* a referência não é uniforme: o aside mede #0c0f0b e a coluna do formulário
+     #101110..#141311 (neutro-quente, mais claro) — há um levantamento da esquerda
+     para a direita. */
+  background: linear-gradient(100deg,
+    rgba(9, 12, 10, .93) 0%, rgba(9, 12, 10, .93) 42%, rgba(20, 19, 17, .90) 100%);
+  align-items: stretch;
+  min-height: 39.4rem;
+  border-radius: .5rem;
+  overflow: hidden;
+  box-shadow:
+    0 26px 60px rgba(0, 0, 0, .7),
+    inset 0 1px 0 rgba(244, 236, 200, .40),
+    inset -1px 0 0 rgba(186, 198, 128, .32);
+}
+
+/* ==========================================================================
+   COLUNA ESQUERDA — logo + dicas
+   ========================================================================== */
+.page-login .login-card__aside {
+  position: relative;
+  flex: 0 0 25.375rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  min-width: 0;
+  padding: 5.95rem 2rem 4.9rem;
+  background: linear-gradient(160deg, rgba(155, 224, 74, .035), rgba(0, 0, 0, 0) 55%);
+}
+
+/* divisória: na referência nasce invisível, tem pico a ~30% da altura e some antes do rodapé */
+.page-login .login-card__aside::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  /* alfas calibrados sobre o perfil de contraste medido na referência
+     (0 até 8%, +22 a 14%, +66 a 29%, +48 a 45%, +52 a 61%, +31 a 77%, +14 a 85%, 0 abaixo de 94%).
+     O matiz é cáqui quase neutro (#4d5336 a 29%, #3a3c29 a 60%), não lime. */
+  background: linear-gradient(180deg,
+    transparent 0 8%,
+    rgba(190, 196, 148, .11) 14%,
+    rgba(190, 196, 148, .33) 29%,
+    rgba(190, 196, 148, .24) 45%,
+    rgba(190, 196, 148, .26) 61%,
+    rgba(190, 196, 148, .15) 77%,
+    rgba(190, 196, 148, .07) 85%,
+    rgba(190, 196, 148, .10) 94%,
+    transparent 97%);
+}
+
+/* logo variante auth (F3). O emblema atual (razão 1.58) é mais achatado que o da
+   referência (1.27); enquanto a arte nova não chega, alargamos e encurtamos o vão.
+   A estrela é o elemento mais baixo do PNG e pegava a ponta escura do gradiente do
+   F3, lendo como peça solta e mais opaca que a caveira — daí o gradiente mais curto. */
+.page-login .logo--auth { width: 100%; }
+.page-login .logo--auth .logo__emblem {
+  width: 12.25rem;
+  margin-bottom: .85rem;
+  background: linear-gradient(180deg, #ffffff 0%, #eaf0e4 78%, #dde5d5 100%);
+  animation: float-y 9s var(--ease) infinite;
+}
+/* na referência o bloco inferior (filete + HUNTERS + filete) termina rente às bordas
+   do wordmark: 224px de largura para os dois. */
+.page-login .logo--auth .logo__word { font-size: 3.95rem; }
+.page-login .logo--auth .logo__sub { margin-top: .55rem; font-size: 1.4rem; }
+.page-login .logo--auth .logo__sub::before,
+.page-login .logo--auth .logo__sub::after { width: 2.24rem; }
+
+/* ---- painel de dicas ------------------------------------------------------
+   Referência: caixa 342x131 px, ícone 27x32, título condensado, corpo 2 linhas. */
+.page-login .login-tips {
+  width: 100%;
+  padding: 1.05rem .5rem 1.25rem .9rem;
+  border: 1px solid rgba(190, 196, 110, .22);
+  border-bottom-color: rgba(190, 196, 110, .36);
+  border-radius: var(--r-3);
+  background: linear-gradient(180deg, rgba(10, 14, 9, .28) 0%, rgba(13, 18, 10, .55) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .03);
+  transition: border-color var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease);
+}
+.page-login .login-tips:hover {
+  border-color: rgba(155, 224, 74, .5);
+  box-shadow: var(--glow-soft), inset 0 -1px 0 rgba(155, 224, 74, .3);
+}
+.page-login .login-tips__head {
+  display: flex;
+  align-items: center;
+  gap: .42rem;
+  margin: 0;
+}
+/* escudo prateado com estrela LIME encaixada (referência), traço fino */
+.page-login .login-tips__icon {
+  position: relative;
+  top: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 2.6rem;
+  height: 2.2rem;
+  line-height: 1;
+}
+.page-login .login-tips__icon .ms {
+  font-size: 2.6rem;
+  color: #e9eee5;
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+  text-shadow: 0 0 8px rgba(155, 224, 74, .28);
+}
+.page-login .login-tips__icon .login-tips__star {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -56%);
+  font-size: 1.08rem !important;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  color: var(--c-lime) !important;
+  text-shadow: 0 0 6px rgba(155, 224, 74, .45) !important;
+}
+.page-login .login-tips__title {
+  font-family: var(--font-cond);
+  font-weight: 400;
+  font-size: 1.12rem;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+.page-login .login-tips__stack {
+  display: grid;
+  min-height: 3.25rem;         /* 2 linhas de 26px */
+  margin: 4px 0 0 3.15rem;     /* linha 1 do corpo a 40px do topo do escudo (referência) */
+}
+.page-login .login-tips__text {
+  grid-area: 1 / 1;
+  margin: 0;
+  max-width: 17.3rem;
+  font-family: var(--font-body);
+  font-size: .86rem;
+  line-height: 1.885;
+  color: var(--c-text-2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity var(--t-slow) var(--ease), transform var(--t-slow) var(--ease-out), visibility var(--t-slow);
+}
+.page-login .login-tips__text.is-current {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+/* ==========================================================================
+   COLUNA DIREITA — formulário
+   ========================================================================== */
+.page-login .login-card__main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 2.29rem 3.75rem 1.95rem 2.65rem;
+}
+
+/* SPEC §6: .page-title = 2.1rem / 500. A densidade de tinta medida na referência
+   (30,5% dentro da caixa do título) confirma o peso 500 — o 600 engordava as hastes
+   de ~2px para ~3,5px. A largura perdida volta pelo letter-spacing. */
+.page-login .login__title {
+  margin: 0;
+  font-size: 2.1rem;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: .06em;
+  color: #f4f7f2;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .55);
+}
+.page-login .login__sub {
+  margin: .1rem 0 0;
+  font-family: var(--font-body);
+  font-size: 1.02rem;
+  line-height: 1.4;
+  color: var(--c-text-2);
+}
+
+.page-login .login__form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1.9rem;
+}
+
+.page-login .login__error {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  margin: 0 0 1.1rem;
+  padding: .6rem .85rem;
+  border: 1px solid rgba(229, 72, 77, .55);
+  border-radius: var(--r-2);
+  background: rgba(60, 14, 16, .45);
+  font-family: var(--font-body);
+  font-size: .92rem;
+  color: #ffd9da;
+}
+.page-login .login__error .ms { font-size: 1.2rem; color: var(--c-red); }
+
+/* ---- campos --------------------------------------------------------------- */
+.page-login .login__field { gap: .4rem; }
+.page-login .login__field + .login__field { margin-top: 1.8rem; }
+
+.page-login .field__label {
+  font-weight: 400;
+  font-size: 1.11rem;
+  letter-spacing: .055em;
+  line-height: 1.2;
+  color: #ffffff;
+}
+/* borda do input: na referência é cáqui quase neutro (#363820, G-R = +2), não verde */
+.page-login .login__field .input {
+  min-height: 3.35rem;
+  padding: .6rem 3.1rem .6rem 1.3rem;
+  border-color: rgba(182, 184, 112, .38);
+  border-bottom-color: rgba(182, 184, 112, .28);
+  border-radius: var(--r-2);
+  background: rgba(14, 18, 15, .74);
+  font-size: 1.1rem;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .55);
+}
+.page-login .login__field .input::placeholder { color: #9fa09a; }
+.page-login .login__field .input:hover {
+  border-color: rgba(155, 224, 74, .62);
+  background: rgba(21, 29, 19, .88);
+  box-shadow: 0 0 12px rgba(155, 224, 74, .18), inset 0 1px 3px rgba(0, 0, 0, .5);
+}
+.page-login .login__field:hover .login__field-icon { color: #b4bdaa; }
+.page-login .login__field .input:focus {
+  border-color: var(--c-lime);
+  box-shadow: 0 0 0 1px rgba(155, 224, 74, .35), 0 0 16px rgba(155, 224, 74, .22), inset 0 1px 3px rgba(0, 0, 0, .55);
+  background: rgba(16, 22, 15, .86);
+}
+
+/* ícone à direita, centrado na altura do input (3.35rem) */
+.page-login .field--icon .ms {
+  right: 1.2rem;
+  bottom: .95rem;
+  font-size: 1.45rem;
+}
+.page-login .field--icon .login__field-icon { color: #8d958a; font-size: 1.56rem; right: 1.01rem; bottom: .83rem; }
+.page-login .login__eye {
+  bottom: .88rem;
+  font-size: 1.6rem;
+  color: #c6ccc2;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  background: none;
+  border: 0;
+  border-radius: var(--r-1);
+  transition: color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.page-login .login__eye:hover { color: var(--c-lime); transform: scale(1.08); }
+.page-login .login__eye:active { transform: scale(.94); }
+.page-login .login__eye:focus-visible { outline: 2px solid var(--c-lime); outline-offset: 3px; }
+
+.page-login .login__forgot {
+  align-self: flex-end;
+  margin-top: .85rem;
+  font-size: .88rem;
+  line-height: 1.2;
+}
+
+/* ---- botão ENTRAR ---------------------------------------------------------
+   Verde mais fechado que o token --c-primary-grad; sobreposição escopada nesta tela.
+   Varredura vertical no centro do botão na referência: rgb(59,76,35) no topo ->
+   rgb(49,65,27) na base (iluminado de CIMA, não de baixo).
+   Anel: média medida ao longo de toda a largura, topo L=113 e base L=99 na
+   referência (o perfil é irregular, de 69 a 161 — uma sonda única engana).
+   O halo externo em repouso é discreto: o ganho visual fica reservado ao :hover. */
+.page-login .login__submit {
+  --_bg: linear-gradient(180deg, #3b4c23 0%, #374520 55%, #31411b 100%);
+  --_bc: rgba(152, 180, 66, .46);
+  border-bottom-color: rgba(92, 110, 52, .90);
+  margin-top: 1.45rem;
+  min-height: 3.95rem;
+  gap: .85rem;
+  padding: 0 1.4rem;
+  border-radius: var(--r-2);
+  font-size: 1.56rem;
+  font-weight: 400;
+  letter-spacing: .075em;
+  box-shadow:
+    0 0 8px rgba(155, 224, 74, .045),
+    inset 0 1px 0 rgba(198, 232, 146, .06),
+    inset 0 -1px 0 rgba(0, 0, 0, .30);
+  /* sem o halo lime no texto: ele engordava as hastes do rotulo */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .55);
+}
+/* na referência o glifo aponta para a ESQUERDA e é mais baixo (26x20) */
+.page-login .login__submit .ms { font-size: 1.3em; transform: scaleX(-1); font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24; }
+.page-login .login__submit:hover,
+.page-login .login__submit:focus-visible {
+  --_bg: linear-gradient(180deg, #4b6a2c 0%, #3e5424 45%, #354622 100%);
+  --_bc: var(--c-lime);
+  box-shadow:
+    0 0 0 1px rgba(155, 224, 74, .38),
+    0 0 30px rgba(155, 224, 74, .38),
+    inset 0 1px 0 rgba(198, 240, 140, .38),
+    inset 0 -1px 0 rgba(0, 0, 0, .4);
+}
+.page-login .login__submit:active {
+  box-shadow: inset 0 3px 12px rgba(0, 0, 0, .5), 0 0 0 1px rgba(155, 224, 74, .5);
+}
+
+/* ---- divisória OU ---------------------------------------------------------- */
+.page-login .login__or {
+  margin: 1rem 0 0;
+  gap: 1rem;
+  font-size: 1.07rem;
+  font-weight: 400;
+  letter-spacing: .12em;
+  color: #ffffff;
+}
+/* filetes: na referência são mais claros nas pontas externas (83) que junto ao "OU" (50) */
+.page-login .login__or::before { background: linear-gradient(90deg, rgba(178, 196, 150, .26), rgba(178, 196, 150, .20)); }
+.page-login .login__or::after  { background: linear-gradient(90deg, rgba(178, 196, 150, .28), rgba(178, 196, 150, .22)); }
+
+/* ---- botão Steam ----------------------------------------------------------- */
+/* borda do Steam na referência: #211f18 — quente (R > G), não verde */
+.page-login .login__steam {
+  margin-top: .85rem;
+  min-height: 3.7rem;
+  gap: .72rem;
+  border-radius: var(--r-2);
+  border-color: rgba(198, 190, 166, .09);
+  font-size: 1.38rem;
+  font-weight: 400;
+  letter-spacing: .06em;
+  color: #e6ebe2;
+}
+.page-login .login__steam-glyph { width: 1.7em; height: 1.7em; color: #f2f3f5; }
+.page-login .login__steam:hover .login__steam-glyph { color: #fff; }
+.page-login .login__steam.is-nudged { animation: login-nudge 420ms var(--ease); }
+
+/* ---- rodapé do formulário --------------------------------------------------- */
+.page-login .login__signup {
+  margin: 1.45rem 0 0;
+  font-family: var(--font-body);
+  font-size: 1.04rem;
+  line-height: 1.4;
+  color: #f1f4f2;
+}
+.page-login .login__signup-link {
+  font-family: var(--font-cond);
+  font-weight: 400;
+  font-size: 1.1rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   MOVIMENTO
+   ========================================================================== */
+@keyframes login-nudge {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-4px); }
+  75%      { transform: translateX(4px); }
+}
+
+/* stagger dos filhos das duas colunas (hud.js escreve --i via [data-stagger]) */
+body.is-booted .page-login .login-card__aside > *,
+body.is-booted .page-login .login-card__main > * {
+  animation: fade-up 480ms var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 55ms + 260ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-login .logo--auth .logo__emblem { animation: none; }
+  .page-login .login-tips__text { transition: none; }
+  .page-login .login__steam.is-nudged { animation: none; }
+  body.is-booted .page-login .login-card__aside > *,
+  body.is-booted .page-login .login-card__main > * { animation: none; }
+}
+
+/* A marca em arte é mais baixa que o antigo emblema + wordmark empilhados:
+   sem isto sobrava um vazio grande entre o logo e o painel de dicas. */
+.page-login .login-card__aside { justify-content: center; gap: 3.5rem; padding-top: 4rem; padding-bottom: 4rem; }
+.page-login .login-card__aside .logo--auth { margin-top: auto; }
+.page-login .login-card__aside .login-tips { margin-top: auto; }
+.page-login .logo--auth .logo__art { width: 22.5rem; }

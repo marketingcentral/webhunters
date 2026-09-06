@@ -1,0 +1,379 @@
+/* ==========================================================================
+   EXTRACT HUNTERS - Topbar (F3)
+   Markup: app/Views/partials/topbar.php   Preview: assets/_dev/topbar.html
+   Depends only on tokens.css (+ fonts.css). Everything scoped under .topbar
+   so the header renders identically on every page.
+   Reference geometry (1672x941): hex 20..72 x 10..70, name x85, XP rail x137-245 @ y49,
+   nav words start x~299, inline LOJA 1049-1155 x 20-60, currencies from x1196, VOLTAR ends x1651.
+   Home (ref 01): no back button, gear at x1525, tall LOJA block 1567-1644 x 12-80.
+   ========================================================================== */
+
+.topbar {
+  position: relative;
+  z-index: 30;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: stretch;
+  padding: 0 1.25rem 0 1.25rem;
+  color: var(--c-text);
+  font-family: var(--font-cond);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  line-height: 1;
+  background: rgba(6, 9, 6, .82);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(155, 224, 74, .18);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .55), 0 8px 24px rgba(0, 0, 0, .28);
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* faint travelling scanline */
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(155, 224, 74, 0) 0%, rgba(155, 224, 74, .045) 50%, rgba(155, 224, 74, 0) 100%)
+    0 -3rem / 100% 3rem no-repeat;
+  animation: topbar-scan 11s linear infinite;
+}
+@keyframes topbar-scan {
+  from { background-position: 0 -3rem; }
+  to   { background-position: 0 calc(100% + 3rem); }
+}
+
+.topbar .ms { font-size: 1.6rem; }
+.topbar .ic  { width: 1.15rem; height: 1.15rem; display: block; flex-shrink: 0; }
+
+/* ---------- player -------------------------------------------------------- */
+.topbar__player {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-width: 16.1rem;
+  padding-right: .75rem;
+  position: relative;
+  transition: filter var(--t-med) var(--ease);
+}
+.topbar__player:hover { filter: brightness(1.12); }
+
+/* hex badge: F2's component('hex') does the geometry; we only size/tint it for the header.
+   (the fallback markup in topbar.php uses the same classes, so the same rules apply) */
+.topbar__player .hex {
+  --hex-w: 3.25rem;                      /* 52 x 60px like the reference */
+  --hex-c: var(--c-lime);
+  --hex-rgb: 155, 224, 74;
+  --hex-clip: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--hex-w);
+  height: calc(var(--hex-w) * 1.1547);
+  flex: 0 0 auto;
+  filter: drop-shadow(0 0 6px rgba(155, 224, 74, .45));
+}
+.topbar__player .hex::before {
+  content: "";
+  position: absolute; inset: 0;
+  clip-path: var(--hex-clip);
+  background: linear-gradient(180deg, var(--c-lime-2), var(--c-lime) 55%, var(--c-lime-dim));
+}
+.topbar__player .hex__in {
+  position: absolute; inset: 2px;
+  clip-path: var(--hex-clip);
+  display: grid; place-items: center;
+  background: linear-gradient(160deg, #171f16, #090c09);   /* flat dark interior like the reference */
+}
+.topbar__player .hex__in .ic,
+.topbar__player .hex__in .ms {
+  width: 1.75rem; height: 1.75rem; font-size: 1.75rem;
+  color: #f4f7f1; fill: currentColor;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+  text-shadow: none;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .7));
+}
+.topbar__player .hex__in .num { color: #f4f7f1; font-size: 1.35rem; text-shadow: none; }
+
+.topbar__id { display: flex; flex-direction: column; gap: .5rem; padding-top: .45rem; }
+.topbar__name {
+  font-size: 1.3rem;
+  font-weight: 500;
+  letter-spacing: .02em;
+  color: #f4f7f1;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .6);
+}
+.topbar__lvl { display: flex; align-items: center; gap: .3rem; }
+.topbar__lvl-txt { font-size: .88rem; font-weight: 400; letter-spacing: .05em; color: #d5dbd2; }
+.topbar__lvl-txt .num { font-size: .8rem; }
+.topbar__xp {
+  position: relative;
+  top: 3px;
+  width: 6.75rem;
+  height: 2px;
+  background: rgba(255, 255, 255, .2);
+  overflow: hidden;
+  border-radius: 1px;
+}
+.topbar__xp-bar {
+  position: absolute; inset: 0;
+  width: var(--v, 0%);
+  background: linear-gradient(90deg, var(--c-lime-dim), var(--c-lime));
+  box-shadow: 0 0 6px rgba(155, 224, 74, .7);
+  transition: width var(--t-slow) var(--ease-out);
+}
+.topbar__xpnum { font-size: .85rem; color: #c8d0c5; letter-spacing: 0; }
+
+.topbar .num { font-family: var(--font-mono); letter-spacing: 0; text-transform: none; }
+
+/* ---------- nav ----------------------------------------------------------- */
+.topbar__nav {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+}
+.topbar__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 1.35rem;
+  font-size: 1.22rem;
+  font-weight: 400;
+  letter-spacing: .03em;
+  color: #e2e7df;
+  transition: color var(--t-fast) var(--ease), text-shadow var(--t-med) var(--ease), background var(--t-med) var(--ease);
+}
+/* hover underline grows from the centre; the active item overrides it with the solid lime cap */
+.topbar__link::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  pointer-events: none;
+  background: rgba(155, 224, 74, .45);
+  transform: scaleX(0);
+  transition: transform var(--t-med) var(--ease-out), background var(--t-med) var(--ease);
+}
+.topbar__link:hover,
+.topbar__link:focus-visible {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(155, 224, 74, .55), 0 0 2px rgba(255, 255, 255, .35);
+  background: linear-gradient(180deg, rgba(155, 224, 74, .04), rgba(155, 224, 74, .1));
+  outline: none;
+}
+.topbar__link:hover::after,
+.topbar__link:focus-visible::after { transform: scaleX(1); }
+
+/* active: lit slab (dark -> green) capped by a solid 2px lime line, exactly like the reference */
+.topbar__link.is-active {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(155, 224, 74, .3);
+  background:
+    linear-gradient(180deg, rgba(155, 224, 74, .03) 0%, rgba(155, 224, 74, .07) 58%, rgba(155, 224, 74, .19) 100%),
+    rgba(16, 24, 13, .5);
+}
+.topbar__link.is-active::after {
+  left: 0; right: 0; bottom: 0;
+  height: 1.5px;
+  background: #9be04a;
+  box-shadow: 0 0 6px rgba(155, 224, 74, .45);
+  filter: none;
+  transform: none;
+}
+/* small lime pip centred under the active tab, as in the reference */
+.topbar__link.is-active::before {
+  content: "";
+  position: absolute;
+  left: 50%; bottom: -1px;
+  width: 6px; height: 6px;
+  margin-left: -3px;
+  background: #9be04a;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  box-shadow: 0 0 6px rgba(155, 224, 74, .6);
+  pointer-events: none;
+}
+
+/* ---------- LOJA (inline, pages with a back button) ------------------------ */
+.topbar .topbar__shop {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
+  height: 2.5rem;
+  margin-left: 1.25rem;
+  padding: 0 1rem 0 .95rem;
+  border: 1px solid rgba(245, 197, 24, .62);
+  border-radius: var(--r-2);
+  color: var(--c-gold);
+  font-family: var(--font-cond);
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, rgba(20, 18, 8, .55), rgba(8, 8, 4, .7));
+  box-shadow: 0 0 0 1px rgba(245, 197, 24, .1), 0 0 12px rgba(245, 197, 24, .2), inset 0 0 12px rgba(245, 197, 24, .06);
+  text-shadow: 0 0 8px rgba(245, 197, 24, .35);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 0;
+  transition: transform var(--t-fast) var(--ease), box-shadow var(--t-med) var(--ease), background var(--t-med) var(--ease), color var(--t-med) var(--ease), border-color var(--t-med) var(--ease);
+}
+.topbar .topbar__shop .ms { font-size: 1.7rem; }
+.topbar .topbar__shop:hover,
+.topbar .topbar__shop:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(245, 197, 24, .3), 0 0 18px rgba(245, 197, 24, .38), inset 0 0 14px rgba(245, 197, 24, .1);
+  background: linear-gradient(180deg, rgba(40, 34, 10, .6), rgba(14, 12, 4, .75));
+  color: #ffe27a;
+  border-color: #ffd95a;
+}
+.topbar .topbar__shop:active { transform: scale(.985); }
+
+/* ---------- LOJA (tall block, Home: no back button) ------------------------ */
+.topbar .topbar__shop--tall {
+  flex-direction: column;
+  justify-content: center;
+  gap: .3rem;
+  width: 4.8rem;
+  height: 4.25rem;                      /* 77 x 68px like reference 01 */
+  align-self: flex-start;
+  margin: .75rem .5rem 0 -.65rem;       /* ref 01: box at y12-80, 18px after the gear, right edge at x1644 */
+  padding: 0;
+  overflow: visible;
+  border: 1px solid #f5c518;
+  border-radius: var(--r-2);
+  color: #ffd52e;
+  font-size: .95rem;
+  letter-spacing: .06em;
+  background: linear-gradient(180deg, rgba(64, 54, 10, .6), rgba(22, 18, 4, .8));
+  box-shadow: 0 0 0 1px rgba(245, 197, 24, .35), 0 0 22px rgba(245, 197, 24, .55), 0 0 6px rgba(245, 197, 24, .5), inset 0 0 18px rgba(245, 197, 24, .16);
+  text-shadow: 0 0 8px rgba(245, 197, 24, .55);
+}
+.topbar .topbar__shop--tall .ms {
+  font-size: 1.75rem;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  filter: drop-shadow(0 0 4px rgba(245, 197, 24, .45));
+}
+.topbar .topbar__shop-lbl { font-size: .95rem; font-weight: 500; letter-spacing: .06em; }
+/* four 3x3 gold ticks sitting on the middle of each edge (ref 01) */
+.topbar .topbar__shop--tall::before,
+.topbar .topbar__shop--tall::after {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  width: auto;
+  pointer-events: none;
+  transform: none;
+  z-index: 1;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  animation: none;
+}
+.topbar .topbar__shop--tall::before {
+  background-image: linear-gradient(#f5c518, #f5c518), linear-gradient(#f5c518, #f5c518);
+  background-position: 50% 0, 50% 100%;
+}
+.topbar .topbar__shop--tall::after {
+  background-image: linear-gradient(#f5c518, #f5c518), linear-gradient(#f5c518, #f5c518);
+  background-position: 0 50%, 100% 50%;
+}
+.topbar .topbar__shop--tall:hover::after,
+.topbar .topbar__shop--tall:focus-visible::after { animation: none; }
+.topbar .topbar__shop--tall:hover,
+.topbar .topbar__shop--tall:focus-visible {
+  box-shadow: 0 0 0 1px rgba(245, 197, 24, .4), 0 0 26px rgba(245, 197, 24, .6), inset 0 0 20px rgba(245, 197, 24, .18);
+  background: linear-gradient(180deg, rgba(80, 66, 12, .6), rgba(28, 22, 6, .8));
+}
+
+/* ---------- right cluster ------------------------------------------------- */
+.topbar__right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+/* Home has no back button, so the cluster breathes like reference 01 (coin 1093, friends 1413, gear 1525) */
+.topbar--home .topbar__right { gap: 1.75rem; }
+.topbar__cur {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  font-size: 1rem;
+  transition: filter var(--t-fast) var(--ease);
+}
+.topbar__cur:hover { filter: brightness(1.2); }
+.topbar__cur .ic { width: 1.15rem; height: 1.15rem; }
+.topbar__cur .num { font-size: 1.1rem; letter-spacing: -.05em; }   /* Share Tech Mono is loose: track in so digits match the ref width */
+.topbar .topbar__cur--lime  { color: var(--c-lime);  text-shadow: 0 0 8px rgba(155, 224, 74, .35); }
+.topbar .topbar__cur--cyan  { color: var(--c-cyan);  text-shadow: 0 0 8px rgba(62, 201, 240, .35); }
+.topbar .topbar__cur--amber { color: var(--c-amber); text-shadow: 0 0 8px rgba(245, 166, 35, .35); }
+.topbar__cur--lime  .ic { filter: drop-shadow(0 0 3px rgba(155, 224, 74, .6)); }
+.topbar__cur--cyan  .ic { filter: drop-shadow(0 0 3px rgba(62, 201, 240, .6)); }
+.topbar__cur--amber .ic { filter: drop-shadow(0 0 3px rgba(245, 166, 35, .6)); }
+
+.topbar__sep {
+  width: 1px;
+  height: 1.6rem;
+  margin: 0 -.3rem;
+  background: linear-gradient(180deg, rgba(155, 224, 74, 0), rgba(155, 224, 74, .35), rgba(155, 224, 74, 0));
+}
+
+.topbar__ico {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: .2rem;
+  color: #dfe4dc;
+  transition: color var(--t-fast) var(--ease), text-shadow var(--t-med) var(--ease);
+}
+.topbar__ico .ms { font-size: 1.5rem; }
+.topbar__friends .ms { font-size: 1.5rem; }
+.topbar__ico .num { font-size: 1.1rem; letter-spacing: -.05em; color: #f4f7f1; }
+.topbar__ico:hover { color: #fff; text-shadow: 0 0 10px rgba(155, 224, 74, .5); }
+.topbar__ico.has-unread::after {
+  content: "";
+  position: absolute;
+  top: -1px; right: -3px;
+  width: .45rem; height: .45rem;
+  border-radius: 50%;
+  background: var(--c-lime-2);
+  box-shadow: 0 0 6px rgba(155, 224, 74, .9), 0 0 0 2px rgba(6, 9, 6, .9);
+  animation: topbar-pulse 2.4s ease-in-out infinite;
+}
+@keyframes topbar-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(.75); opacity: .7; }
+}
+
+.topbar__back {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #f4f7f1;
+  font: inherit;
+  font-size: 1.16rem;
+  font-weight: 400;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease), text-shadow var(--t-med) var(--ease);
+}
+.topbar__back .ms { font-size: 1.5rem; }
+.topbar__back:hover { color: var(--c-lime-2); text-shadow: 0 0 10px rgba(155, 224, 74, .45); }
+.topbar__back-form { display: contents; }
+
+.topbar :focus-visible { outline: 1px solid var(--c-lime); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar::before { animation: none; }
+  .topbar__ico.has-unread::after { animation: none; }
+  .topbar__link::after { transition: none; }
+}

@@ -1,0 +1,708 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — tela LOJA (sem referência bitmap; âncora 01-Menu-do-jogo).
+   Escopado em body.page-loja. Base 1672x941 => 1rem = 16px.
+   Altura útil de .hud-main: 941 - 80 (topbar) - 60 (footer) - 48 (padding)
+   = 753px = 47.06rem. Repartição: cabeçalho 4.6 + abas 2.9 + promo 11.5 +
+   3 vãos de 1 = 22rem; a grade fica com 25rem (2 linhas de ~12).
+   ========================================================================== */
+
+/* ---- fundo: o mercado é uma tela de leitura, então o bitmap recua --------- */
+body.page-loja .bg__img{
+  filter:saturate(.7) contrast(1.06) brightness(.62);
+  object-position:50% 38%;
+}
+body.page-loja .bg__overlay{
+  background:
+    linear-gradient(180deg, rgba(4,7,5,.92) 0%, rgba(4,7,5,.62) 22%, rgba(4,7,5,.58) 55%, rgba(4,7,5,.88) 100%),
+    linear-gradient(90deg, rgba(4,7,5,.55) 0%, rgba(4,7,5,.18) 40%, rgba(4,7,5,.18) 60%, rgba(4,7,5,.55) 100%);
+}
+body.page-loja .bg__fx{opacity:.22}
+
+/* ---- moldura ------------------------------------------------------------- */
+body.page-loja .hud-main{padding:1.5rem 1.75rem 1.5rem}
+body.page-loja .shop{
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  flex:1 1 auto;
+  min-height:0;
+}
+body.page-loja .num{letter-spacing:-.01em}
+
+/* ==========================================================================
+   CABEÇALHO — acento dourado à esquerda, carteira à direita
+   ========================================================================== */
+body.page-loja .shop__head{
+  position:relative;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:1.5rem;
+  flex:0 0 auto;
+  padding:0 0 .85rem 1.15rem;
+  border-bottom:1px solid rgba(245,197,24,.16);
+}
+/* barra dourada vertical do título */
+body.page-loja .shop__head::before{
+  content:"";
+  position:absolute;
+  left:0;top:.15rem;bottom:1.2rem;
+  width:3px;
+  border-radius:2px;
+  background:linear-gradient(180deg, var(--c-gold), rgba(245,197,24,.15));
+  box-shadow:0 0 12px rgba(245,197,24,.55);
+}
+/* fio dourado que morre nas pontas, sob a linha da borda */
+body.page-loja .shop__head::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:-1px;
+  height:1px;
+  background:linear-gradient(90deg, rgba(245,197,24,.75) 0%, rgba(245,197,24,.22) 26%, rgba(245,197,24,0) 62%);
+}
+body.page-loja .shop__id{min-width:0}
+body.page-loja .shop__kicker{
+  display:flex;
+  align-items:center;
+  gap:.34rem;
+  margin:0 0 .34rem;
+  font-family:var(--font-cond);
+  font-size:.8rem;
+  font-weight:600;
+  line-height:1;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  color:var(--c-gold);
+  text-shadow:0 0 14px rgba(245,197,24,.4);
+}
+body.page-loja .shop__kicker-ico{font-size:1.05rem;line-height:1}
+body.page-loja .shop__title{font-size:2.1rem;letter-spacing:.05em;color:#fff}
+body.page-loja .shop__title small{
+  font-size:1rem;
+  font-weight:500;
+  letter-spacing:.18em;
+  color:var(--c-gold);
+  text-shadow:0 0 12px rgba(245,197,24,.35);
+}
+body.page-loja .shop__intro{margin-top:.42rem;font-size:.88rem;color:var(--c-text-2)}
+
+/* ----------------------------------------------------------- carteira ----- */
+body.page-loja .wallet{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:.5rem;
+  flex:0 0 auto;
+  padding:.55rem .9rem .6rem;
+  border:1px solid rgba(245,197,24,.24);
+  border-radius:var(--r-2);
+  background:linear-gradient(180deg, rgba(20,18,8,.6), rgba(8,12,8,.72));
+  box-shadow:inset 0 1px 0 rgba(245,197,24,.14),0 8px 22px rgba(0,0,0,.4);
+}
+body.page-loja .wallet__label{
+  display:flex;
+  align-items:center;
+  gap:.3rem;
+  align-self:flex-start;
+  font-family:var(--font-cond);
+  font-size:.72rem;
+  font-weight:600;
+  line-height:1;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:rgba(245,197,24,.86);
+}
+body.page-loja .wallet__label-ico{font-size:.95rem;line-height:1}
+body.page-loja .wallet__list{
+  display:flex;
+  align-items:stretch;
+  gap:0;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+body.page-loja .wallet__coin{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  padding:0 .95rem;
+  min-width:8.4rem;
+}
+body.page-loja .wallet__coin + .wallet__coin{border-left:1px solid rgba(226,236,222,.13)}
+body.page-loja .wallet__coin:last-child{padding-right:.15rem}
+body.page-loja .wallet__coin:first-child{padding-left:.15rem}
+body.page-loja .wallet__ico{
+  width:1.5rem;height:1.5rem;
+  flex:0 0 auto;
+  filter:drop-shadow(0 0 8px currentColor);
+}
+body.page-loja .wallet__txt{display:flex;flex-direction:column;gap:.22rem;min-width:0}
+body.page-loja .wallet__val{
+  font-family:var(--font-mono);
+  font-size:1.12rem;
+  line-height:1;
+  color:#f2f6ef;
+}
+body.page-loja .wallet__name{
+  font-family:var(--font-cond);
+  font-size:.68rem;
+  font-weight:500;
+  line-height:1;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+}
+body.page-loja .wallet__coin--lime .wallet__ico{color:var(--c-lime)}
+body.page-loja .wallet__coin--cyan .wallet__ico{color:var(--c-cyan)}
+body.page-loja .wallet__coin--amber .wallet__ico{color:var(--c-amber)}
+body.page-loja .wallet__coin--lime .wallet__val{color:#e6f7cf}
+body.page-loja .wallet__coin--cyan .wallet__val{color:#d9f4fd}
+body.page-loja .wallet__coin--amber .wallet__val{color:#fbeacd}
+
+/* ==========================================================================
+   ABAS
+   ========================================================================== */
+body.page-loja .shop__tabs{
+  position:relative;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:1.5rem;
+  flex:0 0 auto;
+}
+body.page-loja .shop__tabnav{flex:1 1 auto}
+body.page-loja .shop__note{
+  display:flex;
+  align-items:center;
+  gap:.34rem;
+  margin:0 .1rem .55rem 0;
+  flex:0 0 auto;
+  font-family:var(--font-cond);
+  font-size:.76rem;
+  font-weight:500;
+  line-height:1;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  white-space:nowrap;
+}
+body.page-loja .shop__note-ico{font-size:.95rem;line-height:1;color:var(--c-muted)}
+body.page-loja .shop__tabnav{gap:.15rem;border-bottom-color:rgba(150,190,100,.16)}
+body.page-loja .shop__tabnav .tab{
+  min-width:0;
+  flex:0 0 auto;
+  padding:.62rem 1.55rem;
+  font-size:1rem;
+  letter-spacing:.1em;
+  background:rgba(10,14,10,.55);
+}
+body.page-loja .shop__tabnav .tab .ms{font-size:1.15em;opacity:.8}
+body.page-loja .shop__tabnav .tab.is-active .ms{opacity:1;color:var(--c-lime)}
+body.page-loja .shop__tabnav .tab__count{
+  padding:0 .3rem;
+  border-radius:2px;
+  background:rgba(226,236,222,.08);
+  font-size:.72rem;
+}
+body.page-loja .shop__tabnav .tab.is-active .tab__count{background:rgba(155,224,74,.16)}
+
+/* ==========================================================================
+   PACOTE EM DESTAQUE
+   ========================================================================== */
+body.page-loja .promo{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 20.5rem;
+  align-items:stretch;
+  flex:0 0 11.5rem;
+  overflow:hidden;
+  --_bc:rgba(245,197,24,.34);
+  box-shadow:0 0 0 1px rgba(245,197,24,.08),0 0 22px rgba(245,197,24,.10),var(--shadow-panel);
+}
+/* anel dourado por cima da arte */
+body.page-loja .promo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:5;
+  pointer-events:none;
+  border-radius:inherit;
+  box-shadow:inset 0 0 0 1px rgba(245,197,24,.34);
+}
+
+/* ---- arte: bitmap sangrando da direita + produto recortado --------------- */
+body.page-loja .promo__art{
+  position:absolute;
+  inset:0 0 0 auto;
+  width:64%;
+  z-index:0;
+  pointer-events:none;
+}
+body.page-loja .promo__bg{
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:52% 26%;
+  display:block;
+  filter:brightness(1.02) contrast(1.12) saturate(1.05) sepia(.28) hue-rotate(-8deg);
+  -webkit-mask-image:linear-gradient(90deg, transparent 0%, rgba(0,0,0,.4) 26%, #000 60%);
+  mask-image:linear-gradient(90deg, transparent 0%, rgba(0,0,0,.4) 26%, #000 60%);
+}
+body.page-loja .promo__art::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(52% 90% at 40% 55%, rgba(245,197,24,.16) 0%, rgba(245,197,24,0) 70%),
+    linear-gradient(180deg, rgba(4,8,4,.18) 0%, rgba(4,8,4,0) 40%, rgba(4,8,4,.55) 100%);
+}
+body.page-loja .promo__product{
+  position:absolute;
+  left:22%;
+  bottom:-.6rem;
+  width:11.2rem;
+  filter:drop-shadow(0 14px 22px rgba(0,0,0,.75)) drop-shadow(0 0 22px rgba(245,197,24,.28));
+  animation-duration:6s;
+}
+
+/* ---- texto --------------------------------------------------------------- */
+body.page-loja .promo__info{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:.42rem;
+  padding:1.1rem 1.35rem 1.1rem 1.5rem;
+  max-width:34rem;
+  min-width:0;
+}
+body.page-loja .promo__kicker{display:flex;align-items:center;gap:.6rem;margin:0}
+body.page-loja .promo__tag{letter-spacing:.14em;font-weight:600}
+body.page-loja .promo__kicker-txt{
+  font-family:var(--font-cond);
+  font-size:.78rem;
+  font-weight:600;
+  line-height:1;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  color:var(--c-text-2);
+}
+body.page-loja .promo__title{
+  margin:.12rem 0 0;
+  font-family:var(--font-cond);
+  font-size:1.85rem;
+  font-weight:500;
+  line-height:1;
+  letter-spacing:.045em;
+  text-transform:uppercase;
+  color:#fff;
+  text-shadow:0 2px 10px rgba(0,0,0,.8);
+}
+body.page-loja .promo__desc{
+  margin:.1rem 0 0;
+  max-width:26rem;
+  font-family:var(--font-body);
+  font-size:.86rem;
+  line-height:1.4;
+  color:var(--c-text-2);
+  text-shadow:0 1px 6px rgba(0,0,0,.7);
+}
+body.page-loja .promo__bullets{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.3rem 1.1rem;
+  margin:.42rem 0 0;
+  padding:0;
+  list-style:none;
+}
+body.page-loja .promo__bullet{
+  display:flex;
+  align-items:center;
+  gap:.32rem;
+  font-family:var(--font-cond);
+  font-size:.8rem;
+  font-weight:500;
+  line-height:1;
+  letter-spacing:.075em;
+  text-transform:uppercase;
+  color:var(--c-text);
+  text-shadow:0 1px 5px rgba(0,0,0,.8);
+}
+body.page-loja .promo__bullet .ms{font-size:1rem;color:var(--c-lime)}
+
+/* ---- coluna de compra ---------------------------------------------------- */
+body.page-loja .promo__buy{
+  position:relative;
+  z-index:3;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:center;
+  gap:.42rem;
+  padding:1rem 1.35rem 1rem 1rem;
+  background:linear-gradient(90deg, rgba(6,10,7,0) 0%, rgba(6,10,7,.72) 38%, rgba(6,10,7,.92) 100%);
+}
+body.page-loja .promo__timer{
+  display:flex;
+  align-items:center;
+  gap:.34rem;
+  margin:0;
+  padding:.2rem .5rem;
+  border:1px solid rgba(245,197,24,.32);
+  border-radius:var(--r-1);
+  background:rgba(12,10,4,.7);
+  font-family:var(--font-cond);
+  font-size:.72rem;
+  font-weight:500;
+  line-height:1;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--c-gold);
+}
+body.page-loja .promo__timer-ico{font-size:.95rem;line-height:1}
+body.page-loja .promo__clock{font-family:var(--font-mono);letter-spacing:.02em;color:#ffe9a8}
+body.page-loja .promo__prices{display:flex;align-items:center;gap:.5rem;margin:.15rem 0 0;min-height:1.1rem}
+body.page-loja .promo__old{
+  position:relative;
+  font-family:var(--font-mono);
+  font-size:.88rem;
+  line-height:1;
+  color:var(--c-muted);
+}
+body.page-loja .promo__old::after{
+  content:"";
+  position:absolute;
+  left:-.1rem;right:-.1rem;top:50%;
+  height:1px;
+  background:var(--c-red);
+  transform:rotate(-6deg);
+}
+body.page-loja .promo__disc{font-weight:600;letter-spacing:.06em}
+body.page-loja .promo__form{display:flex;justify-content:flex-end;margin:.3rem 0 0;width:100%}
+body.page-loja .promo__cta{min-width:12.5rem;letter-spacing:.1em}
+
+/* ==========================================================================
+   CHIP DE PREÇO (cor da moeda)
+   ========================================================================== */
+body.page-loja .price{
+  display:inline-flex;
+  align-items:center;
+  gap:.34rem;
+  height:1.55rem;
+  padding:0 .55rem 0 .42rem;
+  border:1px solid rgba(var(--_rgb,155,224,74),.42);
+  border-radius:var(--r-1);
+  background:rgba(var(--_rgb,155,224,74),.10);
+  white-space:nowrap;
+}
+body.page-loja .price--lime{--_rgb:var(--c-lime-rgb);--_c:var(--c-lime)}
+body.page-loja .price--cyan{--_rgb:var(--c-cyan-rgb);--_c:var(--c-cyan)}
+body.page-loja .price--amber{--_rgb:var(--c-amber-rgb);--_c:var(--c-amber)}
+body.page-loja .price__coin{
+  width:.95rem;height:.95rem;
+  flex:0 0 auto;
+  color:var(--_c,var(--c-lime));
+  filter:drop-shadow(0 0 5px rgba(var(--_rgb,155,224,74),.55));
+}
+body.page-loja .price__val{
+  font-family:var(--font-mono);
+  font-size:.92rem;
+  line-height:1;
+  color:#f2f6ef;
+}
+body.page-loja .price--lg{height:2.35rem;padding:0 .85rem 0 .7rem;gap:.5rem;border-width:1px}
+body.page-loja .price--lg .price__coin{width:1.4rem;height:1.4rem}
+body.page-loja .price--lg .price__val{font-size:1.55rem}
+body.page-loja .promo__price{
+  box-shadow:0 0 16px rgba(var(--_rgb),.18),inset 0 0 18px rgba(var(--_rgb),.06);
+}
+
+/* ==========================================================================
+   GRADE DE PRODUTOS — 6 colunas x 2 linhas
+   ========================================================================== */
+body.page-loja .shop__grid{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+  align-content:stretch;
+  gap:.9rem;
+  flex:1 1 auto;
+  min-height:0;
+}
+body.page-loja .shop__empty{
+  flex:1 1 auto;
+  display:grid;
+  place-items:center;
+  font-family:var(--font-cond);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+body.page-loja .item{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  min-height:0;
+  overflow:hidden;
+  border:1px solid var(--c-line-2);
+  border-radius:var(--r-2);
+  background:linear-gradient(180deg, rgba(15,21,15,.86), rgba(7,11,8,.9));
+  box-shadow:0 6px 18px rgba(0,0,0,.38);
+  transition:border-color var(--t-med) var(--ease),box-shadow var(--t-med) var(--ease),transform var(--t-med) var(--ease-out),background var(--t-med) var(--ease);
+}
+body.page-loja .item:hover{
+  transform:translateY(-3px);
+  border-color:rgba(155,224,74,.55);
+  box-shadow:0 0 0 1px rgba(155,224,74,.28),0 0 20px rgba(155,224,74,.16),0 12px 26px rgba(0,0,0,.5);
+  background:linear-gradient(180deg, rgba(22,31,20,.9), rgba(9,14,9,.92));
+}
+
+/* ---- mídia --------------------------------------------------------------- */
+body.page-loja .item__media{
+  position:relative;
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+  background:
+    radial-gradient(78% 78% at 50% 42%, rgba(155,224,74,.05) 0%, rgba(155,224,74,0) 70%),
+    linear-gradient(180deg, rgba(10,15,10,.7), rgba(6,10,7,.35));
+  border-bottom:1px solid var(--c-line-2);
+}
+/* halo que acende no hover */
+body.page-loja .item__glow{
+  position:absolute;
+  left:50%;top:52%;
+  width:8.5rem;height:8.5rem;
+  margin:-4.25rem 0 0 -4.25rem;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(155,224,74,.30) 0%, rgba(155,224,74,0) 68%);
+  opacity:0;
+  transition:opacity var(--t-med) var(--ease);
+  pointer-events:none;
+}
+body.page-loja .item:hover .item__glow{opacity:1}
+/* PNGs de item têm proporções muito diferentes: posicionamento absoluto
+   (caixa definida) + object-fit:contain garante que todos caibam inteiros. */
+body.page-loja .item__img{
+  position:absolute;
+  inset:0;
+  width:100%;height:100%;
+  padding:.45rem .5rem .35rem;
+  box-sizing:border-box;
+  object-fit:contain;
+  object-position:center;
+  filter:drop-shadow(0 6px 10px rgba(0,0,0,.6));
+  transition:transform var(--t-slow) var(--ease-out),filter var(--t-med) var(--ease),opacity var(--t-med) var(--ease);
+}
+body.page-loja .item:hover .item__img{
+  transform:scale(1.07) translateY(-2px);
+  filter:drop-shadow(0 8px 14px rgba(0,0,0,.7)) drop-shadow(0 0 10px rgba(155,224,74,.28));
+}
+body.page-loja .item__tag{position:absolute;top:.45rem;left:.45rem;z-index:3}
+body.page-loja .item__tag .chip{height:1.25rem;padding:0 .38rem;font-size:.66rem;letter-spacing:.1em}
+body.page-loja .item__owned{
+  position:absolute;
+  top:.45rem;right:.45rem;
+  z-index:3;
+  display:flex;
+  align-items:center;
+  gap:.2rem;
+  padding:0 .34rem;
+  height:1.25rem;
+  border:1px solid rgba(155,224,74,.4);
+  border-radius:var(--r-1);
+  background:rgba(10,18,8,.8);
+  font-family:var(--font-cond);
+  font-size:.64rem;
+  font-weight:600;
+  line-height:1;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--c-lime);
+}
+body.page-loja .item__owned .ms{font-size:.8rem}
+body.page-loja .item__owned[hidden]{display:none}
+body.page-loja .item.is-owned .item__img{opacity:.9}
+
+/* ---- botão COMPRAR (só no hover) ----------------------------------------- */
+body.page-loja .item__hover{
+  position:absolute;
+  inset:auto 0 0 0;
+  z-index:4;
+  display:flex;
+  justify-content:center;
+  padding:.45rem;
+  background:linear-gradient(180deg, rgba(6,10,7,0) 0%, rgba(6,10,7,.78) 55%, rgba(6,10,7,.92) 100%);
+  opacity:0;
+  transform:translateY(.55rem);
+  transition:opacity var(--t-med) var(--ease),transform var(--t-med) var(--ease-out);
+}
+body.page-loja .item:hover .item__hover,
+body.page-loja .item:focus-within .item__hover{opacity:1;transform:translateY(0)}
+body.page-loja .item__hover{margin:0}
+body.page-loja .item__buy{
+  min-height:1.85rem;
+  padding:0 .8rem;
+  font-size:.82rem;
+  letter-spacing:.09em;
+}
+body.page-loja .item__buy .ms{font-size:1.05rem}
+
+/* ---- sem saldo: cartão recua, o preço fica vermelho e o botão vira cadeado -- */
+body.page-loja .item.is-locked .item__img{filter:grayscale(.55) brightness(.62)}
+body.page-loja .item.is-locked .item__name{color:var(--c-muted)}
+/* o preço é o motivo do bloqueio: ele é quem muda de cor, sempre visível */
+body.page-loja .item.is-locked .price{
+  border-color:rgba(229,72,77,.5);
+  background:rgba(229,72,77,.10);
+}
+body.page-loja .item.is-locked .price__coin{color:var(--c-red);filter:none}
+body.page-loja .item.is-locked .price__val{color:#efb3b3}
+body.page-loja .item.is-locked:hover{
+  border-color:rgba(229,72,77,.4);
+  box-shadow:0 0 0 1px rgba(229,72,77,.22),0 12px 26px rgba(0,0,0,.5);
+  background:linear-gradient(180deg, rgba(24,16,16,.9), rgba(9,8,8,.92));
+}
+body.page-loja .item.is-locked:hover .item__glow{opacity:0}
+body.page-loja .item.is-locked:hover .item__name{color:#e3b3b3}
+body.page-loja .item.is-locked .item__buy,
+body.page-loja .promo.is-locked .promo__cta{
+  --_bg:rgba(20,12,12,.92);
+  background:rgba(20,12,12,.92);
+  border-color:rgba(229,72,77,.34);
+  color:#e79a9a;
+}
+/* .btn:disabled já tem pointer-events:none — o clique cai no <form>, que sacode o botão */
+body.page-loja .item__hover .btn:disabled,
+body.page-loja .promo__form .btn:disabled{opacity:.72;filter:none}
+
+/* ---- compra concluída: pisca o cartão e o novo saldo --------------------- */
+@keyframes shop-bought{
+  0%{box-shadow:0 0 0 1px rgba(155,224,74,.9),0 0 26px rgba(155,224,74,.55)}
+  100%{box-shadow:0 0 0 1px rgba(155,224,74,0),0 0 26px rgba(155,224,74,0)}
+}
+body.page-loja .item.is-bought,
+body.page-loja .promo.is-bought{animation:shop-bought 700ms var(--ease)}
+body.page-loja .item.is-busy{opacity:.86}
+@keyframes shop-bump{
+  0%{transform:translateY(0);color:#f2f6ef}
+  35%{transform:translateY(-3px);color:var(--c-lime)}
+  100%{transform:translateY(0)}
+}
+body.page-loja .wallet__val.is-bumped{
+  display:inline-block;
+  animation:shop-bump 620ms var(--ease-out);
+}
+
+/* ---- corpo --------------------------------------------------------------- */
+body.page-loja .item__body{
+  flex:0 0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:.28rem;
+  padding:.5rem .6rem .55rem;
+}
+body.page-loja .item__name{
+  margin:0;
+  font-family:var(--font-cond);
+  font-size:.95rem;
+  font-weight:500;
+  line-height:1.05;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+  color:var(--c-text);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  transition:color var(--t-fast) var(--ease);
+}
+body.page-loja .item:hover .item__name{color:var(--c-lime)}
+/* a descrição vem do banco (até ~60 caracteres): duas linhas cabem inteiras,
+   e a altura fixa mantém o rodapé dos cartões alinhado */
+body.page-loja .item__desc{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  margin:0;
+  min-height:1.74rem;
+  font-family:var(--font-body);
+  font-size:.72rem;
+  line-height:1.2;
+  color:var(--c-muted);
+  overflow:hidden;
+}
+body.page-loja .item__foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.4rem;
+  margin-top:.14rem;
+}
+body.page-loja .item__cat{
+  font-family:var(--font-cond);
+  font-size:.62rem;
+  font-weight:500;
+  line-height:1;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* ---- movimento reduzido -------------------------------------------------- */
+@media (prefers-reduced-motion: reduce){
+  body.page-loja .item,
+  body.page-loja .item__img,
+  body.page-loja .item__hover{transition:none}
+  body.page-loja .promo__product{animation:none}
+}
+
+/* ---- recusa da compra (loja.js: .is-denied por 420ms) -------------------- */
+@keyframes shop-deny{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-3px)}
+  45%{transform:translateX(3px)}
+  70%{transform:translateX(-2px)}
+}
+body.page-loja .btn.is-denied{
+  animation:shop-deny 380ms var(--ease);
+  border-color:rgba(229,72,77,.7);
+  box-shadow:0 0 0 1px rgba(229,72,77,.45),0 0 14px rgba(229,72,77,.3);
+}
+
+/* ---- nicho vazio do mostruário ------------------------------------------ */
+body.page-loja .item--soon{
+  align-items:center;
+  justify-content:center;
+  border-style:dashed;
+  border-color:rgba(150,190,100,.10);
+  background:linear-gradient(180deg, rgba(12,17,12,.42), rgba(7,11,8,.46));
+  box-shadow:none;
+}
+body.page-loja .item--soon:hover{
+  transform:none;
+  border-color:rgba(150,190,100,.16);
+  box-shadow:none;
+  background:linear-gradient(180deg, rgba(12,17,12,.42), rgba(7,11,8,.46));
+}
+body.page-loja .item__soon{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.4rem;
+  opacity:.42;
+}
+body.page-loja .item__soon-ico{font-size:1.35rem;line-height:1;color:var(--c-dim)}
+body.page-loja .item__soon-txt{
+  font-family:var(--font-cond);
+  font-size:.68rem;
+  font-weight:500;
+  line-height:1;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+}

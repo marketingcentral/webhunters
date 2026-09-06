@@ -1,0 +1,165 @@
+/* ==========================================================================
+   EXTRACT HUNTERS - Logo (F3)
+   Markup: app/Views/components/logo.php  ->  component('logo', ['variant' => 'hero'|'auth'|'mark'])
+   ========================================================================== */
+
+.logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: #fff;
+  font-family: var(--font-cond);
+  text-transform: uppercase;
+  line-height: 1;
+  user-select: none;
+  text-decoration: none;
+}
+
+/* emblem (skull + wings + star), tinted via mask so it stays crisp at any size */
+.logo__emblem {
+  display: block;
+  aspect-ratio: 672 / 425;
+  background: linear-gradient(180deg, #ffffff 0%, #dfe6d8 60%, #c9d3c0 100%);
+  -webkit-mask: url("../img/logo/emblem.png") center / contain no-repeat;
+  mask: url("../img/logo/emblem.png") center / contain no-repeat;
+  filter: drop-shadow(0 0 10px rgba(155, 224, 74, .18)) drop-shadow(0 2px 2px rgba(0, 0, 0, .55));
+}
+
+/* ---------- hero (Home, top-left) ----------------------------------------- */
+.logo--hero { gap: .35rem; }
+.logo--hero .logo__word {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 4.5rem;
+  letter-spacing: .2em;
+  margin-left: -.02em;
+  margin-right: -.2em;
+  color: #f7f9f5;
+  text-shadow:
+    0 0 1px rgba(255, 255, 255, .6),
+    0 2px 0 rgba(0, 0, 0, .35),
+    0 6px 18px rgba(0, 0, 0, .55);
+  /* subtle grunge: two faint diagonal cuts across the letters */
+  -webkit-mask:
+    linear-gradient(#000 0 0),
+    linear-gradient(115deg, transparent 47.6%, #000 47.6%, #000 48.05%, transparent 48.05%),
+    linear-gradient(-25deg, transparent 61.5%, #000 61.5%, #000 61.85%, transparent 61.85%);
+  -webkit-mask-composite: xor, source-over, source-over;
+  mask:
+    linear-gradient(#000 0 0),
+    linear-gradient(115deg, transparent 47.6%, #000 47.6%, #000 48.05%, transparent 48.05%),
+    linear-gradient(-25deg, transparent 61.5%, #000 61.5%, #000 61.85%, transparent 61.85%);
+  mask-composite: exclude, add, add;
+}
+/* green strike mark over the "A" of EXTRACT */
+.logo--hero .logo__mark {
+  position: absolute;
+  left: 58.5%;
+  top: -6%;
+  width: .5em;
+  height: .5em;
+  pointer-events: none;
+  color: var(--c-lime-2);
+  filter: drop-shadow(0 0 6px rgba(155, 224, 74, .8));
+}
+.logo--hero .logo__mark svg { width: 100%; height: 100%; display: block; }
+.logo--hero .logo__sub {
+  display: flex;
+  justify-content: space-between;
+  align-self: stretch;
+  padding: 0 1.5rem 0 1.7rem;
+  font-weight: 700;
+  font-size: 1.85rem;
+  letter-spacing: 0;
+  color: var(--c-lime);
+  text-shadow: 0 0 10px rgba(155, 224, 74, .45), 0 0 2px rgba(155, 224, 74, .8), 0 1px 0 rgba(0, 0, 0, .5);
+}
+.logo--hero .logo__tag {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  align-self: stretch;
+  margin-top: .35rem;
+  padding: 0 .35rem;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: .78rem;
+  letter-spacing: .2em;
+  color: #dfe4dc;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .6);
+}
+.logo--hero .logo__tag span { margin-right: -.2em; }
+.logo--hero .logo__tag::before,
+.logo--hero .logo__tag::after {
+  content: "";
+  flex: 1 1 .7rem;
+  height: 1px;
+  background: rgba(190, 204, 180, .45);
+}
+
+/* ---------- auth (login / register / recover) ----------------------------- */
+.logo--auth { align-items: center; text-align: center; }
+.logo--auth .logo__emblem { width: 10.5rem; margin-bottom: 1.6rem; }
+.logo--auth .logo__word {
+  font-family: var(--font-display);
+  font-size: 3.65rem;
+  letter-spacing: .06em;
+  color: #f7f9f5;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .55);
+}
+.logo--auth .logo__sub {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  margin-top: .95rem;
+  font-weight: 600;
+  font-size: 1.35rem;
+  letter-spacing: .38em;
+  color: var(--c-lime);
+  text-shadow: 0 0 10px rgba(155, 224, 74, .4);
+}
+.logo--auth .logo__sub::before,
+.logo--auth .logo__sub::after {
+  content: "";
+  width: 3.4rem;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(155, 224, 74, 0), var(--c-lime));
+}
+.logo--auth .logo__sub::after { background: linear-gradient(-90deg, rgba(155, 224, 74, 0), var(--c-lime)); }
+.logo--auth .logo__sub span { margin-right: -.38em; }
+
+/* ---------- mark (emblem only) -------------------------------------------- */
+.logo--mark { display: inline-block; }
+.logo--mark .logo__emblem {
+  width: 2.75rem;
+  background: var(--c-lime);
+  filter: drop-shadow(0 0 5px rgba(155, 224, 74, .5));
+}
+.logo--mark.logo--white .logo__emblem { background: #f4f7f1; }
+
+/* ==========================================================================
+   MARCA EM ARTE (media/logo/logo-final.png) — substitui o wordmark tipográfico
+   nas variantes hero e auth. O emblema segue em uso na variante mark.
+   ========================================================================== */
+.logo__art { display: block; line-height: 0; }
+.logo__art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* a arte já traz brilho lime próprio; a sombra só a assenta sobre o cenário */
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, .6));
+}
+
+/* hero (Home, topo-esquerda): a arte define a largura do bloco */
+.logo--hero { gap: .25rem; }
+.logo--hero .logo__art { width: 24.5rem; max-width: 100%; }
+/* a tagline acompanha a largura da arte, com os filetes da referência */
+.logo--hero .logo__tag { margin-top: .1rem; }
+
+/* auth (login / criar conta / recuperar senha): centralizado no cartão */
+.logo--auth { align-items: center; }
+.logo--auth .logo__art { width: 21rem; max-width: 100%; }
+
+@media (prefers-reduced-motion: reduce) { .logo__art img { transition: none; } }
