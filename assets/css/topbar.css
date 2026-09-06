@@ -377,3 +377,31 @@
   .topbar__ico.has-unread::after { animation: none; }
   .topbar__link::after { transition: none; }
 }
+
+/* ---- estado operacional no bloco do jogador (PRD v3 §15) -------------------
+   O badge ocupa a linha que era "Nível N"; o nível/reputação vira o texto ao
+   lado da barra de XP. Alturas iguais às anteriores para a topbar não crescer. */
+.topbar__state { display: flex; align-items: center; min-height: 1.15rem; margin-top: -.15rem; }
+.topbar__state-badge.chip { height: 1.15rem; font-size: .68rem; letter-spacing: .1em; padding: 0 .5rem; }
+.topbar__state-badge .ic { width: .8rem; height: .8rem; }
+.topbar__lvl-txt--mercenary { color: var(--c-cyan); }
+.topbar__lvl-txt--survivor { color: var(--c-text); letter-spacing: .12em; }
+
+/* ==========================================================================
+   Bloco do jogador em duas linhas (nome + badge / nível + XP). Antes eram
+   quatro linhas empilhadas: 91px de conteúdo numa barra de 77px, e o "0 / 1.000
+   XP" escapava por baixo da topbar sobre a tela.
+   ========================================================================== */
+.topbar__id { gap: .22rem; padding-top: 0; justify-content: center; min-width: 0; }
+.topbar__idtop { display: flex; flex-direction: column; align-items: flex-start; gap: .22rem; min-width: 0; max-width: 100%; }
+.topbar__name { font-size: 1.1rem; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.topbar__state { margin-top: 0; min-height: 0; }
+.topbar__state-badge.chip { height: 1.02rem; font-size: .6rem; letter-spacing: .08em; }
+.topbar__lvl { gap: .4rem; line-height: 1; }
+.topbar__lvl-txt { font-size: .74rem; white-space: nowrap; }
+.topbar__xp { top: 0; width: 3.4rem; flex: 0 1 auto; }
+.topbar__xpnum { font-size: .68rem; white-space: nowrap; }/* Com o badge de estado ao lado do nome, o bloco do jogador ficava mais largo que a coluna
+   reservada e empurrava a barra inteira (23px de rolagem horizontal em 1600px). Ele passa a
+   ter um teto e o nome corta com reticências antes de empurrar o menu. */
+.topbar__player { min-width: 0; max-width: 16.1rem; flex: 0 1 auto; }
+.topbar__idtop { flex-wrap: nowrap; }

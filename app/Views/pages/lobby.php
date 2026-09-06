@@ -45,10 +45,16 @@ foreach ($slides as $s) {
     </header>
 
     <div class="squad" data-stagger>
+      <?php
+        /* PRD v3 §18.2–18.4: callsign · nível · PATENTE · FUNÇÃO (as quatro oficiais) · prontidão.
+           O líder é COMANDO — maior patente presente — com tooltip; a coroa fica, mas não sozinha. */
+        $readyCls = (array)($data['readiness_labels'] ?? ['PRONTO' => 'lime', 'PREPARANDO' => 'amber', 'NÃO PRONTO' => 'muted']);
+      ?>
       <?php foreach ($squad as $m): ?>
-      <article class="op-card<?= !empty($m['leader']) ? ' op-card--leader' : '' ?>" data-boot>
+      <?php $ready = mb_strtoupper((string)($m['readiness'] ?? $m['status'] ?? 'PRONTO')); $roleKey = \App\Core\GameRules::role($m['role'] ?? $m['class'] ?? null) ?? 'ASSAULT'; $roleDef = \App\Core\GameRules::ROLES[$roleKey]; ?>
+      <article class="op-card<?= !empty($m['leader']) ? ' op-card--leader' : '' ?> op-card--<?= e(strtolower($readyCls[$ready] ?? 'muted')) ?>" data-boot>
         <?php if (!empty($m['leader'])): ?>
-        <span class="op-card__tag"><?= e((string)($data['leader_tag'] ?? 'LÍDER')) ?></span>
+        <span class="op-card__tag" data-tip="<?= e((string)($data['command_tip'] ?? 'Oficial de maior patente presente na unidade.')) ?>"><?= svg('crown', 'op-card__crown') ?><?= e((string)($data['command_tag'] ?? 'COMANDO')) ?></span>
         <?php endif; ?>
         <span class="op-card__media">
           <img class="op-card__portrait" src="<?= e(media((string)$m['portrait'])) ?>" alt="" width="896" height="1200" decoding="async">
@@ -58,13 +64,13 @@ foreach ($slides as $s) {
           <?php component('hex', ['size' => 'md', 'color' => !empty($m['leader']) ? 'lime' : 'muted', 'text' => (string)$m['level'], 'hot' => !empty($m['leader']), 'class' => 'op-card__hex', 'title' => 'Nível ' . (string)$m['level']]) ?>
           <span class="op-card__id">
             <strong class="op-card__name"><?= e((string)$m['name']) ?></strong>
-            <span class="op-card__ready"><?= e((string)($m['status'] ?? '')) ?><?= icon('check_circle', 'fill op-card__check') ?></span>
+            <span class="op-card__rank"><?= e((string)($m['rank'] ?? 'RECRUTA')) ?></span>
+            <span class="op-card__ready op-card__ready--<?= e(strtolower($readyCls[$ready] ?? 'muted')) ?>"><?= e($ready) ?><?= icon($ready === 'PRONTO' ? 'check_circle' : ($ready === 'PREPARANDO' ? 'pending' : 'radio_button_unchecked'), 'fill op-card__check') ?></span>
           </span>
         </span>
-        <span class="op-card__class">
-          <?= icon((string)($m['class_ms'] ?? 'swords'), 'op-card__class-ic') ?>
-          <span class="op-card__class-name"><?= e((string)($m['class'] ?? '')) ?></span>
-          <?php if (!empty($m['leader'])): ?><?= svg('crown', 'op-card__crown') ?><?php endif; ?>
+        <span class="op-card__class" data-tip="<?= e($roleDef['desc']) ?>">
+          <?= icon((string)($roleDef['ms'] ?? 'swords'), 'op-card__class-ic') ?>
+          <span class="op-card__class-name"><?= e($roleDef['label']) ?></span>
         </span>
       </article>
       <?php endforeach; ?>
@@ -175,15 +181,28 @@ foreach ($slides as $s) {
       </header>
       <div class="panel__body panel__body--tight">
         <?php foreach ($settings as $row): ?>
-        <?php $opts = (array)($row['options'] ?? [$row['value']]); ?>
-        <div class="set-row stepper<?= !empty($row['icon']) ? ' set-row--icon' : '' ?>" data-key="<?= e((string)$row['key']) ?>" data-options="<?= e(implode('|', array_map('strval', $opts))) ?>" data-value="<?= e((string)$row['value']) ?>">
+        <?php
+          /* PRD v3 §18.6: num mundo persistente clima, janela e protocolo de fogo amigo são
+             INFORMAÇÃO — a linha continua no mesmo lugar e com a mesma cara, só perde as setas. */
+          $ro   = (($row['type'] ?? '') === 'readonly');
+          $opts = $ro ? [(string)$row['value']] : (array)($row['options'] ?? [$row['value']]);
+        ?>
+        <div class="set-row<?= $ro ? ' set-row--readonly' : ' stepper' ?><?= !empty($row['icon']) ? ' set-row--icon' : '' ?>" data-key="<?= e((string)$row['key']) ?>"<?php if (!$ro): ?> data-options="<?= e(implode('|', array_map('strval', $opts))) ?>" data-value="<?= e((string)$row['value']) ?>"<?php endif; ?><?php if (!empty($row['tip'])): ?> data-tip="<?= e((string)$row['tip']) ?>"<?php endif; ?>>
           <span class="set-row__label"><?= e((string)$row['label']) ?></span>
+          <?php if ($ro): ?>
+          <span class="stepper__btn ms set-row__prev" aria-hidden="true"></span>
+          <?php else: ?>
           <button class="stepper__btn ms set-row__prev" type="button" aria-label="Anterior: <?= e((string)$row['label']) ?>">chevron_left</button>
+          <?php endif; ?>
           <?php if (!empty($row['icon'])): ?>
           <?= icon((string)$row['icon'], 'set-row__ic') ?>
           <?php endif; ?>
           <span class="stepper__val set-row__val"><?= e((string)$row['value']) ?></span>
+          <?php if ($ro): ?>
+          <span class="stepper__btn ms set-row__next" aria-hidden="true"></span>
+          <?php else: ?>
           <button class="stepper__btn ms set-row__next" type="button" aria-label="Próximo: <?= e((string)$row['label']) ?>">chevron_right</button>
+          <?php endif; ?>
           <input type="hidden" name="<?= e((string)$row['key']) ?>" value="<?= e((string)$row['value']) ?>">
         </div>
         <?php endforeach; ?>

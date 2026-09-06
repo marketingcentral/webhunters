@@ -1042,3 +1042,57 @@ body.is-booted.page-missoes .mission-cta{animation:fade-up 620ms var(--ease-out)
   .page-missoes .reset__clock{animation:none}
   .page-missoes .mcard__status--active i{animation:none}
 }
+
+/* ==========================================================================
+   PRD v3 §24 — origem, esquadrão e requisito de contrato (sem mudar o grid)
+   ========================================================================== */
+.page-missoes .mcard__sub{display:flex;align-items:center;gap:.45rem;min-width:0}
+.page-missoes .mcard__giver{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.page-missoes .mcard__origin.chip{font-size:.6rem;padding:.12rem .45rem;letter-spacing:.12em;flex:0 0 auto}
+.page-missoes .mcard__req{display:flex;align-items:center;gap:.5rem;margin-top:.35rem}
+.page-missoes .mcard__req .chip{font-size:.62rem}
+.page-missoes .mcard__req-ok{display:inline-flex;align-items:center;gap:.2rem;font-family:var(--font-cond);font-size:.64rem;letter-spacing:.12em;color:var(--c-lime)}
+.page-missoes .mcard__req-ic{font-size:.85rem}
+.page-missoes .mcard[data-requires="1"] .mcard__img{filter:saturate(.55) brightness(.8)}
+
+.page-missoes .mission__sub{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.page-missoes .mission__origin.chip{font-size:.64rem;letter-spacing:.12em}
+
+.page-missoes .mission__note--req{border-color:rgba(124,214,255,.26);background:rgba(124,214,255,.05)}
+.page-missoes .mission__note--req .mission__note-ic{color:var(--c-cyan)}
+.page-missoes .mission__note--req.is-met{border-color:rgba(155,224,74,.28);background:rgba(155,224,74,.05)}
+.page-missoes .mission__note--req.is-met .mission__note-ic{color:var(--c-lime)}
+
+.page-missoes .mfact__val--origin-hunter_command{color:var(--c-lime)}
+.page-missoes .mfact__val--origin-aegis{color:var(--c-cyan)}
+.page-missoes .mfact__val--origin-frontier{color:var(--c-amber)}
+.page-missoes .mfact__val--origin-icarus{color:var(--c-purple)}
+.page-missoes .mfact__val--origin-world{color:var(--c-red)}
+.page-missoes .mfact__val--emergencia{color:var(--c-red)}
+
+.page-missoes .accept-alt{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-cond);letter-spacing:.1em;font-size:.82rem}
+.page-missoes .accept-alt__ic{font-size:1.2rem;color:var(--c-cyan)}
+/* ==========================================================================
+   Coluna esquerda: com sete filtros de ORIGEM e quatro tipos de contrato ela
+   passou a pedir 740px em 639px e PROGRESSO DO QUADRO ficava cortado pelo
+   rodapé. Linhas e painéis mais compactos; a coluna rola por dentro se ainda
+   faltar espaço, e o quadro deixa de ser empurrado para fora.
+   ========================================================================== */
+/* coluna esquerda cabe na altura */
+.page-missoes .missions__left{overflow-y:auto;scrollbar-width:thin;gap:.55rem;padding-right:.15rem}
+.page-missoes .missions__left > .panel{flex:0 0 auto}
+.page-missoes .missions__left .panel__head{padding:.5rem .85rem .38rem}
+.page-missoes .missions__left .panel__title{font-size:.92rem}
+.page-missoes .filters-panel .panel__body{padding:.35rem .45rem .45rem}
+.page-missoes .filters{gap:.15rem}
+.page-missoes .filter-row{min-height:2.05rem;gap:.55rem}
+.page-missoes .filter-row__ic{font-size:1.1rem}
+.page-missoes .filter-row .row__text strong{font-size:.88rem}
+.page-missoes .filter-row__count{font-size:.78rem}
+.page-missoes .types-panel .panel__body{padding:.45rem .7rem .6rem}
+.page-missoes .types{gap:.3rem}
+.page-missoes .type-chip{font-size:.66rem;padding:.16rem .5rem}
+.page-missoes .reset-panel .panel__body{padding:.5rem .85rem .6rem}
+.page-missoes .reset__clock{font-size:1.35rem}
+.page-missoes .reset__note{font-size:.68rem;line-height:1.25}
+.page-missoes .board-panel .panel__body{padding:.5rem .85rem .65rem;gap:.32rem}

@@ -8,7 +8,9 @@
 
 use App\Controllers\AchievementsController;
 use App\Controllers\AuthController;
+use App\Controllers\BaseController;
 use App\Controllers\ChallengesController;
+use App\Controllers\FactionsController;
 use App\Controllers\FriendsController;
 use App\Controllers\HealthController;
 use App\Controllers\HomeController;
@@ -21,6 +23,7 @@ use App\Controllers\MissionsController;
 use App\Controllers\NewsController;
 use App\Controllers\PlayController;
 use App\Controllers\ProfileController;
+use App\Controllers\SafeZoneController;
 use App\Controllers\SettingsController;
 use App\Controllers\ShopController;
 use App\Controllers\SkillsController;
@@ -67,6 +70,15 @@ return [
     ['POST',          '/mensagens/responder',     MessagesController::class,     'reply'],
     ['POST',          '/mensagens/lida',          MessagesController::class,     'read'],
     ['GET',           '/perfil',                  ProfileController::class,      'index'],
+    // PRD v3 — facções (contrato Aegis/Frontier) e Base de Campo. Fora da topbar de propósito.
+    ['GET',           '/faccoes',                 FactionsController::class,     'index'],
+    ['POST',          '/faccoes/assinar',         FactionsController::class,     'sign'],
+    ['POST',          '/faccoes/romper',          FactionsController::class,     'release'],
+    ['GET',           '/base',                    BaseController::class,         'index'],
+    // SAFE ZONE — papéis civis entre operações (patch v4). POST muda estado: passa por CSRF.
+    ['POST',          '/safe-zone/assumir',       SafeZoneController::class,     'assume'],
+    ['POST',          '/safe-zone/encerrar',      SafeZoneController::class,     'leave'],
+    ['GET',           '/safe-zone[/{zona}]',      SafeZoneController::class,     'index'],
     [['GET', 'POST'], '/suporte',                 SupportController::class,      'index'],
     ['GET',           '/relatorio-de-bug/{code}', SupportController::class,      'bugDetail'],
     [['GET', 'POST'], '/relatorio-de-bug',        SupportController::class,      'bug'],

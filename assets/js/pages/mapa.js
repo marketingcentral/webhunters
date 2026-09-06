@@ -2,6 +2,8 @@
  * EXTRACT HUNTERS — tela MAPA DO MUNDO.
  *
  *  - OCULTAR / MOSTRAR LEGENDA (botão + atalho X)
+ *  - CAMADAS: chips TODOS · HUNTER · FACÇÕES · VEYRA · BASES · EXTRAÇÕES · EVENTOS (PRD v3 §23)
+ *  - sinais de atividade humana expiram (data-expires)
  *  - contagem regressiva ao vivo do evento ativo (mm:ss)
  *  - MARCAR PONTO (estado on/off)
  *  - atalho F = DEFINIR ROTA
@@ -25,6 +27,38 @@ if (page && page.dataset.page === 'mapa') {
     if (label) label.textContent = open ? (toggle.dataset.labelOn || '') : (toggle.dataset.labelOff || '');
   }
   if (toggle) toggle.addEventListener('click', () => setLegend(legend.classList.contains('is-hidden')));
+
+  /* ---- camadas (PRD v3 §23.9) --------------------------------------------
+   * hud.js já alterna .is-active nos chips de [data-select-group] e dispara
+   * `select:change`; aqui só escondemos os marcadores/zonas fora da camada. */
+  const layers = $('[data-map-filters]');
+  if (layers) {
+    const nodes = Array.from(document.querySelectorAll('#map3d-layer [data-layer]'));
+    const apply = (slug) => {
+      const all = !slug || slug === 'todos';
+      nodes.forEach((n) => n.classList.toggle('is-filtered', !all && n.dataset.layer !== slug));
+      document.getElementById('map3d')?.setAttribute('data-layer-filter', all ? '' : slug);
+    };
+    layers.addEventListener('select:change', (e) => apply(e.detail?.value));
+  }
+
+  /* ---- sinais de atividade humana expiram (§23.8) --------------------------
+   * Posição aproximada e temporária: o rótulo mostra o tempo restante e o
+   * marcador se apaga ao chegar em zero — o backend real substituirá isto. */
+  const temp = Array.from(document.querySelectorAll('#map3d-layer .mk[data-expires]'));
+  if (temp.length) {
+    const pad = (n) => String(n).padStart(2, '0');
+    const st = temp.map((el) => ({ el, s: Math.max(0, parseInt(el.dataset.expires, 10) || 0), sub: el.querySelector('.mk__sub') }));
+    const tick = () => {
+      st.forEach((t) => {
+        if (t.s > 0) t.s -= 1;
+        if (t.sub) t.sub.textContent = 'EXPIRA EM ' + pad(Math.floor(t.s / 60)) + ':' + pad(t.s % 60);
+        t.el.classList.toggle('is-expired', t.s === 0);
+      });
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
 
   /* ---- contagem regressiva ---------------------------------------------- */
   const clock = $('[data-countdown]');

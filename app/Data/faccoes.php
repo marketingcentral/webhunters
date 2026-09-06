@@ -1,0 +1,61 @@
+<?php declare(strict_types=1);
+
+/**
+ * Tela FACÇÕES (/faccoes) — PRD v3 §27. Só cromo: rótulos e microcopy. Reputação, contrato,
+ * bloqueio, contratos disponíveis e instalações vêm do banco pelo FactionsController; a
+ * identidade de cada facção vem de GameRules::FACTIONS (Bíblia §5).
+ */
+return [
+    'title'    => 'FACÇÕES',
+    'subtitle' => 'CONTRATO MERCENÁRIO',
+    'intro'    => 'Sob a Licença Cinza, um Hunter pode suspender o IFF do governo e atuar para uma facção. É o mesmo personagem, o mesmo inventário e o mesmo mundo — muda quem reconhece você, quem o protege e quem o caça.',
+    'rule'     => 'Só uma facção por vez. Romper um contrato zera a reputação da facção abandonada.',
+
+    'labels' => [
+        'reputation'    => 'REPUTAÇÃO',
+        'tier'          => 'FAIXA',
+        'relation'      => 'RELAÇÃO',
+        'contracts'     => 'CONTRATOS DISPONÍVEIS',
+        'installations' => 'INSTALAÇÕES CONHECIDAS',
+        'benefits'      => 'BENEFÍCIOS',
+        'status'        => 'STATUS DO CONTRATO',
+        'identity'      => 'IDENTIDADE',
+        'economy'       => 'ECONOMIA',
+        'missions'      => 'MISSÕES',
+        'npc'           => 'APOIO EM CAMPO',
+        'locked_until'  => 'BLOQUEADO',
+        'next_tier'     => 'PRÓXIMA FAIXA',
+    ],
+
+    'relation' => [
+        'active'   => 'ALIADA · CONTRATO ATIVO',
+        'none'     => 'NEUTRA',
+        'rival'    => 'RIVAL DA SUA FACÇÃO',
+        'locked'   => 'HOSTIL · ACESSO BLOQUEADO',
+        'survivor' => 'NÃO RECONHECE SOBREVIVENTES',
+    ],
+
+    'cta' => [
+        'sign'     => 'ASSINAR CONTRATO',
+        'active'   => 'CONTRATO ATIVO',
+        'switch'   => 'ROMPER CONTRATO ATUAL E ASSINAR',
+        'release'  => 'ENCERRAR CONTRATO',
+        'locked'   => 'ACESSO TEMPORARIAMENTE BLOQUEADO',
+        'survivor' => 'INDISPONÍVEL PARA SOBREVIVENTES',
+    ],
+
+    /* Confirmação obrigatória (PRD §7.2). %s = facção abandonada / %2$s = nova. */
+    'confirm' => [
+        'title'  => 'ROMPER CONTRATO?',
+        'body'   => 'Romper este contrato zerará sua reputação atual com a %1$s. Esta ação não pode ser desfeita.',
+        'body_new' => 'Você passa a operar sob a %2$s a partir de zero. NPCs da %1$s deixam de reconhecer o seu IFF imediatamente.',
+        'cancel' => 'CANCELAR',
+        'ok'     => 'ROMPER E ASSINAR %2$s',
+        'title_first' => 'ASSINAR CONTRATO?',
+        'body_first'  => 'Você suspende o IFF do Hunter Command e passa a atuar para a %2$s. Hunter Command não garante resgate durante a licença.',
+        'ok_first'    => 'ASSINAR %2$s',
+    ],
+
+    'survivor_notice' => 'Sobreviventes não têm bandeira. Nenhuma facção assina com quem está fora das cadeias de comando — o ciclo termina só com a morte válida do personagem.',
+    'back' => ['label' => 'VER CONTRATOS', 'href' => 'missoes'],
+];

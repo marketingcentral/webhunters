@@ -35,12 +35,25 @@ $tbHexFile = __DIR__ . '/../components/hex.php';
       <span class="hex hex--md hex--hot"><span class="hex__in"><?= icon('skull') ?></span></span>
     <?php endif ?>
     <span class="topbar__id">
-      <span class="topbar__name"><?= e($tbName) ?></span>
-      <span class="topbar__lvl">
-        <span class="topbar__lvl-txt">Nível <span class="num"><?= e((string)$tbLevel) ?></span></span>
-        <span class="topbar__xp" style="--v:<?= e((string)$tbXpPct) ?>%" role="progressbar" aria-label="Experiência" aria-valuemin="0" aria-valuemax="<?= e((string)$tbXpNext) ?>" aria-valuenow="<?= e((string)$tbXp) ?>"><span class="topbar__xp-bar"></span></span>
+      <span class="topbar__idtop">
+        <span class="topbar__name"><?= e($tbName) ?></span>
+      <?php
+        /* Estado operacional (PRD v3 §15): a linha "Nível N" vira o badge de estado
+           (HUNTER COMMAND · RECRUTA / MERCENÁRIO · AEGIS / SOBREVIVENTE), e o complemento
+           segue a regra por estado — NÍVEL 23 / REP 1.850 / SEM EXTRAÇÃO. A barra de XP
+           continua: o personagem é o mesmo em qualquer estado. */
+        $tbOp    = is_array($player['operational'] ?? null) ? $player['operational'] : \App\Repo\OperationalRepo::defaults();
+        $tbBadge = \App\Repo\OperationalRepo::badge($tbOp, $tbLevel);
+      ?>
+        <span class="topbar__state">
+          <?php component('badge', ['kind' => 'state', 'value' => $tbBadge, 'class' => 'topbar__state-badge', 'tip' => $tbBadge['survivor'] ? 'Sem bandeira: nenhuma organização responde por este operador.' : ($tbBadge['state'] === 'MERCENARY' ? 'Contrato mercenário ativo. Hunter Command não garante resgate.' : 'Operando sob o Hunter Command.')]) ?>
+        </span>
       </span>
-      <span class="topbar__xpnum num"><?= e(num($tbXp)) ?> / <?= e(num($tbXpNext)) ?> XP</span>
+      <span class="topbar__lvl">
+        <span class="topbar__lvl-txt topbar__lvl-txt--<?= e(strtolower($tbBadge['state'])) ?>"><?= e($tbBadge['sub']) ?></span>
+        <span class="topbar__xp" style="--v:<?= e((string)$tbXpPct) ?>%" role="progressbar" aria-label="Experiência" aria-valuemin="0" aria-valuemax="<?= e((string)$tbXpNext) ?>" aria-valuenow="<?= e((string)$tbXp) ?>"><span class="topbar__xp-bar"></span></span>
+        <span class="topbar__xpnum num"><?= e(num($tbXp)) ?> / <?= e(num($tbXpNext)) ?> XP</span>
+      </span>
     </span>
   </a>
 

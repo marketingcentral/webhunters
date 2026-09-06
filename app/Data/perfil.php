@@ -14,21 +14,21 @@ return [
     'portrait' => 'portraits/op-assault.jpg',
     'joined' => '14/02/2024',
     'playtime' => '187h 42m',
-    'faction' => 'RESISTÊNCIA',
-    'faction_rank' => 'CAÇADOR VETERANO',
+    'faction' => 'HUNTER COMMAND',
+    'faction_rank' => 'RECRUTA',
     'reputation' => 34,
 
     /* --- cartão do operador (coluna esquerda) --------------------------- */
     'operator' => [
         'title' => 'OPERADOR',
-        'class' => 'ASSALTO',
+        'class' => 'ASSAULT',
         'callsign' => 'INDICATIVO',
         'status' => 'EM PRONTIDÃO',
         'squad' => 'ESQUADRÃO LOBO CINZENTO',
         'session_seconds' => 2712,
         'meta' => [
-            ['label' => 'FACÇÃO',        'value' => 'RESISTÊNCIA', 'icon' => 'handshake', 'color' => 'lime'],
-            ['label' => 'PATENTE',       'value' => 'CAÇADOR VETERANO', 'icon' => 'military_tech', 'color' => 'gold'],
+            ['label' => 'ORGANIZAÇÃO',        'value' => 'HUNTER COMMAND', 'icon' => 'handshake', 'color' => 'lime'],
+            ['label' => 'PATENTE',       'value' => 'RECRUTA', 'icon' => 'military_tech', 'color' => 'gold'],
             ['label' => 'TEMPO DE JOGO', 'value' => '187h 42m', 'icon' => 'schedule', 'color' => ''],
             ['label' => 'EM CAMPO DESDE','value' => '14/02/2024', 'icon' => 'flag', 'color' => ''],
         ],
@@ -76,12 +76,12 @@ return [
     ],
 
     /* --- classes (coluna direita) --------------------------------------- */
-    'classes_title' => 'CLASSES',
+    'classes_title' => 'FUNÇÕES HUNTER',
     'classes' => [
-        ['slug' => 'assault', 'label' => 'ASSALTO',         'icon' => 'class-assault', 'level' => 23, 'pct' => 46, 'main' => true],
-        ['slug' => 'scout',   'label' => 'BATEDOR',         'icon' => 'class-scout',   'level' => 14, 'pct' => 24, 'main' => false],
-        ['slug' => 'support', 'label' => 'SUPORTE',         'icon' => 'class-support', 'level' => 11, 'pct' => 18, 'main' => false],
-        ['slug' => 'sniper',  'label' => 'FRANCO-ATIRADOR', 'icon' => 'class-sniper',  'level' => 8,  'pct' => 12, 'main' => false],
+        ['slug' => 'assault', 'label' => 'ASSAULT',         'icon' => 'class-assault', 'level' => 23, 'pct' => 46, 'main' => true],
+        ['slug' => 'scout',   'label' => 'RASTREADOR',         'icon' => 'class-scout',   'level' => 14, 'pct' => 24, 'main' => false],
+        ['slug' => 'support', 'label' => 'MEDICAL',         'icon' => 'class-support', 'level' => 11, 'pct' => 18, 'main' => false],
+        ['slug' => 'sniper',  'label' => 'SNIPER', 'icon' => 'class-sniper',  'level' => 8,  'pct' => 12, 'main' => false],
     ],
 
     /* --- atividade recente ---------------------------------------------- */

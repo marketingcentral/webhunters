@@ -5,6 +5,8 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+DROP TABLE IF EXISTS player_factions;
+DROP TABLE IF EXISTS government_bases;
 DROP TABLE IF EXISTS support_tickets;
 DROP TABLE IF EXISTS support_categories;
 DROP TABLE IF EXISTS server_services;
@@ -142,6 +144,15 @@ CREATE TABLE missions (
   image        VARCHAR(160) NULL,
   locked       TINYINT(1)   NOT NULL DEFAULT 0,
   sort_order   SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  -- Mundo persistente (PRD v3): de quem vem, o que exige e quantos vão.
+  origin           VARCHAR(24) NOT NULL DEFAULT 'hunter_command', -- hunter_command | aegis | frontier | icarus | world
+  act              TINYINT UNSIGNED NULL,                        -- ato da campanha (1–4) quando principal
+  requires_faction VARCHAR(16) NULL,                             -- aegis | frontier | any
+  requires_tier    VARCHAR(24) NULL,                             -- faixa de reputação mínima (GameRules::REP_TIERS)
+  requires_rep     INT NULL,
+  squad_min        TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  squad_max        TINYINT UNSIGNED NOT NULL DEFAULT 4,          -- nunca 5: esquadrão Hunter
+  human_activity   VARCHAR(16) NULL,                             -- IMPROVÁVEL | PROVÁVEL | DETECTADA
   PRIMARY KEY (id),
   UNIQUE KEY uq_missions_slug (slug)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -343,8 +354,43 @@ CREATE TABLE players (
   skill_points  SMALLINT NOT NULL DEFAULT 0,
   health        JSON NULL,     -- {saude:100,energia:78,hidratacao:56,fome:62,temperatura:36.6, limbs:{...}}
   survival      JSON NULL,
+  -- Estado operacional (PRD v3): o MESMO personagem como Hunter, Mercenário ou Sobrevivente.
+  operational_state VARCHAR(16) NOT NULL DEFAULT 'HUNTER',   -- HUNTER | MERCENARY | SURVIVOR
+  hunter_rank   VARCHAR(24)  NOT NULL DEFAULT 'RECRUTA',     -- GameRules::RANKS
+  hunter_role   VARCHAR(16)  NULL,                           -- ASSAULT | SNIPER | MEDICAL | RASTREADOR
+  base_pref     VARCHAR(16)  NULL,                           -- government_bases.slug preferencial
+  survivor_since DATETIME    NULL,                           -- desde quando está sem bandeira
   PRIMARY KEY (user_id),
   CONSTRAINT fk_player_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Contrato e reputação do personagem com cada facção (PRD v3 §7). Uma linha por facção
+-- conhecida; só UMA pode ter contract_active = 1 (regra na aplicação, OperationalRepo::sign).
+CREATE TABLE player_factions (
+  user_id         INT UNSIGNED NOT NULL,
+  faction         VARCHAR(16)  NOT NULL,                 -- aegis | frontier
+  reputation      INT NOT NULL DEFAULT 0,
+  tier            VARCHAR(24)  NULL,                     -- RECRUTADO / OPERADOR / CONFIÁVEL / VETERANO
+  contract_active TINYINT(1)   NOT NULL DEFAULT 0,
+  locked_until    DATETIME     NULL,                     -- bloqueio após traição; valor vem do backend
+  updated_at      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, faction),
+  CONSTRAINT fk_pf_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- As Bases Governamentais de uma região (Bíblia §3): 3 × 4 Hunters = 12. A capacidade por
+-- base é DADO, não constante — muda aqui, sem deploy.
+CREATE TABLE government_bases (
+  id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  slug       VARCHAR(16)  NOT NULL,                      -- alpha | bravo | charlie
+  name       VARCHAR(60)  NOT NULL,
+  map_id     INT UNSIGNED NULL,
+  capacity   TINYINT UNSIGNED NOT NULL DEFAULT 4,
+  status     VARCHAR(16)  NOT NULL DEFAULT 'OPERACIONAL',-- OPERACIONAL | LOTADA | EM RISCO | ISOLADA | SOB ATAQUE
+  sort_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_gb_slug (slug),
+  CONSTRAINT fk_gb_map FOREIGN KEY (map_id) REFERENCES maps(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Instâncias de item que o jogador possui (adquiridas em partidas ou na loja).
@@ -702,4 +748,43 @@ CREATE TABLE support_tickets (
   UNIQUE KEY uq_ticket_protocol (protocol),
   KEY idx_ticket_user (user_id, created_at),
   CONSTRAINT fk_ticket_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================================
+-- SAFE ZONE (patch v4): perímetros protegidos e o papel civil de cada jogador.
+-- ============================================================================
+DROP TABLE IF EXISTS `player_safe_roles`;
+DROP TABLE IF EXISTS `safe_zones`;
+
+CREATE TABLE `safe_zones` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `slug` VARCHAR(32) NOT NULL,
+  `name` VARCHAR(120) NOT NULL,
+  `kind` VARCHAR(8) NOT NULL DEFAULT 'gov',          -- gov | free
+  `base_slug` VARCHAR(16) NULL,                       -- government_bases.slug
+  `map_id` INT UNSIGNED NULL,
+  `region` VARCHAR(80) NULL,
+  `status` VARCHAR(16) NOT NULL DEFAULT 'ABERTA',
+  `occupancy` VARCHAR(16) NOT NULL DEFAULT 'MODERADA',
+  `capacity` SMALLINT UNSIGNED NOT NULL DEFAULT 24,
+  `protection` VARCHAR(120) NULL,
+  `description` TEXT NULL,
+  `meta` JSON NULL,                                   -- services[], rules[]
+  `sort_order` SMALLINT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_safe_zones_slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `player_safe_roles` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` INT UNSIGNED NOT NULL,
+  `zone_slug` VARCHAR(32) NOT NULL,
+  `role` VARCHAR(24) NOT NULL,                        -- GameRules::SAFE_ROLES
+  `status` VARCHAR(16) NOT NULL DEFAULT 'ATIVO',
+  `started_at` DATETIME NOT NULL,
+  `shift_ends_at` DATETIME NULL,
+  `served` INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_safe_role_user` (`user_id`),         -- um papel por vez
+  KEY `ix_safe_role_zone` (`zone_slug`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

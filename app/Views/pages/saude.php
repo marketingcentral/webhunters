@@ -58,8 +58,8 @@ $partIcon = static function (string $name) use ($partPaths): string {
 
       <div class="sd-ov__top">
         <figure class="sd-figure">
-          <img class="sd-figure__img" src="<?= e(media((string)($data['body_image'] ?? 'ui/body-wireframe.png'))) ?>"
-               alt="<?= e((string)($data['body_image_alt'] ?? '')) ?>" width="686" height="1317" decoding="async">
+          <img class="sd-figure__img" src="<?= e(media((string)($data['body_image'] ?? 'ui/body-wireframe-clean.png'))) ?>"
+               alt="<?= e((string)($data['body_image_alt'] ?? '')) ?>" width="200" height="453" decoding="async">
           <span class="sd-figure__scan" aria-hidden="true"></span>
         </figure>
 

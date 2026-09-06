@@ -116,18 +116,34 @@ $crest  = static function (?string $id, string $fallback, array $ok): string {
         <div class="list jogar-modes__list" data-select-group data-stagger>
 <?php foreach ($modes as $m): ?>
 <?php
+  /* PRD v3 §17.2: os itens são ESTADOS OPERACIONAIS (Hunter Command, Mercenário, Facções e,
+     só quando ativo, Sobrevivente), não modos arcade. `href` vira link (FACÇÕES abre /faccoes);
+     `survivor` é informativo — nunca selecionável por vontade. */
   $locked = !empty($m['locked']);
   $act    = !empty($m['active']);
   $sym    = $crest((string)($m['icon'] ?? ''), 'jg-quick', $crests);
-  $tag    = $locked ? 'div' : 'button';
+  $href   = isset($m['href']) ? (string)$m['href'] : null;
+  $isSurv = !empty($m['survivor']);
+  $tag    = $href !== null ? 'a' : (($locked || $isSurv) ? 'div' : 'button');
+  $cls    = 'row jogar-mode jogar-mode--' . e((string)($m['slug'] ?? '')) . ($act ? ' is-active' : '') . ($locked ? ' is-locked' : '') . ($isSurv ? ' jogar-mode--survivor' : '');
+  $heroKey = $isSurv ? 'survivor' : (string)($m['slug'] ?? 'hunter');
 ?>
-          <<?= $tag ?> class="row jogar-mode<?= $act ? ' is-active' : '' ?><?= $locked ? ' is-locked' : '' ?>" data-value="<?= e((string)($m['slug'] ?? '')) ?>"<?php if ($locked): ?> data-tip="Modo bloqueado"<?php else: ?> type="button" data-select aria-pressed="<?= $act ? 'true' : 'false' ?>"<?php endif; ?>>
+          <<?= $tag ?> class="<?= $cls ?>" data-value="<?= e((string)($m['slug'] ?? '')) ?>" data-hero="<?= e($heroKey) ?>"<?php
+            if ($href !== null): ?> href="<?= e(url($href)) ?>"<?php
+            elseif ($locked): ?> data-tip="<?= e((string)($m['lock_tip'] ?? 'Indisponível')) ?>"<?php
+            elseif ($isSurv): ?> aria-current="true"<?php
+            else: ?> type="button" data-select aria-pressed="<?= $act ? 'true' : 'false' ?>"<?php endif; ?>>
             <span class="row__icon jogar-mode__crest" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><use href="#<?= e($sym) ?>"></use></svg></span>
             <span class="row__text"><strong><?= e((string)($m['title'] ?? '')) ?></strong><small><?= e((string)($m['desc'] ?? '')) ?></small></span>
+<?php if (!empty($m['faction'])): ?>
+            <?php component('badge', ['kind' => 'faction', 'value' => (string)$m['faction'], 'class' => 'jogar-mode__badge']) ?>
+<?php endif; ?>
 <?php if ($locked): ?>
             <span class="ms row__lock" aria-hidden="true">lock</span>
+<?php elseif ($isSurv): ?>
+            <?php component('badge', ['kind' => 'state', 'value' => $data['operational'] ?? [], 'label' => 'STATUS ATIVO', 'class' => 'jogar-mode__badge']) ?>
 <?php else: ?>
-            <span class="ms row__chev" aria-hidden="true">chevron_right</span>
+            <span class="ms row__chev" aria-hidden="true"><?= $href !== null ? 'open_in_new' : 'chevron_right' ?></span>
 <?php endif; ?>
           </<?= $tag ?>>
 <?php endforeach; ?>
@@ -164,31 +180,68 @@ $crest  = static function (?string $id, string $fallback, array $ok): string {
   <!-- ================= COLUNA CENTRAL ================= -->
   <div class="col jogar-mid">
 
-    <section class="jogar-banner" data-boot>
-      <img class="jogar-banner__img" src="<?= e(media((string)($banner['image'] ?? 'bg/jogar-banner.jpg'))) ?>" alt="">
+<?php
+  /* Hero central por ESTADO (PRD v3 §17.4–17.6): Mobilização Hunter / Contrato Mercenário /
+     Sobrevivente Ativo. O PlayController escolhe; os outros heróis ficam em data-* para o
+     jogar.js trocar sem recarregar quando o jogador muda a seleção da esquerda. */
+  $hero   = is_array($data['hero'] ?? null) ? $data['hero'] : $banner;
+  $heroes = is_array($data['heroes'] ?? null) ? $data['heroes'] : [];
+  $heroKey = (string)($hero['key'] ?? 'hunter');
+?>
+    <section class="jogar-banner jogar-hero jogar-hero--<?= e($heroKey) ?>" data-boot data-hero-current="<?= e($heroKey) ?>"
+             data-heroes="<?= e(json_encode(array_map(static fn(array $h): array => ['title' => (string)($h['title'] ?? ''), 'desc' => (string)($h['desc'] ?? ''), 'cta' => (string)($h['cta'] ?? '')], $heroes), JSON_UNESCAPED_UNICODE)) ?>">
+      <img class="jogar-banner__img" src="<?= e(media((string)($hero['image'] ?? 'bg/jogar-banner.jpg'))) ?>" alt="">
       <div class="jogar-banner__shade" aria-hidden="true"></div>
       <div class="jogar-banner__body">
         <svg class="jg-hex jogar-banner__hex" viewBox="0 0 52 60" aria-hidden="true" focusable="false">
           <polygon class="jg-hex__frame" points="26,1.4 50.6,15.7 50.6,44.3 26,58.6 1.4,44.3 1.4,15.7"/>
           <g class="jg-hex__dots"><circle cx="5.4" cy="18.2" r="1"/><circle cx="46.6" cy="18.2" r="1"/><circle cx="5.4" cy="41.8" r="1"/><circle cx="46.6" cy="41.8" r="1"/></g>
-          <use href="#jg-quick" x="10.5" y="15.5" width="31" height="31"></use>
+          <use href="#<?= e($heroKey === 'mercenary' ? 'jg-hunt' : ($heroKey === 'survivor' ? 'jg-zone' : 'jg-quick')) ?>" x="10.5" y="15.5" width="31" height="31"></use>
         </svg>
         <div class="jogar-banner__text">
-          <h2 class="jogar-banner__title"><?= e((string)($banner['title'] ?? '')) ?></h2>
-          <p class="jogar-banner__desc"><?= e((string)($banner['desc'] ?? '')) ?></p>
+          <h2 class="jogar-banner__title" data-hero-title><?= e((string)($hero['title'] ?? '')) ?></h2>
+          <p class="jogar-banner__desc" data-hero-desc><?= e((string)($hero['desc'] ?? '')) ?></p>
         </div>
       </div>
+      <ul class="jogar-hero__stats" aria-label="Situação operacional">
+<?php foreach ((array)($hero['stats'] ?? []) as $hs): ?>
+        <li class="hstat<?= !empty($hs['cls']) ? ' hstat--' . e((string)$hs['cls']) : '' ?>">
+          <span class="hstat__k"><?= e((string)$hs['k']) ?></span>
+          <span class="hstat__v<?= !empty($hs['num']) ? ' num' : '' ?>"><?= e((string)$hs['v']) ?><?php if (!empty($hs['sub'])): ?> <small><?= e((string)$hs['sub']) ?></small><?php endif; ?></span>
+        </li>
+<?php endforeach; ?>
+      </ul>
     </section>
 
     <section class="panel jogar-maps panel--grow" data-boot>
       <div class="panel__body">
-        <h2 class="panel__section"><?= e((string)($data['maps_title'] ?? 'SELEÇÃO DE MAPAS')) ?></h2>
+<?php
+  /* PRD v3 §17.7 / §17.9: regiões persistentes, não mapas de partida. Sai o "6v6", entra a
+     leitura do setor; a capacidade é estrutura (20 = 12 Hunters + até 8 Mercenários), nunca
+     ocupação exata. */
+  $cap   = (array)($data['capacity'] ?? \App\Core\GameRules::REGION_CAPACITY);
+  $capL  = (array)($data['capacity_labels'] ?? []);
+  $mapL  = (array)($data['map_labels'] ?? []);
+?>
+        <div class="jogar-maps__head">
+          <h2 class="panel__section"><?= e((string)($data['maps_title'] ?? 'REGIÕES OPERACIONAIS')) ?></h2>
+          <p class="jogar-cap" data-tip="Sobreviventes não ampliam o teto: ocupam vagas existentes.">
+            <span class="jogar-cap__k"><?= e((string)($capL['title'] ?? 'CAPACIDADE DO SETOR')) ?></span>
+            <span class="jogar-cap__v num"><?= e((string)($cap['total'] ?? 20)) ?></span>
+            <span class="jogar-cap__sep" aria-hidden="true">·</span>
+            <span class="jogar-cap__k"><?= e((string)($capL['structure'] ?? 'ESTRUTURA')) ?></span>
+            <span class="jogar-cap__v"><span class="num"><?= e((string)($cap['hunters'] ?? 12)) ?></span> <?= e((string)($capL['hunters'] ?? 'HUNTERS')) ?> / <?= e(sprintf((string)($capL['mercs'] ?? 'ATÉ %d MERCENÁRIOS'), (int)($cap['mercenaries'] ?? 8))) ?></span>
+          </p>
+        </div>
         <div class="map-grid" data-select-group>
 <?php foreach (array_slice($maps, 0, 8) as $mp): ?>
 <?php
   $mode = (string)($mp['mode'] ?? '');
   $sel  = !empty($mp['selected']);
   $sym  = $crest((string)($modeIcons[$mode] ?? ''), 'jg-hx-skull', $crests);
+  $inf  = (int)($mp['infestation'] ?? 0);
+  $infE = \App\Core\GameRules::infestation($inf);
+  $hum  = (string)($mp['human_activity'] ?? 'MODERADA');
 ?>
           <article class="card map-card<?= $sel ? ' is-selected' : '' ?>" data-value="<?= e((string)($mp['slug'] ?? '')) ?>" data-ue-level="<?= e((string)($mp['ue_level'] ?? '')) ?>"<?= $sel ? ' aria-selected="true"' : '' ?>>
             <div class="card__media">
@@ -201,8 +254,13 @@ $crest  = static function (?string $id, string $fallback, array $ok): string {
               </svg>
               <div class="grid min-0 map-card__lines">
                 <h3 class="card__title"><?= e((string)($mp['name'] ?? '')) ?></h3>
-                <span class="card__sub"><?= e($mode) ?></span>
-                <span class="card__meta"><?= e((string)($mp['players'] ?? '')) ?></span>
+                <span class="card__sub map-card__world">
+                  <span class="map-card__inf map-card__inf--<?= e($infE['color']) ?>"><?= e((string)($mapL['infest'] ?? 'INFESTAÇÃO')) ?> <b class="num"><?= e((string)$inf) ?>%</b></span>
+                </span>
+                <span class="card__meta map-card__human">
+                  <?= e((string)($mapL['human'] ?? 'ATIVIDADE HUMANA')) ?> <b class="map-card__act map-card__act--<?= e(\App\Core\GameRules::activityColor($hum)) ?>"><?= e($hum) ?></b>
+                  <i class="map-card__persist"><?= e((string)($mapL['world'] ?? 'MUNDO')) ?>: <?= e((string)($mapL['persistent'] ?? 'PERSISTENTE')) ?></i>
+                </span>
               </div>
             </div>
             <span class="map-card__check" aria-hidden="true"><?= icon('check') ?></span>

@@ -1,56 +1,70 @@
 <?php declare(strict_types=1);
 
-/** Tela LOBBY (referência 03). */
+/**
+ * Tela LOBBY HUNTER (referência 03). PRD v3 §18.
+ *
+ * Esquadrão Hunter é 1 + até 3: QUATRO cards, nunca cinco. Cada operador traz callsign,
+ * nível, patente, função (só as quatro oficiais) e prontidão. O LobbyController substitui
+ * o card `self` pelo jogador real e o painel da operação pelo dado do banco.
+ */
 return [
     'title'    => 'LOBBY',
-    'subtitle' => 'Até 5 amigos',
-    'invite'   => 'CONVIDAR AMIGO',
-    'max_players' => 5,
+    'subtitle' => 'ATÉ 3 AMIGOS · 4 HUNTERS',
+    'invite'   => 'CONVIDAR HUNTER',
+    'max_players' => 4,   // GameRules::SQUAD_MAX — mantido aqui só para o mock ficar legível
     'squad' => [
-        ['name' => 'SOBREVIVENTE_B1', 'level' => 23, 'status' => 'Pronto', 'ready' => true, 'class' => 'ASSALTO',         'class_icon' => 'class-assault', 'class_ms' => 'swords', 'portrait' => 'portraits/op-assault.jpg', 'leader' => true,  'self' => true],
-        ['name' => 'CaçadorXP',       'level' => 18, 'status' => 'Pronto', 'ready' => true, 'class' => 'BATEDOR',         'class_icon' => 'class-scout', 'class_ms' => 'visibility',   'portrait' => 'portraits/op-scout.jpg',   'leader' => false, 'self' => false],
-        ['name' => 'Ghost_BR',        'level' => 16, 'status' => 'Pronto', 'ready' => true, 'class' => 'SUPORTE',         'class_icon' => 'class-support', 'class_ms' => 'add', 'portrait' => 'portraits/op-support.jpg', 'leader' => false, 'self' => false],
-        ['name' => 'Montanha_7',      'level' => 20, 'status' => 'Pronto', 'ready' => true, 'class' => 'FRANCO-ATIRADOR', 'class_icon' => 'class-sniper', 'class_ms' => 'my_location',  'portrait' => 'portraits/op-sniper.jpg',  'leader' => false, 'self' => false],
+        ['name' => 'HUNTER_07', 'level' => 23, 'rank' => 'CABO',     'role' => 'ASSAULT',    'readiness' => 'PRONTO',     'portrait' => 'portraits/op-assault.jpg', 'leader' => true,  'self' => true],
+        ['name' => 'Ghost_BR',  'level' => 16, 'rank' => 'SOLDADO',  'role' => 'MEDICAL',    'readiness' => 'PRONTO',     'portrait' => 'portraits/op-support.jpg', 'leader' => false, 'self' => false],
+        ['name' => 'CaçadorXP', 'level' => 18, 'rank' => 'RECRUTA',  'role' => 'RASTREADOR', 'readiness' => 'PREPARANDO', 'portrait' => 'portraits/op-scout.jpg',   'leader' => false, 'self' => false],
     ],
-    'empty_slot' => ['title' => 'CONVIDAR AMIGO', 'desc' => 'Espaço livre'],
-    'leader_tag' => 'LÍDER',
+    'empty_slot' => ['title' => 'CONVIDAR HUNTER', 'desc' => 'Vaga na unidade'],
+    /* PRD §18.4: o líder é hierarquia, não coroa genérica. */
+    'command_tag' => 'COMANDO',
+    'command_tip' => 'Oficial de maior patente presente na unidade.',
+    'readiness_labels' => ['PRONTO' => 'lime', 'PREPARANDO' => 'amber', 'NÃO PRONTO' => 'muted'],
+
     'chat' => [
-        ['author' => 'SOBREVIVENTE_B1', 'text' => 'Fala galera, bora caçar!',     'time' => '19:42', 'self' => true],
-        ['author' => 'CaçadorXP',       'text' => 'Bora! Partiu missão!',          'time' => '19:42', 'self' => false],
-        ['author' => 'Ghost_BR',        'text' => 'Tô pronto aqui',                'time' => '19:43', 'self' => false],
-        ['author' => 'Montanha_7',      'text' => 'Só esperar o líder iniciar',    'time' => '19:43', 'self' => false],
-        ['author' => 'SOBREVIVENTE_B1', 'text' => '5 min e vamos',                 'time' => '19:44', 'self' => true],
+        ['author' => 'HUNTER_07', 'text' => 'Unidade formada. Base Alpha confirma a janela.', 'time' => '19:42', 'self' => true],
+        ['author' => 'Ghost_BR',  'text' => 'Kits médicos checados. Pronto.',                  'time' => '19:42', 'self' => false],
+        ['author' => 'CaçadorXP', 'text' => 'Rádio captou transmissão perto da estação. Não é nossa.', 'time' => '19:43', 'self' => false],
+        ['author' => 'Ghost_BR',  'text' => 'Então tem gente lá antes de nós.',                'time' => '19:43', 'self' => false],
+        ['author' => 'HUNTER_07', 'text' => '2 min e mobilizamos.',                            'time' => '19:44', 'self' => true],
     ],
-    'chat_title' => 'CHAT DO LOBBY',
+    'chat_title' => 'CHAT DA UNIDADE',
     'chat_ph'    => 'Digite sua mensagem...',
     'chat_send'  => 'Enviar mensagem',
-    'news_title' => 'NOTÍCIAS E ATUALIZAÇÕES',
+    'news_title' => 'BOLETINS E ATUALIZAÇÕES',
     'news_slides' => [
-        ['title' => 'NOVA ATUALIZAÇÃO DISPONÍVEL',  'desc' => 'Correções de bugs, melhorias de desempenho e novos conteúdos já disponíveis.', 'image' => 'maps/vale-do-eco.jpg', 'href' => 'noticias/atualizacao-8-8-1'],
-        ['title' => 'EVENTO: CAÇA NA FLORESTA',      'desc' => 'Participe do evento especial e ganhe recompensas exclusivas até 05/06.',       'image' => 'news/news-evento-caca.jpg', 'href' => 'noticias/evento-caca-na-floresta'],
-        ['title' => 'MANUTENÇÃO PROGRAMADA',         'desc' => 'Servidores ficarão offline para manutenção na terça, das 03h às 05h.',        'image' => 'news/news-manutencao.jpg', 'href' => 'noticias/manutencao-programada'],
-        ['title' => 'NOVO MAPA: COMPLEXO MILITAR',   'desc' => 'Uma base fortificada com três pontos de extração e zonas de risco dinâmicas.', 'image' => 'maps/complexo-militar.jpg', 'href' => 'mapas'],
-        ['title' => 'PASSE DE TEMPORADA 01',         'desc' => 'Desbloqueie skins, tokens de XP e a AK-103 dourada até o nível 100.',          'image' => 'ui/season-pass.jpg', 'href' => 'loja'],
-        ['title' => 'RANKED: TEMPORADA COMPETITIVA', 'desc' => 'As partidas ranqueadas chegam em junho com recompensas por divisão.',         'image' => 'bg/forest-generic.jpg', 'href' => 'noticias'],
-        ['title' => 'BALANCEAMENTO DE ARMAS',        'desc' => 'M4A1 com menos recuo horizontal; Glock 17 ganha 2 balas por carregador.',     'image' => 'maps/porto-industrial.jpg', 'href' => 'noticias/balanceamento-de-armas'],
-        ['title' => 'DESAFIOS DIÁRIOS RENOVADOS',    'desc' => 'Quatro missões curtas por dia com créditos extras para o esquadrão completo.', 'image' => 'maps/fabrica-abandonada.jpg', 'href' => 'desafios'],
+        ['title' => 'ATIVIDADE BIOLÓGICA AUMENTA NO NORTE', 'desc' => 'Relatórios do Icarus indicam movimentação subterrânea próxima ao Setor K-07.', 'image' => 'maps/vale-do-eco.jpg', 'href' => 'noticias'],
+        ['title' => 'AEGIS REFORÇA A PONTE LESTE',          'desc' => 'Blindados cruzando a estrada leste. Mercenários relatam patrulhas dobradas.',  'image' => 'maps/porto-industrial.jpg', 'href' => 'noticias'],
+        ['title' => 'PRÓXIMA JANELA LOGÍSTICA CONFIRMADA',  'desc' => 'Comboio de reabastecimento cruza o setor nas próximas horas.',               'image' => 'maps/complexo-militar.jpg', 'href' => 'noticias'],
+        ['title' => 'ATUALIZAÇÃO 8.8.1',                    'desc' => 'Correções, desempenho e novo conteúdo já disponíveis.',                      'image' => 'news/news-atualizacao.jpg', 'href' => 'noticias/atualizacao-8-8-1'],
+        ['title' => 'MANUTENÇÃO PROGRAMADA',                'desc' => 'Servidores offline para manutenção na terça, das 03h às 05h.',              'image' => 'news/news-manutencao.jpg', 'href' => 'noticias/manutencao-programada'],
+        ['title' => 'PASSE DE OPERAÇÕES 04',                'desc' => 'Cosméticos, dossiês e o boletim Intelligence 24 h antes de todo mundo.',    'image' => 'ui/season-pass.jpg', 'href' => 'loja'],
     ],
+
+    /* ---- painel da operação (PRD §18.5): origem, base, ameaça Veyra, atividade humana ---- */
     'mission' => [
-        'panel_title' => 'MISSÃO SELECIONADA',
+        'panel_title' => 'OPERAÇÃO SELECIONADA',
         'title'    => 'SINAL PERDIDO',
-        'subtitle' => 'BASE DA RESISTÊNCIA',
+        'subtitle' => 'HUNTER COMMAND · BASE ALPHA',
         'image'    => 'ui/mission-sinal-perdido.jpg',
         'href'     => 'missoes',
+        'origin'   => 'hunter_command',
         'stats' => [
-            ['label' => 'DIFICULDADE',      'value' => 'MÉDIA',  'hot' => true],
-            ['label' => 'DURAÇÃO ESTIMADA', 'value' => '35 MIN', 'hot' => true],
-            ['label' => 'JOGADORES MÁX.',   'value' => '5',      'hot' => true],
+            ['label' => 'ORIGEM',            'value' => 'HUNTER COMMAND', 'hot' => true],
+            ['label' => 'BASE',              'value' => 'ALPHA',          'hot' => false],
+            ['label' => 'AMEAÇA VEYRA',      'value' => 'ALTA',           'hot' => true],
+            ['label' => 'ATIVIDADE HUMANA',  'value' => 'DETECTADA',      'hot' => true],
+            ['label' => 'ESQUADRÃO',         'value' => '1–4',            'hot' => false],
+            ['label' => 'MUNDO',             'value' => 'PERSISTENTE',    'hot' => false],
         ],
-        'objective_title' => 'OBJETIVO',
-        'objective' => 'Restaure a comunicação do posto avançado norte. Reative o terminal de comunicação e proteja o técnico.',
+        'objective_title' => 'ORDEM',
+        'objective' => 'Restaure a comunicação da estação militar ao norte. Reative o terminal e proteja o técnico durante a sincronização.',
         'objective_lines' => [
-            'Restaure a comunicação do posto avançado norte.',
-            'Reative o terminal de comunicação e proteja o técnico.',
+            'Restaure a comunicação da estação militar ao norte.',
+            'Reative o terminal e proteja o técnico durante a sincronização.',
+            'Há corpos com marcas de tiros humanos: alguém chegou antes.',
         ],
         'rewards_title' => 'RECOMPENSAS',
         'rewards' => [
@@ -60,20 +74,23 @@ return [
         ],
         'reward_item' => ['name' => 'AK-103', 'desc' => 'FUZIL DE ASSALTO', 'image' => 'items/ak103.png'],
     ],
-    'settings_title' => 'CONFIGURAÇÕES DA MISSÃO',
+
+    /* ---- configurações (PRD §18.6): o mundo é persistente, então clima e janela são
+           INFORMAÇÃO (readonly); fogo amigo é protocolo, não interruptor. ---- */
+    'settings_title' => 'CONFIGURAÇÕES DA OPERAÇÃO',
     'settings' => [
-        ['key' => 'difficulty', 'label' => 'DIFICULDADE',            'value' => 'MÉDIA',         'type' => 'stepper', 'icon' => null,
+        ['key' => 'difficulty', 'label' => 'DIFICULDADE DO CONTRATO', 'value' => 'MÉDIA',        'type' => 'stepper',  'icon' => null,
             'options' => ['FÁCIL', 'MÉDIA', 'DIFÍCIL', 'EXTREMA']],
-        ['key' => 'weather',    'label' => 'CLIMA',                  'value' => 'NUBLADO',       'type' => 'stepper', 'icon' => 'cloud',
-            'options' => ['LIMPO', 'NUBLADO', 'CHUVA', 'NEBLINA', 'TEMPESTADE']],
-        ['key' => 'cycle',      'label' => 'TEMPO DO CICLO',         'value' => '35 MIN',        'type' => 'stepper', 'icon' => 'schedule',
-            'options' => ['20 MIN', '35 MIN', '50 MIN', '70 MIN']],
-        ['key' => 'friendly',   'label' => 'FOGO AMIGO',             'value' => 'DESATIVADO',    'type' => 'stepper', 'icon' => 'swords',
-            'options' => ['DESATIVADO', 'ATIVADO', 'REFLETIDO']],
-        ['key' => 'fill',       'label' => 'PREENCHIMENTO DE SQUAD', 'value' => 'NÃO PREENCHER', 'type' => 'stepper', 'icon' => 'groups',
+        ['key' => 'weather',    'label' => 'CLIMA ATUAL',             'value' => 'NUBLADO',      'type' => 'readonly', 'icon' => 'cloud',
+            'tip' => 'Clima do mundo persistente. Não é escolha: é previsão.'],
+        ['key' => 'window',     'label' => 'JANELA OPERACIONAL',      'value' => 'PERÍODO ATUAL','type' => 'readonly', 'icon' => 'schedule',
+            'tip' => 'O mundo não tem duração de partida. Você entra no meio de um dia que já estava acontecendo.'],
+        ['key' => 'friendly',   'label' => 'PROTOCOLO DE FOGO AMIGO', 'value' => 'ATIVO · PENALIZADO', 'type' => 'readonly', 'icon' => 'gavel',
+            'tip' => 'Fogo amigo é possível e tem consequência: quebra de protocolo confirmada revoga o status Hunter.'],
+        ['key' => 'fill',       'label' => 'PREENCHIMENTO DE SQUAD',  'value' => 'NÃO PREENCHER', 'type' => 'stepper', 'icon' => 'groups',
             'options' => ['NÃO PREENCHER', 'SÓ AMIGOS', 'PREENCHER']],
     ],
-    'cta'         => 'INICIAR MISSÃO',
+    'cta'         => 'MOBILIZAR ESQUADRÃO',
     'cta_href'    => 'mapa',
     'cta_ready'   => true,
     'gear_label'  => 'Configurações',

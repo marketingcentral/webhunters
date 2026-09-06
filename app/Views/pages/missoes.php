@@ -5,6 +5,10 @@
  * $data: title, title_tag, subtitle, list_title, detail_title, filters_title, types_title,
  *        filters[], types[], reset{}, board{}, summary[], items[], empty{}, labels{}, cta, cta_href.
  * Escopo da view: $page, $player, $nav, $server, $data, $flash, $csrf.
+ *
+ * PRD v3 §24: todo card mostra ORIGEM (badge), ESQUADRÃO 1–4 em vez de "jogadores máx.", e
+ * REQUER CONTRATO AEGIS/FRONTIER (badge requirement) quando a operação é de facção. Os filtros da
+ * esquerda são por ORIGEM (data-origin) — ver assets/js/pages/missoes.js.
  */
 
 $items   = (array)($data['items'] ?? []);
@@ -135,6 +139,7 @@ $pips = static function (int $level): string {
           ?>
           <button class="mcard mcard--<?= e($st) ?><?= $sel ? ' is-active' : '' ?>" type="button" data-boot data-select
                   data-value="<?= e((string)$m['slug']) ?>" data-status="<?= e($st) ?>" data-type="<?= e((string)($m['type'] ?? '')) ?>"
+                  data-origin="<?= e((string)($m['origin'] ?? 'hunter_command')) ?>" data-requires="<?= (!empty($m['requirement']) && empty($m['requirement']['met'])) ? '1' : '0' ?>"
                   aria-pressed="<?= $sel ? 'true' : 'false' ?>">
             <span class="mcard__media">
               <img class="mcard__img" src="<?= e(media((string)$m['image'])) ?>" alt="" loading="lazy" decoding="async">
@@ -149,7 +154,10 @@ $pips = static function (int $level): string {
                 <strong class="mcard__title"><?= e((string)$m['title']) ?></strong>
                 <span class="mcard__status mcard__status--<?= e($st) ?>"><i aria-hidden="true"></i><?= e((string)($m['status_label'] ?? '')) ?></span>
               </span>
-              <span class="mcard__sub"><?= e((string)$m['faction']) ?> <i aria-hidden="true">•</i> <?= e((string)$m['region']) ?></span>
+              <span class="mcard__sub">
+                <?php component('badge', ['kind' => 'origin', 'value' => (string)($m['origin'] ?? 'hunter_command'), 'class' => 'mcard__origin']); ?>
+                <span class="mcard__giver"><?= e((string)$m['faction']) ?> <i aria-hidden="true">•</i> <?= e((string)$m['region']) ?></span>
+              </span>
 
               <span class="mcard__meta">
                 <span class="mmeta">
@@ -161,10 +169,17 @@ $pips = static function (int $level): string {
                   <span class="mmeta__val"><?= icon('schedule', 'mmeta__ic') ?><?= e((string)$m['duration']) ?></span>
                 </span>
                 <span class="mmeta">
-                  <span class="mmeta__label"><?= e((string)($labels['players'] ?? 'JOGADORES')) ?></span>
-                  <span class="mmeta__val"><?= icon('group', 'mmeta__ic') ?><span class="num"><?= e((string)(int)$m['players']) ?></span></span>
+                  <span class="mmeta__label"><?= e((string)($labels['players'] ?? 'ESQUADRÃO')) ?></span>
+                  <span class="mmeta__val"><?= icon('group', 'mmeta__ic') ?><span class="num"><?= e((string)($m['squad'] ?? (int)($m['players'] ?? 4))) ?></span></span>
                 </span>
               </span>
+              <?php $rq = is_array($m['requirement'] ?? null) ? $m['requirement'] : []; ?>
+              <?php if ($rq !== []): ?>
+              <span class="mcard__req<?= !empty($rq['met']) ? ' is-met' : '' ?>">
+                <?php component('badge', ['kind' => 'requirement', 'value' => ['faction' => (string)($rq['faction'] ?? ''), 'tier' => (string)($rq['tier'] ?? '')], 'label' => (string)($rq['label'] ?? '')]); ?>
+                <?php if (!empty($rq['met'])): ?><small class="mcard__req-ok"><?= icon('check', 'mcard__req-ic') ?>ATENDIDO</small><?php endif; ?>
+              </span>
+              <?php endif; ?>
 
               <span class="mcard__foot">
                 <span class="mrewards">
@@ -233,7 +248,10 @@ $pips = static function (int $level): string {
               <span class="mission__shade" aria-hidden="true"></span>
               <span class="mission__head">
                 <strong class="mission__title"><?= e((string)$m['title']) ?></strong>
-                <span class="mission__sub"><?= e((string)$m['faction']) ?></span>
+                <span class="mission__sub">
+                  <?php component('badge', ['kind' => 'origin', 'value' => (string)($m['origin'] ?? 'hunter_command'), 'class' => 'mission__origin']); ?>
+                  <span><?= e((string)$m['faction']) ?></span>
+                </span>
               </span>
               <span class="mission__stats">
                 <span class="mstat">
@@ -245,8 +263,8 @@ $pips = static function (int $level): string {
                   <span class="mstat__val"><?= e((string)$m['duration']) ?></span>
                 </span>
                 <span class="mstat">
-                  <span class="mstat__label"><?= e((string)($labels['players'] ?? '')) ?></span>
-                  <span class="mstat__val num"><?= e((string)(int)$m['players']) ?></span>
+                  <span class="mstat__label"><?= e((string)($labels['players'] ?? 'ESQUADRÃO')) ?></span>
+                  <span class="mstat__val num"><?= e((string)($m['squad'] ?? (int)($m['players'] ?? 4))) ?></span>
                 </span>
               </span>
             </a>
@@ -284,6 +302,17 @@ $pips = static function (int $level): string {
             </div>
             <?php endif; ?>
 
+            <?php $rq = is_array($m['requirement'] ?? null) ? $m['requirement'] : []; ?>
+            <?php if ($rq !== []): ?>
+            <div class="mission__note mission__note--req<?= !empty($rq['met']) ? ' is-met' : '' ?>">
+              <?= icon(!empty($rq['met']) ? 'verified' : 'lock', 'mission__note-ic') ?>
+              <span>
+                <strong><?= e((string)($labels['requires'] ?? 'REQUISITO')) ?></strong>
+                <small><?= e((string)($rq['label'] ?? '')) ?><?= !empty($rq['met']) ? ' · ATENDIDO' : (!empty($rq['hint']) ? ' · ' . e((string)$rq['hint']) : '') ?></small>
+              </span>
+            </div>
+            <?php endif; ?>
+
             <div class="mission__facts">
               <span class="mfact">
                 <span class="mfact__label"><?= e((string)($labels['region'] ?? 'REGIÃO')) ?></span>
@@ -296,6 +325,14 @@ $pips = static function (int $level): string {
               <span class="mfact">
                 <span class="mfact__label"><?= e((string)($labels['level'] ?? 'NÍVEL REC.')) ?></span>
                 <span class="mfact__val num"><?= e((string)(int)($m['level_req'] ?? 1)) ?></span>
+              </span>
+              <span class="mfact">
+                <span class="mfact__label"><?= e((string)($labels['origin'] ?? 'ORIGEM')) ?></span>
+                <span class="mfact__val mfact__val--origin-<?= e((string)($m['origin'] ?? 'hunter_command')) ?>"><?= e((string)($m['origin_label'] ?? 'HUNTER COMMAND')) ?></span>
+              </span>
+              <span class="mfact">
+                <span class="mfact__label"><?= e((string)($labels['human'] ?? 'ATIVIDADE HUMANA')) ?></span>
+                <span class="mfact__val"><?= icon('radar', 'mfact__ic') ?><?= e(mb_strtoupper((string)($m['human_activity'] ?? 'PROVÁVEL'))) ?></span>
               </span>
             </div>
 
@@ -332,6 +369,9 @@ $pips = static function (int $level): string {
           <span class="btn accept-btn accept-btn--off is-disabled" aria-disabled="true">
             <?= icon($st === 'done' ? 'check_circle' : 'lock', 'accept-btn__ic') ?><span class="accept-btn__label"><?= e((string)($m['cta'] ?? '')) ?></span>
           </span>
+          <?php endif; ?>
+          <?php if ($rq !== [] && empty($rq['met']) && (string)($m['cta_href'] ?? '') !== 'faccoes'): ?>
+          <a class="btn accept-alt" href="<?= e(url('faccoes')) ?>"><?= icon('handshake', 'accept-alt__ic') ?><span>VER CONTRATO DA FACÇÃO</span></a>
           <?php endif; ?>
           <a class="btn accept-map" href="<?= e(url('mapa')) ?>" aria-label="<?= e((string)($labels['map'] ?? 'VER NO MAPA')) ?>" data-tip="<?= e((string)($labels['map'] ?? 'VER NO MAPA')) ?>">
             <?= icon('map') ?>

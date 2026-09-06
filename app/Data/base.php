@@ -1,0 +1,50 @@
+<?php declare(strict_types=1);
+
+/**
+ * Tela BASE DE CAMPO (/base) — PRD v3 §28. Versão P0: existe para o botão da Home não ser
+ * link morto e para o conceito ficar claro (Bíblia §7 "Bases de campo dos jogadores").
+ * A base do jogador (player_bases) entra no P1; até lá, o estado é "nenhuma base ativa".
+ */
+return [
+    'title'    => 'BASE DE CAMPO',
+    'subtitle' => 'INFRAESTRUTURA PERSISTENTE',
+    'intro'    => 'A manifestação física da sua permanência numa região: depósito, garagem e um ponto de continuidade que o mundo não apaga quando você extrai.',
+
+    'empty' => [
+        'title' => 'NENHUMA BASE DE CAMPO ATIVA',
+        'desc'  => 'Você ainda não estabeleceu uma base nesta região. Bases de campo guardam armas, materiais, recursos científicos, combustível e veículos — fora da extração oficial.',
+        'cta'   => 'VER MAPA',
+        'href'  => 'mapa',
+        'cta2'  => 'STASH CENTRAL',
+        'href2' => 'inventario',
+    ],
+
+    'labels' => [
+        'name' => 'NOME', 'region' => 'REGIÃO', 'sector' => 'SETOR', 'status' => 'STATUS', 'capacity' => 'CAPACIDADE',
+        'energy' => 'ENERGIA', 'security' => 'SEGURANÇA', 'storage' => 'ARMAZENAMENTO', 'vehicles' => 'VEÍCULOS',
+        'owner' => 'PROPRIETÁRIO', 'permissions' => 'PERMISSÕES', 'exposure' => 'EXPOSIÇÃO', 'human' => 'ATIVIDADE HUMANA PRÓXIMA',
+    ],
+
+    /* Módulos possíveis (PRD §28.2) — simples e táticos, sem sandbox. */
+    'modules_title' => 'MÓDULOS',
+    'modules' => [
+        ['slug' => 'deposito',   'label' => 'DEPÓSITO',   'icon' => 'inventory_2',        'desc' => 'Armazenamento de itens, munição e materiais.'],
+        ['slug' => 'garagem',    'label' => 'GARAGEM',    'icon' => 'garage',             'desc' => 'Estaciona e mantém veículos de logística.'],
+        ['slug' => 'gerador',    'label' => 'GERADOR',    'icon' => 'bolt',               'desc' => 'Energia para os demais módulos.'],
+        ['slug' => 'bancada',    'label' => 'BANCADA',    'icon' => 'handyman',           'desc' => 'Reparos de campo e modificações.'],
+        ['slug' => 'radio',      'label' => 'RÁDIO',      'icon' => 'cell_tower',         'desc' => 'Boletins, coordenação e sinais interceptados.'],
+        ['slug' => 'enfermaria', 'label' => 'ENFERMARIA', 'icon' => 'medical_services',   'desc' => 'Estabilização e tratamento entre operações.'],
+        ['slug' => 'defesa',     'label' => 'DEFESA',     'icon' => 'security',           'desc' => 'Barricadas e perímetro. Não é invisibilidade.'],
+    ],
+
+    'terms_title' => 'NÃO CONFUNDIR',
+    'terms' => [
+        ['k' => 'BASE GOVERNAMENTAL',   'v' => 'Mobilização Hunter. Alpha, Bravo, Charlie.'],
+        ['k' => 'INSTALAÇÃO DE FACÇÃO', 'v' => 'Estrutura controlada por Aegis ou Frontier.'],
+        ['k' => 'BASE DE CAMPO',        'v' => 'Construída pelo jogador. Persiste no mundo.'],
+        ['k' => 'STASH CENTRAL',        'v' => 'Armazenamento seguro fora da operação.'],
+    ],
+
+    'survivor_note' => 'Para o Sobrevivente a base de campo é ainda mais importante: sem extração oficial, o armazenamento local é a única forma de transformar tempo vivo em progresso.',
+    'p1_note' => 'Construção, permissões e veículos registrados dependem do backend de bases (fase P1).',
+];

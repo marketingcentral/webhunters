@@ -3,9 +3,11 @@
 namespace App\Controllers;
 
 use App\Core\Database;
+use App\Core\GameRules;
 use App\Core\Request;
 use App\Core\Response;
 use App\Repo\CatalogRepo;
+use App\Repo\OperationalRepo;
 
 final class MissionsController extends Controller
 {
@@ -24,11 +26,20 @@ final class MissionsController extends Controller
     /** Texto de dificuldade -> nível de pips (1..4). */
     private const DIFFICULTY = ['FÁCIL' => 1, 'MÉDIA' => 2, 'DIFÍCIL' => 3, 'EXTREMO' => 4];
 
-    /** Tipo de contrato -> rótulo exibido. */
-    private const TYPE_LABEL = ['principal' => 'PRINCIPAL', 'contrato' => 'CONTRATO', 'diaria' => 'DIÁRIA'];
+    /** Tipo de contrato -> rótulo exibido. `emergencia` = evento de mundo (PRD v3 §24). */
+    private const TYPE_LABEL = ['principal' => 'PRINCIPAL', 'contrato' => 'CONTRATO', 'diaria' => 'DIÁRIA', 'emergencia' => 'EMERGÊNCIA'];
 
-    /** kind da recompensa -> ícone do sprite (xp tem tratamento próprio na view). */
-    private const REWARD_ICON = ['xp' => 'xp', 'cash' => 'coin-cash', 'points' => 'coin-points', 'credits' => 'coin-credit'];
+    /**
+     * kind da recompensa -> ícone do sprite (xp tem tratamento próprio na view).
+     * Reputação de facção, acesso e intel (PRD §24.8) usam glifos que já existem no sprite.
+     */
+    private const REWARD_ICON = [
+        'xp' => 'xp', 'cash' => 'coin-cash', 'points' => 'coin-points', 'credits' => 'coin-credit',
+        'rep_aegis' => 'sk-medal', 'rep_frontier' => 'sk-medal', 'access' => 'sk-exit-run', 'intel' => 'sk-network',
+    ];
+
+    /** Sufixo curto por kind (o texto do selo). */
+    private const REWARD_SUFFIX = ['rep_aegis' => ' REP AEGIS', 'rep_frontier' => ' REP FRONTIER', 'access' => ' ACESSO', 'intel' => ' INTEL'];
 
     /** Categoria do item -> etiqueta curta da recompensa. */
     private const ITEM_LABEL = [
@@ -79,22 +90,28 @@ final class MissionsController extends Controller
         foreach ($items as &$it) { $it['selected'] = $it['slug'] === $selected; }
         unset($it);
 
-        // Filtros contam o estado do jogador.
+        // Filtros por ORIGEM (PRD v3 §24.3) + estado do jogador.
         $counts = [
             'todas'       => count($items),
+            'hunter'      => $this->countBy($items, static fn(array $i): bool => $i['origin'] === 'hunter_command'),
+            'aegis'       => $this->countBy($items, static fn(array $i): bool => $i['origin'] === 'aegis'),
+            'frontier'    => $this->countBy($items, static fn(array $i): bool => $i['origin'] === 'frontier'),
+            'eventos'     => $this->countBy($items, static fn(array $i): bool => in_array($i['origin'], ['world', 'icarus'], true)),
+            'diarias'     => $this->countBy($items, static fn(array $i): bool => $i['type'] === 'diaria'),
+            'concluidas'  => $this->countBy($items, static fn(array $i): bool => $i['status'] === 'done'),
             'ativas'      => $this->countBy($items, static fn(array $i): bool => $i['status'] === 'active'),
             'disponiveis' => $this->countBy($items, static fn(array $i): bool => $i['status'] === 'available'),
-            'concluidas'  => $this->countBy($items, static fn(array $i): bool => $i['status'] === 'done'),
-            'diarias'     => $this->countBy($items, static fn(array $i): bool => $i['type'] === 'diaria'),
+            'requer'      => $this->countBy($items, static fn(array $i): bool => is_array($i['requirement']) && !$i['requirement']['met']),
         ];
         foreach ((array)($data['filters'] ?? []) as $k => $f) {
             $data['filters'][$k]['count'] = $counts[(string)$f['slug']] ?? 0;
         }
         $data['summary'] = [
-            ['label' => 'ATIVAS',      'value' => $counts['ativas']],
-            ['label' => 'DISPONÍVEIS', 'value' => $counts['disponiveis']],
-            ['label' => 'DIÁRIAS',     'value' => $counts['diarias']],
+            ['label' => 'ATIVAS',           'value' => $counts['ativas']],
+            ['label' => 'DISPONÍVEIS',      'value' => $counts['disponiveis']],
+            ['label' => 'REQUEREM CONTRATO','value' => $counts['requer']],
         ];
+        $data['operational'] = $this->operational();
 
         $data['items'] = $items;
 
@@ -141,24 +158,63 @@ final class MissionsController extends Controller
                 'type'  => $kind,
                 'icon'  => self::REWARD_ICON[$kind] ?? $kind,
                 'value' => $amount,
-                'text'  => $kind === 'xp' ? '+' . num($amount) . ' XP' : '+' . num($amount),
+                'text'  => $kind === 'xp' ? '+' . num($amount) . ' XP' : '+' . num($amount) . (self::REWARD_SUFFIX[$kind] ?? ''),
             ];
         }
 
         [$ctaLabel, $ctaHref] = self::CTA[$status] ?? ['ACEITAR CONTRATO', 'lobby'];
+
+        /*
+         * Origem e requisito de facção (PRD v3 §24.2–24.5). Se a missão exige contrato que o
+         * jogador não tem, o card diz isso e o CTA vira o caminho para resolver — VER CONTRATO
+         * DA FACÇÃO — em vez de fingir que dá para aceitar.
+         */
+        $op       = $this->operational();
+        $origin   = (string)($m['origin'] ?? 'hunter_command');
+        $reqFac   = ($m['requires_faction'] ?? null) !== null ? strtolower((string)$m['requires_faction']) : null;
+        $reqTier  = ($m['requires_tier'] ?? null) !== null ? (string)$m['requires_tier'] : null;
+        $reqMet   = $reqFac === null
+            || ($reqFac === 'any' && ($op['faction'] ?? null) !== null)
+            || ($reqFac !== 'any' && OperationalRepo::meets($op, $reqFac, $reqTier));
+        $requirement = null;
+        if ($reqFac !== null) {
+            $requirement = [
+                'faction' => $reqFac === 'any' ? null : $reqFac,
+                'tier'    => $reqTier,
+                'met'     => $reqMet,
+                'label'   => $reqFac === 'any'
+                    ? 'REQUER CONTRATO MERCENÁRIO'
+                    : ($reqTier !== null
+                        ? (GameRules::faction($reqFac)['label'] ?? strtoupper($reqFac)) . ' — ' . mb_strtoupper($reqTier)
+                        : 'REQUER CONTRATO ' . (GameRules::faction($reqFac)['label'] ?? strtoupper($reqFac))),
+                'hint'    => $reqTier !== null ? mb_strtoupper($reqTier) . ' NECESSÁRIA' : null,
+            ];
+            if (!$reqMet && in_array($status, ['available', 'locked'], true)) {
+                $statusLabel = 'REQUER CONTRATO';
+                [$ctaLabel, $ctaHref] = $op['state'] === GameRules::STATE_HUNTER
+                    ? ['ATUAR COMO MERCENÁRIO', 'faccoes']
+                    : ['VER CONTRATO DA FACÇÃO', 'faccoes'];
+            }
+        }
 
         $card = [
             'slug'             => $slug,
             'level_req'        => (int)($m['level_req'] ?? 1),
             'title'            => (string)$m['name'],
             'faction'          => (string)($m['giver'] ?? ''),
+            'origin'           => $origin,
+            'origin_label'     => GameRules::origin($origin)['label'],
+            'requirement'      => $requirement,
             'type'             => $type,
             'type_label'       => self::TYPE_LABEL[$type] ?? mb_strtoupper($type),
             'image'            => (string)($m['image'] ?? ''),
             'difficulty'       => (string)($m['difficulty'] ?? ''),
             'difficulty_level' => self::DIFFICULTY[(string)($m['difficulty'] ?? '')] ?? 1,
             'duration'         => ((int)($m['duration_min'] ?? 0)) . ' MIN',
-            'players'          => (int)($m['players_max'] ?? 0),
+            // Mundo persistente: não há "jogadores máx." — há a unidade recomendada (PRD §24.7)
+            'squad'            => (int)($m['squad_min'] ?? 1) . '–' . (int)($m['squad_max'] ?? GameRules::SQUAD_MAX),
+            'players'          => min((int)($m['players_max'] ?? GameRules::SQUAD_MAX), GameRules::SQUAD_MAX),
+            'human_activity'   => (string)($m['human_activity'] ?? 'PROVÁVEL'),
             'region'           => (string)($m['region'] ?? ''),
             'status'           => $status,
             'status_label'     => $statusLabel,

@@ -1,0 +1,61 @@
+/* ==========================================================================
+   FACÇÕES (/faccoes) — PRD v3 §27
+   Dois painéis iguais, lado a lado. A cor de cada facção (ciano Aegis, âmbar
+   Frontier) aparece só em badge, número e filete — a paleta continua preto/verde.
+   ========================================================================== */
+.page-faccoes .fac{display:flex;flex-direction:column;gap:1rem;min-height:0}
+.page-faccoes .fac__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem}
+.page-faccoes .fac__intro{max-width:52rem}
+.page-faccoes .fac__me{display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;text-align:right;flex:none}
+.page-faccoes .fac__rule{display:flex;align-items:center;gap:.4rem;margin:0;font-family:var(--font-cond);font-size:.78rem;letter-spacing:.08em;color:var(--c-text-2);text-transform:uppercase}
+.page-faccoes .fac__rule-ic{color:var(--c-amber)}
+.page-faccoes .fac__notice{display:flex;align-items:center;gap:.75rem;margin:0;padding:.7rem 1rem;border:1px solid rgba(232,237,230,.35);border-radius:var(--r-2);background:rgba(232,237,230,.05);font-size:.9rem;color:var(--c-text-2)}
+
+.page-faccoes .fac__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;min-height:0}
+.page-faccoes .fac-card{display:flex;flex-direction:column;gap:.85rem;padding:1.1rem 1.25rem 1.2rem;--_fc:var(--c-muted)}
+.page-faccoes .fac-card--cyan{--_fc:var(--c-cyan)}
+.page-faccoes .fac-card--amber{--_fc:var(--c-amber)}
+.page-faccoes .fac-card.is-active{--_bc:var(--_fc);box-shadow:0 0 0 1px rgba(0,0,0,0),0 0 22px rgba(0,0,0,.35)}
+.page-faccoes .fac-card.is-locked{opacity:.78}
+.page-faccoes .fac-card::before{content:"";position:absolute;left:0;top:1rem;bottom:1rem;width:2px;background:var(--_fc);opacity:.55}
+
+.page-faccoes .fac-card__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.page-faccoes .fac-card__name{margin:0;font-family:var(--font-display);font-size:2rem;letter-spacing:.06em;color:#fff;line-height:1}
+.page-faccoes .fac-card__tag{margin:.25rem 0 0;font-size:.9rem;color:var(--c-text-2);font-style:italic}
+
+.page-faccoes .fac-card__rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem 1rem;margin:0;padding:0;list-style:none}
+.page-faccoes .frow{display:flex;flex-direction:column;gap:.12rem;min-width:0}
+.page-faccoes .frow--wide{grid-column:1/-1}
+.page-faccoes .frow__k{font-family:var(--font-cond);font-size:.66rem;letter-spacing:.14em;color:var(--c-muted);text-transform:uppercase}
+.page-faccoes .frow__v{font-family:var(--font-cond);font-size:1.05rem;letter-spacing:.05em;color:#e8ede6;display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem}
+.page-faccoes .frow__v small{font-size:.66rem;letter-spacing:.1em;color:var(--c-muted)}
+.page-faccoes .frow__v--cyan{color:var(--c-cyan)} .page-faccoes .frow__v--amber{color:var(--c-amber)}
+.page-faccoes .frow__v--rel-active{color:var(--c-lime)}
+.page-faccoes .frow__v--rel-locked,.page-faccoes .frow__v--rel-rival{color:var(--c-red)}
+.page-faccoes .frow__v--rel-survivor{color:var(--c-text)}
+.page-faccoes .frow__v--list span{padding:.1rem .5rem;border:1px solid var(--c-line);border-radius:var(--r-1);font-size:.72rem;letter-spacing:.08em}
+.page-faccoes .frow__v--list em{font-style:normal;font-size:.72rem;color:var(--c-dim);letter-spacing:.1em}
+
+.page-faccoes .fac-card__sec{margin:.2rem 0 0;font-family:var(--font-cond);font-size:.72rem;letter-spacing:.16em;color:var(--c-muted);text-transform:uppercase}
+.page-faccoes .fac-card__ben{display:grid;gap:.4rem;margin:0;padding:0;list-style:none;flex:1 1 auto}
+.page-faccoes .fac-card__ben li{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:.6rem;align-items:baseline;font-size:.88rem;color:var(--c-text-2)}
+.page-faccoes .fac-card__ben b{font-family:var(--font-cond);font-weight:500;font-size:.72rem;letter-spacing:.12em;color:var(--_fc)}
+
+.page-faccoes .fac-card__foot{display:flex;flex-direction:column;gap:.7rem;padding-top:.6rem;border-top:1px solid var(--c-line-2)}
+.page-faccoes .fac-card__status{display:flex;align-items:center;justify-content:space-between;gap:.6rem;font-family:var(--font-cond);font-size:.7rem;letter-spacing:.14em;color:var(--c-muted)}
+.page-faccoes .fac-card__form{margin:0}
+.page-faccoes .fac__back{margin:0;display:flex;justify-content:flex-end}
+
+/* modal de confirmação (PRD §7.2): curto, direto, sem sair da paleta */
+.page-faccoes .fac-modal{border:0;padding:0;background:transparent;max-width:min(92vw,32rem)}
+.page-faccoes .fac-modal::backdrop{background:rgba(7,9,7,.78);backdrop-filter:blur(3px)}
+.page-faccoes .fac-modal__box{margin:0;padding:1.25rem 1.4rem 1.3rem;border:1px solid var(--c-red);border-radius:var(--r-3);background:var(--c-panel-solid);box-shadow:var(--glow-red),var(--shadow-panel);display:grid;gap:.8rem}
+.page-faccoes .fac-modal__title{margin:0;font-family:var(--font-cond);font-size:1.35rem;letter-spacing:.08em;color:#fff}
+.page-faccoes .fac-modal__body{margin:0;font-size:.95rem;line-height:1.5;color:var(--c-text-2)}
+.page-faccoes .fac-modal__actions{display:flex;justify-content:flex-end;gap:.6rem;margin-top:.2rem}
+
+@media (max-width:1100px){
+  .page-faccoes .fac__grid{grid-template-columns:1fr}
+  .page-faccoes .fac__head{flex-direction:column}
+  .page-faccoes .fac__me{align-items:flex-start;text-align:left}
+}

@@ -31,10 +31,17 @@ $colorClass = static function (string $c): string {
 ?>
 <div class="page-head" data-boot>
   <h1 class="page-title"><?= e((string)($data['title'] ?? 'PERFIL')) ?> <small><?= e($pName) ?></small></h1>
+  <?php /* PRD v3 §21: organização · estado · patente · reputação da facção contratada */ $pfOp = (array)($data['operational'] ?? []); ?>
   <p class="pf-head__sub">
-    <span class="pf-head__rank"><?= icon('military_tech') ?><?= e((string)($data['faction_rank'] ?? '')) ?></span>
+    <span class="pf-head__org"><?= icon('handshake') ?><?= e((string)($data['organization'] ?? 'HUNTER COMMAND')) ?></span>
     <span class="pf-head__sep" aria-hidden="true"></span>
-    <span class="pf-head__rep">REPUTAÇÃO <span class="num lime"><?= e(num((int)($data['reputation'] ?? 0))) ?></span></span>
+    <?php component('badge', ['kind' => 'state', 'value' => $pfOp, 'level' => $pLevel]) ?>
+    <span class="pf-head__sep" aria-hidden="true"></span>
+    <span class="pf-head__rank"><?= icon('military_tech') ?><?= e((string)($data['faction_rank'] ?? '')) ?></span>
+<?php if (!empty($data['reputation_of'])): ?>
+    <span class="pf-head__sep" aria-hidden="true"></span>
+    <span class="pf-head__rep">REP <?= e((string)$data['reputation_of']) ?> <span class="num lime"><?= e(num((int)($data['reputation'] ?? 0))) ?></span></span>
+<?php endif; ?>
   </p>
 </div>
 
@@ -48,7 +55,7 @@ $colorClass = static function (string $c): string {
         <img class="op__img" src="<?= e(media($portrait)) ?>" alt="<?= e($pName) ?>" decoding="async">
         <span class="op__grid" aria-hidden="true"></span>
         <span class="op__scan" aria-hidden="true"></span>
-        <span class="op__tag op__tag--class"><?= svg((string)($classes[0]['icon'] ?? 'class-assault')) ?><?= e((string)($op['class'] ?? 'ASSALTO')) ?></span>
+        <span class="op__tag op__tag--class"><?= svg((string)($op['class_icon'] ?? 'class-assault')) ?><?= e((string)($op['class'] ?? 'ASSAULT')) ?></span>
         <span class="op__tag op__tag--status"><i aria-hidden="true"></i><?= e((string)($op['status'] ?? '')) ?></span>
         <div class="op__id">
           <?php component('hex', ['size' => 'lg', 'color' => 'lime', 'text' => $pLevel, 'hot' => true, 'ring' => true, 'class' => 'op__hex', 'title' => 'Nível ' . $pLevel]) ?>
@@ -121,7 +128,27 @@ $colorClass = static function (string $c): string {
         <h2 class="panel__title"><?= icon('bar_chart') ?><?= e((string)($data['stats_title'] ?? 'ESTATÍSTICAS')) ?></h2>
         <span class="panel__meta"><?= e((string)($data['stats_meta'] ?? '')) ?></span>
       </header>
-      <div class="panel__body st__body" data-stagger>
+      <?php
+        /* PRD v3 §21.6: estatísticas por estado. GERAL é a grade que já existia; as outras
+           abas vêm do controller com o que o backend já mede (o resto aparece como "—"). */
+        $stTabs  = (array)($data['stats_tabs'] ?? []);
+        $tabItems = [['label' => 'GERAL', 'panel' => 'geral', 'active' => true]];
+        foreach ($stTabs as $t) { $tabItems[] = ['label' => (string)$t['label'], 'panel' => (string)$t['slug']]; }
+      ?>
+      <div class="st__tabs"><?php component('tabs', ['items' => $tabItems, 'label' => 'Estatísticas por estado', 'class' => 'st__tabnav']) ?></div>
+<?php foreach ($stTabs as $t): ?>
+      <div class="panel__body st__body" data-tab-panel="<?= e((string)$t['slug']) ?>" hidden>
+<?php foreach ((array)$t['items'] as $s): ?>
+        <div class="st-cell<?= e($colorClass((string)($s['color'] ?? ''))) ?><?= !empty($s['dep']) ? ' is-dep' : '' ?>">
+          <span class="st-cell__ic"><?= icon((string)($s['icon'] ?? 'star')) ?></span>
+          <span class="st-cell__val num"><?= isset($s['n']) ? e(num((int)$s['n'])) : '—' ?></span>
+          <span class="st-cell__label"><?= e((string)($s['label'] ?? '')) ?></span>
+          <span class="st-cell__sub<?= !empty($s['dep']) ? ' is-dep' : '' ?>"><?= e((string)($s['sub'] ?? '')) ?></span>
+        </div>
+<?php endforeach; ?>
+      </div>
+<?php endforeach; ?>
+      <div class="panel__body st__body" data-stagger data-tab-panel="geral">
 <?php foreach ($stats as $s): ?>
 <?php
         $sn   = $s['n'] ?? 0;
@@ -197,9 +224,37 @@ $colorClass = static function (string $c): string {
   <!-- ================= coluna 3 — classes / atividade ================= -->
   <div class="pf__col pf__col--r col">
 
+    <?php /* PRD v3 §21.3–21.4: contrato mercenário e reputação com as duas facções */ $fc = (array)($data['contract_block'] ?? []); $fcAtiva = is_array($fc['active'] ?? null) ? $fc['active'] : null; ?>
+    <section class="panel fc" data-boot>
+      <header class="panel__head">
+        <h2 class="panel__title"><?= e((string)($fc['title'] ?? 'CONTRATO MERCENÁRIO')) ?></h2>
+        <a class="panel__action" href="<?= e(url((string)($fc['cta']['href'] ?? 'faccoes'))) ?>">FACÇÕES<?= icon('chevron_right') ?></a>
+      </header>
+      <div class="fc__body">
+<?php if (!empty($fc['survivor'])): ?>
+        <p class="fc__none"><?php component('badge', ['kind' => 'state', 'value' => (array)($data['operational'] ?? [])]) ?><span>SEM BANDEIRA · NENHUMA FACÇÃO ASSINA</span></p>
+<?php elseif ($fcAtiva === null): ?>
+        <p class="fc__none"><span><?= e((string)($fc['none'] ?? 'NENHUM CONTRATO ATIVO')) ?></span><?php component('badge', ['kind' => 'origin', 'value' => 'hunter_command']) ?></p>
+<?php else: ?>
+        <p class="fc__none"><?php component('badge', ['kind' => 'faction', 'value' => (string)($data['operational']['faction'] ?? ''), 'solid' => true]) ?><span>REP <b class="num"><?= e(num((int)($fcAtiva['rep'] ?? 0))) ?></b> · <?= e((string)($fcAtiva['tier'] ?? '')) ?></span></p>
+<?php endif; ?>
+<?php foreach ((array)($fc['factions'] ?? []) as $f): ?>
+        <div class="fc__row fc__row--<?= e((string)$f['color']) ?><?= !empty($f['active']) ? ' is-active' : '' ?>">
+          <?php component('badge', ['kind' => 'faction', 'value' => (string)$f['slug']]) ?>
+          <span class="fc__rep"><b class="num"><?= e(num((int)$f['rep'])) ?></b><small><?= e((string)$f['tier']) ?></small></span>
+          <span class="fc__state<?= !empty($f['locked']) ? ' is-locked' : '' ?>"><?= e((string)$f['state']) ?><?php if (!empty($f['locked_until'])): ?> <span class="num" data-countdown-to="<?= e((string)$f['locked_until']) ?>"><?= e(date('H:i:s', (int)strtotime((string)$f['locked_until']))) ?></span><?php endif; ?></span>
+        </div>
+<?php endforeach; ?>
+        <div class="fc__actions">
+          <?php component('btn', ['label' => (string)($fc['cta']['benefits'] ?? 'VER BENEFÍCIOS'), 'href' => url((string)($fc['cta']['href'] ?? 'faccoes')), 'variant' => 'outline', 'size' => 'sm']) ?>
+          <?php component('btn', ['label' => (string)($fc['cta']['manage'] ?? 'GERENCIAR CONTRATO'), 'href' => url((string)($fc['cta']['href'] ?? 'faccoes')), 'variant' => 'primary', 'size' => 'sm', 'chev' => true]) ?>
+        </div>
+      </div>
+    </section>
+
     <section class="panel cl" data-boot>
       <header class="panel__head">
-        <h2 class="panel__title"><?= e((string)($data['classes_title'] ?? 'CLASSES')) ?></h2>
+        <h2 class="panel__title"><?= e((string)($data['classes_title'] ?? 'FUNÇÕES HUNTER')) ?></h2>
         <a class="panel__action" href="<?= e(url('habilidades')) ?>">HABILIDADES<?= icon('chevron_right') ?></a>
       </header>
       <div class="panel__body cl__body" data-stagger>

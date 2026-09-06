@@ -670,3 +670,110 @@ body.page-mapa .hud-main{padding:0;overflow:hidden}
   .page-mapa .revent__ic .gl{animation:none}
   .page-mapa .rrow:hover::after{animation:none}
 }
+
+/* ==========================================================================
+   PRD v3 §23 — mundo persistente: camadas, cores de facção, status nos
+   marcadores, estado do setor, bases e extrações tipadas (sem mudar o grid)
+   ========================================================================== */
+/* camadas (chips) */
+.page-mapa .mgroup--layers{margin-top:.6rem;padding:0 0 .45rem}
+.page-mapa .mlayers{display:flex;flex-wrap:wrap;gap:.3rem;padding:.35rem .55rem 0}
+.page-mapa .mlayer.chip{cursor:pointer;font-size:.62rem;letter-spacing:.11em;padding:.2rem .5rem;border-color:var(--c-line-2);color:var(--c-text-2);background:rgba(8,16,15,.5);transition:border-color var(--t-med) var(--ease),color var(--t-med) var(--ease),background var(--t-med) var(--ease)}
+.page-mapa .mlayer.chip:hover{border-color:rgba(155,224,74,.45);color:var(--c-text)}
+.page-mapa .mlayer.chip.is-active{border-color:rgba(155,224,74,.6);color:var(--c-lime);background:rgba(24,40,22,.6)}
+
+/* legenda: cores novas */
+.page-mapa .mlegend__ic--cyan{color:var(--c-cyan)}
+.page-mapa .mlegend__ic--amber{color:var(--c-amber)}
+.page-mapa .mlegend{padding-top:.2rem;padding-bottom:.2rem}
+.page-mapa .mlegend__i{height:1.48rem}
+
+/* marcadores: cores de facção / neutro */
+.page-mapa .mk--cyan{--mk-c:#7cd6ff;--mk-rgb:56,189,248}
+.page-mapa .mk--amber{--mk-c:#ffc35c;--mk-rgb:245,166,35}
+.page-mapa .mk--muted{--mk-c:#aab3a8;--mk-rgb:138,147,138}
+.page-mapa .mk--cyan .mk__glyph{filter:drop-shadow(0 3px 7px rgba(0,0,0,.75)) drop-shadow(0 0 8px rgba(56,189,248,.4))}
+.page-mapa .mk--amber .mk__glyph{filter:drop-shadow(0 3px 7px rgba(0,0,0,.75)) drop-shadow(0 0 8px rgba(245,166,35,.4))}
+/* atividade humana: alvo sem moldura, pulsando (posição aproximada) */
+.page-mapa .mk__glyph--human::before,.page-mapa .mk__glyph--human::after{display:none}
+.page-mapa .mk__glyph--human .gl{width:1.8rem;height:1.8rem;color:var(--mk-c);opacity:.95}
+/* área contaminada: esporos translúcidos */
+.page-mapa .mk__glyph--contaminated::before{background:radial-gradient(circle, rgba(var(--mk-rgb),.55), rgba(var(--mk-rgb),.12) 70%)}
+.page-mapa .mk__glyph--contaminated::after{opacity:.75}
+/* extração bloqueada (Sobrevivente) */
+.page-mapa .mk--blocked .mk__glyph{filter:grayscale(1) drop-shadow(0 3px 7px rgba(0,0,0,.75));opacity:.7}
+.page-mapa .mk--blocked .mk__glyph .gl{opacity:.7}
+/* sub-rótulo de status */
+.page-mapa .mk__sub{display:block;margin-top:.1rem;font-size:.62rem;font-weight:500;letter-spacing:.1em;color:var(--c-muted);text-shadow:0 1px 3px rgba(0,0,0,.95)}
+.page-mapa .mk__sub--lime{color:var(--c-lime)}
+.page-mapa .mk__sub--cyan{color:var(--c-cyan)}
+.page-mapa .mk__sub--amber{color:var(--c-amber)}
+.page-mapa .mk__sub--red{color:#ff6a63}
+.page-mapa .mk__sub--purple{color:#d68cff}
+/* filtro de camada / expiração */
+.page-mapa .mk,.page-mapa .mrisk{transition:opacity var(--t-med) var(--ease)}
+.page-mapa .mk.is-filtered,.page-mapa .mrisk.is-filtered{opacity:0;pointer-events:none}
+.page-mapa .mk.is-expired{opacity:.25;pointer-events:none}
+
+/* coluna direita: estado do setor */
+.page-mapa .rstate{display:grid;gap:.4rem;padding:.35rem .5rem .75rem}
+.page-mapa .rstate__infest.infest{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:.25rem .5rem}
+.page-mapa .rstate__infest .infest__bar{grid-column:1/-1}
+.page-mapa .rstate__row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;min-height:1.5rem}
+.page-mapa .rstate__k{font-family:var(--font-cond);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted)}
+.page-mapa .rstate .chip{font-size:.62rem}
+
+/* bases hunter / instalações de facção */
+.page-mapa .rbases{list-style:none;margin:0;padding:.15rem 0 .7rem}
+.page-mapa .rbase{display:grid;grid-template-columns:1rem minmax(0,1fr) auto;align-items:center;gap:.55rem;height:1.62rem;padding:0 .5rem}
+.page-mapa .rbase__ic{display:grid;place-items:center;width:1rem;height:1rem;color:var(--c-lime)}
+.page-mapa .rbase__ic .gl{width:1rem;height:1rem}
+.page-mapa .rbase--aegis .rbase__ic{color:var(--c-cyan)}
+.page-mapa .rbase--frontier .rbase__ic{color:var(--c-amber)}
+.page-mapa .rbase__n{font-family:var(--font-cond);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.page-mapa .rbase__st.chip{font-size:.58rem;padding:.1rem .4rem;letter-spacing:.1em}
+
+/* extrações tipadas */
+.page-mapa .rext__n{display:flex;flex-direction:column;gap:.05rem;line-height:1.05;min-width:0}
+.page-mapa .rext__t{font-size:.58rem;letter-spacing:.12em;color:var(--c-muted)}
+.page-mapa .rext__i{height:auto;min-height:1.62rem;padding-top:.15rem;padding-bottom:.15rem}
+.page-mapa .rext__i--t-cyan .rext__t{color:var(--c-cyan)}
+.page-mapa .rext__i--t-amber .rext__t{color:var(--c-amber)}
+.page-mapa .rext__i--t-lime .rext__t{color:var(--c-lime-dim)}
+.page-mapa .rext__i--t-purple .rext__t{color:#c56cf5}
+.page-mapa .rext__i--blocked .rext__ic{color:var(--c-muted)}
+.page-mapa .rext__i--blocked .rext__n{color:var(--c-text-2)}
+.page-mapa .rext__i--blocked .rext__s{color:var(--c-muted)}
+.page-mapa .rext__i--blocked .rext__d{background:#6f776f}
+.page-mapa .rsec--blocked .rsec__title{color:var(--c-text-2)}
+.page-mapa .rext__warn{display:flex;align-items:center;gap:.45rem;margin:-.3rem 0 .7rem;padding:.4rem .55rem;border:1px solid rgba(232,237,230,.28);border-radius:var(--r-2);font-family:var(--font-cond);font-size:.72rem;letter-spacing:.09em;color:var(--c-text-2)}
+.page-mapa .rext__warn-ic{font-size:1rem;color:var(--c-text-2)}
+
+/* o painel direito ganhou seções: rola dentro de si em vez de estourar */
+.page-mapa .rp{overflow-y:auto;scrollbar-width:thin}
+.page-mapa .rp__cta{margin-top:auto;padding-top:.5rem}
+/* encaixe v3 */
+/* legenda em duas colunas (13 itens cabem na altura de referência) */
+.page-mapa .mlegend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 .5rem;padding:.25rem .5rem .3rem .6rem}
+.page-mapa .mlegend__i{height:1.36rem;gap:.5rem}
+.page-mapa .mlegend__label{font-size:.72rem;letter-spacing:.05em}
+.page-mapa .mgroup--layers{margin-top:.5rem;padding-bottom:.4rem}
+.page-mapa .mgroup--layers .mgroup__title{padding-bottom:.1rem}
+.page-mapa .mp{overflow-y:auto;scrollbar-width:thin}
+/* coluna direita: seções mais densas + CTA fixo no rodapé do painel */
+.page-mapa .rstate{gap:.3rem;padding:.3rem .5rem .5rem}
+.page-mapa .rstate__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem}
+.page-mapa .rstate__grid .rstate__row{flex-direction:column;align-items:flex-start;gap:.15rem;min-height:0}
+.page-mapa .rstate__k{font-size:.62rem}
+.page-mapa .rbases{padding-bottom:.45rem}
+.page-mapa .rbase{height:1.45rem}
+.page-mapa .rext{padding-bottom:.45rem}
+.page-mapa .rext__n{flex-direction:row;align-items:baseline;gap:.4rem;white-space:nowrap;overflow:hidden}
+.page-mapa .rext__n .rext__t{flex:0 0 auto}
+.page-mapa .rext__i{min-height:1.5rem;padding-top:0;padding-bottom:0}
+.page-mapa .rp__cta{position:sticky;bottom:-.625rem;margin:auto -.9375rem 0;padding:.6rem .9375rem .625rem;background:linear-gradient(180deg, rgba(4,9,9,0), rgba(4,9,9,.96) 28%)}/* encaixe v3 — painel esquerdo sem rolagem em 900px de altura */
+.page-mapa .mp__title{margin-bottom:.7rem}
+.page-mapa .mgroup__list{gap:.35rem}
+.page-mapa .mgroup--layers{margin-top:.35rem}
+.page-mapa .mlegend__i{height:1.28rem}
+.page-mapa .mp__toggle{margin-top:.5rem}

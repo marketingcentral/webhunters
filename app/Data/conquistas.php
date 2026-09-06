@@ -153,8 +153,8 @@ return [
             'reward_item' => ['name' => 'CARTÃO DE ACESSO', 'desc' => 'CHAVE', 'image' => 'items/keycard.png'],
         ],
         [
-            'slug' => 'lider-da-resistencia', 'title' => 'LÍDER DA RESISTÊNCIA',
-            'desc' => 'Conclua todas as missões da facção da resistência.',
+            'slug' => 'lider-da-resistencia', 'title' => 'CADEIA DE COMANDO',
+            'desc' => 'Conclua todas as operações do Hunter Command de uma região.',
             'icon' => 'workspace_premium', 'color' => 'muted', 'category' => 'faccoes',
             'status' => 'locked',
             'rewards' => [

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Database;
+use App\Core\GameRules;
 use App\Core\Request;
 use App\Core\Response;
 use App\Repo\ChallengeRepo;
@@ -28,6 +29,7 @@ final class HomeController extends Controller
         $uid = $this->userId();
         $data['season']   = $this->season((array)($data['season'] ?? []), $uid);
         $data['contract'] = $this->contract((array)($data['contract'] ?? []), $uid);
+        $data['status_op'] = $this->statusOperacional((array)($data['status'] ?? []));
 
         $page = $this->page('inicio', 'Início', [
             'bg'     => 'bg/home-hero-wide.jpg',
@@ -125,15 +127,19 @@ final class HomeController extends Controller
      */
     private function contract(array $chrome, int $uid): array
     {
-        $m = Database::one(
-            "SELECT m.id, m.name, m.objective, m.target, pm.status, pm.progress
-               FROM missions m
-               JOIN player_missions pm ON pm.mission_id = m.id AND pm.user_id = :u
-              WHERE pm.status IN ('active', 'available')
-              ORDER BY (pm.status <> 'active'), m.sort_order
-              LIMIT 1",
-            ['u' => $uid]
-        );
+        // missions.origin vem do patch v3. Se o patch ainda não rodou no banco (deploy do
+        // código antes do SQL), a coluna não existe: repete sem ela e cai em hunter_command.
+        $sql = "SELECT m.id, m.name, m.objective, m.target, %s pm.status, pm.progress
+                  FROM missions m
+                  JOIN player_missions pm ON pm.mission_id = m.id AND pm.user_id = :u
+                 WHERE pm.status IN ('active', 'available')
+                 ORDER BY (pm.status <> 'active'), m.sort_order
+                 LIMIT 1";
+        try {
+            $m = Database::one(sprintf($sql, 'm.origin,'), ['u' => $uid]);
+        } catch (\Throwable) {
+            $m = Database::one(sprintf($sql, ''), ['u' => $uid]);
+        }
         if ($m === null) {
             return $chrome;                                  // sem missão: mantém o cromo
         }
@@ -143,12 +149,72 @@ final class HomeController extends Controller
             'action'       => (string)($chrome['action'] ?? 'VER TODOS'),
             'href'         => (string)($chrome['href'] ?? 'missoes'),
             'reward_label' => (string)($chrome['reward_label'] ?? 'RECOMPENSA'),
+            'origin_label' => (string)($chrome['origin_label'] ?? 'ORIGEM'),
+            // de quem vem a ordem/contrato (PRD v3 §16.2): missions.origin, fallback Hunter Command
+            'origin'       => (string)($m['origin'] ?? 'hunter_command'),
             'name'         => (string)$m['name'],
             'desc'         => (string)$m['objective'],
             'progress'     => (int)$m['progress'],
             'total'        => max(1, (int)$m['target']),
             'rewards'      => $this->contractRewards((int)$m['id']),
         ];
+    }
+
+    /**
+     * Faixa "STATUS OPERACIONAL" da Home (PRD v3 §16.3): responde "em qual estado estou" e
+     * "para quem trabalho" em uma linha. Só rótulos vêm do cromo; valores de OperationalRepo.
+     *
+     * @param array<string,mixed> $chrome
+     * @return array<string,mixed>
+     */
+    private function statusOperacional(array $chrome): array
+    {
+        $op    = $this->operational();
+        $lab   = (array)($chrome['labels'] ?? []);
+        $itens = [];
+
+        if ($op['state'] === GameRules::STATE_SURVIVOR) {
+            $itens[] = ['label' => $lab['org'] ?? 'ORGANIZAÇÃO', 'value' => 'NENHUMA', 'cls' => 'white'];
+            $itens[] = ['label' => 'EXTRAÇÃO', 'value' => 'INDISPONÍVEL', 'cls' => 'white'];
+            $since = $op['survivor_since'] ?? null;
+            if ($since) { $itens[] = ['label' => 'NO ESTADO HÁ', 'value' => $this->duracao((string)$since), 'cls' => 'white', 'num' => true]; }
+        } elseif ($op['state'] === GameRules::STATE_MERCENARY) {
+            $f = GameRules::faction($op['faction']) ?? ['label' => '—', 'color' => 'muted'];
+            $itens[] = ['label' => $lab['contract'] ?? 'CONTRATO', 'value' => $f['label'], 'cls' => $f['color']];
+            $itens[] = ['label' => $lab['rep'] ?? 'REP', 'value' => num((int)($op['reputation'][$op['faction']] ?? 0)), 'cls' => $f['color'], 'num' => true];
+            $itens[] = ['label' => 'FAIXA', 'value' => (string)($op['tiers'][$op['faction']] ?? '—'), 'cls' => $f['color']];
+        } else {
+            $itens[] = ['label' => $lab['org'] ?? 'ORGANIZAÇÃO', 'value' => 'HUNTER COMMAND', 'cls' => 'lime'];
+            $itens[] = ['label' => $lab['base'] ?? 'BASE DE ORIGEM', 'value' => $this->nomeDaBase($op['base_pref'] ?? null), 'cls' => ''];
+            $itens[] = ['label' => $lab['role'] ?? 'FUNÇÃO', 'value' => (string)($op['role'] ?? 'A DEFINIR'), 'cls' => ''];
+            $itens[] = ['label' => $lab['rank'] ?? 'PATENTE', 'value' => (string)$op['rank'], 'cls' => ''];
+        }
+
+        return [
+            'title' => (string)($chrome['title'] ?? 'STATUS OPERACIONAL'),
+            'href'  => (string)($chrome['href'] ?? 'perfil'),
+            'items' => $itens,
+            'op'    => $op,
+        ];
+    }
+
+    /** Nome curto da Base Governamental (government_bases); sem o patch aplicado cai no slug. */
+    private function nomeDaBase(?string $slug): string
+    {
+        $slug = $slug ?: 'alpha';
+        try {
+            $n = Database::value('SELECT name FROM government_bases WHERE slug = :s', ['s' => $slug]);
+            if (is_string($n) && $n !== '') { return (string)preg_replace('/^BASE HUNTER /u', '', $n); }
+        } catch (\Throwable) {
+            // tabela ainda não existe
+        }
+        return strtoupper($slug);
+    }
+
+    private function duracao(string $desde): string
+    {
+        $s = max(0, time() - (int)strtotime($desde));
+        return $s >= 3600 ? sprintf('%dh %02dmin', intdiv($s, 3600), intdiv($s % 3600, 60)) : sprintf('%d min', intdiv($s, 60));
     }
 
     /**

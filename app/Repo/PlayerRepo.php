@@ -54,6 +54,9 @@ final class PlayerRepo
             ],
             'health'         => $health,
             'survival'       => $survival,
+            // Em qual estado o personagem opera e para quem (PRD v3). Lê as colunas do patch
+            // v3 na mesma linha; sem elas cai em HUNTER · RECRUTA — a HUD nunca fica sem estado.
+            'operational'    => OperationalRepo::fromRow($userId, $p),
             'match_stats'    => [
                 'matches'     => (int)($stats['matches'] ?? 0),
                 'kills'       => (int)($stats['kills'] ?? 0),

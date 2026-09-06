@@ -60,6 +60,61 @@ final class CatalogRepo
         });
     }
 
+    /**
+     * Bases Governamentais (Alpha, Bravo, Charlie) com capacidade e estado — tabela do patch v3.
+     * Sem a tabela (patch ainda não aplicado) devolve as três com o padrão canônico, para a
+     * HUD não ficar sem base.
+     * @return list<array{slug:string,name:string,short:string,capacity:int,status:string,map_id:?int}>
+     */
+    public static function governmentBases(): array
+    {
+        return self::cached('gov_bases', static function (): array {
+            try {
+                $rows = Database::all('SELECT slug, name, map_id, capacity, status FROM government_bases ORDER BY sort_order, id');
+            } catch (\Throwable) {
+                $rows = [];
+            }
+            if ($rows === []) {
+                $rows = [
+                    ['slug' => 'alpha',   'name' => 'BASE HUNTER ALPHA',   'map_id' => null, 'capacity' => 4, 'status' => 'OPERACIONAL'],
+                    ['slug' => 'bravo',   'name' => 'BASE HUNTER BRAVO',   'map_id' => null, 'capacity' => 4, 'status' => 'OPERACIONAL'],
+                    ['slug' => 'charlie', 'name' => 'BASE HUNTER CHARLIE', 'map_id' => null, 'capacity' => 4, 'status' => 'OPERACIONAL'],
+                ];
+            }
+            foreach ($rows as &$r) {
+                $r['capacity'] = (int)$r['capacity'];
+                $r['map_id']   = $r['map_id'] !== null ? (int)$r['map_id'] : null;
+                $r['short']    = (string)preg_replace('/^BASE HUNTER /u', '', (string)$r['name']);
+            }
+            return $rows;
+        });
+    }
+
+    /**
+     * Estado de mundo de uma região (maps.meta do patch v3), já com os padrões canônicos
+     * quando a chave ainda não existe.
+     * @param array<string,mixed> $row linha de maps (com meta decodificado)
+     * @return array{persistent:bool,capacity:array{total:int,hunters:int,mercenaries:int},infestation:int,veyra_activity:string,human_activity:string,weather:string,sector_state:string}
+     */
+    public static function regionState(array $row): array
+    {
+        $meta = is_array($row['meta'] ?? null) ? $row['meta'] : [];
+        $cap  = is_array($meta['capacity'] ?? null) ? $meta['capacity'] : [];
+        return [
+            'persistent'     => (bool)($meta['persistent'] ?? true),
+            'capacity'       => [
+                'total'       => (int)($cap['total'] ?? \App\Core\GameRules::REGION_CAPACITY['total']),
+                'hunters'     => (int)($cap['hunters'] ?? \App\Core\GameRules::REGION_CAPACITY['hunters']),
+                'mercenaries' => (int)($cap['mercenaries'] ?? \App\Core\GameRules::REGION_CAPACITY['mercenaries']),
+            ],
+            'infestation'    => (int)($meta['infestation'] ?? 0),
+            'veyra_activity' => (string)($meta['veyra_activity'] ?? 'MODERADA'),
+            'human_activity' => (string)($meta['human_activity'] ?? 'MODERADA'),
+            'weather'        => (string)($meta['weather'] ?? ''),
+            'sector_state'   => (string)($meta['sector_state'] ?? 'ATIVO'),
+        ];
+    }
+
     /** @return list<array<string,mixed>> marcadores da região */
     public static function mapMarkers(int $mapId): array
     {

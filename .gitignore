@@ -6,7 +6,7 @@
 .env.*
 !.env.example
 app/db.local.php
-
+docs/*
 # ========================================================= DEPENDÊNCIAS
 node_modules/
 tools/node_modules/

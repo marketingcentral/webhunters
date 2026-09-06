@@ -70,16 +70,30 @@ function claim() {
   });
 }
 
-/* ---- modo de jogo: mantém o banner coerente com a seleção --------------- */
+/* ---- estado operacional: o hero central acompanha a seleção (PRD v3 §17.4–17.6) ----
+   Os textos dos heróis vêm em data-heroes (JSON) no próprio hero; a linha de indicadores
+   é do estado REAL do jogador (vem do servidor) e não muda ao passear pela lista. */
 function modeSync() {
   const list = document.querySelector('.jogar-modes__list');
-  const title = document.querySelector('.jogar-banner__title');
-  if (!list || !title) return;
+  const hero = document.querySelector('.jogar-hero');
+  if (!list || !hero) return;
+  let heroes = {};
+  try { heroes = JSON.parse(hero.dataset.heroes || '{}'); } catch { heroes = {}; }
+  const title = hero.querySelector('[data-hero-title]');
+  const desc  = hero.querySelector('[data-hero-desc]');
+  const cta   = document.querySelector('.jogar-cta__btn .btn__label');
+
   list.addEventListener('select:change', (e) => {
     const item = e.detail && e.detail.item;
     if (!item) return;
-    const name = item.querySelector('.row__text strong');
-    if (name) title.textContent = name.textContent.trim();
+    const key = item.dataset.hero || 'hunter';
+    const h = heroes[key];
+    if (!h) return;
+    if (title) title.textContent = h.title || title.textContent;
+    if (desc)  desc.textContent  = h.desc  || desc.textContent;
+    if (cta && h.cta) cta.textContent = h.cta;
+    hero.className = hero.className.replace(/\bjogar-hero--\w+/, 'jogar-hero--' + key);
+    hero.dataset.heroCurrent = key;
   });
 }
 

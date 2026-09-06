@@ -11,7 +11,10 @@
  */
 return [
     'overview_title' => 'VISÃO GERAL',
-    'body_image'     => 'ui/body-wireframe.png',
+    /* PNG já recortado, com alpha: entra inteiro na moldura. O antigo
+       ui/body-wireframe.png é 686x1317 com fundo preto e precisava de offsets
+       negativos que cortavam o braço e a perna esquerdos. */
+    'body_image'     => 'ui/body-wireframe-clean.png',
     'body_image_alt' => 'Silhueta do operador com pontos de dano',
 
     /* ---- VISÃO GERAL: 5 sinais vitais ---------------------------------- */

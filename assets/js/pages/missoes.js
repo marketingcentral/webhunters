@@ -3,7 +3,7 @@
  * Depende de hud.js: os grupos [data-select-group] já alternam .is-active nos
  * filtros, nos chips de tipo e nos cards. Aqui só reagimos a `select:change`.
  *
- *  - filtros de estado + chips de tipo filtram o quadro de contratos
+ *  - filtros de ORIGEM (hunter/aegis/frontier/eventos/diárias/concluídas) + chips de tipo filtram o quadro
  *  - selecionar um card troca o painel de detalhe da direita
  *  - relógios [data-countdown="segundos"] correm ao vivo
  */
@@ -19,8 +19,14 @@ const countEl = $('[data-list-count]');
 const wordEl = $('[data-list-word]');
 
 /** slug do filtro -> teste sobre o card */
+/* PRD v3 §24.3: filtros por ORIGEM (quem manda) — o card carrega data-origin do banco. */
 const MATCH = {
   todas: () => true,
+  hunter: (c) => c.dataset.origin === 'hunter_command',
+  aegis: (c) => c.dataset.origin === 'aegis',
+  frontier: (c) => c.dataset.origin === 'frontier',
+  eventos: (c) => c.dataset.origin === 'world' || c.dataset.origin === 'icarus',
+  requer: (c) => c.dataset.requires === '1',
   ativas: (c) => c.dataset.status === 'active',
   disponiveis: (c) => c.dataset.status === 'available',
   concluidas: (c) => c.dataset.status === 'done',

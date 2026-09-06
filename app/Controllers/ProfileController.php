@@ -3,6 +3,9 @@
 namespace App\Controllers;
 
 use App\Core\Database;
+use App\Core\GameRules;
+use App\Repo\CatalogRepo;
+use App\Repo\OperationalRepo;
 use App\Core\Request;
 use App\Core\Response;
 
@@ -43,22 +46,44 @@ final class ProfileController extends Controller
         $extractions = (int)($ms['extractions'] ?? 0);
         $deaths      = (int)($ms['deaths'] ?? 0);
 
-        // --- cabeçalho / retrato / patente (PlayerRepo) ---------------------
+        // --- cabeçalho / retrato / estado operacional (PRD v3 §21) ----------
+        // Resistência saiu: a organização é o Hunter Command (ou a facção contratada, ou
+        // nenhuma, no caso do Sobrevivente). Patente e função vêm de OperationalRepo.
+        $op   = $this->operational();
         $data['portrait']     = (string)($player['avatar'] ?? ($data['portrait'] ?? 'portraits/op-assault.jpg'));
-        $faction              = mb_strtoupper((string)($player['clan'] ?? ''));
-        $rank                 = mb_strtoupper((string)($player['rank'] ?? ($data['faction_rank'] ?? '')));
+        $faction              = OperationalRepo::organization($op);
+        $rank                 = (string)($op['rank'] ?? GameRules::RANKS[0]);
+        $role                 = (string)($op['role'] ?? ($player['class'] ?? 'ASSAULT'));
         $data['faction_rank'] = $rank;
+        $data['organization'] = $faction;
+        $data['operational']  = $op;
+        $data['reputation']   = $op['faction'] !== null ? (int)($op['reputation'][$op['faction']] ?? 0) : 0;
+        $data['reputation_of'] = $op['faction'] !== null ? (GameRules::faction($op['faction'])['label'] ?? '') : '';
+        $data['contract_block'] = $this->contractBlock($op);
+        $data['stats_tabs']     = $this->statsTabs($op, $matches, $kills, $extractions, $deaths);
 
         $joined = $uid > 0 ? (string)Database::value('SELECT created_at FROM users WHERE id = :u', ['u' => $uid]) : '';
         $joinedFmt = $joined !== '' ? date('d/m/Y', strtotime($joined) ?: time()) : (string)($data['joined'] ?? '');
 
         // --- cartão do operador --------------------------------------------
-        $data['operator']['class'] = (string)($player['class'] ?? ($data['operator']['class'] ?? 'ASSALTO'));
+        $roleKey = GameRules::role($role) ?? 'ASSAULT';
+        $data['operator']['class']      = GameRules::ROLES[$roleKey]['label'];
+        $data['operator']['class_icon'] = GameRules::ROLES[$roleKey]['icon'];
+        $estado = match ($op['state']) {
+            GameRules::STATE_MERCENARY => ['v' => 'MERCENÁRIO', 'c' => GameRules::faction($op['faction'])['color'] ?? 'cyan'],
+            GameRules::STATE_SURVIVOR  => ['v' => 'SOBREVIVENTE', 'c' => 'white'],
+            default                    => ['v' => 'HUNTER', 'c' => 'lime'],
+        };
+        $basePref = null;
+        foreach (CatalogRepo::governmentBases() as $b) { if ($b['slug'] === ($op['base_pref'] ?? '')) { $basePref = $b; } }
         $data['operator']['meta']  = [
-            ['label' => 'FACÇÃO',         'value' => $faction !== '' ? $faction : '—', 'icon' => 'handshake',     'color' => 'lime'],
-            ['label' => 'PATENTE',        'value' => $rank !== '' ? $rank : '—',       'icon' => 'military_tech', 'color' => 'gold'],
-            ['label' => 'TEMPO DE JOGO',  'value' => (string)($data['playtime'] ?? ''), 'icon' => 'schedule',     'color' => ''],
-            ['label' => 'EM CAMPO DESDE', 'value' => $joinedFmt,                        'icon' => 'flag',         'color' => ''],
+            ['label' => 'STATUS',          'value' => $estado['v'],                      'icon' => 'shield_person', 'color' => $estado['c']],
+            ['label' => 'ORGANIZAÇÃO',     'value' => $faction,                          'icon' => 'handshake',     'color' => $op['state'] === GameRules::STATE_SURVIVOR ? 'white' : 'lime'],
+            ['label' => 'PATENTE',         'value' => $rank,                             'icon' => 'military_tech', 'color' => 'gold'],
+            ['label' => 'FUNÇÃO',          'value' => GameRules::ROLES[$roleKey]['label'], 'icon' => GameRules::ROLES[$roleKey]['ms'], 'color' => ''],
+            ['label' => 'BASE PREFERENCIAL','value' => $basePref !== null ? 'BASE ' . $basePref['short'] : '—', 'icon' => 'home_work', 'color' => ''],
+            ['label' => 'TEMPO DE JOGO',   'value' => (string)($data['playtime'] ?? ''), 'icon' => 'schedule',      'color' => ''],
+            ['label' => 'EM CAMPO DESDE',  'value' => $joinedFmt,                        'icon' => 'flag',          'color' => ''],
         ];
 
         // --- estatísticas (4 métricas reais de player_matches) --------------
@@ -148,17 +173,22 @@ final class ProfileController extends Controller
             }
         }
 
-        // --- classes: layout; destaca a classe atual do jogador ------------
-        $pClass = mb_strtoupper((string)($player['class'] ?? ''));
-        $classes = (array)($data['classes'] ?? []);
-        $anyMain = false;
-        foreach ($classes as $k => $c) {
-            $isMain = $pClass !== '' && mb_strtoupper((string)($c['label'] ?? '')) === $pClass;
-            $classes[$k]['main'] = $isMain;
-            $anyMain = $anyMain || $isMain;
-        }
-        if (!$anyMain && $classes !== []) {
-            $classes[array_key_first($classes)]['main'] = true;
+        // --- funções Hunter (PRD v3 §21.5): as QUATRO oficiais, sempre nesta ordem; a do jogador
+        //     em destaque. Nível/maestria por função continuam vindo do cromo até existir backend.
+        $mock = [];
+        foreach ((array)($data['classes'] ?? []) as $c) { $mock[GameRules::role($c['label'] ?? null) ?? ''] = $c; }
+        $classes = [];
+        foreach (GameRules::ROLES as $key => $r) {
+            $m = $mock[$key] ?? [];
+            $classes[] = [
+                'slug'  => strtolower($key),
+                'label' => $r['label'],
+                'icon'  => $r['icon'],
+                'desc'  => $r['desc'],
+                'level' => (int)($m['level'] ?? 0),
+                'pct'   => (int)($m['pct'] ?? 0),
+                'main'  => $key === $roleKey,
+            ];
         }
         $data['classes'] = $classes;
 
@@ -170,6 +200,87 @@ final class ProfileController extends Controller
 
         $page = $this->page('perfil', 'Perfil', ['nav' => 'perfil']);
         return $this->render('perfil', $page, $data);
+    }
+
+    /**
+     * Bloco CONTRATO MERCENÁRIO + reputação das duas facções (PRD v3 §21.3–21.4).
+     * A facção sem contrato mostra estado coerente: SEM CONTRATO ou BLOQUEADO hh:mm:ss.
+     *
+     * @param array<string,mixed> $op
+     * @return array<string,mixed>
+     */
+    private function contractBlock(array $op): array
+    {
+        $ativa = $op['faction'] ?? null;
+        $facs  = [];
+        foreach (GameRules::FACTIONS as $slug => $f) {
+            $rep    = (int)($op['reputation'][$slug] ?? 0);
+            $locked = $op['locked'][$slug] ?? null;
+            $isLock = $locked !== null && strtotime((string)$locked) > time();
+            $facs[] = [
+                'slug'      => $slug,
+                'label'     => $f['label'],
+                'color'     => $f['color'],
+                'rep'       => $rep,
+                'tier'      => $ativa === $slug || $rep > 0 ? GameRules::repTier($rep) : 'SEM CONTRATO',
+                'active'    => $ativa === $slug,
+                'locked'    => $isLock,
+                'locked_until' => $isLock ? (string)$locked : null,
+                'state'     => $ativa === $slug ? 'CONTRATO ATIVO' : ($isLock ? 'BLOQUEADO' : 'SEM CONTRATO'),
+            ];
+        }
+        return [
+            'title'    => 'CONTRATO MERCENÁRIO',
+            'none'     => 'NENHUM CONTRATO ATIVO',
+            'active'   => $ativa !== null ? GameRules::faction($ativa) + ['rep' => (int)($op['reputation'][$ativa] ?? 0), 'tier' => (string)($op['tiers'][$ativa] ?? '')] : null,
+            'survivor' => $op['state'] === GameRules::STATE_SURVIVOR,
+            'factions' => $facs,
+            'cta'      => ['benefits' => 'VER BENEFÍCIOS', 'manage' => 'GERENCIAR CONTRATO', 'href' => 'faccoes'],
+        ];
+    }
+
+    /**
+     * Estatísticas por estado (PRD v3 §21.6): GERAL · HUNTER · MERCENÁRIO · SOBREVIVENTE · PVP ·
+     * VEYRA. O que player_matches sabe medir vem real; o resto é marcado `dep` (depende de
+     * backend) e aparece como "—", nunca como número inventado.
+     *
+     * @return list<array<string,mixed>>
+     */
+    private function statsTabs(array $op, int $matches, int $kills, int $extractions, int $deaths): array
+    {
+        $dep = static fn(string $label, string $icon = 'pending'): array => ['label' => $label, 'n' => null, 'sub' => 'DEPENDE DO BACKEND', 'icon' => $icon, 'dep' => true];
+        $pct = $matches > 0 ? (int)round($extractions / $matches * 100) : 0;
+        return [
+            ['slug' => 'hunter', 'label' => 'HUNTER', 'items' => [
+                ['label' => 'OPERAÇÕES CONCLUÍDAS', 'n' => $matches,     'sub' => 'MUNDO PERSISTENTE', 'icon' => 'flag', 'color' => 'lime'],
+                ['label' => 'EXTRAÇÕES',            'n' => $extractions, 'sub' => $pct . '% DE SUCESSO',  'icon' => 'logout', 'color' => 'lime'],
+                $dep('ORDENS CUMPRIDAS', 'assignment_turned_in'),
+                $dep('ALIADOS REVIVIDOS', 'medical_services'),
+                $dep('INFRAÇÕES', 'gavel'),
+            ]],
+            ['slug' => 'mercenario', 'label' => 'MERCENÁRIO', 'items' => [
+                ['label' => 'REP AEGIS',    'n' => (int)($op['reputation']['aegis'] ?? 0),    'sub' => (string)($op['tiers']['aegis'] ?? 'SEM CONTRATO'),    'icon' => 'shield', 'color' => 'cyan'],
+                ['label' => 'REP FRONTIER', 'n' => (int)($op['reputation']['frontier'] ?? 0), 'sub' => (string)($op['tiers']['frontier'] ?? 'SEM CONTRATO'), 'icon' => 'explore', 'color' => 'amber'],
+                $dep('CONTRATOS AEGIS', 'handshake'),
+                $dep('CONTRATOS FRONTIER', 'handshake'),
+                $dep('MISSÕES DE FACÇÃO', 'assignment'),
+            ]],
+            ['slug' => 'sobrevivente', 'label' => 'SOBREVIVENTE', 'items' => [
+                $dep('ENTRADAS NO ESTADO', 'person_off'),
+                $dep('MAIOR TEMPO SOBREVIVIDO', 'timer'),
+                $dep('RECURSOS ARMAZENADOS EM CAMPO', 'inventory_2'),
+            ]],
+            ['slug' => 'pvp', 'label' => 'PVP', 'items' => [
+                ['label' => 'OPERADORES ELIMINADOS', 'n' => $kills,  'sub' => 'ENCONTROS HOSTIS', 'icon' => 'swords', 'color' => 'red'],
+                ['label' => 'MORTES PARA OPERADORES', 'n' => $deaths, 'sub' => 'MUNDO PERSISTENTE', 'icon' => 'skull', 'color' => ''],
+                $dep('ENCONTROS HOSTIS', 'radar'),
+            ]],
+            ['slug' => 'veyra', 'label' => 'VEYRA', 'items' => [
+                $dep('CRIATURAS ABATIDAS', 'pest_control'),
+                $dep('NINHOS DESTRUÍDOS', 'local_fire_department'),
+                $dep('COLOSSI ELIMINADOS', 'skull'),
+            ]],
+        ];
     }
 
     /**

@@ -64,7 +64,9 @@ $ehExtra = [
 ];
 
 $ehAll = array_merge($ehNews, $ehExtra);
-$ehPages = array_slice(array_chunk($ehAll, 3), 0, 3);
+/* 2 por página: com a faixa STATUS OPERACIONAL no meio da coluna, três linhas de notícia
+   não cabem no painel e a lista transbordava para fora dele. */
+$ehPages = array_slice(array_chunk($ehAll, 2), 0, 4);
 
 return [
     'brand' => [
@@ -72,15 +74,25 @@ return [
         'sub'     => 'HUNTERS',
         'tagline' => 'SOBREVIVA. EXTRAIA. EVOLUA.',
     ],
+    /* PRD v3 §16.1: JOGAR SOLO -> ENTRAR EM OPERAÇÃO, JOGAR COM AMIGOS -> FORMAR ESQUADRÃO,
+       terceiro espaço -> BASE DE CAMPO. SAIR saiu daqui: a topbar da Home já tem SAIR (Controller::page). */
     'menu' => [
-        ['slug' => 'jogar',         'icon' => 'terrain', 'icon_fill' => true, 'emblem' => 'mountain', 'title' => 'JOGAR SOLO',       'desc' => 'Entre sozinho no campo e extraia.',     'href' => 'jogar',         'active' => true],
-        ['slug' => 'lobby',         'icon' => 'group',    'icon_fill' => false, 'title' => 'JOGAR COM AMIGOS', 'desc' => 'Forme um esquadrão e enfrente juntos.', 'href' => 'lobby',         'active' => false],
-        ['slug' => 'configuracoes', 'icon' => 'settings', 'icon_fill' => true,  'title' => 'CONFIGURAÇÕES',    'desc' => 'Ajustes e opções do jogo.',            'href' => 'configuracoes', 'active' => false],
-        ['slug' => 'sair',          'icon' => 'logout',   'icon_fill' => false, 'title' => 'SAIR',             'desc' => 'Voltar para a área de trabalho.',       'href' => null,            'active' => false],
+        ['slug' => 'jogar',         'icon' => 'terrain',  'icon_fill' => true,  'emblem' => 'mountain', 'title' => 'ENTRAR EM OPERAÇÃO', 'desc' => 'Escolha seu status operacional e entre em uma região ativa.', 'href' => 'jogar',         'active' => true],
+        ['slug' => 'lobby',         'icon' => 'group',    'icon_fill' => false, 'title' => 'FORMAR ESQUADRÃO',   'desc' => 'Monte uma unidade Hunter com até 4 operadores.',             'href' => 'lobby',         'active' => false],
+        ['slug' => 'safe-zone',     'icon' => 'storefront','icon_fill' => false,'title' => 'SAFE ZONE',          'desc' => 'Assuma um papel civil no perímetro protegido entre operações.', 'href' => 'safe-zone',     'active' => false],
+        ['slug' => 'base',          'icon' => 'home_work','icon_fill' => false, 'title' => 'BASE DE CAMPO',      'desc' => 'Gerencie armazenamento, veículos e infraestrutura persistente.', 'href' => 'base',          'active' => false],
+        ['slug' => 'configuracoes', 'icon' => 'settings', 'icon_fill' => true,  'title' => 'CONFIGURAÇÕES',     'desc' => 'Ajustes e opções do jogo.',                                    'href' => 'configuracoes', 'active' => false],
+    ],
+    /* Faixa "STATUS OPERACIONAL" (PRD §16.3) — só os rótulos; os valores vêm de OperationalRepo. */
+    'status' => [
+        'title'   => 'STATUS OPERACIONAL',
+        'labels'  => ['org' => 'ORGANIZAÇÃO', 'base' => 'BASE DE ORIGEM', 'role' => 'FUNÇÃO', 'rank' => 'PATENTE',
+                       'contract' => 'CONTRATO', 'rep' => 'REP', 'survivor' => 'SEM EXTRAÇÃO DISPONÍVEL'],
+        'href'    => 'perfil',
     ],
     'season' => [
         'level'    => 45,
-        'title'    => 'PASSE DE TEMPORADA',
+        'title'    => 'PASSE DE OPERAÇÕES',
         'subtitle' => 'TEMPORADA 01',
         'xp'       => 2450,
         'xp_next'  => 10000,
@@ -97,9 +109,11 @@ return [
     'contract' => [
         'title'    => 'CONTRATO ATIVO',
         'action'   => 'VER TODOS',
+        'origin_label' => 'ORIGEM',
+        'origin'   => 'hunter_command',   /* fallback sem banco; o real vem de missions.origin */
         'href'     => 'missoes',
-        'name'     => 'CAÇA NA FLORESTA',
-        'desc'     => 'ELIMINE 8 INIMIGOS NA REGIÃO DA FLORESTA',
+        'name'     => 'SINAL PERDIDO',
+        'desc'     => 'RESTAURE A COMUNICAÇÃO DA ESTAÇÃO AO NORTE. ALGUÉM CHEGOU ANTES.',
         'icon'     => 'my_location',
         'progress' => 3,
         'total'    => 8,

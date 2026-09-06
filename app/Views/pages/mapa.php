@@ -6,9 +6,19 @@
  *        legend_title, legend_toggle, controls[], map_image, info_title, extractions_title,
  *        event_title, cta_route, cta_mark, compass.
  * Escopo da view: $page, $player, $nav, $server, $data, $flash, $csrf.
+ *
+ * PRD v3 §23 (mundo persistente): camadas filtráveis (chips), Bases Hunter com estado (sem vagas),
+ * instalações de facção com status conforme o contrato, marcadores Veyra/atividade humana/logística,
+ * extrações tipadas — e todas BLOQUEADAS quando o jogador é Sobrevivente.
  */
 
-$regions = (array)($data['regions'] ?? []);
+$regions  = (array)($data['regions'] ?? []);
+$filters  = (array)($data['filters'] ?? []);
+$bases    = (array)($data['bases'] ?? []);
+$sites    = (array)($data['faction_sites'] ?? []);
+$labels   = (array)($data['labels'] ?? []);
+$survivor = !empty($data['survivor']);
+$rstate   = is_array(($data['region'] ?? [])['state'] ?? null) ? $data['region']['state'] : [];
 $region  = (array)($data['region'] ?? []);
 $markers = (array)($data['markers'] ?? []);
 $legend  = (array)($data['legend'] ?? []);
@@ -30,6 +40,25 @@ $GLYPHS = [
     'village'    => '<path d="M10.4 2.6h3.2v2.6h3.1v16.2h-3.9v-4.2h-1.6v4.2H6.5V5.2h3.9zM8.6 7.6v1.9h1.9V7.6zm4.9 0v1.9h1.9V7.6zM8.6 11.4v1.9h1.9v-1.9zm4.9 0v1.9h1.9v-1.9z"/><path d="M2.6 9.9h3.1v11.5H2.6zM18.3 9.9h3.1v11.5h-3.1z"/>',
     'enemy-legend' => '<path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M8.4 2.4h7.2l4.6 4.7v9.8L15.6 21.6H8.4L3.8 16.9V7.1z"/><path d="M12 6.2a4.6 4.6 0 0 0-4.6 4.5c0 1.4.6 2.6 1.6 3.4v1.5c0 .4.3.7.7.7h4.6c.4 0 .7-.3.7-.7v-1.5c1-.8 1.6-2 1.6-3.4A4.6 4.6 0 0 0 12 6.2Zm-1.9 3.8a1.2 1.2 0 1 1 0 2.3 1.2 1.2 0 0 1 0-2.3Zm3.8 0a1.2 1.2 0 1 1 0 2.3 1.2 1.2 0 0 1 0-2.3Z"/>',
     'locked'     => '<path d="M12 2.2A4.6 4.6 0 0 0 7.4 6.8v2.1H6.2c-.7 0-1.2.5-1.2 1.2v10.5c0 .7.5 1.2 1.2 1.2h11.6c.7 0 1.2-.5 1.2-1.2V10.1c0-.7-.5-1.2-1.2-1.2h-1.2V6.8A4.6 4.6 0 0 0 12 2.2Zm0 2.2a2.4 2.4 0 0 1 2.4 2.4v2.1H9.6V6.8A2.4 2.4 0 0 1 12 4.4Z"/>',
+    /* PRD v3 §23 — mundo persistente */
+    // Base Hunter (governamental): escudo com chevrons de patente
+    'gov-base'   => '<path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M12 2.6 4.8 5.5v5.9c0 4.3 3 8.3 7.2 9.4 4.2-1.1 7.2-5.1 7.2-9.4V5.5z"/><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="m8.6 10.2 3.4-2.6 3.4 2.6M8.6 14.2l3.4-2.6 3.4 2.6"/>',
+    // Instalação Aegis: bastião/blindagem
+    'aegis'      => '<path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M3.4 20.6V9.2l3.2-2.4V4.2h3.2v2.6h1.2V4.2h3.2v2.6h1.2V4.2h3.2v2.6l-.6 2.4v11.4z"/><path d="M9.6 13.2h4.8v7.4H9.6z"/>',
+    // Acampamento Frontier: tenda + trilha
+    'frontier'   => '<path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M12 3.4 2.8 19.6h18.4z"/><path d="M12 9.2 8.4 19.6h7.2z"/><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="1.6 1.8" d="M3 22h18"/>',
+    // Base de campo: casa simples com antena
+    'field-base' => '<path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M4 12.4 12 5.6l8 6.8V20.4H4z"/><path d="M10 14h4v6.4h-4z"/><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M16.5 3v5.2M15 4.4h3"/>',
+    // Ninho / colônia Veyra: núcleo com filamentos
+    'nest'       => '<circle cx="12" cy="12" r="3.2"/><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" d="M12 8.8V3.2M12 15.2v5.6M8.8 12H3.2M15.2 12h5.6M9.7 9.7 5.8 5.8M14.3 14.3l3.9 3.9M14.3 9.7l3.9-3.9M9.7 14.3l-3.9 3.9"/>',
+    // Área contaminada: esporos
+    'contaminated' => '<circle cx="8.2" cy="9" r="2.6"/><circle cx="15.6" cy="8" r="2"/><circle cx="12.4" cy="15.4" r="3"/><circle cx="6.6" cy="16.2" r="1.6"/><circle cx="17.8" cy="14.6" r="1.5"/>',
+    // Atividade humana: alvo de sinal
+    'human'      => '<circle cx="12" cy="12" r="2.4"/><circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M12 2.6v3M12 18.4v3M2.6 12h3M18.4 12h3"/>',
+    // Safe Zone: portão protegido (perímetro civil)
+    'safe-zone'  => '<path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M3.6 20.4V9.6L12 4.2l8.4 5.4v10.8z"/><path d="M12 8.2 8.4 9.6v3c0 2.2 1.5 4.2 3.6 4.8 2.1-.6 3.6-2.6 3.6-4.8v-3z"/>',
+    // Janela logística: comboio/caminhão
+    'convoy'     => '<path d="M2.6 7h10.8v8.2H2.6z"/><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M13.4 9.4h4.4l3.6 3.4v2.4h-8z"/><circle cx="6.4" cy="17.4" r="2"/><circle cx="16.8" cy="17.4" r="2"/>',
 ];
 
 /* --- glifos das regiões (coluna esquerda) --------------------------------- */
@@ -50,7 +79,7 @@ $glyph = static function (array $set, string $id, string $cls = ''): string {
 /* --- marcadores: separa zonas de risco ------------------------------------ */
 $risks = [];
 foreach ($markers as $m) {
-    if (!empty($m['risk']) && is_array($m['risk'])) { $risks[] = $m['risk']; }
+    if (!empty($m['risk']) && is_array($m['risk'])) { $risks[] = $m['risk'] + ['layer' => (string)($m['layer'] ?? 'veyra')]; }
 }
 ?>
 <div class="mapa">
@@ -82,6 +111,18 @@ foreach ($markers as $m) {
           <?php endforeach; ?>
         </div>
       </div>
+
+      <!-- ---- CAMADAS (PRD v3 §23.9: chips, sem novo painel) ---- -->
+      <?php if ($filters !== []): ?>
+      <div class="mgroup mgroup--layers">
+        <h2 class="mgroup__title"><?= e((string)($data['filters_title'] ?? 'CAMADAS')) ?></h2>
+        <div class="mlayers" data-select-group data-map-filters role="group" aria-label="<?= e((string)($data['filters_title'] ?? 'CAMADAS')) ?>">
+          <?php foreach ($filters as $k => $f): ?>
+          <button class="chip mlayer<?= $k === 0 ? ' is-active' : '' ?>" type="button" data-select data-value="<?= e((string)$f['slug']) ?>" aria-pressed="<?= $k === 0 ? 'true' : 'false' ?>"><?= e((string)$f['label']) ?></button>
+          <?php endforeach; ?>
+        </div>
+      </div>
+      <?php endif; ?>
 
       <!-- ---- LEGENDA ---- -->
       <div class="mgroup mgroup--legend" id="mapa-legend">
@@ -119,20 +160,22 @@ foreach ($markers as $m) {
       <div class="map3d__layer" id="map3d-layer">
         <?php foreach ($risks as $i => $rk): ?>
         <span class="mrisk" aria-hidden="true"
-              data-risk="<?= e((string)$i) ?>"
+              data-risk="<?= e((string)$i) ?>" data-layer="<?= e((string)($rk['layer'] ?? 'veyra')) ?>"
               style="--x:<?= e((string)$rk['x']) ?>%;--y:<?= e((string)$rk['y']) ?>%;--rx:<?= e((string)$rk['rx']) ?>%"></span>
         <?php endforeach; ?>
 
         <?php foreach ($markers as $m): ?>
         <?php $lab = $m['label'] ?? false; ?>
-        <div class="mk mk--<?= e((string)$m['color']) ?><?= $lab === 'right' ? ' mk--lab-right' : '' ?><?= !empty($m['narrow']) ? ' mk--lab-narrow' : '' ?><?= !empty($m['pulse']) ? ' mk--pulse' : '' ?>"
+        <?php $g = isset($GLYPHS[(string)$m['glyph']]) ? (string)$m['glyph'] : 'event'; ?>
+        <div class="mk mk--<?= e((string)$m['color']) ?><?= $lab === 'right' ? ' mk--lab-right' : '' ?><?= !empty($m['narrow']) ? ' mk--lab-narrow' : '' ?><?= !empty($m['pulse']) ? ' mk--pulse' : '' ?><?= !empty($m['blocked']) ? ' mk--blocked' : '' ?>"
              data-marker="<?= e((string)$m['id']) ?>" data-x="<?= e((string)$m['x']) ?>" data-y="<?= e((string)$m['y']) ?>"
+             data-kind="<?= e((string)($m['kind'] ?? $g)) ?>" data-layer="<?= e((string)($m['layer'] ?? 'eventos')) ?>"<?= !empty($m['expires']) ? ' data-expires="' . e((string)(int)$m['expires']) . '"' : '' ?><?= !empty($m['tip']) ? ' data-tip="' . e((string)$m['tip']) . '"' : '' ?>
              style="--x:<?= e((string)$m['x']) ?>%;--y:<?= e((string)$m['y']) ?>%">
-          <span class="mk__glyph mk__glyph--<?= e((string)$m['glyph']) ?>"><?= $glyph($GLYPHS, (string)$m['glyph']) ?></span>
+          <span class="mk__glyph mk__glyph--<?= e($g) ?>"><?= $glyph($GLYPHS, $g) ?></span>
           <?php if ($lab): ?>
-          <span class="mk__label"><?= e((string)$m['name']) ?></span>
+          <span class="mk__label"><?= e((string)$m['name']) ?><?php if (!empty($m['sub'])): ?><small class="mk__sub mk__sub--<?= e((string)($m['sub_color'] ?? 'muted')) ?>"><?= e((string)$m['sub']) ?></small><?php endif; ?></span>
           <?php else: ?>
-          <span class="sr-only"><?= e((string)$m['name']) ?></span>
+          <span class="sr-only"><?= e((string)$m['name']) ?><?= !empty($m['sub']) ? ' — ' . e((string)$m['sub']) : '' ?></span>
           <?php endif; ?>
         </div>
         <?php endforeach; ?>
@@ -212,30 +255,78 @@ foreach ($markers as $m) {
           <?php $isNum = (bool)preg_match('/^[0-9]/', (string)$it['value']); ?>
           <li class="rinfo__i">
             <span class="rinfo__k"><?= e((string)$it['label']) ?></span>
-            <span class="rinfo__v<?= $isNum ? ' num' : '' ?><?= !empty($it['cls']) ? ' ' . e((string)$it['cls']) : '' ?>"><?= e((string)$it['value']) ?><?php if (!empty($it['icon'])): ?><?= icon((string)$it['icon'], 'rinfo__ic fill') ?><?php endif; ?></span>
+            <span class="rinfo__v<?= $isNum ? ' num' : '' ?><?= !empty($it['cls']) ? ' ' . e((string)$it['cls']) : '' ?>"<?= !empty($it['tip']) ? ' data-tip="' . e((string)$it['tip']) . '"' : '' ?>><?= e((string)$it['value']) ?><?php if (!empty($it['icon'])): ?><?= icon((string)$it['icon'], 'rinfo__ic fill') ?><?php endif; ?></span>
           </li>
           <?php endforeach; ?>
         </ul>
       </section>
 
+      <!-- ESTADO DO SETOR (PRD §23.2–§23.3: o que está acontecendo agora) -->
+      <?php if ($rstate !== []): ?>
+      <section class="rsec rsec--state">
+        <h3 class="rsec__title"><?= e((string)($data['state_title'] ?? 'ESTADO DO SETOR')) ?></h3>
+        <div class="rstate">
+          <?php component('infestation', ['value' => (int)($rstate['infestation'] ?? 0), 'label' => (string)($labels['infestation'] ?? 'INFESTAÇÃO VEYRA'), 'class' => 'rstate__infest']); ?>
+          <div class="rstate__grid">
+            <div class="rstate__row">
+              <span class="rstate__k"><?= e((string)($labels['veyra'] ?? 'ATIVIDADE VEYRA')) ?></span>
+              <?php component('badge', ['kind' => 'activity', 'value' => (string)($rstate['veyra_activity'] ?? 'MODERADA')]); ?>
+            </div>
+            <div class="rstate__row">
+              <span class="rstate__k"><?= e((string)($labels['human'] ?? 'ATIVIDADE HUMANA')) ?></span>
+              <?php component('badge', ['kind' => 'activity', 'value' => (string)($rstate['human_activity'] ?? 'MODERADA')]); ?>
+            </div>
+          </div>
+        </div>
+      </section>
+      <?php endif; ?>
+
+      <!-- BASES HUNTER (PRD §23.5: estado, nunca vagas exatas) + INSTALAÇÕES DE FACÇÃO (§23.6: status
+           conforme o contrato) — uma lista só, para o painel continuar cabendo na altura de referência -->
+      <?php if ($bases !== [] || $sites !== []): ?>
+      <section class="rsec rsec--bases">
+        <h3 class="rsec__title"><?= e((string)($data['bases_title'] ?? 'BASES E INSTALAÇÕES')) ?></h3>
+        <ul class="rbases" data-tip="<?= e((string)($data['bases_note'] ?? '')) ?>">
+          <?php foreach ($bases as $b): ?>
+          <li class="rbase rbase--<?= e((string)$b['color']) ?> rbase--hunter">
+            <span class="rbase__ic"><?= $glyph($GLYPHS, 'gov-base') ?></span>
+            <span class="rbase__n"><?= e((string)$b['name']) ?></span>
+            <?php component('badge', ['kind' => 'base', 'value' => (string)$b['status'], 'class' => 'rbase__st']); ?>
+          </li>
+          <?php endforeach; ?>
+          <?php foreach ($sites as $s): ?>
+          <li class="rbase rbase--<?= e((string)$s['color']) ?> rbase--<?= e((string)$s['faction']) ?>"<?= $s['tip'] !== '' ? ' data-tip="' . e((string)$s['tip']) . '"' : '' ?>>
+            <span class="rbase__ic"><?= $glyph($GLYPHS, (string)$s['faction']) ?></span>
+            <span class="rbase__n"><?= e((string)$s['name']) ?></span>
+            <span class="chip chip--<?= e((string)$s['color']) ?> badge rbase__st"><?= e((string)$s['status']) ?></span>
+          </li>
+          <?php endforeach; ?>
+        </ul>
+      </section>
+      <?php endif; ?>
+
       <!-- EXTRAÇÕES DISPONÍVEIS -->
-      <section class="rsec">
+      <section class="rsec rsec--ext<?= $survivor ? ' rsec--blocked' : '' ?>">
         <h3 class="rsec__title"><?= e((string)($data['extractions_title'] ?? 'EXTRAÇÕES DISPONÍVEIS')) ?></h3>
         <ul class="rext">
           <?php foreach ((array)($region['extractions'] ?? []) as $x): ?>
-          <?php $st = (string)($x['state'] ?? 'active'); ?>
-          <li class="rext__i rext__i--<?= e($st) ?>">
+          <?php $st = (string)($x['state'] ?? 'active'); $tc = (string)($x['type_color'] ?? ''); ?>
+          <li class="rext__i rext__i--<?= e($st) ?><?= $tc !== '' ? ' rext__i--t-' . e($tc) : '' ?>"<?= !empty($x['tip']) ? ' data-tip="' . e((string)$x['tip']) . '"' : '' ?>>
             <span class="rext__ic"><?php
-                if ($st === 'active') { echo $glyph($GLYPHS, 'extraction'); }
+                if ($st === 'blocked') { echo icon('lock'); }
+                elseif ($st === 'active') { echo $glyph($GLYPHS, 'extraction'); }
                 elseif ($st === 'conditional') { echo icon('adjust'); }
                 else { echo icon('close'); }
             ?></span>
-            <span class="rext__n"><?= e((string)$x['name']) ?></span>
+            <span class="rext__n"><?= e((string)$x['name']) ?><?php if (!empty($x['type_label'])): ?><small class="rext__t"><?= e((string)$x['type_label']) ?></small><?php endif; ?></span>
             <span class="rext__s"><?= e((string)$x['status']) ?></span>
             <span class="rext__d" aria-hidden="true"></span>
           </li>
           <?php endforeach; ?>
         </ul>
+        <?php if ($survivor): ?>
+        <p class="rext__warn"><?= icon('block', 'rext__warn-ic') ?><?= e(\App\Core\GameRules::SURVIVOR_EXTRACTION_TIP) ?></p>
+        <?php endif; ?>
       </section>
 
       <!-- EVENTO ATIVO -->

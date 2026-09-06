@@ -34,8 +34,11 @@ abstract class Controller
         'amigos'           => 'bg/lobby.jpg',
         'mensagens'        => 'bg/menu.jpg',
         'perfil'           => 'bg/home-hero.jpg',
+        'safe-zone'        => 'bg/lobby.jpg',
         'suporte'          => 'bg/forest-generic.jpg',
         'relatorio-de-bug' => 'bg/forest-generic.jpg',
+        'faccoes'          => 'bg/forest-generic.jpg',
+        'base'             => 'bg/inventario.jpg',
         '404'              => 'bg/forest-generic.jpg',
     ];
 
@@ -46,6 +49,9 @@ abstract class Controller
         'mapas'    => 'mapa',
         'desafios' => 'missoes',
         'noticias' => 'inicio',
+        'faccoes'  => 'missoes',
+        'base'     => 'inventario',
+        'safe-zone'=> 'inicio',
     ];
 
     /**
@@ -121,18 +127,40 @@ abstract class Controller
         if ($cache !== null) {
             return $cache;
         }
+        $player = null;
         try {
             $uid = current_user_id();
             if ($uid > 0) {
-                $p = \App\Repo\PlayerRepo::forUser($uid);
-                if ($p !== null) {
-                    return $cache = $p;
-                }
+                $player = \App\Repo\PlayerRepo::forUser($uid);
             }
         } catch (\Throwable) {
             // banco indisponível — usa o mock abaixo
         }
-        return $cache = data_mock('player');
+        $player ??= data_mock('player');
+
+        // Pré-visualização de estado operacional, SÓ em localhost (Config::debug()): permite ver
+        // a mesma HUD como Hunter, Mercenário Aegis/Frontier ou Sobrevivente sem tocar em dado
+        // real. Em produção o estado é o que está no banco — não existe atalho.
+        if (\App\Core\Config::debug()) {
+            $estado = Request::fromGlobals()->query('estado');
+            if ($estado !== null && $estado !== '') {
+                $player['operational'] = \App\Repo\OperationalRepo::preview(
+                    (array)($player['operational'] ?? \App\Repo\OperationalRepo::defaults()),
+                    $estado
+                );
+            }
+        }
+        return $cache = $player;
+    }
+
+    /**
+     * Estado operacional do jogador atual (atalho para o que toda tela do PRD v3 precisa).
+     * @return array<string,mixed>
+     */
+    protected function operational(): array
+    {
+        $op = $this->player()['operational'] ?? null;
+        return is_array($op) ? $op : \App\Repo\OperationalRepo::defaults();
     }
 
     /** ID do jogador atual (0 se o banco não estiver instalado). */

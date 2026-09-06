@@ -725,3 +725,61 @@ body.page-perfil .hud-main{
   .page-perfil .rc-item:first-child .rc-item__dot{animation:none}
   .page-perfil .st-cell:hover::after{animation:none}
 }
+
+/* ==========================================================================
+   PRD v3 §21 — organização, estado operacional, contrato mercenário e
+   reputação por facção. Mesmos painéis; blocos novos usam as linhas do op__meta.
+   ========================================================================== */
+.page-perfil .pf-head__org{display:inline-flex;align-items:center;gap:.4rem;color:var(--c-text-2)}
+.page-perfil .pf-head__org .ms{font-size:1.05rem;color:var(--c-lime)}
+.page-perfil .op__meta-ic.is-cyan,.page-perfil .op__meta-val.is-cyan{color:var(--c-cyan)}
+.page-perfil .op__meta-ic.is-amber,.page-perfil .op__meta-val.is-amber{color:var(--c-amber)}
+.page-perfil .op__meta-val.is-white{color:var(--c-text);letter-spacing:.1em}
+.page-perfil .op__tag--state{left:.7rem;top:2.7rem}
+
+/* contrato mercenário + facções */
+.page-perfil .fc__body{display:flex;flex-direction:column;gap:.7rem;padding:.85rem 1rem 1rem}
+.page-perfil .fc__none{display:flex;align-items:center;justify-content:space-between;gap:.6rem;font-family:var(--font-cond);font-size:.9rem;letter-spacing:.08em;color:var(--c-text-2)}
+.page-perfil .fc__row{display:grid;grid-template-columns:5.2rem minmax(0,1fr) auto;align-items:center;gap:.6rem;padding:.45rem .6rem;border:1px solid var(--c-line-2);border-radius:var(--r-2);background:var(--c-panel-3)}
+.page-perfil .fc__row.is-active{border-color:var(--c-line)}
+.page-perfil .fc__rep{display:grid;gap:.05rem;min-width:0}
+.page-perfil .fc__rep b{font-family:var(--font-cond);font-weight:400;font-size:1.05rem;letter-spacing:.04em;color:#e8ede6}
+.page-perfil .fc__rep small{font-family:var(--font-cond);font-size:.66rem;letter-spacing:.12em;color:var(--c-muted)}
+.page-perfil .fc__row--cyan .fc__rep b{color:var(--c-cyan)}
+.page-perfil .fc__row--amber .fc__rep b{color:var(--c-amber)}
+.page-perfil .fc__state{font-family:var(--font-cond);font-size:.66rem;letter-spacing:.12em;color:var(--c-muted);text-align:right;white-space:nowrap}
+.page-perfil .fc__state.is-locked{color:var(--c-red)}
+.page-perfil .fc__actions{display:flex;gap:.5rem}
+.page-perfil .fc__actions .btn{flex:1 1 0}
+
+/* estatísticas por estado: tabs sobre a grade */
+.page-perfil .st__tabs{padding:.4rem 1rem 0}
+.page-perfil .st__tabs .tab{font-size:.7rem;letter-spacing:.12em;padding:.35rem .6rem}
+.page-perfil .st-cell__sub.is-dep{color:var(--c-dim);font-style:italic}
+
+/* ==========================================================================
+   Coluna direita: os três painéis pediam 814px em 679px, então o flex encolhia
+   cada um abaixo do conteúdo e os botões VER BENEFÍCIOS / GERENCIAR CONTRATO
+   caíam por cima de FUNÇÕES HUNTER. Agora nenhum painel encolhe, os dois de
+   cima são compactos e a coluna rola por dentro se ainda faltar espaço.
+   ========================================================================== */
+/* coluna direita cabe na altura */
+.page-perfil .pf__col--r{overflow-y:auto;scrollbar-width:thin;padding-right:.2rem}
+.page-perfil .pf__col--r > .panel{flex:0 0 auto}
+.page-perfil .pf__col--r > .panel--grow{flex:1 1 auto;min-height:11rem}
+
+/* CONTRATO MERCENÁRIO mais baixo */
+.page-perfil .fc__body{gap:.5rem;padding:.6rem .9rem .75rem}
+.page-perfil .fc__none{font-size:.82rem}
+.page-perfil .fc__row{grid-template-columns:4.6rem minmax(0,1fr) auto;padding:.3rem .55rem;gap:.5rem}
+.page-perfil .fc__row .chip{font-size:.62rem}
+.page-perfil .fc__rep b{font-size:.92rem}
+.page-perfil .fc__rep small{font-size:.6rem}
+.page-perfil .fc__state{font-size:.6rem}
+.page-perfil .fc__actions .btn{padding-left:.5rem;padding-right:.5rem;font-size:.72rem}
+
+/* FUNÇÕES HUNTER mais baixo */
+.page-perfil .cl__body{gap:.35rem;padding:.55rem .9rem .7rem}
+.page-perfil .cl-row{padding:.3rem .55rem;gap:.55rem}
+.page-perfil .cl-row__ic .ic{width:1.25rem;height:1.25rem}
+.page-perfil .cl-row__txt{gap:.15rem}

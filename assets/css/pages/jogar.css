@@ -589,3 +589,54 @@ body.is-booted.page-jogar .map-card:nth-child(8){animation-delay:400ms}
   body.is-booted.page-jogar .map-card{animation:none}
   body.page-jogar .jogar-banner:hover .jogar-banner__img{transform:scale(1.01)}
 }
+
+/* ==========================================================================
+   PRD v3 §17 — OPERAÇÃO. Mesmo grid, mesma banner, mesmos cards. O que muda é o
+   conteúdo: hero por estado, regiões persistentes em vez de 6v6, capacidade.
+   ========================================================================== */
+
+/* status operacional na lista da esquerda */
+.page-jogar .jogar-mode__badge{margin-left:auto;flex:none}
+.page-jogar .jogar-mode--survivor{border-color:rgba(232,237,230,.35);cursor:default}
+.page-jogar .jogar-mode--survivor .row__text strong{color:var(--c-text)}
+.page-jogar a.jogar-mode{text-decoration:none;color:inherit}
+
+/* hero: indicadores em uma linha sob o texto, ancorados na base da imagem */
+.page-jogar .jogar-hero{display:flex;flex-direction:column;justify-content:flex-end}
+.page-jogar .jogar-hero__stats{
+  position:relative;z-index:1;
+  display:flex;flex-wrap:wrap;gap:.35rem 1.15rem;
+  margin:0;padding:.55rem 1.15rem .8rem;list-style:none;
+  background:linear-gradient(180deg,rgba(6,9,6,0),rgba(6,9,6,.78) 45%,rgba(6,9,6,.92));
+}
+.page-jogar .hstat{display:flex;flex-direction:column;gap:.05rem;min-width:0}
+.page-jogar .hstat__k{font-family:var(--font-cond);font-size:.64rem;letter-spacing:.14em;color:var(--c-muted)}
+.page-jogar .hstat__v{font-family:var(--font-cond);font-size:.92rem;letter-spacing:.06em;color:#e8ede6;white-space:nowrap}
+.page-jogar .hstat__v small{font-size:.66em;letter-spacing:.1em;color:var(--c-muted);margin-left:.25em}
+.page-jogar .hstat--lime .hstat__v{color:var(--c-lime)}
+.page-jogar .hstat--cyan .hstat__v{color:var(--c-cyan)}
+.page-jogar .hstat--amber .hstat__v{color:var(--c-amber)}
+.page-jogar .hstat--red .hstat__v{color:var(--c-red)}
+.page-jogar .hstat--purple .hstat__v{color:var(--c-purple)}
+.page-jogar .hstat--white .hstat__v{color:var(--c-text);letter-spacing:.1em}
+.page-jogar .jogar-hero--survivor .jogar-banner__shade{background:linear-gradient(180deg,rgba(6,9,6,.35),rgba(6,9,6,.9))}
+.page-jogar .jogar-hero--survivor .jg-hex__frame{stroke:var(--c-text)}
+.page-jogar .jogar-hero--mercenary .jg-hex__frame{stroke:var(--c-cyan)}
+
+/* capacidade do setor (§17.9) ao lado do título das regiões */
+.page-jogar .jogar-maps__head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.page-jogar .jogar-maps__head .panel__section{margin-bottom:0}
+.page-jogar .jogar-cap{display:inline-flex;align-items:baseline;gap:.4rem;margin:0;font-family:var(--font-cond);font-size:.7rem;letter-spacing:.12em;color:var(--c-muted);cursor:help}
+.page-jogar .jogar-cap__v{color:#e8ede6;letter-spacing:.06em}
+.page-jogar .jogar-cap__v .num{color:var(--c-lime)}
+.page-jogar .jogar-cap__sep{color:var(--c-dim)}
+
+/* cards de região: leitura do setor no lugar de MODO / 6v6 */
+.page-jogar .map-card__world,.page-jogar .map-card__human{display:flex;flex-wrap:wrap;align-items:baseline;gap:.2rem .45rem;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase}
+.page-jogar .map-card__inf b{font-weight:400;font-size:1.05em}
+.page-jogar .map-card__inf--lime b{color:var(--c-lime)} .page-jogar .map-card__inf--amber b{color:var(--c-amber)}
+.page-jogar .map-card__inf--red b{color:var(--c-red)}   .page-jogar .map-card__inf--purple b{color:var(--c-purple)}
+.page-jogar .map-card__act{font-weight:400}
+.page-jogar .map-card__act--lime{color:var(--c-lime)} .page-jogar .map-card__act--amber{color:var(--c-amber)}
+.page-jogar .map-card__act--red{color:var(--c-red)}   .page-jogar .map-card__act--purple{color:var(--c-purple)}
+.page-jogar .map-card__persist{font-style:normal;color:var(--c-dim);letter-spacing:.12em}

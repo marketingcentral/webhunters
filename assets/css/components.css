@@ -935,6 +935,49 @@ a.card:active{transform:scale(.99)}
 .chip--lg{height:1.8rem;font-size:.85rem;padding:0 .75rem}
 .chip--dot::before{content:"";width:.45rem;height:.45rem;border-radius:50%;background:var(--_c);box-shadow:0 0 6px var(--_c)}
 
+/* ---- badges de contexto operacional (components/badge.php) --------------
+   Um chip com regra de cor por estado. Só o Sobrevivente ganha assinatura
+   própria: off-white (PRD §13) e a faixa branca no lugar do ícone — duas
+   barras, como as do braço e da perna. Cor NUNCA vira fundo: é borda, texto
+   e ponto, para a paleta continuar preta/verde. */
+.badge{white-space:nowrap}
+.badge .ic,.badge .ms{flex:none}
+.chip--survivor{
+  --_c:var(--c-text);
+  --_rgb:232,237,230;
+  color:var(--c-text);
+  border-color:rgba(232,237,230,.55);
+  background:rgba(232,237,230,.06);
+  text-shadow:none;
+}
+.chip--survivor::before{
+  content:"";
+  width:.9rem;height:.7rem;
+  flex:none;
+  background:
+    linear-gradient(var(--c-text),var(--c-text)) 0 15%/100% 22% no-repeat,
+    linear-gradient(var(--c-text),var(--c-text)) 0 65%/100% 22% no-repeat;
+  opacity:.95;
+}
+.badge--state.chip--lg{letter-spacing:.06em}
+
+/* linha de configuração só-leitura (lobby: clima, janela operacional, protocolo) */
+.set-row--readonly .stepper__btn{visibility:hidden;pointer-events:none}
+.set-row--readonly .set-row__val{color:var(--c-text-2)}
+.set-row--readonly .set-row__val::after{content:" · MUNDO";font-size:.68em;letter-spacing:.12em;color:var(--c-dim)}
+
+/* medidor de infestação (components/infestation.php) */
+.infest{display:grid;grid-template-columns:1fr auto;gap:.15rem .5rem;align-items:baseline;--_c:var(--c-lime)}
+.infest--amber{--_c:var(--c-amber)} .infest--red{--_c:var(--c-red)} .infest--purple{--_c:var(--c-purple)}
+.infest__label{font-family:var(--font-cond);font-size:.72rem;letter-spacing:.14em;color:var(--c-muted);text-transform:uppercase}
+.infest__val{font-size:1.05rem;color:var(--_c);text-align:right}
+.infest__val small{font-size:.65em;margin-left:.05em}
+.infest__state{grid-column:1;font-family:var(--font-cond);font-size:.72rem;letter-spacing:.12em;color:var(--_c);text-transform:uppercase}
+.infest__bar{grid-column:1/-1}
+.infest--compact{grid-template-columns:auto auto;gap:.4rem;align-items:center}
+.infest--compact .infest__label{display:none}
+.infest--compact .infest__state{grid-column:auto}
+
 /* ==========================================================================
    STAT
    ========================================================================== */

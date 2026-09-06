@@ -127,11 +127,33 @@ foreach ($newsPages as $pageItems) {
       <span class="season__clock" data-countdown="<?= e((string)($season['ends_at'] ?? '')) ?>" aria-hidden="true"></span>
     </section>
 
+    <!-- status operacional (PRD v3 §16.3): em qual estado estou e para quem trabalho -->
+    <?php $st = (array)($data['status_op'] ?? []); $stOp = (array)($st['op'] ?? []); ?>
+    <a class="panel opstat opstat--<?= e(strtolower((string)($stOp['state'] ?? 'hunter'))) ?>" href="<?= e(url((string)($st['href'] ?? 'perfil'))) ?>" data-boot>
+      <span class="opstat__head">
+        <span class="opstat__title"><?= e((string)($st['title'] ?? 'STATUS OPERACIONAL')) ?></span>
+        <?php component('badge', ['kind' => 'state', 'value' => $stOp, 'level' => (int)($player['level'] ?? 0), 'class' => 'opstat__badge']) ?>
+      </span>
+      <ul class="opstat__list">
+<?php foreach ((array)($st['items'] ?? []) as $it): ?>
+        <li class="opstat__i<?= !empty($it['cls']) ? ' opstat__i--' . e((string)$it['cls']) : '' ?>">
+          <span class="opstat__k"><?= e((string)$it['label']) ?></span>
+          <span class="opstat__v<?= !empty($it['num']) ? ' num' : '' ?>"><?= e((string)$it['value']) ?></span>
+        </li>
+<?php endforeach; ?>
+      </ul>
+    </a>
+
     <!-- contrato ativo -->
     <section class="panel contract">
       <header class="panel__head">
         <h2 class="panel__title"><?= e((string)($contract['title'] ?? 'CONTRATO ATIVO')) ?></h2>
         <a class="panel__action" href="<?= e(url((string)($contract['href'] ?? 'missoes'))) ?>"><?= e((string)($contract['action'] ?? 'VER TODOS')) ?><?= icon('add') ?></a>
+        <?php /* PRD v3 §16.2: de quem vem a ordem — OPERAÇÃO HUNTER ou CONTRATO MERCENÁRIO */ $cOrigin = \App\Core\GameRules::origin($contract['origin'] ?? null); ?>
+        <span class="contract__origin">
+          <span class="contract__origin-k"><?= e((string)($contract['origin_label'] ?? 'ORIGEM')) ?></span>
+          <?php component('badge', ['kind' => 'origin', 'value' => (string)($contract['origin'] ?? 'hunter_command'), 'tip' => $cOrigin['badge'], 'class' => 'contract__origin-badge']) ?>
+        </span>
       </header>
       <div class="panel__body contract__body">
         <a class="contract__mission" href="<?= e(url((string)($contract['href'] ?? 'missoes'))) ?>">

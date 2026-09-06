@@ -1,0 +1,47 @@
+/* ==========================================================================
+   BASE DE CAMPO (/base) — PRD v3 §28. Três painéis: principal (ou estado
+   vazio honesto), módulos e um glossário curto. Nada aqui inventa sandbox.
+   ========================================================================== */
+.page-base .fb{display:flex;flex-direction:column;gap:1rem;min-height:0}
+.page-base .fb__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem}
+.page-base .fb__intro{max-width:50rem}
+
+.page-base .fb__grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);grid-template-rows:auto auto;gap:1rem;min-height:0}
+.page-base .fb-main{grid-row:1/3;display:flex;flex-direction:column}
+.page-base .fb-mods,.page-base .fb-terms{display:flex;flex-direction:column}
+
+/* estado vazio */
+.page-base .fb-empty{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.7rem;padding:2rem 1.5rem}
+.page-base .fb-empty__ic .ms{font-size:3.4rem;color:var(--c-dim)}
+.page-base .fb-empty__title{margin:0;font-family:var(--font-cond);font-size:1.5rem;letter-spacing:.1em;color:#fff}
+.page-base .fb-empty__desc{margin:0;max-width:34rem;color:var(--c-text-2);line-height:1.5}
+.page-base .fb-empty__surv{display:flex;align-items:center;gap:.6rem;margin:.2rem 0 0;padding:.6rem .9rem;border:1px solid rgba(232,237,230,.3);border-radius:var(--r-2);font-size:.86rem;color:var(--c-text-2);text-align:left;max-width:36rem}
+.page-base .fb-empty__actions{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:.4rem}
+.page-base .fb-empty__note{color:var(--c-dim);font-size:.72rem;letter-spacing:.06em;margin-top:.6rem}
+
+/* painel com base real (P1) */
+.page-base .fb-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem 1rem;margin:0;padding:1rem 1.25rem;list-style:none}
+.page-base .fb-rows li{display:flex;flex-direction:column;gap:.1rem}
+.page-base .fb-rows span{font-family:var(--font-cond);font-size:.66rem;letter-spacing:.14em;color:var(--c-muted)}
+.page-base .fb-rows b{font-family:var(--font-cond);font-weight:400;font-size:1.05rem;letter-spacing:.05em;color:#e8ede6}
+
+/* módulos */
+.page-base .fb-mods__list{display:grid;gap:.4rem;margin:0;padding:.8rem 1rem 1rem;list-style:none}
+.page-base .fb-mod{display:grid;grid-template-columns:2rem minmax(0,1fr) auto;align-items:center;gap:.7rem;padding:.45rem .6rem;border:1px solid var(--c-line-2);border-radius:var(--r-2);background:var(--c-panel-3)}
+.page-base .fb-mod__ic .ms{font-size:1.4rem;color:var(--c-dim)}
+.page-base .fb-mod__txt{display:grid;gap:.1rem;min-width:0}
+.page-base .fb-mod__txt strong{font-family:var(--font-cond);font-weight:500;font-size:.92rem;letter-spacing:.08em;color:#e8ede6}
+.page-base .fb-mod__txt small{font-size:.76rem;color:var(--c-muted)}
+.page-base .fb-mod__st{font-family:var(--font-cond);font-size:.64rem;letter-spacing:.14em;color:var(--c-dim);white-space:nowrap}
+.page-base .fb-mod.is-on{border-color:var(--c-line)}
+.page-base .fb-mod.is-on .fb-mod__ic .ms,.page-base .fb-mod.is-on .fb-mod__st{color:var(--c-lime)}
+
+/* glossário */
+.page-base .fb-terms__list{display:grid;gap:.55rem;margin:0;padding:.8rem 1.25rem 1rem;list-style:none}
+.page-base .fb-terms__list li{display:grid;grid-template-columns:10.5rem minmax(0,1fr);gap:.6rem;align-items:baseline;font-size:.86rem;color:var(--c-text-2)}
+.page-base .fb-terms__list b{font-family:var(--font-cond);font-weight:500;font-size:.7rem;letter-spacing:.12em;color:var(--c-lime)}
+
+@media (max-width:1100px){
+  .page-base .fb__grid{grid-template-columns:1fr}
+  .page-base .fb-main{grid-row:auto}
+}

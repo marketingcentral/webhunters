@@ -871,3 +871,21 @@ body.page-saude .hud-main{
   .page-saude .mcard.is-running .mcard__scan{animation:none}
   .page-saude .sd-figure__scan{opacity:0}
 }
+
+/* ==========================================================================
+   Silhueta inteira: o asset limpo (200x453, com alpha) cabe na moldura sem
+   recorte. A versão anterior posicionava um PNG de 686x1317 com top/left
+   negativos e mix-blend-mode para apagar o fundo preto — o que cortava o braço
+   e a perna do lado esquerdo, como aparece no print.
+   ========================================================================== */
+/* silhueta inteira */
+.page-saude .sd-figure{overflow:visible;display:grid;place-items:center}
+.page-saude .sd-figure__img{
+  position:relative;top:auto;left:auto;
+  width:auto;height:100%;max-height:19.75rem;
+  max-width:100%;
+  object-fit:contain;
+  mix-blend-mode:normal;
+  filter:brightness(.92) sepia(.5) saturate(2.1) hue-rotate(52deg) drop-shadow(0 0 10px rgba(155,224,74,.28));
+  opacity:.9;
+}

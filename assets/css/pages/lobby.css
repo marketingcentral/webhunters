@@ -79,7 +79,8 @@ body.page-lobby .hud-main{overflow:hidden;padding-left:1.75rem;padding-right:1.1
 /* ---- esquadrão: 5 cards -------------------------------------------------- */
 .page-lobby .squad{
   display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
+  /* PRD v3 §18.1: 1 + até 3 = QUATRO cards. Nunca cinco. */
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:.6875rem;
   flex:394 1 0;
   min-height:0;
@@ -827,3 +828,23 @@ body.is-booted.page-lobby .mission-cta{animation:fade-up 620ms var(--ease-out) 4
   .page-lobby .news-slide__img,
   .page-lobby .mission__img{transition:none}
 }
+
+/* ==========================================================================
+   PRD v3 §18 — patente, função oficial, prontidão e COMANDO por hierarquia.
+   ========================================================================== */
+.page-lobby .op-card__rank{
+  font-family:var(--font-cond);font-size:.66rem;letter-spacing:.14em;color:var(--c-muted);text-transform:uppercase;
+}
+.page-lobby .op-card--leader .op-card__rank{color:var(--c-lime)}
+.page-lobby .op-card__ready--amber{color:var(--c-amber)}
+.page-lobby .op-card__ready--amber .op-card__check{color:var(--c-amber)}
+.page-lobby .op-card__ready--muted{color:var(--c-muted)}
+.page-lobby .op-card__ready--muted .op-card__check{color:var(--c-muted)}
+.page-lobby .op-card--amber .op-card__portrait{filter:saturate(.75)}
+.page-lobby .op-card--muted .op-card__portrait{filter:saturate(.4) brightness(.85)}
+/* COMANDO: a coroa vem junto do rótulo, com tooltip explicando a hierarquia */
+.page-lobby .op-card__tag{display:inline-flex;align-items:center;gap:.3rem;cursor:help}
+.page-lobby .op-card__tag .op-card__crown{position:static;width:.85rem;height:.85rem;margin:0}
+/* linhas só-leitura: mesma altura, sem setas, valor com marca "· MUNDO" (components.css) */
+.page-lobby .set-row--readonly{cursor:help}
+.page-lobby .set-row--readonly .set-row__val{color:var(--c-text-2)}

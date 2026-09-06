@@ -11,29 +11,34 @@
  * `type`   de um item: principal | contrato | diaria.
  */
 return [
+    /* PRD v3 §24.1: a Resistência saiu; quem manda é o Hunter Command, e facções contratam. */
     'title'         => 'MISSÕES',
-    'title_tag'     => 'CONTRATOS',
-    'subtitle'      => 'Contratos e operações da Resistência disponíveis nesta região.',
-    'intro'         => 'Contratos e operações da Resistência disponíveis nesta região.',
+    'title_tag'     => 'CONTRATOS E OPERAÇÕES',
+    'subtitle'      => 'Operações do Hunter Command e contratos de facção disponíveis nesta região.',
+    'intro'         => 'Operações do Hunter Command e contratos de facção disponíveis nesta região.',
     'list_title'    => 'QUADRO DE CONTRATOS',
-    'detail_title'  => 'MISSÃO SELECIONADA',
-    'filters_title' => 'FILTROS',
+    'detail_title'  => 'OPERAÇÃO SELECIONADA',
+    'filters_title' => 'ORIGEM',
     'types_title'   => 'TIPO DE CONTRATO',
 
     /* --- coluna esquerda: filtros de estado -------------------------------- */
+    /* PRD v3 §24.3: filtros por ORIGEM (quem manda) — os contadores vêm do controller. */
     'filters' => [
-        ['slug' => 'todas',        'label' => 'TODAS',        'icon' => 'list',         'count' => 5],
-        ['slug' => 'ativas',       'label' => 'ATIVAS',       'icon' => 'radar',        'count' => 1],
-        ['slug' => 'disponiveis',  'label' => 'DISPONÍVEIS',  'icon' => 'flag',         'count' => 2],
-        ['slug' => 'concluidas',   'label' => 'CONCLUÍDAS',   'icon' => 'check_circle', 'count' => 1],
-        ['slug' => 'diarias',      'label' => 'DIÁRIAS',      'icon' => 'schedule',     'count' => 2],
+        ['slug' => 'todas',      'label' => 'TODAS',       'icon' => 'list',          'count' => 0],
+        ['slug' => 'hunter',     'label' => 'HUNTER',      'icon' => 'shield_person', 'count' => 0],
+        ['slug' => 'aegis',      'label' => 'AEGIS',       'icon' => 'shield',        'count' => 0],
+        ['slug' => 'frontier',   'label' => 'FRONTIER',    'icon' => 'explore',       'count' => 0],
+        ['slug' => 'eventos',    'label' => 'EVENTOS',     'icon' => 'crisis_alert',  'count' => 0],
+        ['slug' => 'diarias',    'label' => 'DIÁRIAS',     'icon' => 'schedule',      'count' => 0],
+        ['slug' => 'concluidas', 'label' => 'CONCLUÍDAS',  'icon' => 'check_circle',  'count' => 0],
     ],
 
     /* --- coluna esquerda: chips de tipo ------------------------------------ */
     'types' => [
-        ['slug' => 'principal', 'label' => 'PRINCIPAL', 'color' => 'lime'],
-        ['slug' => 'contrato',  'label' => 'CONTRATO',  'color' => 'cyan'],
-        ['slug' => 'diaria',    'label' => 'DIÁRIA',    'color' => 'amber'],
+        ['slug' => 'principal',  'label' => 'PRINCIPAL',  'color' => 'lime'],
+        ['slug' => 'contrato',   'label' => 'CONTRATO',   'color' => 'cyan'],
+        ['slug' => 'diaria',     'label' => 'DIÁRIA',     'color' => 'amber'],
+        ['slug' => 'emergencia', 'label' => 'EMERGÊNCIA', 'color' => 'red'],
     ],
 
     /* --- coluna esquerda: reset diário + progresso da temporada ------------ */
@@ -65,9 +70,9 @@ return [
     /* --- quadro de missões -------------------------------------------------- */
     'items' => [
         [
-            'slug' => 'sinal-perdido', 'level_req' => 18, 'title' => 'SINAL PERDIDO', 'faction' => 'BASE DA RESISTÊNCIA',
+            'slug' => 'sinal-perdido', 'level_req' => 18, 'title' => 'SINAL PERDIDO', 'faction' => 'BASE VIGIA · HUNTER COMMAND',
             'type' => 'principal', 'type_label' => 'PRINCIPAL', 'image' => 'missions/mission-sinal-perdido.jpg',
-            'difficulty' => 'MÉDIA', 'difficulty_level' => 2, 'duration' => '35 MIN', 'players' => 5,
+            'difficulty' => 'MÉDIA', 'difficulty_level' => 2, 'duration' => '35 MIN', 'players' => 4,
             'region' => 'FLORESTA VERDE', 'status' => 'active', 'status_label' => 'EM ANDAMENTO', 'selected' => true,
             'summary' => 'Reative o terminal de comunicação do posto avançado norte.',
             'objective' => 'Restaure a comunicação do posto avançado norte. Reative o terminal de comunicação e proteja o técnico.',
@@ -85,7 +90,7 @@ return [
             'cta' => 'CONTINUAR CONTRATO', 'cta_href' => 'lobby',
         ],
         [
-            'slug' => 'suprimentos-medicos', 'level_req' => 12, 'title' => 'SUPRIMENTOS MÉDICOS', 'faction' => 'BASE DA RESISTÊNCIA',
+            'slug' => 'suprimentos-medicos', 'level_req' => 12, 'title' => 'SUPRIMENTOS MÉDICOS', 'faction' => 'BASE VIGIA · HUNTER COMMAND',
             'type' => 'diaria', 'type_label' => 'DIÁRIA', 'image' => 'missions/mission-suprimentos-medicos.jpg',
             'difficulty' => 'FÁCIL', 'difficulty_level' => 1, 'duration' => '25 MIN', 'players' => 4,
             'region' => 'FLORESTA VERDE', 'status' => 'available', 'status_label' => 'DISPONÍVEL', 'selected' => false,
@@ -106,7 +111,7 @@ return [
         [
             'slug' => 'cacada-ao-cacador', 'level_req' => 26, 'title' => 'CAÇADA AO CAÇADOR', 'faction' => 'CAÇADORES',
             'type' => 'diaria', 'type_label' => 'DIÁRIA', 'image' => 'missions/mission-cacada-ao-cacador.jpg',
-            'difficulty' => 'DIFÍCIL', 'difficulty_level' => 3, 'duration' => '45 MIN', 'players' => 5,
+            'difficulty' => 'DIFÍCIL', 'difficulty_level' => 3, 'duration' => '45 MIN', 'players' => 4,
             'region' => 'FLORESTA VERDE', 'status' => 'available', 'status_label' => 'DISPONÍVEL', 'selected' => false,
             'summary' => 'Elimine o franco-atirador que domina a passagem da cordilheira.',
             'objective' => 'Localize e elimine o franco-atirador que controla a passagem da cordilheira. Recupere seu rifle.',
@@ -142,9 +147,9 @@ return [
             'cta' => 'RECOMPENSA RESGATADA', 'cta_href' => null,
         ],
         [
-            'slug' => 'tecnologia-recuperada', 'level_req' => 40, 'title' => 'TECNOLOGIA RECUPERADA', 'faction' => 'BASE DA RESISTÊNCIA',
+            'slug' => 'tecnologia-recuperada', 'level_req' => 40, 'title' => 'TECNOLOGIA RECUPERADA', 'faction' => 'BASE VIGIA · HUNTER COMMAND',
             'type' => 'principal', 'type_label' => 'PRINCIPAL', 'image' => 'missions/mission-tecnologia-recuperada.jpg',
-            'difficulty' => 'EXTREMO', 'difficulty_level' => 4, 'duration' => '60 MIN', 'players' => 5,
+            'difficulty' => 'EXTREMO', 'difficulty_level' => 4, 'duration' => '60 MIN', 'players' => 4,
             'region' => 'ZONA INDUSTRIAL', 'status' => 'locked', 'status_label' => 'BLOQUEADA', 'selected' => false,
             'summary' => 'Recupere o servidor de dados no complexo industrial.',
             'objective' => 'Infiltre-se no complexo industrial e recupere o servidor de dados antes que seja destruído.',
@@ -170,8 +175,11 @@ return [
     'labels' => [
         'difficulty' => 'DIFICULDADE',
         'duration'   => 'DURAÇÃO ESTIMADA',
-        'players'    => 'JOGADORES MÁX.',
-        'objective'  => 'OBJETIVO',
+        'players'    => 'ESQUADRÃO',          // PRD v3 §24.7: unidade recomendada, não "jogadores máx."
+        'origin'     => 'ORIGEM',
+        'human'      => 'ATIVIDADE HUMANA',
+        'requires'   => 'REQUISITO',
+        'objective'  => 'ORDEM / OBJETIVO',
         'rewards'    => 'RECOMPENSAS',
         'progress'   => 'PROGRESSO',
         'expires'    => 'EXPIRA EM',
