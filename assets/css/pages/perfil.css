@@ -75,7 +75,7 @@ body.page-perfil .hud-main{
 .page-perfil .op__media{
   position:relative;
   flex:1 1 auto;
-  min-height:10rem;
+  min-height: 8.8rem;
   overflow:hidden;
   isolation:isolate;
 }
