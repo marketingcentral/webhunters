@@ -142,3 +142,77 @@ export function preview(op: Operational, estado: string | null): Operational {
       return op;
   }
 }
+
+// ------------------------------------------------------------------ contratos (lote jogador-mundo)
+
+/** Momento em segundos de um DATETIME do D1 (UTC, sem fuso na string). NaN se inválido. */
+function segundos(s: string): number {
+  const t = Date.parse(s.replace(' ', 'T') + (/[zZ]|[+-]\d\d:?\d\d$/.test(s) ? '' : 'Z'));
+  return t / 1000;
+}
+
+export interface SignResult {
+  ok: boolean;
+  error?: string;
+  broke?: string;
+}
+
+/**
+ * Assina contrato com uma facção (OperationalRepo::sign do PHP). Romper um contrato ativo para
+ * assinar outro zera a reputação da facção abandonada. A transação do PHP vira um batch().
+ */
+export async function sign(userId: number, faction: string, confirm: boolean): Promise<SignResult> {
+  const f = faction.toLowerCase();
+  if (!GR.FACTIONS[f]) return { ok: false, error: 'Facção desconhecida.' };
+  const op = await forUser(userId);
+
+  if (op.state === GR.STATE_SURVIVOR) {
+    return { ok: false, error: 'Sobreviventes não têm bandeira. Nenhuma facção assina com quem está fora das cadeias de comando.' };
+  }
+  if (op.faction === f) return { ok: false, error: 'Este contrato já está ativo.' };
+  const lock = op.locked[f] ?? null;
+  if (lock !== null && segundos(String(lock)) > Date.now() / 1000) {
+    return { ok: false, error: GR.FACTIONS[f]!.label.toUpperCase() + ' — ACESSO TEMPORARIAMENTE BLOQUEADO' };
+  }
+  if (!confirm) return { ok: false, error: 'Confirmação obrigatória.' };
+
+  const broke = op.faction;
+  try {
+    const stmts: D1PreparedStatement[] = [];
+    if (broke !== null) {
+      // Romper zera a reputação da facção abandonada. É a regra que dá peso à troca.
+      stmts.push(DB.prepare(
+        'UPDATE player_factions SET contract_active = 0, reputation = 0, tier = NULL WHERE user_id = :u AND faction = :f',
+        { u: userId, f: broke },
+      ));
+    }
+    stmts.push(DB.prepare(
+      `INSERT INTO player_factions (user_id, faction, reputation, tier, contract_active)
+       VALUES (:u, :f, 0, :t, 1)
+       ON CONFLICT(user_id, faction) DO UPDATE SET contract_active = 1, tier = excluded.tier`,
+      { u: userId, f, t: GR.repTier(0) },
+    ));
+    stmts.push(DB.prepare('UPDATE players SET operational_state = :s WHERE user_id = :u', { s: GR.STATE_MERCENARY, u: userId }));
+    await DB.batch(stmts);
+  } catch (e) {
+    console.error('[extracthunters] sign:', e);
+    return { ok: false, error: 'Sistema de facções indisponível neste servidor. Tente novamente mais tarde.' };
+  }
+  return { ok: true, broke: broke ?? '' };
+}
+
+/** Encerra o contrato atual e devolve ao Hunter Command (sem zerar nada: só a troca zera). */
+export async function release(userId: number): Promise<boolean> {
+  try {
+    await DB.batch([
+      DB.prepare('UPDATE player_factions SET contract_active = 0 WHERE user_id = :u', { u: userId }),
+      DB.prepare('UPDATE players SET operational_state = :s WHERE user_id = :u AND operational_state = :m', {
+        s: GR.STATE_HUNTER, u: userId, m: GR.STATE_MERCENARY,
+      }),
+    ]);
+    return true;
+  } catch (e) {
+    console.error('[extracthunters] release:', e);
+    return false;
+  }
+}

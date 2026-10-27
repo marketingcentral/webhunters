@@ -1,8 +1,8 @@
 # Extract Hunters — port para Cloudflare (Workers + D1 + R2)
 
 Esta pasta é o Extract Hunters reescrito em TypeScript para rodar num **Cloudflare Worker**,
-com **D1** (SQLite) no lugar do MySQL e **R2** para a mídia. O app PHP da raiz continua sendo o
-que está no ar; nada fora de `typescript/` foi alterado.
+com **D1** (SQLite) no lugar do MySQL e **R2** para a mídia. Desde 2026-10-27 o domínio
+`extracthunters.com.br` aponta para este Worker. O app PHP da raiz não foi alterado.
 
 A arquitetura espelha a do PHP de propósito (front controller → guards → router → controller
 → repo → view/layout), com os mesmos nomes, para que quem conhece um ache o outro.
@@ -23,19 +23,34 @@ A arquitetura espelha a do PHP de propósito (front controller → guards → ro
 | `X-EH-Partial` (docs/NAVEGACAO-SPA.md) | portado: layout `partial` devolve o mesmo JSON |
 | AccountGuard, LoginGuard, Maintenance | portados (ver diferenças abaixo) |
 
-**Pendente**, em ordem de prioridade sugerida (o que o jogador vê primeiro / o que destrava mais):
+**Segunda leva (todas as rotas de `app/routes.php` estão portadas)**, um arquivo de rotas por
+lote em `src/rotas/`:
 
-1. **HUD in-game** (`/hud`, `/hud/dados`, `POST /hud/municao`, layout `overlay`) — é o que a Unreal carrega; `InventoryRepo.magazineOf/setAmmo/reserveFor` ainda não foram portados.
-2. **Telas da topbar**: `/saude`, `/habilidades` (+ aprender/redefinir), `/missoes`, `/conquistas`, `/perfil`, `/configuracoes`. Hoje viram 404 no Worker.
-3. **Economia**: `/loja` + `POST /loja/comprar` (o `InventoryRepo.buy()` já está portado), `/desafios` + resgatar.
-4. **Social**: `/amigos`, `/mensagens` (+ responder/lida), `/lobby` (+ chat), `/noticias`, `/noticias/{slug}`.
-5. **PRD v3**: `/faccoes` (+ assinar/romper — falta `OperationalRepo.sign/release`), `/base`, `/safe-zone` (+ assumir/encerrar; `GameRules.SAFE_ROLES` não foi portado), `/jogar`, `/mapas`.
-6. **Suporte**: `/suporte`, `/relatorio-de-bug`, `/recuperar-senha` (no PHP também não envia e-mail).
-7. **Painel `/admin/*`** inteiro (sessão de operador, layout `admin`, 17 módulos, `/admin/upload` — que no Worker deve gravar no R2 em `media/uploads/...`).
-8. **API `/api/v1`** (chaves com escopo, log de requisições; `app/Api/*`).
-9. Mídia/arte faltando que **já falta no PHP**: ex. `media/items/glock-mag.png` (404 nos dois).
+| Lote | Rotas |
+|---|---|
+| `jogador-conta` | `/perfil`, `/saude`, `/habilidades[/{categoria}]` (+ aprender/redefinir), `/conquistas[/{categoria}]` |
+| `jogador-progresso` | `/missoes`, `/desafios[/{aba}]` (+ resgatar), `/loja` (+ comprar), `/noticias`, `/noticias/{slug}` |
+| `jogador-social` | `/amigos[/{aba}]` (+ POST), `/mensagens[/{conversa}]` (+ responder/lida), `/lobby` (+ chat), `/configuracoes[/{aba}]` |
+| `jogador-mundo` | `/jogar`, `/mapas`, `/faccoes` (+ assinar/romper), `/base`, `/safe-zone[/{zona}]` (+ assumir/encerrar) |
+| `jogador-suporte-hud` | `/suporte`, `/relatorio-de-bug[/{code}]`, `/recuperar-senha`, **HUD in-game** `/hud`, `/hud/dados`, `POST /hud/municao` (layout `overlay`) |
+| `admin-base` | `/admin/login`, `POST /admin/sair`, `/admin` (dashboard); base `controllers/admin/admin-controller.ts`, layouts `admin`/`admin-auth` |
+| `admin-conteudo` | `/admin/{missoes,conquistas,mapas,mapas/pontos,mapas/editor,itens,loja,eventos}` (+ salvar/excluir), `POST /admin/upload` (grava no R2 em `media/uploads/<entidade>/`) |
+| `admin-operacao` | `/admin/{jogadores,banimentos,relatorios,transacoes,servidores,configuracoes,logs}` (+ salvar/excluir), `/admin/api` (+ criar/revogar) |
+| `api` | `/api/v1/*` — chaves com escopo, limite por minuto, log; sem sessão nem cookie (`src/api/`) |
 
-As rotas pendentes estão listadas em comentário no fim de `src/routes.ts`.
+Validação feita: `tsc --noEmit` limpo; varredura com conta admin descartável no D1 local — os 44 GETs
+de tela respondem 200, respostas parciais são JSON `hud`, e os 207 assets/mídias referenciados
+carregam. Cada lote testou os próprios POSTs (CSRF, validações, mensagens, auditoria).
+
+**Pendências conhecidas**
+1. Datas: o que o Worker grava sai em **UTC** (`datetime('now')`); algumas telas convertem para
+   Brasília (`core/fuso.ts`, `core/relogio.ts`), outras mostram o texto gravado. Unificar num
+   módulo só e decidir uma convenção (sugestão: gravar UTC, mostrar sempre em -03:00).
+2. `core/fuso.ts` e `core/relogio.ts` fazem a mesma coisa (dois lotes criaram ao mesmo tempo).
+3. Conta nova não recebe amigos/mensagens/avisos de exemplo (igual ao PHP: só os seeds criavam).
+4. `/base` sempre mostra "nenhuma base ativa": a tabela `player_bases` não existe (nem no MySQL).
+5. Mídia que **já falta no PHP**: ex. `media/items/glock-mag.png` (404 nos dois).
+6. Upload do painel recusa SVG (o PHP aceitava, mas nunca servia).
 
 ## Mapa PHP → TS
 
@@ -95,8 +110,7 @@ As rotas pendentes estão listadas em comentário no fim de `src/routes.ts`.
   diferença de maiúsculas). NOCASE ignora caixa só em ASCII e não ignora acento.
 - **`current_user_id()` sem login** não cai mais no "usuário demo" em localhost: o LoginGuard já
   barra anônimo, e o atalho não tinha função no Worker.
-- **Ban vencido**: sem `BanRepo::sincronizar()` (painel não portado), o guard apenas devolve o
-  status para `active` quando não há banimento vigente — não grava auditoria.
+- **Ban vencido**: o AccountGuard chama `BanRepo.sincronizar()` (portado), como no PHP.
 - **`asset()`**: o `?v=` é o mtime do arquivo no momento do `npm run build` (mesmo número do
   PHP, então as URLs saem iguais). Nome de arquivo agora é sensível a maiúsculas; o build cria
   apelidos para o que o PHP achava sem diferenciar (ex.: `models/soldier.glb` → `Soldier.glb`).

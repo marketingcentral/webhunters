@@ -33,7 +33,9 @@ export class AppRequest {
 
     let body: FormData | null = null;
     const tipo = raw.headers.get('Content-Type') ?? '';
-    if (method !== 'GET' && (tipo.includes('application/x-www-form-urlencoded') || tipo.includes('multipart/form-data'))) {
+    // /api/v1 lê o corpo cru (JSON, como o php://input do PHP) em src/api/requisicao.ts: não consumir aqui.
+    const ehApi = path === '/api/v1' || path.startsWith('/api/v1/');
+    if (method !== 'GET' && !ehApi && (tipo.includes('application/x-www-form-urlencoded') || tipo.includes('multipart/form-data'))) {
       try {
         body = await raw.formData();
       } catch {
@@ -73,6 +75,18 @@ export class AppRequest {
     if (!this._body) return [];
     const vals = [...this._body.getAll(key + '[]'), ...this._body.getAll(key)];
     return vals.map((v) => (typeof v === 'string' ? v.trim() : ''));
+  }
+
+  /**
+   * Arquivo enviado em multipart (o $_FILES[key] do PHP), ou null. Campo repetido
+   * (`key[]` ou dois `key`) devolve null: um arquivo por vez (Admin/UploadController).
+   */
+  file(key: string): File | null {
+    if (!this._body || this._body.has(key + '[]')) return null;
+    const todos = this._body.getAll(key);
+    if (todos.length !== 1) return null;
+    const v = todos[0];
+    return typeof v === 'string' || v === undefined ? null : (v as File);
   }
 
   has(key: string): boolean {

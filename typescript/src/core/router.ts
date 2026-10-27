@@ -44,6 +44,8 @@ export class Router {
   private routes: Rota[] = [];
 
   load(table: RouteRow[]): void {
+    Router.atual = this; // o roteador do front controller (ver existeGet)
+    this.cacheGet = null;
     for (const [methods, pattern, action] of table) {
       this.routes.push({
         methods: (Array.isArray(methods) ? methods : [methods]).map((m) => m.toUpperCase()),
@@ -82,5 +84,24 @@ export class Router {
       .map((r) => r.pattern.replace(/\[.*$/, ''))
       .filter((p) => p !== '' && !p.includes('{'))
       .map((p) => p.replace(/\/+$/, '') || '/');
+  }
+
+  // ---------------------------------------------------------------- Router::existeGet (PHP)
+  // A sidebar do painel e os atalhos do dashboard só viram link quando a rota JÁ responde a
+  // GET. No PHP isso lia app/routes.php; aqui lê a tabela que o front controller (index.ts)
+  // carregou — o último Router a chamar load(). Sem roteador carregado, nada existe.
+
+  /** Último roteador carregado (o de src/index.ts). */
+  private static atual: Router | null = null;
+  private cacheGet: Set<string> | null = null;
+
+  /** A rota ('admin/logs', sem barra inicial) já responde a GET? '/' nunca conta, como no PHP. */
+  static existeGet(rota: string): boolean {
+    const r = Router.atual;
+    if (!r) return false;
+    const alvo = '/' + rota.replace(/^\/+|\/+$/g, '');
+    if (alvo === '/') return false;
+    r.cacheGet ??= new Set(r.getPaths());
+    return r.cacheGet.has(alvo);
   }
 }

@@ -12,6 +12,7 @@ import { HttpException } from './http-exception';
 import type { AppRequest } from './request';
 import { AppResponse } from './response';
 import * as Settings from '../repo/settings-repo';
+import * as BanRepo from '../repo/ban-repo';
 
 // ------------------------------------------------------------------------- AccountGuard
 
@@ -42,9 +43,8 @@ async function consultarConta(userId: number) {
 }
 
 /**
- * Estado da conta AGORA. Diferença do PHP: lá um ban temporário vencido era desfeito por
- * BanRepo::sincronizar() (que também escreve auditoria). Aqui, sem ban vigente o status
- * 'banned'/'suspended' é devolvido a 'active' direto — o painel de banimentos não foi portado.
+ * Estado da conta AGORA. Marcada como punida e sem punição vigente, BanRepo.sincronizar()
+ * recalcula `users.status` na hora (igual ao PHP).
  */
 export async function estadoConta(userId: number): Promise<EstadoConta> {
   const livre: EstadoConta = { bloqueado: false, status: 'active', kind: null, reason: null, expires_at: null };
@@ -53,16 +53,28 @@ export async function estadoConta(userId: number): Promise<EstadoConta> {
   if (linha === null) return { bloqueado: true, status: 'gone', kind: null, reason: null, expires_at: null };
   const status = String(linha.status ?? 'active');
   if (!BLOQUEADAS.includes(status)) return livre;
+  let atual = linha;
+  let st = status;
   if (linha.kind === null) {
-    await DB.run(`UPDATE users SET status = 'active' WHERE id = :id`, { id: userId });
-    return livre;
+    // Sem punição VIGENTE: o prazo venceu (ou mexeram no banco). Recalcula pelo BanRepo.
+    const novo = await BanRepo.sincronizar(userId);
+    if (!BLOQUEADAS.includes(novo)) return livre;
+    // sincronizar() manteve o bloqueio: relê para pegar a punição que o 1º SELECT não viu.
+    atual = (await consultarConta(userId)) ?? linha;
+    st = String(atual.status ?? novo);
   }
-  return { bloqueado: true, status, kind: linha.kind, reason: linha.reason, expires_at: linha.expires_at };
+  return { bloqueado: true, status: st, kind: atual.kind, reason: atual.reason, expires_at: atual.expires_at };
 }
 
 function dataBr(s: string): string | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/.exec(s);
-  return m ? `${m[3]}/${m[2]}/${m[1]} às ${m[4]}:${m[5]}` : null;
+  if (!m) return null;
+  // A coluna é UTC (datetime('now') do SQLite); quem lê está no horário de Brasília (UTC-3,
+  // sem horário de verão), o relógio em que o PHP gravava e mostrava o prazo.
+  const ts = Date.UTC(+m[1]!, +m[2]! - 1, +m[3]!, +m[4]!, +m[5]!) - 3 * 3600_000;
+  const d = new Date(ts);
+  const p2 = (n: number) => String(n).padStart(2, '0');
+  return `${p2(d.getUTCDate())}/${p2(d.getUTCMonth() + 1)}/${d.getUTCFullYear()} às ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}`;
 }
 
 export function mensagemConta(est: EstadoConta): string {

@@ -248,3 +248,85 @@ export const SAFE_OCCUPANCY: Record<string, string> = { BAIXA: 'lime', MODERADA:
 export function occupancyColor(level: string): string {
   return SAFE_OCCUPANCY[level.trim().toUpperCase()] ?? 'muted';
 }
+
+/**
+ * Papéis civis da Safe Zone (lote jogador-mundo). `req` é o que a HUD confere antes de deixar
+ * assumir: level (nível mínimo), rank (patente mínima), state (estado exigido ou null),
+ * faction (true = exige contrato mercenário ativo) e role (função Hunter exigida ou null).
+ */
+export interface SafeRoleReq {
+  level: number;
+  rank: string | null;
+  state: string | null;
+  faction: boolean;
+  role: string | null;
+}
+export interface SafeRole {
+  label: string;
+  ms: string;
+  color: string;
+  summary: string;
+  desc: string;
+  gain: string;
+  req: SafeRoleReq;
+}
+export const SAFE_ROLES: Record<string, SafeRole> = {
+  comerciante: {
+    label: 'COMERCIANTE', ms: 'storefront', color: 'gold',
+    summary: 'Abre banca no mercado da zona.',
+    desc: 'Compra o que os outros trouxeram do campo e revende a quem vai entrar. Define o próprio preço e responde por ele.',
+    gain: 'Comissão em créditos sobre cada negócio fechado na sua banca.',
+    req: { level: 0, rank: null, state: null, faction: false, role: null },
+  },
+  ferramenteiro: {
+    label: 'FERRAMENTEIRO', ms: 'build', color: 'cyan',
+    summary: 'Repara e modifica equipamento alheio.',
+    desc: 'Recupera durabilidade, instala acessórios e devolve arma boa a quem não tem bancada própria.',
+    gain: 'Pagamento por serviço e peças recuperadas do que passa pela oficina.',
+    req: { level: 5, rank: null, state: null, faction: false, role: null },
+  },
+  instrutor: {
+    label: 'INSTRUTOR', ms: 'school', color: 'lime',
+    summary: 'Treina recrutas do Hunter Command.',
+    desc: 'Ensina leitura de terreno, disciplina de fogo e protocolo de extração a quem ainda vai à primeira operação.',
+    gain: 'Experiência por recruta treinado e peso na sua folha de conduta.',
+    req: { level: 0, rank: 'SARGENTO', state: STATE_HUNTER, faction: false, role: null },
+  },
+  medico: {
+    label: 'MÉDICO DA ZONA', ms: 'medical_services', color: 'red',
+    summary: 'Atende ferimentos e contaminação.',
+    desc: 'Trata quem voltou inteiro por pouco: hemorragia, fratura, mordida, arranhão e contaminação por esporo.',
+    gain: 'Pagamento por atendimento e acesso ao estoque médico da enfermaria.',
+    req: { level: 8, rank: null, state: null, faction: false, role: 'MEDICAL' },
+  },
+  transportador: {
+    label: 'TRANSPORTADOR', ms: 'local_shipping', color: 'amber',
+    summary: 'Move carga entre zonas na janela logística.',
+    desc: 'Organiza o comboio, escolhe a rota e responde pela carga de outros operadores até a próxima zona.',
+    gain: 'Frete em créditos e reputação com a facção que assina a carga.',
+    req: { level: 0, rank: null, state: null, faction: true, role: null },
+  },
+  analista: {
+    label: 'ANALISTA ICARUS', ms: 'biotech', color: 'purple',
+    summary: 'Decodifica amostras, sinais e intel.',
+    desc: 'Cruza gravações do Coro, tecido de infectados, Fragmentos Vesper e registros recuperados em campo para o Instituto Icarus.',
+    gain: 'Intel utilizável em operação e crédito científico com o Icarus.',
+    req: { level: 12, rank: 'SARGENTO', state: STATE_HUNTER, faction: false, role: null },
+  },
+};
+
+/** Chave canônica de um papel civil (aceita o rótulo). */
+export function safeRoleKey(any: string | null | undefined): string | null {
+  const k = String(any ?? '').trim().toLowerCase();
+  if (SAFE_ROLES[k]) return k;
+  const up = String(any ?? '').toUpperCase();
+  for (const [key, r] of Object.entries(SAFE_ROLES)) {
+    if (up === r.label) return key;
+  }
+  return null;
+}
+
+export function safeRole(any: string | null | undefined): (SafeRole & { key: string }) | null {
+  const k = safeRoleKey(any);
+  return k !== null ? { ...SAFE_ROLES[k]!, key: k } : null;
+}

@@ -5,6 +5,15 @@
  * (ver a lista priorizada no README).
  */
 import type { RouteRow } from './core/router';
+import { ROTAS as jogadorConta } from './rotas/jogador-conta';
+import { ROTAS as jogadorProgresso } from './rotas/jogador-progresso';
+import { ROTAS as jogadorSocial } from './rotas/jogador-social';
+import { ROTAS as jogadorMundo } from './rotas/jogador-mundo';
+import { ROTAS as jogadorSuporteHud } from './rotas/jogador-suporte-hud';
+import { ROTAS as adminBase } from './rotas/admin-base';
+import { ROTAS as adminConteudo } from './rotas/admin-conteudo';
+import { ROTAS as adminOperacao } from './rotas/admin-operacao';
+import { ROTAS as api } from './rotas/api';
 import { AuthController } from './controllers/auth-controller';
 import { BestiaryController } from './controllers/bestiary-controller';
 import { HomeController } from './controllers/home-controller';
@@ -40,9 +49,14 @@ export const ROUTES: RouteRow[] = [
   ['GET', '/bestiario[/{grupo}]', (r, p) => best.index(r, p)],
   ['POST', '/bestiario/registrar', (r, p) => best.registrar(r, p)],
 
-  // Ainda não portadas (app/routes.php): /jogar, /mapas, /lobby (+chat), /configuracoes,
-  // /hud (+dados, municao), /saude, /habilidades (+aprender, redefinir), /conquistas,
-  // /missoes, /desafios (+resgatar), /noticias, /loja (+comprar), /amigos, /mensagens
-  // (+responder, lida), /perfil, /faccoes (+assinar, romper), /base, /safe-zone (+assumir,
-  // encerrar), /suporte, /relatorio-de-bug, todo o /admin/* e a API /api/v1.
+  // Demais telas, painel e API: um arquivo por lote em src/rotas/.
+  ...jogadorConta,
+  ...jogadorProgresso,
+  ...jogadorSocial,
+  ...jogadorMundo,
+  ...jogadorSuporteHud,
+  ...adminBase,
+  ...adminConteudo,
+  ...adminOperacao,
+  ...api,
 ];

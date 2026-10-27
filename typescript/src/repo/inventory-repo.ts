@@ -381,3 +381,55 @@ export async function buy(userId: number, offerId: number): Promise<Res> {
   ]);
   return { ok: true, instance_id: Number(r?.meta.last_row_id ?? 0) };
 }
+
+// ------------------------------------------------------------------ munição (HUD in-game)
+
+/**
+ * Carregador instalado na arma equipada num slot ('primary', 'pistol', ...).
+ * A munição de uma arma vive no CARREGADOR anexado, não na arma — por isso o
+ * caminho é slot -> arma -> attachment com mag_capacity.
+ */
+export async function magazineOf(userId: number, slotKey: string): Promise<Dict | null> {
+  return DB.one(
+    `SELECT mag.*, it.mag_capacity, it.ammo_caliber, it.name, it.short_name
+       FROM player_items arma
+       JOIN player_items mag ON mag.parent_id = arma.id AND mag.container = 'attach' AND mag.user_id = arma.user_id
+       JOIN items it ON it.id = mag.item_id
+      WHERE arma.user_id = :u AND arma.container = 'equip' AND arma.slot_key = :s
+        AND it.mag_capacity IS NOT NULL
+      ORDER BY mag.id LIMIT 1`,
+    { u: userId, s: slotKey },
+  );
+}
+
+/**
+ * Grava a munição do carregador. Trunca no intervalo [0, capacidade] — o jogo é a
+ * autoridade sobre quantos tiros saíram, mas não sobre o tamanho do carregador.
+ */
+export async function setAmmo(userId: number, slotKey: string, current: number): Promise<Res> {
+  const mag = await magazineOf(userId, slotKey);
+  if (mag === null) return { ok: false, error: 'Nenhum carregador nesta arma.' };
+  const cap = Number(mag.mag_capacity) | 0;
+  const cur = Math.max(0, Math.min(cap, current));
+  await DB.run('UPDATE player_items SET ammo_cur = :a WHERE id = :id AND user_id = :u', {
+    a: cur, id: Number(mag.id), u: userId,
+  });
+  return { ok: true, current: cur, capacity: cap };
+}
+
+/**
+ * Munição de reserva: soma o que existe em OUTROS carregadores do mesmo calibre,
+ * em qualquer lugar do inventário (baú, bolsos, contêineres, outras armas).
+ */
+export async function reserveFor(userId: number, caliber: string | null | undefined, exceptInstanceId = 0): Promise<number> {
+  if (caliber === null || caliber === undefined || caliber === '') return 0;
+  return Number(
+    (await DB.value(
+      `SELECT COALESCE(SUM(pi.ammo_cur), 0)
+         FROM player_items pi JOIN items it ON it.id = pi.item_id
+        WHERE pi.user_id = :u AND it.ammo_caliber = :c
+          AND it.mag_capacity IS NOT NULL AND pi.id <> :ex`,
+      { u: userId, c: caliber, ex: exceptInstanceId },
+    )) ?? 0,
+  ) | 0;
+}

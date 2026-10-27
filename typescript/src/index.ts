@@ -55,7 +55,10 @@ export default {
     if (u.pathname.startsWith('/assets/')) return deR2(env, raw, decodeURIComponent(u.pathname.slice(1)));
 
     const req = await AppRequest.from(raw);
-    const session = await Session.start(env.DB, raw.headers.get('Cookie'), req.isHttps());
+    // /api/v1 não tem sessão (no PHP o bootstrap nem a abria): o cookie é ignorado, então a
+    // sessão nasce vazia, nada a grava e não sai Set-Cookie (credencial é o Authorization).
+    const ehApi = req.path() === '/api/v1' || req.path().startsWith('/api/v1/');
+    const session = await Session.start(env.DB, ehApi ? null : raw.headers.get('Cookie'), req.isHttps());
     const c: Ctx = {
       env,
       req,
@@ -81,7 +84,9 @@ export default {
           resp = await errs.serverError(e, req);
         }
       }
-      const cookie = await session.save();
+      // Sob /api/v1 a sessão nunca é gravada — nem quando o caminho cai na página de erro HTML
+      // do roteador (ex.: 5 segmentos), que gera token CSRF na sessão ao desenhar o layout.
+      const cookie = ehApi ? null : await session.save();
       return resp.toResponse(req.isHttps(), cookie);
     });
   },
