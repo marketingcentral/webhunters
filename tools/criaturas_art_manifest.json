@@ -1,0 +1,80 @@
+{
+  "_nota": "Bestiário do enredo v6 (docs/Extract_Hunters_Biblia_Canon_v6_0.md): um meteoro caiu na ilha em 2058 trazendo a Veyra, um FUNGO. Infectados são pessoas vivas tomadas pelo micélio (não mortos-vivos), mais animais infectados e plantas alienígenas que vieram na rocha. Mesma regra da landing (2026-09-17): ESCALA HUMANA, nada de chefe de fase — um jogador sozinho e com pouca munição precisa olhar e pensar 'dá, se eu fizer certo'. Só o Amálgama é a resposta extrema. Um retrato por criatura, criatura em primeiro plano; quando aparece um operador, é para dar escala. Gerar com: node tools/gen_art.mjs --manifest tools/criaturas_art_manifest.json --out assets/img/criaturas e depois node tools/prep_criaturas.mjs",
+
+  "styleSuffix": "Grounded creature concept art for a slow, tactical survival extraction game. The infection is a FUNGUS that arrived on a meteorite: pale grey-white mycelium threads, shelf-fungus plates, fine spore dust, faint sickly lime-green bioluminescence in the veins. Realistic anatomy and human scale, unsettling but NOT gory, no exposed guts, no blood pools. Overcast cold light, volumetric fog, muted olive greens, ash greys and cold blacks, dramatic rim light, photorealistic, extremely detailed, cinematic AAA key art, single subject clearly readable, no text, no watermark, no UI, no logo, no letters.",
+
+  "defaults": { "model": "gemini-3-pro-image", "aspectRatio": "3:4" },
+
+  "jobs": [
+    {
+      "file": "errante.jpg",
+      "prompt": "ERRANTE — a recently infected factory worker still wearing a stained grey work uniform and a torn high-visibility vest, shuffling aimlessly with head tilted and slack jaw, thin pale fungal threads spreading from a healed bite on the forearm up the neck and around one clouded eye, two more blurred wanderers in the fog behind on a ruined industrial street with abandoned cars, early morning"
+    },
+    {
+      "file": "febril.jpg",
+      "prompt": "FEBRIL — an infected man in the fever stage caught mid-sprint toward the camera, gaunt, flushed sweating skin with grey fungal veins under it, visible hot breath steaming from an open mouth in cold air, torn civilian clothes, sprinting down a narrow alley between concrete buildings, motion blur on the limbs, a steel door half closed in the foreground where an operator's gloved hand is pulling it shut"
+    },
+    {
+      "file": "vigia.jpg",
+      "prompt": "VIGIA — an infected sentinel crouched motionless on the edge of a rooftop water tank, slim long-limbed body, several thin antenna-like fungal stalks sprouting from the back of the skull and curving upward, head slowly turning, mouth open as if about to scream, seen from street level far below at dusk, low angle, a silhouette against a pale grey sky over a dead town"
+    },
+    {
+      "file": "semeador.jpg",
+      "prompt": "SEMEADOR — a slow bloated infected person whose back, shoulders and neck are covered in swollen yellowish fungal spore sacs, skin stretched and cracked around them, half-blind with eyes overgrown, trailing fine yellow spore dust that hangs in the air, standing in a flooded swamp boardwalk among dead reeds, an operator in a gas mask aiming a rifle from far in the background"
+    },
+    {
+      "file": "rastejante.jpg",
+      "prompt": "RASTEJANTE — a crawling infected person hiding flat under a rusted abandoned car, legs fused together by grey mycelium into a tail-like mass, emaciated arms reaching out to grab, wet glint of fungal threads catching a flashlight beam, dust and drag marks on the asphalt, seen from a low angle at night on a deserted road, the boots of an operator standing just beside the car, absolutely no writing, no words and no letters anywhere in the scene, no signs, no labels"
+    },
+    {
+      "file": "couracado.jpg",
+      "prompt": "COURAÇADO — a large heavy-set infected person about 2.2 meters tall, the front of the body, chest, forearms and face covered in thick grey calcified fungal plates like layered shelf-fungus bark, the exposed back showing soft pale tissue and a cluster of breathing fungal pores, slowly walking through a smashed doorway with debris falling, interior of a ruined warehouse, two operators visible for scale, one in front drawing attention with a flashlight, one flanking from the side"
+    },
+    {
+      "file": "eco.jpg",
+      "prompt": "ECO — a thin pale infected woman half-hidden behind a tree trunk in a foggy pine forest at night, mouth stretched open calling out, fine fungal filaments growing from the throat and along the jaw, one arm wrapped around the trunk, faint green glow in the veins of the neck, an old handheld radio hanging from her torn jacket, the scene feels like a lure, unsettling, quiet"
+    },
+    {
+      "file": "amalgama.jpg",
+      "prompt": "AMÁLGAMA — a hulking mass about four meters tall made of several infected human bodies fused together by thick ropes of grey mycelium into one lumbering shape, too many arms, multiple heads partly absorbed, spore dust pouring off it, dragging itself through a burning industrial corridor at night, red emergency lights, a small team of operators retreating in the foreground toward an exit, the operators look small and the scene says run, not fight"
+    },
+    {
+      "file": "lobo-cinza.jpg",
+      "prompt": "LOBO-CINZA — an infected grey wolf, patchy fur falling out in tufts, pale fungal growth on the gums and along the spine, clouded eyes, crouched low and snarling in a snowy pine forest edge, two more wolves circling in the fog behind, a lit red road flare burning on the snow in the foreground casting red light on the animals"
+    },
+    {
+      "file": "varrao.jpg",
+      "prompt": "VARRÃO — a huge infected wild boar about 1.2 meters tall at the shoulder, tusks encrusted with grey fungal crust, thick bristly hide with patches of shelf fungus along the back, mid-charge in a straight line through swamp mud and reeds, mud spraying, an operator diving sideways out of its path in the background, overcast grey swamp"
+    },
+    {
+      "file": "revoada.jpg",
+      "prompt": "REVOADA — a large flock of infected black crows and vultures taking off screaming from the roof of a ruined coastal warehouse, a few birds in the foreground showing pale fungal growth around the beak and along the wings, feathers missing, the flock circling low over one spot in a grey sky, harbour cranes and fog in the background"
+    },
+    {
+      "file": "soprador.jpg",
+      "prompt": "SOPRADOR — an alien plant, a cluster of fleshy yellow-ochre bulbs on thick ribbed stems about 1.2 meters tall, one bulb deflating and puffing a cloud of yellow gas, a ring of dead bleached grass around the clump, ground carpeted in pale mycelium, growing in a misty swamp clearing, clearly not an Earth plant, a distant operator in a gas mask for scale"
+    },
+    {
+      "file": "veu.jpg",
+      "prompt": "VÉU — curtains of fine translucent sticky alien filaments hanging from the ceiling of a dark concrete service tunnel, at face height, catching and glinting in a single flashlight beam, the threads pulse faintly green where they join the ceiling mycelium, the gloved hand of an operator holding a knife slowly reaching to cut one thread, tense, quiet"
+    },
+    {
+      "file": "farol.jpg",
+      "prompt": "FAROL — clusters of alien bioluminescent bulb-mushrooms growing on pine trunks at shoulder height along a forest trail at night, glowing bright lime green because someone just walked past, lighting the mist and the trail, the dark silhouette of an operator frozen mid-step in the glow, in the far darkness several human silhouettes turning toward the light"
+    },
+    {
+      "file": "matriz.jpg",
+      "prompt": "MATRIZ — the body of an infected person fused into a concrete wall of a flooded basement, the figure has become roots and fungus, thick grey mycelium fanning out across the walls, floor and ceiling in all directions from it, pulsing faint green core in the chest, small spore puffs drifting, several motionless infected standing around it like guards in the dark, eerie and still, full-bleed image edge to edge, no border, no frame, no page edges"
+    },
+    {
+      "file": "a-queda.jpg",
+      "aspectRatio": "16:9",
+      "prompt": "A QUEDA — ONE single continuous wide landscape scene (not a diptych, not split panels, no inset images): a blazing meteor breaking apart as it streaks low across a stormy night sky over a cold forested island with a small industrial town and harbour, fragments trailing fire and smoke, ordinary townspeople and dock workers in plain raincoats on the harbour pier looking up in awe, seen small from behind, nobody is infected yet: NO fungus, NO mycelium, NO glowing veins on anyone, the whole scene lit orange by the fireball, epic but realistic, year 2058"
+    },
+    {
+      "file": "cratera.jpg",
+      "aspectRatio": "16:9",
+      "prompt": "A CRATERA — five years after the impact, a deep crater in the middle of a ruined industrial zone, a huge black porous meteorite core half buried at the bottom, the crater walls and the surrounding broken factories covered in pale grey mycelium and shelf fungus, faint green glow in the cracks of the black rock, fine spore haze in the air, a military quarantine fence with warning lights on the rim in the foreground, overcast"
+    }
+  ]
+}

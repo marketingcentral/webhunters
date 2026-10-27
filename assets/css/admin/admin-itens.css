@@ -1,0 +1,232 @@
+/* ==========================================================================
+   ADMIN · ITENS (/admin/itens)
+   Carregado pelo layout a partir do slug da página: css/admin/admin-itens.css.
+   Depende de css/admin.css — aqui só entra o que É desta tela.
+
+   O problema desta tela é LARGURA: oito colunas, sete delas com número ou selo
+   que não pode quebrar. A solução é table-layout:fixed com largura declarada em
+   tudo que é numérico e UMA coluna elástica (o item), que trunca com reticências.
+   Assim a tabela nunca empurra a página para o lado — em 1600×900 ou em 1366×768.
+   ========================================================================== */
+
+/* ---- resumo -------------------------------------------------------------- */
+/* A terceira linha do KPI é procedência ("em 3 inventários"), não um segundo número:
+   fica menor e apagada para não competir com o valor. */
+.itens-kpis .adm-kpi__txt .adm-meta{ line-height:1.25; margin-top:.1rem }
+
+/* ==========================================================================
+   LISTAGEM
+   ========================================================================== */
+
+/* Os três seletores da barra têm largura própria: sem isto o navegador dimensiona
+   cada um pelo texto da opção selecionada e a barra dança a cada filtro aplicado. */
+.itens-toolbar__sel{ width:auto; min-width:11rem; max-width:15rem; flex:0 1 auto }
+
+.itens-tabela{ table-layout:fixed }
+
+/* A ordem das colunas é a ordem do <thead>: item | categoria | raridade | grade |
+   peso | preço | posse | ações. */
+.itens-tabela th:nth-child(2){ width:11rem }
+.itens-tabela th:nth-child(3){ width:7.5rem }
+.itens-tabela th:nth-child(4){ width:5.5rem }
+.itens-tabela th:nth-child(5){ width:6.5rem }
+.itens-tabela th:nth-child(6){ width:8.5rem }
+.itens-tabela th:nth-child(7){ width:9.5rem }
+.itens-tabela th:nth-child(8){ width:6rem }
+
+/* A linha aberta no formulário fica marcada: depois de rolar até o topo para editar,
+   é como o operador reencontra onde estava. */
+.itens-tabela tbody tr.is-editando{
+  background:rgba(var(--c-lime-rgb),.09);
+  box-shadow:inset 3px 0 0 var(--c-lime);
+}
+
+/* ---- célula do item ------------------------------------------------------ */
+.itens-cel{ display:flex; align-items:center; gap:.65rem; min-width:0 }
+.itens-cel__art{
+  width:2.5rem; height:2.5rem;
+  flex-shrink:0;
+  border-radius:var(--adm-r-sm);
+  border:1px solid var(--adm-line);
+  background:var(--adm-surface-3);
+  object-fit:contain;
+  padding:.15rem;
+}
+/* Arte ausente é um ESTADO conhecido, não um quadrado quebrado: o quadro vira âmbar
+   e o motivo inteiro vive no title. */
+.itens-cel__art--falta{
+  display:grid; place-items:center;
+  border-color:rgba(var(--c-amber-rgb),.35);
+  background:rgba(var(--c-amber-rgb),.08);
+  color:var(--c-amber);
+  cursor:help;
+}
+.itens-cel__art--falta .ms{ font-size:1.15rem }
+
+.itens-cel__txt{ display:grid; gap:.1rem; min-width:0 }
+.itens-cel__txt strong{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.itens-cel__txt small{
+  color:var(--c-dim);
+  font-size:.75rem;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.itens-cel__txt code{ font-family:var(--font-mono); font-size:.72rem; color:var(--c-muted) }
+
+/* ---- categoria / subtipo -------------------------------------------------- */
+.itens-cat{ display:block; overflow:hidden; text-overflow:ellipsis }
+.itens-cat__sub{
+  display:block;
+  font-size:.72rem;
+  overflow:hidden; text-overflow:ellipsis;
+  font-family:var(--font-mono);
+}
+
+/* ---- grade, peso, preço --------------------------------------------------- */
+.itens-grade small{
+  display:inline-block;
+  margin-left:.2rem;
+  padding:0 .25rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:2px;
+  font-size:.68rem;
+  color:var(--c-cyan);
+}
+/* A unidade acompanha o número mas não disputa com ele: o olho compara os dígitos. */
+.itens-tabela td.num small{ color:var(--c-dim); font-size:.72rem }
+
+/* ---- posse ---------------------------------------------------------------- */
+/* Zero é o dado mais importante desta coluna — é ele que libera a exclusão —, então
+   ele fica legível em vez de apagado, só sem o destaque de quem tem dono. */
+.itens-posse__zero{ color:var(--c-dim); cursor:help }
+.itens-posse.is-usado{ color:var(--c-text) }
+.itens-posse__inst{
+  display:block;
+  font-size:.7rem;
+  color:var(--c-muted);
+  line-height:1.2;
+}
+
+/* ==========================================================================
+   FORMULÁRIO
+   ========================================================================== */
+.itens-form{ scroll-margin-top:1rem }
+
+/* Aviso do servidor: fica ENTRE o cabeçalho e os campos, porque um alerta no rodapé
+   do formulário longo é um alerta que ninguém vê antes de rolar. */
+.itens-form__alerta{
+  display:flex; align-items:flex-start; gap:.5rem;
+  margin:0;
+  padding:.7rem 1rem;
+  background:rgba(var(--c-red-rgb),.10);
+  border-bottom:1px solid rgba(var(--c-red-rgb),.30);
+  color:#ffb9bb;
+  font-size:.85rem;
+  line-height:1.4;
+}
+.itens-form__alerta .ms{ font-size:1.15rem; color:var(--c-red); flex-shrink:0 }
+
+/* 24 campos numa lista corrida viram um paredão. Os blocos são o que permite achar
+   "onde ficava o preço" sem ler tudo. */
+.itens-form__bloco{
+  border:0;
+  border-top:1px solid var(--adm-line);
+  margin:0;
+  padding:1rem 0 0;
+  display:grid;
+  gap:1rem;
+  min-width:0;
+}
+.itens-form > .adm-form > .itens-form__bloco:first-of-type{ border-top:0; padding-top:0 }
+
+.itens-form__legenda{
+  display:flex; align-items:center; gap:.4rem;
+  padding:0;
+  font-family:var(--font-cond);
+  font-size:.82rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--c-lime);
+}
+.itens-form__legenda .ms{ font-size:1.05rem; color:var(--c-lime-dim) }
+
+/* JSON é código: monoespaçado, sem correção ortográfica e sem quebra automática de
+   palavra, para uma chave longa não virar duas linhas falsas. */
+.itens-form__json{
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  line-height:1.45;
+  white-space:pre;
+  overflow:auto;
+  min-height:5.5rem;
+}
+
+/* ==========================================================================
+   CONFIRMAÇÃO DE EXCLUSÃO
+   ========================================================================== */
+/* Duas peles: âmbar quando dá para excluir (é grave, mas é permitido) e vermelha
+   quando está bloqueado. A cor nunca vai sozinha — o texto diz a mesma coisa. */
+.itens-baixa{ border-color:rgba(var(--c-amber-rgb),.40); scroll-margin-top:1rem }
+.itens-baixa.is-bloqueada{ border-color:rgba(var(--c-red-rgb),.40) }
+
+.itens-baixa__body{ display:grid; gap:.9rem }
+
+.itens-baixa__lead{
+  display:flex; align-items:flex-start; gap:.6rem;
+  margin:0;
+  font-size:.92rem;
+  line-height:1.5;
+  color:var(--c-text-2);
+}
+.itens-baixa__lead strong{ color:var(--c-text) }
+.itens-baixa__ico{ font-size:1.4rem; color:var(--c-amber); flex-shrink:0 }
+.itens-baixa.is-bloqueada .itens-baixa__ico{ color:var(--c-red) }
+
+.itens-baixa__refs{ display:grid; gap:.4rem; margin:0; padding:0; list-style:none }
+.itens-baixa__refs li{
+  display:flex; align-items:baseline; gap:.5rem;
+  padding:.5rem .75rem;
+  background:var(--adm-surface-2);
+  border:1px solid var(--adm-line);
+  border-left:3px solid var(--c-red);
+  border-radius:var(--adm-r-sm);
+  font-size:.86rem;
+  color:var(--c-text-2);
+}
+.itens-baixa__refs .ms{ font-size:1.05rem; color:var(--c-muted); align-self:center }
+.itens-baixa__refs b{ font-family:var(--font-mono); color:var(--c-text); font-size:.95rem }
+.itens-baixa__refs em{ font-style:normal; color:var(--c-dim) }
+
+.itens-baixa__ficha{
+  padding:.75rem;
+  background:var(--adm-surface-2);
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+}
+.itens-baixa__ficha code{ font-family:var(--font-mono); font-size:.82rem; color:var(--c-lime-dim) }
+
+/* ==========================================================================
+   RESPONSIVO
+   As colunas caem por ORDEM DE DISPENSABILIDADE, não por posição na tela: primeiro
+   o que é atributo de balanceamento (grade, peso), depois classificação. Item,
+   posse e ações ficam até o fim — é o mínimo para reconhecer e agir sobre a linha.
+   ========================================================================== */
+@media (max-width:1400px){
+  .itens-tabela th:nth-child(2){ width:9.5rem }
+  .itens-tabela th:nth-child(7){ width:8.5rem }
+  .itens-toolbar__sel{ min-width:9.5rem }
+}
+@media (max-width:1180px){
+  .itens-tabela th:nth-child(5),
+  .itens-tabela td:nth-child(5){ display:none }          /* peso */
+}
+@media (max-width:1000px){
+  .itens-tabela th:nth-child(4),
+  .itens-tabela td:nth-child(4){ display:none }          /* grade */
+  .itens-toolbar__sel{ min-width:0; flex:1 1 8rem; max-width:none }
+}
+@media (max-width:820px){
+  .itens-tabela th:nth-child(3),
+  .itens-tabela td:nth-child(3){ display:none }          /* raridade */
+  .itens-tabela{ table-layout:auto }
+  .itens-form__json{ white-space:pre-wrap }
+}

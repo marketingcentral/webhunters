@@ -1,0 +1,1477 @@
+{
+    "title": "CATEGORIAS",
+    "points_label": "PONTOS DISPONÍVEIS",
+    "points": 0,
+    "redistribute": {
+        "label": "REDISTRIBUIR",
+        "key": "R"
+    },
+    "reset_category": {
+        "label": "REDEFINIR CATEGORIA",
+        "key": "R"
+    },
+    "unlocked_label": "HABILIDADES DESBLOQUEADAS",
+    "level_label": "NÍVEL",
+    "cost_suffix": "PONTO(S) DE HABILIDADE",
+    "categories": [
+        {
+            "slug": "combate",
+            "label": "COMBATE",
+            "desc": "Domine armas e táticas de combate.",
+            "icon": "my_location",
+            "unlocked": 8,
+            "total": 15
+        },
+        {
+            "slug": "sobrevivencia",
+            "label": "SOBREVIVÊNCIA",
+            "desc": "Aumente suas chances na selva.",
+            "icon": "grass",
+            "unlocked": 6,
+            "total": 15
+        },
+        {
+            "slug": "mobilidade",
+            "label": "MOBILIDADE",
+            "desc": "Se mova melhor e mais rápido.",
+            "icon": "directions_run",
+            "unlocked": 4,
+            "total": 10
+        },
+        {
+            "slug": "suporte",
+            "label": "SUPORTE",
+            "desc": "Ajude a si e sua equipe.",
+            "icon": "medical_services",
+            "unlocked": 5,
+            "total": 12
+        },
+        {
+            "slug": "equipamento",
+            "label": "EQUIPAMENTO",
+            "desc": "Melhore seus equipamentos.",
+            "icon": "backpack",
+            "unlocked": 7,
+            "total": 15
+        },
+        {
+            "slug": "comercio",
+            "label": "COMÉRCIO",
+            "desc": "Negocie melhores preços.",
+            "icon": "handshake",
+            "unlocked": 3,
+            "total": 10
+        }
+    ],
+    "tiers": [
+        "I",
+        "II",
+        "III",
+        "IV"
+    ],
+    "trees": {
+        "combate": [
+            [
+                {
+                    "slug": "mira-precisa",
+                    "name": "MIRA PRECISA",
+                    "icon": "sk-crosshair",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Reduz a oscilação da mira ao apontar em 8%."
+                },
+                {
+                    "slug": "municao-extra",
+                    "name": "MUNIÇÃO EXTRA",
+                    "icon": "sk-bullets",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Aumenta a munição inicial de cada saída em 15%."
+                },
+                {
+                    "slug": "recarga-rapida",
+                    "name": "RECARGA RÁPIDA",
+                    "icon": "sk-mag",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Reduz o tempo de recarga das armas em 10%."
+                },
+                {
+                    "slug": "olho-de-aguia",
+                    "name": "OLHO DE ÁGUIA",
+                    "icon": "sk-scope",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 2,
+                    "desc": "Aumenta o alcance de identificação de alvos em 20%."
+                },
+                {
+                    "slug": "granadeiro",
+                    "name": "GRANADEIRO",
+                    "icon": "sk-grenade",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 2,
+                    "desc": "Aumenta o raio de dano dos explosivos em 12%."
+                }
+            ],
+            [
+                {
+                    "slug": "capacete-reforcado",
+                    "name": "CAPACETE REFORÇADO",
+                    "icon": "sk-helmet-skull",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Reduz o dano recebido na cabeça em 10%."
+                },
+                {
+                    "slug": "colete-tatico",
+                    "name": "COLETE TÁTICO",
+                    "icon": "sk-vest",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Aumenta a durabilidade do colete em 15%."
+                },
+                {
+                    "slug": "disparo-estavel",
+                    "name": "DISPARO ESTÁVEL",
+                    "icon": "sk-rifle",
+                    "state": "progress",
+                    "cur": 2,
+                    "max": 3,
+                    "cost": 3,
+                    "selected": true,
+                    "desc": "Reduz o recuo vertical das armas em 12% por nível."
+                },
+                {
+                    "slug": "foco",
+                    "name": "FOCO",
+                    "icon": "sk-focus",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Prende a respiração por mais 2 segundos ao mirar."
+                },
+                {
+                    "slug": "explosivo",
+                    "name": "EXPLOSIVO",
+                    "icon": "sk-impact",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Aumenta o dano de explosivos em 14%."
+                }
+            ],
+            [
+                {
+                    "slug": "resistencia",
+                    "name": "RESISTÊNCIA",
+                    "icon": "sk-shooter",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 3,
+                    "desc": "Reduz o dano recebido de armas leves em 5% por nível."
+                },
+                {
+                    "slug": "armeiro",
+                    "name": "ARMEIRO",
+                    "icon": "sk-gunsmith",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 3,
+                    "desc": "Reduz o desgaste das armas em 8% por nível."
+                },
+                {
+                    "slug": "corpo-a-corpo",
+                    "name": "CORPO A CORPO",
+                    "icon": "sk-fist",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Aumenta o dano corpo a corpo em 25%."
+                },
+                {
+                    "slug": "instinto-assassino",
+                    "name": "INSTINTO ASSASSINO",
+                    "icon": "sk-killer",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 4,
+                    "desc": "Aumenta o dano crítico em 6% por nível."
+                },
+                {
+                    "slug": "pente-duplo",
+                    "name": "PENTE DUPLO",
+                    "icon": "sk-mag2",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 4,
+                    "desc": "Reduz a troca de carregador em 7% por nível."
+                }
+            ],
+            [
+                {
+                    "slug": "atirador-de-elite",
+                    "name": "ATIRADOR DE ELITE",
+                    "icon": "sk-marksman",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Aumenta o dano a longa distância em 18%."
+                },
+                {
+                    "slug": "balas-perfurantes",
+                    "name": "BALAS PERFURANTES",
+                    "icon": "sk-pierce",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Ignora 15% da blindagem inimiga."
+                },
+                {
+                    "slug": "blindagem-pesada",
+                    "name": "BLINDAGEM PESADA",
+                    "icon": "sk-plates",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Permite equipar coletes de classe 5 sem penalidade."
+                },
+                {
+                    "slug": "supressao",
+                    "name": "SUPRESSÃO",
+                    "icon": "sk-silencer",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Reduz o ruído dos disparos em 20%."
+                },
+                {
+                    "slug": "cacador-implacavel",
+                    "name": "CAÇADOR IMPLACÁVEL",
+                    "icon": "sk-reaper",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Recupera 10 de vida a cada abate confirmado."
+                }
+            ]
+        ],
+        "sobrevivencia": [
+            [
+                {
+                    "slug": "estomago-de-ferro",
+                    "name": "ESTÔMAGO DE FERRO",
+                    "icon": "sk-can",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Reduz o risco de intoxicação por comida em 30%."
+                },
+                {
+                    "slug": "hidratacao",
+                    "name": "HIDRATAÇÃO",
+                    "icon": "sk-droplet",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Reduz a perda de hidratação em 12%."
+                },
+                {
+                    "slug": "fogueira",
+                    "name": "FOGUEIRA",
+                    "icon": "sk-campfire",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Acende fogueiras 25% mais rápido."
+                },
+                {
+                    "slug": "rastreador",
+                    "name": "RASTREADOR",
+                    "icon": "sk-tracks",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 2,
+                    "desc": "Revela pegadas recentes por 15 segundos."
+                },
+                {
+                    "slug": "camuflagem",
+                    "name": "CAMUFLAGEM",
+                    "icon": "sk-camo",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 2,
+                    "desc": "Reduz a sua visibilidade na vegetação em 18%."
+                }
+            ],
+            [
+                {
+                    "slug": "sangue-frio",
+                    "name": "SANGUE FRIO",
+                    "icon": "sk-thermo",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Reduz o tremor por frio em 20%."
+                },
+                {
+                    "slug": "primeiros-socorros",
+                    "name": "PRIMEIROS SOCORROS",
+                    "icon": "sk-bandage",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Usa curativos 20% mais rápido."
+                },
+                {
+                    "slug": "abrigo",
+                    "name": "ABRIGO",
+                    "icon": "sk-tent",
+                    "state": "progress",
+                    "cur": 1,
+                    "max": 3,
+                    "cost": 3,
+                    "selected": true,
+                    "desc": "Reduz a perda de temperatura em 10% por nível ao descansar."
+                },
+                {
+                    "slug": "forrageiro",
+                    "name": "FORRAGEIRO",
+                    "icon": "sk-mushroom",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Encontra 20% mais recursos naturais."
+                },
+                {
+                    "slug": "imunidade",
+                    "name": "IMUNIDADE",
+                    "icon": "sk-virus",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Reduz a duração de infecções em 25%."
+                }
+            ],
+            [
+                {
+                    "slug": "sobrevivente-nato",
+                    "name": "SOBREVIVENTE NATO",
+                    "icon": "sk-heart-plus",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 3,
+                    "desc": "Aumenta a vida máxima em 4% por nível."
+                },
+                {
+                    "slug": "purificador",
+                    "name": "PURIFICADOR",
+                    "icon": "sk-filter",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 3,
+                    "desc": "Purifica água 10% mais rápido por nível."
+                },
+                {
+                    "slug": "cacador-noturno",
+                    "name": "CAÇADOR NOTURNO",
+                    "icon": "sk-moon-eye",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 4,
+                    "desc": "Melhora a visão noturna sem equipamento."
+                },
+                {
+                    "slug": "regeneracao",
+                    "name": "REGENERAÇÃO",
+                    "icon": "sk-regen",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 4,
+                    "desc": "Recupera 1 de vida a cada 8 segundos por nível.",
+                    "step": 1,
+                    "unit": "",
+                    "effect": "Recupera {v} de vida a cada 8 segundos."
+                },
+                {
+                    "slug": "ferreiro",
+                    "name": "FERREIRO",
+                    "icon": "sk-anvil",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 4,
+                    "desc": "Repara equipamentos com 10% menos material por nível."
+                }
+            ],
+            [
+                {
+                    "slug": "ultimo-folego",
+                    "name": "ÚLTIMO FÔLEGO",
+                    "icon": "sk-lifeline",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Sobrevive a um golpe fatal uma vez por saída."
+                },
+                {
+                    "slug": "inquebravel",
+                    "name": "INQUEBRÁVEL",
+                    "icon": "sk-unbreak",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Reduz o dano de queda em 40%."
+                },
+                {
+                    "slug": "mestre-da-selva",
+                    "name": "MESTRE DA SELVA",
+                    "icon": "sk-jungle",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Move-se sem ruído em vegetação densa."
+                },
+                {
+                    "slug": "fantasma",
+                    "name": "FANTASMA",
+                    "icon": "sk-ghost",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Não aparece em radares inimigos por 30 segundos."
+                },
+                {
+                    "slug": "lenda-viva",
+                    "name": "LENDA VIVA",
+                    "icon": "sk-laurel",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Aumenta todo o XP de sobrevivência em 15%."
+                }
+            ]
+        ],
+        "mobilidade": [
+            [
+                {
+                    "slug": "passo-leve",
+                    "name": "PASSO LEVE",
+                    "icon": "sk-footstep",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Reduz o ruído dos passos em 15%."
+                },
+                {
+                    "slug": "folego",
+                    "name": "FÔLEGO",
+                    "icon": "sk-lungs",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Aumenta a estamina máxima em 10%."
+                },
+                {
+                    "slug": "escalada",
+                    "name": "ESCALADA",
+                    "icon": "sk-ladder",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Escala obstáculos 20% mais rápido."
+                },
+                {
+                    "slug": "deslize",
+                    "name": "DESLIZE",
+                    "icon": "sk-slide",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 2,
+                    "desc": "Permite deslizar em corrida por 2 segundos."
+                },
+                {
+                    "slug": "salto-alto",
+                    "name": "SALTO ALTO",
+                    "icon": "sk-jump",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 2,
+                    "desc": "Aumenta a altura do salto em 12%."
+                }
+            ],
+            [
+                {
+                    "slug": "corrida-tatica",
+                    "name": "CORRIDA TÁTICA",
+                    "icon": "sk-runner-gun",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Corre 8% mais rápido com arma em punho."
+                },
+                {
+                    "slug": "carga-leve",
+                    "name": "CARGA LEVE",
+                    "icon": "sk-feather-pack",
+                    "state": "progress",
+                    "cur": 2,
+                    "max": 3,
+                    "cost": 3,
+                    "selected": true,
+                    "desc": "Reduz a penalidade de peso em 9% por nível."
+                },
+                {
+                    "slug": "reflexos",
+                    "name": "REFLEXOS",
+                    "icon": "sk-reflex",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Saca a arma 15% mais rápido."
+                },
+                {
+                    "slug": "agachado",
+                    "name": "AGACHADO",
+                    "icon": "sk-crouch",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Move-se 18% mais rápido agachado."
+                },
+                {
+                    "slug": "rolamento",
+                    "name": "ROLAMENTO",
+                    "icon": "sk-roll",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Reduz o dano de queda em 25%."
+                }
+            ],
+            [
+                {
+                    "slug": "resiliencia",
+                    "name": "RESILIÊNCIA",
+                    "icon": "sk-stamina",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 3,
+                    "desc": "Recupera estamina 8% mais rápido por nível."
+                },
+                {
+                    "slug": "nadador",
+                    "name": "NADADOR",
+                    "icon": "sk-swim",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 3,
+                    "desc": "Nada 10% mais rápido por nível."
+                },
+                {
+                    "slug": "sombra",
+                    "name": "SOMBRA",
+                    "icon": "sk-shadow",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 4,
+                    "desc": "Reduz o ruído ao correr em 20%."
+                },
+                {
+                    "slug": "impulso",
+                    "name": "IMPULSO",
+                    "icon": "sk-boost",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 4,
+                    "desc": "Ganha 5% de velocidade após um abate por nível."
+                },
+                {
+                    "slug": "surto",
+                    "name": "SURTO",
+                    "icon": "sk-surge",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 4,
+                    "desc": "Corre 6% mais rápido com pouca vida por nível."
+                }
+            ],
+            [
+                {
+                    "slug": "velocista",
+                    "name": "VELOCISTA",
+                    "icon": "sk-speed",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Aumenta a velocidade base de corrida em 12%."
+                },
+                {
+                    "slug": "acrobata",
+                    "name": "ACROBATA",
+                    "icon": "sk-acrobat",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Encadeia manobras sem perder estamina."
+                },
+                {
+                    "slug": "vento",
+                    "name": "VENTO",
+                    "icon": "sk-wind",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Recupera estamina mesmo em movimento."
+                },
+                {
+                    "slug": "caminho-livre",
+                    "name": "CAMINHO LIVRE",
+                    "icon": "sk-path",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Ignora a lentidão de terrenos difíceis."
+                },
+                {
+                    "slug": "fuga",
+                    "name": "FUGA",
+                    "icon": "sk-exit-run",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Extrai 20% mais rápido do ponto de saída."
+                }
+            ]
+        ],
+        "suporte": [
+            [
+                {
+                    "slug": "mao-firme",
+                    "name": "MÃO FIRME",
+                    "icon": "sk-hand-heart",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Aplica curativos em aliados 15% mais rápido."
+                },
+                {
+                    "slug": "doador",
+                    "name": "DOADOR",
+                    "icon": "sk-give",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Compartilha suprimentos sem penalidade de tempo."
+                },
+                {
+                    "slug": "sinalizador",
+                    "name": "SINALIZADOR",
+                    "icon": "sk-flare",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Marcações de equipe duram 10 segundos a mais."
+                },
+                {
+                    "slug": "reanimador",
+                    "name": "REANIMADOR",
+                    "icon": "sk-defib",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 2,
+                    "desc": "Reanima aliados 20% mais rápido."
+                },
+                {
+                    "slug": "escudo-aliado",
+                    "name": "ESCUDO ALIADO",
+                    "icon": "sk-shield-team",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 2,
+                    "desc": "Aliados próximos recebem 5% menos dano."
+                }
+            ],
+            [
+                {
+                    "slug": "kit-avancado",
+                    "name": "KIT AVANÇADO",
+                    "icon": "sk-medkit",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Kits médicos curam 12% a mais."
+                },
+                {
+                    "slug": "radio-tatico",
+                    "name": "RÁDIO TÁTICO",
+                    "icon": "sk-radio",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Aumenta o alcance do rádio da equipe em 25%."
+                },
+                {
+                    "slug": "moral-alta",
+                    "name": "MORAL ALTA",
+                    "icon": "sk-morale",
+                    "state": "progress",
+                    "cur": 2,
+                    "max": 3,
+                    "cost": 3,
+                    "selected": true,
+                    "desc": "Aumenta a regeneração da equipe em 6% por nível."
+                },
+                {
+                    "slug": "logistica",
+                    "name": "LOGÍSTICA",
+                    "icon": "sk-crate",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Carrega 2 suprimentos extras."
+                },
+                {
+                    "slug": "vigia",
+                    "name": "VIGIA",
+                    "icon": "sk-binoculars",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Marca inimigos automaticamente a 30 metros."
+                }
+            ],
+            [
+                {
+                    "slug": "medico-campo",
+                    "name": "MÉDICO DE CAMPO",
+                    "icon": "sk-field-medic",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 3,
+                    "desc": "Cura aliados 8% mais rápido por nível."
+                },
+                {
+                    "slug": "suprimento",
+                    "name": "SUPRIMENTO",
+                    "icon": "sk-ammo-supply",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 3,
+                    "desc": "Distribui 10% mais munição por nível."
+                },
+                {
+                    "slug": "inspiracao",
+                    "name": "INSPIRAÇÃO",
+                    "icon": "sk-spark",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 4,
+                    "desc": "Aliados próximos recarregam 10% mais rápido."
+                },
+                {
+                    "slug": "barreira",
+                    "name": "BARREIRA",
+                    "icon": "sk-barricade",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 4,
+                    "desc": "Coberturas improvisadas resistem 10% mais por nível."
+                },
+                {
+                    "slug": "coordenacao",
+                    "name": "COORDENAÇÃO",
+                    "icon": "sk-network",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 4,
+                    "desc": "Reduz o tempo de resposta da equipe em 5% por nível."
+                }
+            ],
+            [
+                {
+                    "slug": "anjo-da-guarda",
+                    "name": "ANJO DA GUARDA",
+                    "icon": "sk-guardian",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Reanimações concedem 20 de vida extra."
+                },
+                {
+                    "slug": "rede-de-apoio",
+                    "name": "REDE DE APOIO",
+                    "icon": "sk-link-team",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Compartilha bônus de habilidade com a equipe."
+                },
+                {
+                    "slug": "protocolo",
+                    "name": "PROTOCOLO",
+                    "icon": "sk-beacon",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Marca pontos de extração para toda a equipe."
+                },
+                {
+                    "slug": "resgate",
+                    "name": "RESGATE",
+                    "icon": "sk-carry",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Arrasta aliados caídos sem perder velocidade."
+                },
+                {
+                    "slug": "comandante",
+                    "name": "COMANDANTE",
+                    "icon": "sk-command",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Aumenta todo o XP da equipe em 10%."
+                }
+            ]
+        ],
+        "equipamento": [
+            [
+                {
+                    "slug": "bolsos-extras",
+                    "name": "BOLSOS EXTRAS",
+                    "icon": "sk-pockets",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Adiciona 2 espaços à mochila."
+                },
+                {
+                    "slug": "correias",
+                    "name": "CORREIAS",
+                    "icon": "sk-straps",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Troca de equipamento 15% mais rápida."
+                },
+                {
+                    "slug": "manutencao",
+                    "name": "MANUTENÇÃO",
+                    "icon": "sk-wrench",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Equipamentos desgastam 12% mais devagar."
+                },
+                {
+                    "slug": "optica",
+                    "name": "ÓPTICA",
+                    "icon": "sk-optic",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 2,
+                    "desc": "Miras acopladas ganham 10% de estabilidade."
+                },
+                {
+                    "slug": "coldre",
+                    "name": "COLDRE RÁPIDO",
+                    "icon": "sk-holster",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 2,
+                    "desc": "Saca a arma secundária 25% mais rápido."
+                }
+            ],
+            [
+                {
+                    "slug": "capacete-tec",
+                    "name": "CAPACETE TÉCNICO",
+                    "icon": "sk-helmet-tech",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Adiciona 5% de proteção na cabeça."
+                },
+                {
+                    "slug": "mascara",
+                    "name": "MÁSCARA",
+                    "icon": "sk-gasmask",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Reduz o efeito de gás em 30%."
+                },
+                {
+                    "slug": "rig-tatico",
+                    "name": "RIG TÁTICO",
+                    "icon": "sk-rig",
+                    "state": "progress",
+                    "cur": 2,
+                    "max": 3,
+                    "cost": 3,
+                    "selected": true,
+                    "desc": "Adiciona 1 espaço de carregador por nível.",
+                    "step": 1,
+                    "unit": "",
+                    "effect": "Adiciona {v} espaço(s) de carregador ao rig."
+                },
+                {
+                    "slug": "kit-reparo",
+                    "name": "KIT DE REPARO",
+                    "icon": "sk-toolkit",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Repara equipamentos em campo."
+                },
+                {
+                    "slug": "lanterna",
+                    "name": "LANTERNA",
+                    "icon": "sk-flashlight",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Aumenta o alcance da lanterna em 25%."
+                }
+            ],
+            [
+                {
+                    "slug": "carga-pesada",
+                    "name": "CARGA PESADA",
+                    "icon": "sk-heavy-pack",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 3,
+                    "desc": "Aumenta o peso máximo em 4% por nível."
+                },
+                {
+                    "slug": "blindagem",
+                    "name": "BLINDAGEM",
+                    "icon": "sk-armor-plate",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 3,
+                    "desc": "Coletes resistem 6% mais por nível."
+                },
+                {
+                    "slug": "improviso",
+                    "name": "IMPROVISO",
+                    "icon": "sk-improvise",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 4,
+                    "desc": "Cria bandagens com materiais comuns."
+                },
+                {
+                    "slug": "modular",
+                    "name": "MODULAR",
+                    "icon": "sk-modular",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 4,
+                    "desc": "Acessórios pesam 8% menos por nível."
+                },
+                {
+                    "slug": "reserva",
+                    "name": "RESERVA",
+                    "icon": "sk-spare-mag",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 4,
+                    "desc": "Carrega 1 carregador extra por nível.",
+                    "step": 1,
+                    "unit": "",
+                    "effect": "Carrega {v} carregador(es) extra(s)."
+                }
+            ],
+            [
+                {
+                    "slug": "arsenal",
+                    "name": "ARSENAL",
+                    "icon": "sk-arsenal",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Permite uma terceira arma primária."
+                },
+                {
+                    "slug": "exoesqueleto",
+                    "name": "EXOESQUELETO",
+                    "icon": "sk-exo",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Ignora a penalidade de sobrepeso."
+                },
+                {
+                    "slug": "placa-balistica",
+                    "name": "PLACA BALÍSTICA",
+                    "icon": "sk-plate-ballistic",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Adiciona 15% de resistência a rifles."
+                },
+                {
+                    "slug": "visao-termica",
+                    "name": "VISÃO TÉRMICA",
+                    "icon": "sk-thermal",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Destaca corpos quentes a 40 metros."
+                },
+                {
+                    "slug": "prototipo",
+                    "name": "PROTÓTIPO",
+                    "icon": "sk-prototype",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Libera equipamentos experimentais na loja."
+                }
+            ]
+        ],
+        "comercio": [
+            [
+                {
+                    "slug": "pechincha",
+                    "name": "PECHINCHA",
+                    "icon": "sk-price-tag",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Reduz o preço de compra em 5%."
+                },
+                {
+                    "slug": "avaliador",
+                    "name": "AVALIADOR",
+                    "icon": "sk-appraise",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Mostra o valor real dos itens encontrados."
+                },
+                {
+                    "slug": "contatos",
+                    "name": "CONTATOS",
+                    "icon": "sk-contacts",
+                    "state": "unlocked",
+                    "cur": 1,
+                    "max": 1,
+                    "cost": 0,
+                    "desc": "Libera 1 comerciante adicional."
+                },
+                {
+                    "slug": "taxas",
+                    "name": "TAXAS MENORES",
+                    "icon": "sk-percent-down",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 2,
+                    "desc": "Reduz a taxa do mercado em 20%."
+                },
+                {
+                    "slug": "estoque",
+                    "name": "ESTOQUE",
+                    "icon": "sk-shelf",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 2,
+                    "desc": "Comerciantes repõem estoque 25% mais rápido."
+                }
+            ],
+            [
+                {
+                    "slug": "negociador",
+                    "name": "NEGOCIADOR",
+                    "icon": "sk-deal",
+                    "state": "progress",
+                    "cur": 1,
+                    "max": 3,
+                    "cost": 3,
+                    "selected": true,
+                    "desc": "Aumenta o valor de venda em 7% por nível."
+                },
+                {
+                    "slug": "mercado-negro",
+                    "name": "MERCADO NEGRO",
+                    "icon": "sk-blackmarket",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Libera ofertas restritas por 24 horas."
+                },
+                {
+                    "slug": "contrabando",
+                    "name": "CONTRABANDO",
+                    "icon": "sk-smuggle",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Extrai 1 item de contrabando por saída."
+                },
+                {
+                    "slug": "reputacao",
+                    "name": "REPUTAÇÃO",
+                    "icon": "sk-medal",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Ganha 15% mais reputação com comerciantes."
+                },
+                {
+                    "slug": "leilao",
+                    "name": "LEILÃO",
+                    "icon": "sk-gavel",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 3,
+                    "desc": "Permite leiloar itens raros."
+                }
+            ],
+            [
+                {
+                    "slug": "investidor",
+                    "name": "INVESTIDOR",
+                    "icon": "sk-chart-up",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 3,
+                    "desc": "Rende 3% de juros por nível a cada saída."
+                },
+                {
+                    "slug": "logistico",
+                    "name": "LOGÍSTICO",
+                    "icon": "sk-truck",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 3,
+                    "desc": "Reduz o frete de seguro em 10% por nível."
+                },
+                {
+                    "slug": "informante",
+                    "name": "INFORMANTE",
+                    "icon": "sk-informant",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 4,
+                    "desc": "Revela a demanda do mercado do dia."
+                },
+                {
+                    "slug": "cartel",
+                    "name": "CARTEL",
+                    "icon": "sk-cartel",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 4,
+                    "desc": "Preços de clã caem 5% por nível."
+                },
+                {
+                    "slug": "monopolio",
+                    "name": "MONOPÓLIO",
+                    "icon": "sk-monopoly",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 3,
+                    "cost": 4,
+                    "desc": "Reserva itens raros por 6% mais tempo por nível."
+                }
+            ],
+            [
+                {
+                    "slug": "magnata",
+                    "name": "MAGNATA",
+                    "icon": "sk-money-bag",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Aumenta os créditos ganhos em 20%."
+                },
+                {
+                    "slug": "rede-global",
+                    "name": "REDE GLOBAL",
+                    "icon": "sk-globe",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Compra em qualquer comerciante à distância."
+                },
+                {
+                    "slug": "seguro-total",
+                    "name": "SEGURO TOTAL",
+                    "icon": "sk-insurance",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Recupera 50% do valor do equipamento perdido."
+                },
+                {
+                    "slug": "lavagem",
+                    "name": "LAVAGEM",
+                    "icon": "sk-launder",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Vende itens marcados sem penalidade."
+                },
+                {
+                    "slug": "lenda-mercado",
+                    "name": "LENDA DO MERCADO",
+                    "icon": "sk-diamond",
+                    "state": "locked",
+                    "cur": 0,
+                    "max": 1,
+                    "cost": 5,
+                    "desc": "Desbloqueia o catálogo lendário."
+                }
+            ]
+        ]
+    },
+    "selected_by_category": {
+        "combate": {
+            "slug": "disparo-estavel",
+            "name": "DISPARO ESTÁVEL",
+            "level": 2,
+            "max": 3,
+            "image": "ui/skill-preview.jpg",
+            "desc": "Reduz o recuo vertical das armas em 12% por nível.",
+            "desc_highlight": "12%",
+            "next_title": "PRÓXIMO NÍVEL",
+            "next": "Reduz o recuo vertical das armas em 18%.",
+            "next_highlight": "18%",
+            "cost_title": "CUSTO",
+            "cost": 3,
+            "cost_label": "PONTO(S) DE HABILIDADE",
+            "cta": {
+                "label": "APRENDER HABILIDADE",
+                "key": "F"
+            },
+            "cta_hold": "SEGURAR PARA APRENDER",
+            "can_learn": false
+        },
+        "sobrevivencia": {
+            "slug": "abrigo",
+            "name": "ABRIGO",
+            "level": 1,
+            "max": 3,
+            "image": "ui/skill-preview.jpg",
+            "desc": "Reduz a perda de temperatura em 10% por nível ao descansar.",
+            "desc_highlight": "10%",
+            "next_title": "PRÓXIMO NÍVEL",
+            "next": "Reduz a perda de temperatura em 20%.",
+            "next_highlight": "20%",
+            "cost_title": "CUSTO",
+            "cost": 3,
+            "cost_label": "PONTO(S) DE HABILIDADE",
+            "cta": {
+                "label": "APRENDER HABILIDADE",
+                "key": "F"
+            },
+            "cta_hold": "SEGURAR PARA APRENDER",
+            "can_learn": false
+        },
+        "mobilidade": {
+            "slug": "carga-leve",
+            "name": "CARGA LEVE",
+            "level": 2,
+            "max": 3,
+            "image": "ui/skill-preview.jpg",
+            "desc": "Reduz a penalidade de peso em 9% por nível.",
+            "desc_highlight": "9%",
+            "next_title": "PRÓXIMO NÍVEL",
+            "next": "Reduz a penalidade de peso em 27%.",
+            "next_highlight": "27%",
+            "cost_title": "CUSTO",
+            "cost": 3,
+            "cost_label": "PONTO(S) DE HABILIDADE",
+            "cta": {
+                "label": "APRENDER HABILIDADE",
+                "key": "F"
+            },
+            "cta_hold": "SEGURAR PARA APRENDER",
+            "can_learn": false
+        },
+        "suporte": {
+            "slug": "moral-alta",
+            "name": "MORAL ALTA",
+            "level": 2,
+            "max": 3,
+            "image": "ui/skill-preview.jpg",
+            "desc": "Aumenta a regeneração da equipe em 6% por nível.",
+            "desc_highlight": "6%",
+            "next_title": "PRÓXIMO NÍVEL",
+            "next": "Aumenta a regeneração da equipe em 18%.",
+            "next_highlight": "18%",
+            "cost_title": "CUSTO",
+            "cost": 3,
+            "cost_label": "PONTO(S) DE HABILIDADE",
+            "cta": {
+                "label": "APRENDER HABILIDADE",
+                "key": "F"
+            },
+            "cta_hold": "SEGURAR PARA APRENDER",
+            "can_learn": false
+        },
+        "equipamento": {
+            "slug": "rig-tatico",
+            "name": "RIG TÁTICO",
+            "level": 2,
+            "max": 3,
+            "image": "ui/skill-preview.jpg",
+            "desc": "Adiciona 1 espaço de carregador por nível.",
+            "desc_highlight": "1",
+            "next_title": "PRÓXIMO NÍVEL",
+            "next": "Adiciona 3 espaços de carregador.",
+            "next_highlight": "3",
+            "cost_title": "CUSTO",
+            "cost": 3,
+            "cost_label": "PONTO(S) DE HABILIDADE",
+            "cta": {
+                "label": "APRENDER HABILIDADE",
+                "key": "F"
+            },
+            "cta_hold": "SEGURAR PARA APRENDER",
+            "can_learn": false
+        },
+        "comercio": {
+            "slug": "negociador",
+            "name": "NEGOCIADOR",
+            "level": 1,
+            "max": 3,
+            "image": "ui/skill-preview.jpg",
+            "desc": "Aumenta o valor de venda em 7% por nível.",
+            "desc_highlight": "7%",
+            "next_title": "PRÓXIMO NÍVEL",
+            "next": "Aumenta o valor de venda em 14%.",
+            "next_highlight": "14%",
+            "cost_title": "CUSTO",
+            "cost": 3,
+            "cost_label": "PONTO(S) DE HABILIDADE",
+            "cta": {
+                "label": "APRENDER HABILIDADE",
+                "key": "F"
+            },
+            "cta_hold": "SEGURAR PARA APRENDER",
+            "can_learn": false
+        }
+    }
+}

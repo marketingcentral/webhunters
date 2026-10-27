@@ -1,0 +1,273 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — tela BESTIÁRIO. Tudo sob body.page-bestiario.
+   Grade em 1672x941 (1rem = 16px): grupos 15rem | cartas (até 5 colunas) | ficha 26rem.
+   Roda dentro do CEF 90 da Unreal: nada de :has, dvh, color-mix ou aninhamento.
+   As cores de grupo chegam por classe (--red/--amber/--purple), não por variável inline,
+   porque a ficha e a carta pintam borda, brilho e chip a partir do mesmo --g-rgb.
+   ========================================================================== */
+
+.page-bestiario .bg__img{filter:saturate(.7) contrast(1.08) brightness(.55)}
+.page-bestiario .bg__overlay{
+  background:
+    linear-gradient(180deg, rgba(4,7,4,.92) 0%, rgba(4,7,4,.55) 16%, rgba(4,7,4,.4) 60%, rgba(4,7,4,.92) 100%),
+    linear-gradient(90deg, rgba(4,7,4,.55) 0%, rgba(4,7,4,.1) 30%, rgba(4,7,4,.1) 70%, rgba(4,7,4,.6) 100%);
+}
+
+body.page-bestiario .hud-main{
+  overflow:hidden;
+  padding:1.5rem 2.5rem .75rem 1.5625rem;
+}
+
+/* cor de grupo, herdada por carta e ficha */
+.page-bestiario .bst-card--red,   .page-bestiario .bst-sheet--red,   .page-bestiario .bst-group--red   {--g-rgb:var(--c-red-rgb)}
+.page-bestiario .bst-card--amber, .page-bestiario .bst-sheet--amber, .page-bestiario .bst-group--amber {--g-rgb:var(--c-amber-rgb)}
+.page-bestiario .bst-card--purple,.page-bestiario .bst-sheet--purple,.page-bestiario .bst-group--purple{--g-rgb:var(--c-purple-rgb)}
+
+/* ---------------------------------------------------------------- cabeçalho */
+.page-bestiario .bst-head{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;
+  margin-bottom:1.1rem;flex:0 0 auto;
+}
+.page-bestiario .page-title{font-size:2.1rem;line-height:1;letter-spacing:.03em}
+.page-bestiario .bst-prog{display:flex;align-items:center;gap:.9rem;margin-right:26rem;margin-right:calc(26rem + 1.375rem)}
+.page-bestiario .bst-prog__k{font-family:var(--font-cond);font-size:.85rem;letter-spacing:.14em;color:var(--c-muted)}
+.page-bestiario .bst-prog__v{font-family:var(--font-display);font-size:1.5rem;color:var(--c-lime)}
+.page-bestiario .bst-prog__v i{font-style:normal;color:var(--c-dim);margin:0 .15rem}
+.page-bestiario .bst-prog__bar{position:relative;width:11rem;height:.3125rem;background:var(--c-track);border-radius:2px;overflow:hidden}
+.page-bestiario .bst-prog__bar i{position:absolute;left:0;top:0;bottom:0;background:var(--c-lime);box-shadow:0 0 10px rgba(var(--c-lime-rgb),.6)}
+
+/* ---------------------------------------------------------------- grade da tela */
+.page-bestiario .bst{
+  flex:1 1 auto;
+  display:grid;
+  grid-template-columns:15rem minmax(0,1fr) 26rem;
+  column-gap:1.375rem;
+  min-height:0;
+}
+
+/* ================================================================ 1. GRUPOS */
+.page-bestiario .bst-side{
+  display:flex;flex-direction:column;
+  padding:.9375rem .625rem 1rem;
+  min-height:0;overflow:hidden;
+}
+.page-bestiario .bst-side__title,
+.page-bestiario .bst-levels__title{
+  margin:0 0 .9rem .5rem;
+  font-family:var(--font-cond);font-size:.95rem;font-weight:500;letter-spacing:.12em;
+  color:var(--c-text);
+}
+.page-bestiario .bst-groups{display:flex;flex-direction:column;gap:.25rem}
+.page-bestiario .bst-group{
+  --g-rgb:var(--c-lime-rgb);
+  position:relative;display:flex;align-items:center;gap:.75rem;
+  height:2.875rem;padding:0 .8rem;
+  border:1px solid rgba(150,190,100,.13);border-radius:var(--r-2);
+  background:linear-gradient(180deg, rgba(11,17,11,.5), rgba(6,10,6,.62));
+  color:var(--c-text-2);
+  transition:border-color var(--t-med) var(--ease),background-color var(--t-med) var(--ease),color var(--t-med) var(--ease);
+}
+.page-bestiario .bst-group:hover{border-color:rgba(var(--g-rgb),.45);color:var(--c-text)}
+.page-bestiario .bst-group.is-active{
+  border-color:rgba(var(--g-rgb),.75);
+  background:linear-gradient(100deg, rgba(var(--g-rgb),.24), rgba(var(--g-rgb),.06));
+  color:var(--c-text);
+  box-shadow:0 0 14px rgba(var(--g-rgb),.22), inset 0 0 18px rgba(var(--g-rgb),.08);
+}
+.page-bestiario .bst-group__ms{font-size:1.25rem;color:rgb(var(--g-rgb))}
+.page-bestiario .bst-group__label{flex:1 1 auto;font-family:var(--font-cond);font-size:.95rem;font-weight:600;letter-spacing:.06em}
+.page-bestiario .bst-group__n{font-family:var(--font-mono);font-size:.85rem;color:var(--c-muted)}
+
+.page-bestiario .bst-side__lead{
+  margin:1rem .4rem 0;
+  font-size:.82rem;line-height:1.45;color:var(--c-text-2);
+}
+.page-bestiario .bst-levels{margin-top:auto;padding-top:1rem;border-top:1px solid var(--c-line-2)}
+.page-bestiario .bst-level{display:grid;grid-template-columns:.6rem auto;column-gap:.6rem;margin:0 .4rem .55rem}
+.page-bestiario .bst-level__dot{grid-row:1 / span 2;align-self:start;margin-top:.3rem;width:.45rem;height:.45rem;border-radius:50%;background:var(--c-dim)}
+.page-bestiario .bst-level--avistado .bst-level__dot{background:var(--c-amber)}
+.page-bestiario .bst-level--estudado .bst-level__dot{background:var(--c-lime);box-shadow:0 0 6px rgba(var(--c-lime-rgb),.7)}
+.page-bestiario .bst-level__k{font-family:var(--font-cond);font-size:.8rem;font-weight:600;letter-spacing:.1em;color:var(--c-text)}
+.page-bestiario .bst-level__v{font-size:.74rem;color:var(--c-muted);line-height:1.3}
+.page-bestiario .bst-levels__note{
+  display:flex;gap:.4rem;align-items:flex-start;
+  margin:.4rem .4rem 0;padding:.5rem .55rem;
+  border:1px dashed rgba(var(--c-lime-rgb),.35);border-radius:var(--r-2);
+  font-size:.72rem;line-height:1.35;color:var(--c-lime);
+}
+.page-bestiario .bst-levels__ms{font-size:.95rem}
+
+/* ================================================================ 2. CARTAS */
+.page-bestiario .bst-grid{
+  display:grid;
+  grid-template-columns:repeat(5, minmax(0,1fr));
+  grid-auto-rows:minmax(0,1fr);
+  gap:.625rem;
+  min-height:0;
+  align-content:start;
+}
+/* poucas cartas: elas não se esticam até virar faixa — ficam com cara de retrato */
+.page-bestiario .bst-grid--poucas{grid-template-columns:repeat(4, minmax(0,1fr));grid-auto-rows:auto}
+.page-bestiario .bst-grid--poucas .bst-card{height:22rem}
+
+.page-bestiario .bst-card{
+  --g-rgb:var(--c-lime-rgb);
+  position:relative;display:block;
+  min-height:0;padding:0;
+  border:1px solid rgba(150,190,100,.16);border-radius:var(--r-2);
+  background:#050805;
+  overflow:hidden;cursor:pointer;text-align:left;color:var(--c-text);
+  transition:border-color var(--t-med) var(--ease),box-shadow var(--t-med) var(--ease),transform var(--t-fast) var(--ease);
+}
+.page-bestiario .bst-card::before{ /* fio de cor do grupo no topo */
+  content:"";position:absolute;left:0;right:0;top:0;height:2px;z-index:2;
+  background:rgb(var(--g-rgb));opacity:.75;
+}
+.page-bestiario .bst-card:hover{border-color:rgba(var(--g-rgb),.55);transform:translateY(-2px)}
+.page-bestiario .bst-card:focus-visible{outline:2px solid var(--c-lime);outline-offset:2px}
+.page-bestiario .bst-card.is-selected{
+  border-color:rgba(var(--g-rgb),.95);
+  box-shadow:0 0 0 1px rgba(var(--g-rgb),.6), 0 0 22px rgba(var(--g-rgb),.35);
+}
+.page-bestiario .bst-card__art{position:absolute;left:0;top:0;right:0;bottom:0}
+.page-bestiario .bst-card__threat{
+  position:absolute;top:.45rem;right:.5rem;z-index:2;
+  min-width:1.9rem;padding:.1rem .3rem;text-align:center;
+  border:1px solid rgba(var(--g-rgb),.6);border-radius:2px;background:rgba(0,0,0,.6);
+  font-family:var(--font-mono);font-size:.78rem;color:rgb(var(--g-rgb));
+}
+.page-bestiario .bst-card__foot{
+  position:absolute;left:0;right:0;bottom:0;z-index:2;
+  display:flex;flex-direction:column;gap:.1rem;
+  padding:1.8rem .65rem .55rem;
+  background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.82) 55%, rgba(0,0,0,.94));
+}
+.page-bestiario .bst-card__name{font-family:var(--font-display);font-size:1.1rem;letter-spacing:.04em;line-height:1}
+.page-bestiario .bst-card__role{font-family:var(--font-cond);font-size:.72rem;font-weight:600;letter-spacing:.12em;color:rgb(var(--g-rgb))}
+.page-bestiario .bst-card__lvl{
+  position:absolute;top:.5rem;left:.5rem;z-index:2;
+  font-family:var(--font-cond);font-size:.62rem;font-weight:600;letter-spacing:.14em;
+  padding:.08rem .35rem;border-radius:2px;background:rgba(0,0,0,.62);color:var(--c-muted);
+}
+.page-bestiario .bst-card__lvl--estudado{color:var(--c-lime)}
+.page-bestiario .bst-card__lvl--avistado{color:var(--c-amber)}
+
+/* ---------------------------------------------------------------- retrato (carta e ficha) */
+.page-bestiario .bst-art{overflow:hidden;background:radial-gradient(ellipse at 50% 35%, rgba(var(--g-rgb),.14), rgba(0,0,0,0) 65%), #060906}
+.page-bestiario .bst-art img{
+  display:block;width:100%;height:100%;object-fit:cover;object-position:50% 30%;
+  transition:transform var(--t-slow) var(--ease-out);
+}
+.page-bestiario .bst-card:hover .bst-art img{transform:scale(1.04)}
+.page-bestiario .bst-art--vazia,
+.page-bestiario .bst-art--oculta{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem}
+.page-bestiario .bst-art--vazia::after,
+.page-bestiario .bst-art--oculta::after{ /* scanline: o quadro vazio parece monitor, não erro */
+  content:"";position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0, rgba(255,255,255,.035) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 3px);
+}
+.page-bestiario .bst-art__ms{font-size:3.2rem;color:rgba(var(--g-rgb),.45)}
+.page-bestiario .bst-art__txt{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;color:var(--c-dim)}
+.page-bestiario .bst-art--oculta img{position:absolute;left:0;top:0;filter:brightness(0) contrast(1.4);opacity:.85}
+.page-bestiario .bst-art--oculta .bst-art__ms{position:relative;z-index:1;color:rgba(255,255,255,.22)}
+.page-bestiario .bst-card.is-oculta .bst-card__name{color:var(--c-dim)}
+
+/* ================================================================ 3. FICHA */
+.page-bestiario .bst-det{
+  min-height:0;padding:0;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.page-bestiario .bst-sheet{
+  --g-rgb:var(--c-lime-rgb);
+  display:flex;flex-direction:column;
+  min-height:0;height:100%;
+  overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:thin;
+}
+.page-bestiario .bst-sheet[hidden]{display:none}
+.page-bestiario .bst-sheet.is-on{animation:bst-in var(--t-slow) var(--ease-out)}
+@keyframes bst-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.page-bestiario .bst-sheet.is-on{animation:none}}
+
+.page-bestiario .bst-sheet__art{position:relative;flex:0 0 auto;height:15rem;border-bottom:1px solid rgba(var(--g-rgb),.45)}
+.page-bestiario .bst-sheet__art::before{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:45%;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg, rgba(0,0,0,0), rgba(5,8,5,.85));
+}
+.page-bestiario .bst-sheet__head{position:relative;z-index:2;margin:-3.4rem 1.1rem 0}
+.page-bestiario .bst-sheet__group{
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-family:var(--font-cond);font-size:.72rem;font-weight:600;letter-spacing:.14em;color:rgb(var(--g-rgb));
+}
+.page-bestiario .bst-sheet__gms{font-size:.95rem}
+.page-bestiario .bst-sheet__name{margin:.1rem 0 0;font-family:var(--font-display);font-size:2.2rem;line-height:1;letter-spacing:.03em;color:var(--c-text)}
+.page-bestiario .bst-sheet__meta{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.55rem}
+.page-bestiario .bst-sheet__meta span{
+  padding:.12rem .45rem;border:1px solid var(--c-line);border-radius:2px;
+  font-family:var(--font-cond);font-size:.72rem;font-weight:600;letter-spacing:.08em;color:var(--c-text-2);
+}
+
+.page-bestiario .bst-threat{display:flex;align-items:center;gap:.6rem;margin:.9rem 1.1rem 0}
+.page-bestiario .bst-threat__k{font-family:var(--font-cond);font-size:.72rem;letter-spacing:.14em;color:var(--c-muted)}
+.page-bestiario .bst-threat__bar{position:relative;flex:1 1 auto;height:.375rem;background:var(--c-track);border-radius:2px;overflow:hidden}
+.page-bestiario .bst-threat__bar i{
+  position:absolute;left:0;top:0;bottom:0;
+  background:linear-gradient(90deg, var(--c-lime), var(--c-amber) 55%, var(--c-red) 80%, var(--c-purple));
+  background-size:26rem 100%;
+}
+.page-bestiario .bst-threat__v{font-family:var(--font-mono);font-size:.9rem;color:var(--c-text);min-width:1.6rem;text-align:right}
+
+.page-bestiario .bst-sheet__line{margin:.8rem 1.1rem 0;font-family:var(--font-cond);font-size:1.02rem;font-weight:600;line-height:1.25;color:var(--c-text)}
+.page-bestiario .bst-sheet__text{margin:.5rem 1.1rem 0;font-size:.82rem;line-height:1.5;color:var(--c-text-2)}
+.page-bestiario .bst-sheet__locked{
+  display:flex;gap:.5rem;align-items:flex-start;
+  margin:1rem 1.1rem 0;padding:.7rem .75rem;
+  border:1px dashed var(--c-line);border-radius:var(--r-2);
+  font-size:.8rem;line-height:1.45;color:var(--c-muted);
+}
+.page-bestiario .bst-sheet__locked .ms{font-size:1.1rem;color:var(--c-dim)}
+
+.page-bestiario .bst-facts{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin:.9rem 1.1rem 0}
+.page-bestiario .bst-fact{padding:.5rem .6rem;border:1px solid var(--c-line-2);border-radius:var(--r-2);background:var(--c-panel-3)}
+.page-bestiario .bst-fact--sinal,
+.page-bestiario .bst-fact--contra{grid-column:1 / -1}
+.page-bestiario .bst-fact--sinal{border-color:rgba(var(--c-amber-rgb),.35)}
+.page-bestiario .bst-fact--contra{border-color:rgba(var(--c-lime-rgb),.35)}
+.page-bestiario .bst-fact dt{
+  display:flex;align-items:center;gap:.3rem;margin-bottom:.2rem;
+  font-family:var(--font-cond);font-size:.7rem;font-weight:600;letter-spacing:.14em;color:var(--c-muted);
+}
+.page-bestiario .bst-fact--sinal dt{color:var(--c-amber)}
+.page-bestiario .bst-fact--contra dt{color:var(--c-lime)}
+.page-bestiario .bst-fact dt .ms{font-size:.95rem}
+.page-bestiario .bst-fact dd{margin:0;font-size:.79rem;line-height:1.4;color:var(--c-text)}
+
+.page-bestiario .bst-sub{margin:1rem 1.1rem .45rem;font-family:var(--font-cond);font-size:.75rem;font-weight:600;letter-spacing:.14em;color:var(--c-muted)}
+/* COMO LIDAR — uma leitura só (app/Data/criaturas.php > abordagens), a mesma da landing */
+.page-bestiario .bst-lidar{
+  --l-rgb:var(--c-lime-rgb);
+  display:flex;flex-wrap:wrap;align-items:center;gap:.2rem .55rem;
+  margin:.8rem 1.1rem 0;padding:.5rem .7rem;
+  border:1px solid rgba(var(--l-rgb),.5);border-left-width:3px;border-radius:var(--r-2);
+  background:rgba(var(--l-rgb),.1);
+}
+.page-bestiario .bst-lidar--amber {--l-rgb:var(--c-amber-rgb)}
+.page-bestiario .bst-lidar--red   {--l-rgb:var(--c-red-rgb)}
+.page-bestiario .bst-lidar--purple{--l-rgb:var(--c-purple-rgb)}
+.page-bestiario .bst-lidar .ms{font-size:1.15rem;color:rgb(var(--l-rgb))}
+.page-bestiario .bst-lidar b{font-family:var(--font-cond);font-size:.9rem;font-weight:700;letter-spacing:.14em;color:rgb(var(--l-rgb))}
+.page-bestiario .bst-lidar span{font-size:.78rem;color:var(--c-text-2)}
+
+.page-bestiario .bst-habitat{display:flex;flex-wrap:wrap;gap:.3rem;margin:0 1.1rem;padding:0;list-style:none}
+.page-bestiario .bst-habitat li{
+  padding:.15rem .45rem;border-radius:2px;background:rgba(var(--g-rgb),.12);
+  font-family:var(--font-cond);font-size:.7rem;font-weight:600;letter-spacing:.08em;color:var(--c-text-2);
+}
+
+.page-bestiario .bst-rec{
+  display:flex;justify-content:space-between;gap:.5rem;
+  margin:auto 0 0;padding:.75rem 1.1rem .8rem;margin-top:1.1rem;
+  border-top:1px solid var(--c-line-2);background:rgba(0,0,0,.25);
+}
+.page-bestiario .bst-rec span{display:flex;flex-direction:column;font-family:var(--font-cond);font-size:.62rem;letter-spacing:.12em;color:var(--c-muted)}
+.page-bestiario .bst-rec b{font-family:var(--font-mono);font-size:1rem;font-weight:400;color:var(--c-text);letter-spacing:0}

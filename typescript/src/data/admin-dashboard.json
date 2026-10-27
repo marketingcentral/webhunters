@@ -1,0 +1,165 @@
+{
+    "boas_vindas": {
+        "saudacao": "Bem-vindo(a), %s",
+        "texto": "Gerencie o mundo persistente, acompanhe as métricas e mantenha tudo sob controle.",
+        "imagem": "bg/admin.jpg"
+    },
+    "titulos": {
+        "grafico": "Curva de jogadores online",
+        "servidores": "Status dos servidores",
+        "ranking": "Top jogadores",
+        "receita": "Receita",
+        "eventos": "Eventos ativos",
+        "acoes": "Ações rápidas",
+        "atividade": "Atividade recente",
+        "sistema": "Status do sistema"
+    },
+    "periodos": [
+        {
+            "dias": 7,
+            "label": "7 dias"
+        },
+        {
+            "dias": 14,
+            "label": "14 dias"
+        },
+        {
+            "dias": 30,
+            "label": "30 dias"
+        }
+    ],
+    "acoes": [
+        {
+            "icone": "refresh",
+            "label": "Atualizar",
+            "sub": "Reconsultar o banco",
+            "rota": "admin"
+        },
+        {
+            "icone": "monitor_heart",
+            "label": "Saúde",
+            "sub": "Serviços e regiões",
+            "rota": "saude"
+        },
+        {
+            "icone": "support_agent",
+            "label": "Suporte",
+            "sub": "Fila de chamados",
+            "rota": "suporte"
+        },
+        {
+            "icone": "campaign",
+            "label": "Mural",
+            "sub": "Notícias no ar",
+            "rota": "noticias"
+        },
+        {
+            "icone": "group",
+            "label": "Jogadores",
+            "sub": "Contas e progresso",
+            "rota": "admin/jogadores"
+        },
+        {
+            "icone": "dns",
+            "label": "Servidores",
+            "sub": "Regiões e serviços",
+            "rota": "admin/servidores"
+        },
+        {
+            "icone": "gavel",
+            "label": "Banimentos",
+            "sub": "Punir jogador",
+            "rota": "admin/banimentos"
+        },
+        {
+            "icone": "description",
+            "label": "Logs",
+            "sub": "Trilha de auditoria",
+            "rota": "admin/logs"
+        }
+    ],
+    "links": {
+        "ranking": {
+            "label": "Ver ranking",
+            "rota": "admin/jogadores"
+        },
+        "receita": {
+            "label": "Ver relatório",
+            "rota": "admin/relatorios"
+        },
+        "eventos": {
+            "label": "Ver todos",
+            "rota": "admin/eventos"
+        },
+        "servidores": {
+            "label": "Ver servidores",
+            "rota": "admin/servidores"
+        },
+        "atividade": {
+            "label": "Ver todas",
+            "rota": "admin/logs"
+        }
+    },
+    "estados": {
+        "ativo": "Ativo",
+        "agendado": "Agendado",
+        "encerrado": "Encerrado",
+        "online": "Online",
+        "manutencao": "Em manutenção",
+        "agendada": "Manut. agendada",
+        "instavel": "Instável",
+        "fora": "Fora do ar"
+    },
+    "estados_regiao": {
+        "manutencao": "Manutenção",
+        "agendada": "Agendada"
+    },
+    "fontes": {
+        "vivo": {
+            "selo": "ao vivo",
+            "texto": "Consulta direta nas tabelas do jogo."
+        },
+        "serie": {
+            "selo": "série",
+            "texto": "Série diária de admin_metrics_daily — hoje semeada por db/patch_v6_admin.php, até existir telemetria."
+        },
+        "semente": {
+            "selo": "amostra",
+            "texto": "Coluna real com conteúdo de demonstração: os contadores de server_regions foram semeados e não são presença medida."
+        },
+        "ausente": {
+            "selo": "sem origem",
+            "texto": "Ainda não há de onde ler este número. Nada é estimado."
+        }
+    },
+    "vazios": {
+        "grafico": "Sem série no período — admin_metrics_daily não tem linhas nestes dias.",
+        "ranking": "Nenhum jogador cadastrado ainda.",
+        "eventos": "Nenhuma temporada e nenhuma janela de manutenção registradas.",
+        "atividade": "Nada aconteceu ainda — nem no jogo, nem no painel.",
+        "servidores": "Nenhuma região cadastrada em server_regions.",
+        "receita": "Sem receita registrada no período."
+    },
+    "micro": {
+        "sem_base": "sem base de comparação",
+        "compras": "Compras reais: %s (%s em moeda do jogo)",
+        "ocupacao": "Ocupação relativa à região mais cheia",
+        "media": "Média: %s",
+        "vaga": "Vaga em aberto",
+        "jogo": {
+            "label": "Abrir a HUD do jogador",
+            "rota": "inicio"
+        },
+        "servicos_fora": "%s de %s serviços fora do padrão",
+        "sem_progresso": "Ainda sem progresso registrado — %s",
+        "contas": [
+            "%s conta criada",
+            "%s contas criadas"
+        ],
+        "ocupacao_zero": "nenhum jogador on-line agora",
+        "qualificador": {
+            "serie": "série de demonstração",
+            "semente": "contadores de amostra"
+        }
+    }
+}

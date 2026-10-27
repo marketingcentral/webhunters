@@ -1,0 +1,202 @@
+{
+    "brand": {
+        "title": "EXTRACT",
+        "sub": "HUNTERS",
+        "tagline": "SOBREVIVA. EXTRAIA. EVOLUA."
+    },
+    "menu": [
+        {
+            "slug": "jogar",
+            "icon": "terrain",
+            "icon_fill": true,
+            "emblem": "mountain",
+            "title": "ENTRAR EM OPERAÇÃO",
+            "desc": "Escolha seu status operacional e entre em uma região ativa.",
+            "href": "jogar",
+            "active": true
+        },
+        {
+            "slug": "lobby",
+            "icon": "group",
+            "icon_fill": false,
+            "title": "FORMAR ESQUADRÃO",
+            "desc": "Monte uma unidade Hunter com até 4 operadores.",
+            "href": "lobby",
+            "active": false
+        },
+        {
+            "slug": "safe-zone",
+            "icon": "storefront",
+            "icon_fill": false,
+            "title": "SAFE ZONE",
+            "desc": "Assuma um papel civil no perímetro protegido entre operações.",
+            "href": "safe-zone",
+            "active": false
+        },
+        {
+            "slug": "base",
+            "icon": "home_work",
+            "icon_fill": false,
+            "title": "BASE DE CAMPO",
+            "desc": "Gerencie armazenamento, veículos e infraestrutura persistente.",
+            "href": "base",
+            "active": false
+        },
+        {
+            "slug": "configuracoes",
+            "icon": "settings",
+            "icon_fill": true,
+            "title": "CONFIGURAÇÕES",
+            "desc": "Ajustes e opções do jogo.",
+            "href": "configuracoes",
+            "active": false
+        }
+    ],
+    "status": {
+        "title": "STATUS OPERACIONAL",
+        "labels": {
+            "org": "ORGANIZAÇÃO",
+            "base": "BASE DE ORIGEM",
+            "role": "FUNÇÃO",
+            "rank": "PATENTE",
+            "contract": "CONTRATO",
+            "rep": "REP",
+            "survivor": "SEM EXTRAÇÃO DISPONÍVEL"
+        },
+        "href": "perfil"
+    },
+    "season": {
+        "level": 45,
+        "title": "PASSE DE OPERAÇÕES",
+        "subtitle": "TEMPORADA 01",
+        "xp": 2450,
+        "xp_next": 10000,
+        "image": "ui/season-pass.jpg",
+        "href": "loja",
+        "ends_at": "2026-11-08T19:57:37+00:00",
+        "rewards": [
+            {
+                "level": 45,
+                "name": "OPERADOR ESPECTRO",
+                "tier": "LENDÁRIO",
+                "image": "ui/season-pass.jpg",
+                "pos": "50% 12%"
+            },
+            {
+                "level": 52,
+                "name": "TRAJE CAÇADOR",
+                "tier": "ÉPICO",
+                "image": "portraits/op-sniper.jpg",
+                "pos": "50% 10%"
+            },
+            {
+                "level": 60,
+                "name": "UNIFORME VANGUARDA",
+                "tier": "LENDÁRIO",
+                "image": "portraits/op-support.jpg",
+                "pos": "50% 10%"
+            }
+        ]
+    },
+    "contract": {
+        "title": "CONTRATO ATIVO",
+        "action": "VER TODOS",
+        "origin_label": "ORIGEM",
+        "origin": "hunter_command",
+        "href": "missoes",
+        "name": "SINAL PERDIDO",
+        "desc": "RESTAURE A COMUNICAÇÃO DA ESTAÇÃO AO NORTE. ALGUÉM CHEGOU ANTES.",
+        "icon": "my_location",
+        "progress": 3,
+        "total": 8,
+        "reward_label": "RECOMPENSA",
+        "rewards": [
+            {
+                "type": "xp",
+                "value": 7500,
+                "label": "Experiência"
+            },
+            {
+                "type": "cash",
+                "value": 4200,
+                "label": "Dinheiro"
+            },
+            {
+                "type": "reputation",
+                "value": 2,
+                "label": "Reputação"
+            }
+        ]
+    },
+    "news_panel": {
+        "title": "NOTÍCIAS",
+        "action": "VER TODAS",
+        "href": "noticias"
+    },
+    "news_pages": [
+        [
+            {
+                "title": "ATUALIZAÇÃO 8.8.1",
+                "summary": "Novas missões, armas e ajustes de desempenho.",
+                "date": "30/05/2024",
+                "image": "news/news-atualizacao.jpg",
+                "route": "noticias/atualizacao-8-8-1"
+            },
+            {
+                "title": "EVENTO: CAÇA NA FLORESTA",
+                "summary": "Participe do evento especial e ganhe recompensas exclusivas.",
+                "date": "28/05/2024",
+                "image": "news/news-evento-caca.jpg",
+                "route": "noticias/evento-caca-na-floresta"
+            }
+        ],
+        [
+            {
+                "title": "MANUTENÇÃO PROGRAMADA",
+                "summary": "Servidores ficarão offline para manutenção.",
+                "date": "27/05/2024",
+                "image": "news/news-manutencao.jpg",
+                "route": "noticias/manutencao-programada"
+            },
+            {
+                "title": "NOVO MAPA: COMPLEXO MILITAR",
+                "summary": "Uma base fortificada com três pontos de extração e zonas de risco dinâmicas.",
+                "date": "20/05/2024",
+                "image": "maps/complexo-militar.jpg",
+                "route": "noticias/novo-mapa-complexo-militar"
+            }
+        ],
+        [
+            {
+                "title": "BALANCEAMENTO DE ARMAS",
+                "summary": "M4A1 com menos recuo horizontal; Glock 17 ganha 2 balas por carregador.",
+                "date": "15/05/2024",
+                "image": "maps/porto-industrial.jpg",
+                "route": "noticias/balanceamento-de-armas"
+            },
+            {
+                "title": "PASSE DE TEMPORADA 01",
+                "summary": "Cem níveis de recompensas, camuflagens e projetos.",
+                "date": "12/05/2024",
+                "image": "ui/season-pass.jpg",
+                "route": "noticias"
+            }
+        ],
+        [
+            {
+                "title": "MODO DOMINAÇÃO EM TESTE",
+                "summary": "Servidores de teste abertos para o novo modo 6v6.",
+                "date": "08/05/2024",
+                "image": "maps/complexo-militar.jpg",
+                "route": "noticias"
+            },
+            {
+                "title": "REGIÃO: PÂNTANO CINZENTO",
+                "summary": "Nova zona de risco com extração noturna.",
+                "date": "02/05/2024",
+                "image": "regions/region-pantano-cinzento.jpg",
+                "route": "noticias"
+            }
+        ]
+    ]
+}

@@ -102,7 +102,11 @@ abstract class Controller
             'page'   => $page,
             'player' => $this->player(),
             'nav'    => data_mock('nav'),
-            'server' => data_mock('server'),
+            // Rodapé: os textos fixos (links sociais, versão) continuam no cromo, mas a
+            // região, o ping e a situação vêm de `server_regions` — a mesma tabela que
+            // /admin/servidores escreve. Sem isso o rodapé dizia "online" com a região
+            // marcada como fora do ar no painel.
+            'server' => array_replace(data_mock('server'), \App\Repo\ServersRepo::rodape()),
             'data'   => $data,
             'flash'  => flash_all(),
             'csrf'   => Security::csrfToken(),

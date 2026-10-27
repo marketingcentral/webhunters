@@ -1,0 +1,265 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — PAINEL ADMIN · MAPAS  (/admin/mapas)
+
+   Carregado por app/Views/layouts/admin.php pelo slug da página
+   (assets/css/admin/admin-<slug>.css), DEPOIS de admin.css: aqui só entra o
+   que é próprio desta tela. Todo botão, campo, tabela, badge e paginação vem
+   do sistema (.adm-*) — se um estilo daqui está redefinindo um .adm-, é
+   porque a tela tem uma necessidade que o sistema não tem, e o comentário
+   diz qual.
+
+   A tela tem duas geometrias: o catálogo (tabela larga, densa) e o editor
+   (formulário + grade de marcadores). O problema de layout desta página é um
+   só e aparece nos dois: MUITA COLUNA ESTREITA. A resposta é sempre a mesma —
+   largura fixa no que tem tamanho previsível (coordenada, badge, ação) e o
+   resto para o nome, que é o único texto que merece espaço.
+   ========================================================================== */
+
+/* Campo que guarda identificador técnico — slug, caminho de level, imagem.
+   Monoespaçado porque o operador COMPARA esses valores entre linhas e o
+   alinhamento vertical dos caracteres é o que torna a diferença visível. */
+.page-admin-mapas .mono{
+  font-family:var(--font-mono);
+  font-size:.85rem;
+  letter-spacing:.01em;
+}
+
+/* ==========================================================================
+   1. CATÁLOGO
+   ========================================================================== */
+
+/* Os dois filtros da barra não podem esticar junto com a busca: um <select>
+   de 30rem com "Todos os tipos" dentro é ruído. */
+.mapas-lista .mapas-filtro{ flex:0 0 auto; min-width:0 }
+.mapas-lista .mapas-filtro .adm-select{ width:11.5rem }
+
+/* Cabeçalho ordenável. A seta é sempre desenhada (mesmo inativa, apagada):
+   sem ela, nada na coluna anuncia que dá para clicar. */
+.mapas-ord{
+  display:inline-flex;
+  align-items:center;
+  gap:.3rem;
+  color:inherit;
+  white-space:nowrap;
+}
+.mapas-ord__ico{ font-size:1rem; opacity:.35; transition:opacity var(--t-fast) var(--ease) }
+.mapas-ord:hover{ color:var(--c-lime) }
+.mapas-ord:hover .mapas-ord__ico{ opacity:.9 }
+.mapas-tabela th.is-sorted{ color:var(--c-lime) }
+.mapas-tabela th.is-sorted .mapas-ord__ico{ opacity:1 }
+
+/* Larguras: só o nome do mapa cresce. Tudo o mais tem conteúdo de tamanho
+   conhecido, e deixá-lo elástico só faria a coluna do nome encolher. */
+.mapas-tabela{ table-layout:auto }
+.mapas-tabela th:first-child,
+.mapas-tabela td:first-child{ width:3.5rem }
+.mapas-tabela th:nth-child(3),
+.mapas-tabela td:nth-child(3){ width:7rem }
+.mapas-tabela th:nth-child(5),
+.mapas-tabela td:nth-child(5){ width:5.5rem }
+.mapas-tabela th:nth-child(6),
+.mapas-tabela td:nth-child(6){ width:7rem }
+.mapas-tabela th:nth-child(7),
+.mapas-tabela td:nth-child(7){ width:8rem }
+
+/* Nome + slug em duas linhas: o slug é o que o operador digita nos patches e
+   nas integrações, então ele fica visível, e não escondido num tooltip. */
+.mapas-nome{ display:grid; gap:.1rem; min-width:0; color:inherit }
+.mapas-nome strong{ color:var(--c-text); font-weight:500 }
+.mapas-nome small{
+  font-family:var(--font-mono);
+  font-size:.75rem;
+  color:var(--c-dim);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.mapas-nome:hover strong{ color:var(--c-lime) }
+
+/* Terceira linha da célula do mapa: o level da Unreal. É a ponte entre este
+   cadastro e o jogo — quando falta, a linha DIZ que falta, em âmbar, porque
+   um mapa sem level é um mapa que o cliente não consegue carregar. */
+.mapas-ue{
+  display:inline-flex;
+  align-items:center;
+  gap:.25rem;
+  margin-top:.15rem;
+  max-width:100%;
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  color:var(--c-muted);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.mapas-ue__ico{ font-size:.9rem; flex-shrink:0 }
+.mapas-ue--none{ color:var(--c-amber); font-family:var(--font-body); opacity:.85 }
+
+.mapas-vazio{ color:var(--c-dim) }
+
+/* ==========================================================================
+   2. EDITOR
+   ========================================================================== */
+
+/* O <form> do cadastro embrulha DOIS cartões (cadastro + estado do setor).
+   .adm-form já é grid com gap, então basta alinhar o gap ao do painel para
+   que os cartões de dentro do form respirem igual aos de fora. */
+.mapas-editor{ gap:var(--adm-gap) }
+
+/* Aviso de validação no topo do editor. Repete a informação que já está nos
+   campos porque o formulário é longo: sem ele, um erro no fim da página faria
+   o operador achar que o "Salvar" simplesmente não funcionou. */
+.mapas-erro-topo{ margin-bottom:0 }
+
+/* Sub-cabeçalho dentro de um cartão (Extrações). Não é um .adm-card__title —
+   é um degrau abaixo, para não competir com o título do cartão. */
+.mapas-sub{ margin-top:.25rem }
+.mapas-sub__hint{ margin:-.5rem 0 .5rem }
+
+/* Tabela de extrações: nome elástico, os dois seletores com largura fixa
+   suficiente para "TRANSPORTE AEGIS" e "CONDICIONAL" caberem inteiros. */
+.mapas-ex th:nth-child(2),
+.mapas-ex td:nth-child(2){ width:13rem }
+.mapas-ex th:nth-child(3),
+.mapas-ex td:nth-child(3){ width:10rem }
+.mapas-ex .adm-input,
+.mapas-ex .adm-select{ min-height:2.15rem; padding-top:.25rem; padding-bottom:.25rem }
+
+/* ---- grade de marcadores ------------------------------------------------
+   Sete colunas de campo editável. As larguras abaixo somam ~42rem, deixando
+   o resto para o rótulo: em 1366×768 (rem = 15px pelo admin.css) isso são
+   ~630px de coluna fixa contra ~490px de rótulo — cabe sem barra horizontal,
+   que é a regra da tela. */
+.mapas-mk th:first-child,
+.mapas-mk td:first-child{ width:11rem }
+.mapas-mk__coord{ width:6.25rem }
+.mapas-mk__cor{ width:9rem }
+.mapas-mk__anc{ width:8.5rem }
+
+.mapas-mk .adm-input,
+.mapas-mk .adm-select{ min-height:2.15rem; padding-top:.25rem; padding-bottom:.25rem }
+.mapas-mk .adm-select{ font-size:.82rem; padding-right:1.75rem }
+
+/* Coordenada é número que se COMPARA entre linhas: monoespaçada e alinhada à
+   direita, sem os esporros do spinner nativo roubando 1rem de largura útil. */
+.mapas-mk__coord .adm-input,
+.mapas-novo-grid .num.adm-input{
+  font-family:var(--font-mono);
+  font-size:.82rem;
+  text-align:right;
+  -moz-appearance:textfield;
+  appearance:textfield;
+}
+.mapas-mk__coord .adm-input::-webkit-outer-spin-button,
+.mapas-mk__coord .adm-input::-webkit-inner-spin-button,
+.mapas-novo-grid .num.adm-input::-webkit-outer-spin-button,
+.mapas-novo-grid .num.adm-input::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+
+/* A linha inteira acende quando algum campo dela foi recusado: numa grade de
+   trinta linhas, a borda vermelha de um <input> de 6rem passa despercebida. */
+.mapas-mk tr.is-invalid-row{ background:rgba(var(--c-red-rgb),.07) }
+.mapas-mk tr.is-invalid-row:hover{ background:rgba(var(--c-red-rgb),.11) }
+.mapas-mk .adm-error{ margin-top:.25rem; letter-spacing:.02em; text-transform:none }
+
+/* Linha de marcador novo: mesma ordem de campos da grade acima, para o olho
+   não ter que reaprender o formulário. */
+.mapas-novo-grid{
+  display:grid;
+  gap:.75rem 1rem;
+  grid-template-columns:11rem minmax(8rem,1fr) 7rem 7rem 9rem 8.5rem auto;
+  align-items:start;
+}
+.mapas-novo-grid__acao .adm-btn{ width:100% }
+
+/* ---- ações do rodapé ---------------------------------------------------- */
+.mapas-acoes{ width:100%; margin:0; padding-top:0; border-top:0 }
+.mapas-acoes .adm-meta{ margin-left:auto; text-align:right; max-width:32rem }
+
+/* Exclusão impedida por vínculo. É TEXTO, e não um botão desabilitado: um
+   botão apagado só diz "não dá"; a frase diz quantas bases e quantas partidas
+   estão presas neste mapa, que é a informação de que o operador precisa para
+   resolver o bloqueio. */
+.mapas-bloqueio{
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  max-width:38rem;
+  font-size:.8rem;
+  line-height:1.35;
+  color:var(--c-amber);
+}
+.mapas-bloqueio .ms{ font-size:1.05rem; flex-shrink:0 }
+
+/* Nota sobre as chaves de meta que o formulário preserva sem editar. */
+.mapas-preservado{
+  display:flex;
+  align-items:flex-start;
+  gap:.5rem;
+  margin-top:1rem;
+  padding:.6rem .75rem;
+  border:1px dashed var(--adm-line-2);
+  border-radius:var(--adm-r-sm);
+  font-size:.8rem;
+  line-height:1.4;
+  color:var(--c-muted);
+}
+.mapas-preservado .ms{ font-size:1.05rem; color:var(--c-cyan); flex-shrink:0 }
+.mapas-preservado code{
+  font-family:var(--font-mono);
+  font-size:.95em;
+  color:var(--c-text-2);
+}
+
+/* ==========================================================================
+   3. CONFIRMAÇÃO DE EXCLUSÃO
+   Cartão vermelho, no topo do conteúdo, descrevendo a consequência EXATA.
+   ========================================================================== */
+.mapas-confirma{ border-color:rgba(var(--c-red-rgb),.45) }
+.mapas-confirma .adm-card__head{ border-bottom-color:rgba(var(--c-red-rgb),.25) }
+.mapas-confirma .adm-card__title{ color:#ff8f92; display:flex; align-items:center; gap:.45rem }
+.mapas-confirma .adm-card__title .ms{ font-size:1.25rem }
+.mapas-confirma__txt{
+  font-size:.9rem;
+  line-height:1.5;
+  color:var(--c-text-2);
+  max-width:62ch;
+}
+.mapas-confirma__txt strong{ color:var(--c-text) }
+.mapas-confirma__acts{ margin-top:1rem }
+
+/* ==========================================================================
+   4. RESPONSIVO
+   O ponto de ruptura desta tela é a grade de marcadores, não a página.
+   ========================================================================== */
+@media (max-width:1400px){
+  .mapas-mk th:first-child,
+  .mapas-mk td:first-child{ width:9.5rem }
+  .mapas-mk__cor{ width:8rem }
+  .mapas-mk__anc{ width:7.5rem }
+  .mapas-novo-grid{ grid-template-columns:9.5rem minmax(7rem,1fr) 6.5rem 6.5rem 8rem 7.5rem auto }
+}
+
+@media (max-width:1100px){
+  .mapas-lista .mapas-filtro .adm-select{ width:9.5rem }
+  /* Abaixo daqui a grade de sete campos não cabe em linha: ela vira duas
+     faixas por marcador — identificação em cima, posição embaixo. */
+  .mapas-novo-grid{ grid-template-columns:repeat(3,minmax(0,1fr)) }
+  .mapas-novo-grid__acao{ grid-column:span 3 }
+  .mapas-novo-grid__acao .adm-btn{ width:auto }
+  .mapas-novo-grid__acao .adm-label{ display:none }
+}
+
+@media (max-width:900px){
+  /* O catálogo perde as colunas que o editor mostra inteiras de qualquer
+     forma; nome, tipo e estado são o que identifica a linha. */
+  .mapas-tabela th:nth-child(4),
+  .mapas-tabela td:nth-child(4),
+  .mapas-tabela th:nth-child(5),
+  .mapas-tabela td:nth-child(5){ display:none }
+  .mapas-novo-grid{ grid-template-columns:repeat(2,minmax(0,1fr)) }
+  .mapas-novo-grid__acao{ grid-column:span 2 }
+  .mapas-acoes .adm-meta{ margin-left:0; text-align:left }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "extracthunters-cloudflare",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Extract Hunters portado para Cloudflare Workers + D1 + R2",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "npm run build && wrangler dev",
+    "typecheck": "tsc --noEmit",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:seed:local": "wrangler d1 execute DB --local --file=seed/conteudo.sql",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "db:seed:remote": "wrangler d1 execute DB --remote --file=seed/conteudo.sql",
+    "r2:upload:local": "node scripts/upload-r2.mjs --local",
+    "r2:upload:remote": "node scripts/upload-r2.mjs --remote",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261023.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.20.5",
+    "typescript": "^5.6.0",
+    "wrangler": "^4.0.0"
+  }
+}

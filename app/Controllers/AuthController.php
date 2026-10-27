@@ -9,12 +9,6 @@ use App\Core\Security;
 final class AuthController extends Controller
 {
     /** @param array<string, string> $params */
-    public function root(Request $request, array $params = []): Response
-    {
-        return $this->redirect($this->isLogged() ? 'inicio' : 'login');
-    }
-
-    /** @param array<string, string> $params */
     public function login(Request $request, array $params = []): Response
     {
         // app/Data/login.php (dono: agente da tela) refina os textos de app/Data/auth.php.
@@ -33,17 +27,40 @@ final class AuthController extends Controller
                 try {
                     $account = \App\Repo\UserRepo::findByLogin($user);
                     if ($account !== null && \App\Repo\UserRepo::verify($account, $pass)) {
-                        $this->signIn((int)$account['id']);
-                        \App\Core\Database::run('UPDATE users SET last_login = NOW() WHERE id = :id', ['id' => (int)$account['id']]);
-                        flash('ok', 'Bem-vindo de volta, ' . (string)$account['username'] . '.');
-                        return $this->redirect('inicio');
+                        // Senha certa NÃO é o fim da checagem: `users.status` e a tabela `bans`
+                        // decidem se esta conta ainda pode entrar. O estado é consultado AGORA
+                        // (e não copiado de um cache), e um ban temporário vencido é desfeito
+                        // dentro de AccountGuard::estado() — sem isso, "banir por 3 dias" seria
+                        // banir para sempre, porque não existe cron neste projeto.
+                        $estado = \App\Core\AccountGuard::estado((int)$account['id']);
+                        if ($estado['bloqueado']) {
+                            // Detalhar aqui não vaza quais contas existem: só chega neste ponto
+                            // quem já provou a senha. Quem erra a senha continua vendo o
+                            // genérico "Usuário ou senha inválidos" logo abaixo.
+                            $error = \App\Core\AccountGuard::mensagem($estado);
+                            \App\Repo\AdminRepo::registrar(
+                                null,
+                                'login_bloqueado',
+                                'usuario',
+                                (string)$account['id'],
+                                'Login recusado: conta em ' . (string)$estado['status'] . '.',
+                                ['kind' => $estado['kind'], 'expires_at' => $estado['expires_at']],
+                                $request->ip()
+                            );
+                        } else {
+                            $this->signIn((int)$account['id']);
+                            \App\Core\Database::run('UPDATE users SET last_login = NOW() WHERE id = :id', ['id' => (int)$account['id']]);
+                            flash('ok', 'Bem-vindo de volta, ' . (string)$account['username'] . '.');
+                            return $this->redirect('inicio');
+                        }
+                    } else {
+                        if ($account === null) {
+                            // gasta o mesmo tempo de um hash real: sem isso o tempo de resposta
+                            // denuncia quais contas existem (enumeração de usuários)
+                            password_verify($pass, '$2y$12$usuarioInexistenteXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+                        }
+                        $error = 'Usuário ou senha inválidos.';
                     }
-                    if ($account === null) {
-                        // gasta o mesmo tempo de um hash real: sem isso o tempo de resposta
-                        // denuncia quais contas existem (enumeração de usuários)
-                        password_verify($pass, '$2y$12$usuarioInexistenteXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
-                    }
-                    $error = 'Usuário ou senha inválidos.';
                 } catch (\Throwable $e) {
                     // banco fora do ar: o jogador vê um aviso legível, não uma página 500
                     error_log('[extracthunters] login: ' . $e->getMessage());
@@ -68,7 +85,16 @@ final class AuthController extends Controller
         $errors = [];
         $values = ['user' => '', 'email' => '', 'terms' => false];
 
-        if ($request->isPost()) {
+        // Chave `registration_open` de /admin/configuracoes. Estava no banco desde o patch v6
+        // e ninguém a lia: fechar o cadastro no painel não fechava cadastro nenhum. A leitura
+        // é feita aqui, na única porta que cria conta, e o padrão é ABERTO — falha de banco ou
+        // chave apagada não pode fechar o jogo para quem quer entrar.
+        $aberto = (bool)\App\Repo\AdminSettingsRepo::valor('registration_open', true);
+        if (!$aberto) {
+            $errors['form'] = 'O cadastro de novas contas está temporariamente fechado.';
+        }
+
+        if ($request->isPost() && $aberto) {
             $this->csrf($request);
             // Corte largo só para limitar o que volta para a tela: cortar em 24/120 aqui criaria
             // a conta com um nome/e-mail DIFERENTE do que a pessoa digitou, em silêncio.
@@ -190,5 +216,8 @@ final class AuthController extends Controller
         $_SESSION['user_id'] = $userId;
         unset($_SESSION['player']);  // limpa qualquer cópia mock antiga
         unset($_SESSION['_csrf']);   // rotaciona o token CSRF junto com a sessão
+        // A conta acabou de ser verificada: carimba para o AccountGuard não repetir a
+        // consulta na primeira tela depois do login.
+        \App\Core\AccountGuard::carimbar();
     }
 }

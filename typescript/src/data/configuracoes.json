@@ -1,0 +1,1450 @@
+{
+    "title": "CONFIGURAÇÕES",
+    "tabs": [
+        {
+            "slug": "jogabilidade",
+            "label": "JOGABILIDADE",
+            "desc": "Ajuste as preferências gerais",
+            "icon": "settings"
+        },
+        {
+            "slug": "controles",
+            "label": "CONTROLES",
+            "desc": "Configure controles e atalhos",
+            "icon": "sports_esports"
+        },
+        {
+            "slug": "video",
+            "label": "VÍDEO",
+            "desc": "Ajuste gráfico e desempenho",
+            "icon": "desktop_windows"
+        },
+        {
+            "slug": "audio",
+            "label": "ÁUDIO",
+            "desc": "Som, volumes e dispositivos",
+            "icon": "volume_up"
+        },
+        {
+            "slug": "interface",
+            "label": "INTERFACE",
+            "desc": "HUD, cores e layouts",
+            "icon": "devices"
+        },
+        {
+            "slug": "comunicacao",
+            "label": "COMUNICAÇÃO",
+            "desc": "Voz, chat e notificações",
+            "icon": "mic"
+        },
+        {
+            "slug": "conta",
+            "label": "CONTA",
+            "desc": "Conta, privacidade e segurança",
+            "icon": "person"
+        }
+    ],
+    "groups": {
+        "jogabilidade": [
+            {
+                "title": "GERAL",
+                "items": [
+                    {
+                        "key": "dificuldade",
+                        "label": "Dificuldade",
+                        "type": "stepper",
+                        "value": "MÉDIA",
+                        "options": [
+                            "FÁCIL",
+                            "NORMAL",
+                            "MÉDIA",
+                            "DIFÍCIL",
+                            "EXTREMO"
+                        ],
+                        "active": true
+                    },
+                    {
+                        "key": "dicas",
+                        "label": "Dicas",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "tutoriais",
+                        "label": "Tutoriais",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "pular_intro",
+                        "label": "Pular introduções",
+                        "type": "toggle",
+                        "value": false
+                    }
+                ]
+            },
+            {
+                "title": "COMBATE",
+                "items": [
+                    {
+                        "key": "aim_assist",
+                        "label": "Assistência de mira",
+                        "type": "range",
+                        "value": 60,
+                        "unit": "%"
+                    },
+                    {
+                        "key": "aim_vehicle",
+                        "label": "Assistência de mira - Veículos",
+                        "type": "range",
+                        "value": 40,
+                        "unit": "%"
+                    },
+                    {
+                        "key": "mark_enemies",
+                        "label": "Marcação de inimigos",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "dmg_indicator",
+                        "label": "Indicador de dano",
+                        "type": "stepper",
+                        "value": "COMPLETO",
+                        "options": [
+                            "DESATIVADO",
+                            "SIMPLES",
+                            "COMPLETO"
+                        ]
+                    },
+                    {
+                        "key": "death_cam",
+                        "label": "Câmera de morte",
+                        "type": "toggle",
+                        "value": true
+                    }
+                ]
+            },
+            {
+                "title": "EXPLORAÇÃO",
+                "items": [
+                    {
+                        "key": "map_markers",
+                        "label": "Marcadores de mapa",
+                        "type": "stepper",
+                        "value": "TODOS",
+                        "options": [
+                            "NENHUM",
+                            "ESSENCIAIS",
+                            "TODOS"
+                        ]
+                    },
+                    {
+                        "key": "item_glow",
+                        "label": "Destaque de itens",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "fog_of_war",
+                        "label": "Névoa de guerra",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "compass",
+                        "label": "Bússola",
+                        "type": "toggle",
+                        "value": true
+                    }
+                ]
+            },
+            {
+                "title": "SOBREVIVÊNCIA",
+                "items": [
+                    {
+                        "key": "hunger",
+                        "label": "Fome e sede",
+                        "type": "stepper",
+                        "value": "PADRÃO",
+                        "options": [
+                            "LEVE",
+                            "PADRÃO",
+                            "REALISTA"
+                        ]
+                    },
+                    {
+                        "key": "perm_injuries",
+                        "label": "Lesões permanentes",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "item_loss",
+                        "label": "Perda de itens na morte",
+                        "type": "stepper",
+                        "value": "PARCIAL",
+                        "options": [
+                            "NENHUMA",
+                            "PARCIAL",
+                            "TOTAL"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "controles": [
+            {
+                "title": "MOVIMENTO",
+                "items": [
+                    {
+                        "key": "k_forward",
+                        "label": "Avançar",
+                        "type": "key",
+                        "value": "W"
+                    },
+                    {
+                        "key": "k_back",
+                        "label": "Recuar",
+                        "type": "key",
+                        "value": "S"
+                    },
+                    {
+                        "key": "k_left",
+                        "label": "Esquerda",
+                        "type": "key",
+                        "value": "A"
+                    },
+                    {
+                        "key": "k_right",
+                        "label": "Direita",
+                        "type": "key",
+                        "value": "D"
+                    },
+                    {
+                        "key": "k_sprint",
+                        "label": "Correr",
+                        "type": "key",
+                        "value": "SHIFT"
+                    },
+                    {
+                        "key": "k_crouch",
+                        "label": "Agachar",
+                        "type": "key",
+                        "value": "C"
+                    },
+                    {
+                        "key": "k_prone",
+                        "label": "Deitar",
+                        "type": "key",
+                        "value": "Z"
+                    },
+                    {
+                        "key": "k_jump",
+                        "label": "Pular / Escalar",
+                        "type": "key",
+                        "value": "ESPAÇO"
+                    }
+                ]
+            },
+            {
+                "title": "COMBATE",
+                "items": [
+                    {
+                        "key": "k_fire",
+                        "label": "Atirar",
+                        "type": "key",
+                        "value": "MOUSE 1"
+                    },
+                    {
+                        "key": "k_aim",
+                        "label": "Mirar",
+                        "type": "key",
+                        "value": "MOUSE 2"
+                    },
+                    {
+                        "key": "k_reload",
+                        "label": "Recarregar",
+                        "type": "key",
+                        "value": "R"
+                    },
+                    {
+                        "key": "k_melee",
+                        "label": "Ataque corpo a corpo",
+                        "type": "key",
+                        "value": "V"
+                    },
+                    {
+                        "key": "k_grenade",
+                        "label": "Granada",
+                        "type": "key",
+                        "value": "G"
+                    },
+                    {
+                        "key": "k_firemode",
+                        "label": "Modo de disparo",
+                        "type": "key",
+                        "value": "B"
+                    }
+                ]
+            },
+            {
+                "title": "INTERAÇÃO",
+                "items": [
+                    {
+                        "key": "k_interact",
+                        "label": "Interagir",
+                        "type": "key",
+                        "value": "F"
+                    },
+                    {
+                        "key": "k_inventory",
+                        "label": "Inventário",
+                        "type": "key",
+                        "value": "TAB"
+                    },
+                    {
+                        "key": "k_map",
+                        "label": "Mapa",
+                        "type": "key",
+                        "value": "M"
+                    },
+                    {
+                        "key": "k_heal",
+                        "label": "Curar",
+                        "type": "key",
+                        "value": "4"
+                    },
+                    {
+                        "key": "k_ping",
+                        "label": "Marcar",
+                        "type": "key",
+                        "value": "MOUSE 3"
+                    }
+                ]
+            },
+            {
+                "title": "MOUSE",
+                "items": [
+                    {
+                        "key": "sens",
+                        "label": "Sensibilidade",
+                        "type": "range",
+                        "value": 45,
+                        "unit": "%"
+                    },
+                    {
+                        "key": "sens_ads",
+                        "label": "Sensibilidade ao mirar",
+                        "type": "range",
+                        "value": 70,
+                        "unit": "%"
+                    },
+                    {
+                        "key": "invert_y",
+                        "label": "Inverter eixo Y",
+                        "type": "toggle",
+                        "value": false
+                    },
+                    {
+                        "key": "raw_input",
+                        "label": "Entrada direta (raw)",
+                        "type": "toggle",
+                        "value": true
+                    }
+                ]
+            }
+        ],
+        "video": [
+            {
+                "title": "TELA",
+                "items": [
+                    {
+                        "key": "display_mode",
+                        "label": "Modo de exibição",
+                        "type": "stepper",
+                        "value": "TELA CHEIA",
+                        "options": [
+                            "JANELA",
+                            "JANELA SEM BORDA",
+                            "TELA CHEIA"
+                        ]
+                    },
+                    {
+                        "key": "resolution",
+                        "label": "Resolução",
+                        "type": "stepper",
+                        "value": "1920 x 1080",
+                        "options": [
+                            "1280 x 720",
+                            "1600 x 900",
+                            "1920 x 1080",
+                            "2560 x 1440",
+                            "3840 x 2160"
+                        ]
+                    },
+                    {
+                        "key": "refresh",
+                        "label": "Taxa de atualização",
+                        "type": "stepper",
+                        "value": "144 Hz",
+                        "options": [
+                            "60 Hz",
+                            "120 Hz",
+                            "144 Hz",
+                            "240 Hz"
+                        ]
+                    },
+                    {
+                        "key": "vsync",
+                        "label": "V-Sync",
+                        "type": "toggle",
+                        "value": false
+                    },
+                    {
+                        "key": "fps_cap",
+                        "label": "Limite de FPS",
+                        "type": "stepper",
+                        "value": "144",
+                        "options": [
+                            "60",
+                            "120",
+                            "144",
+                            "ILIMITADO"
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": "QUALIDADE",
+                "items": [
+                    {
+                        "key": "preset",
+                        "label": "Predefinição gráfica",
+                        "type": "stepper",
+                        "value": "ALTA",
+                        "options": [
+                            "BAIXA",
+                            "MÉDIA",
+                            "ALTA",
+                            "ULTRA",
+                            "PERSONALIZADA"
+                        ]
+                    },
+                    {
+                        "key": "textures",
+                        "label": "Texturas",
+                        "type": "stepper",
+                        "value": "ALTA",
+                        "options": [
+                            "BAIXA",
+                            "MÉDIA",
+                            "ALTA",
+                            "ULTRA"
+                        ]
+                    },
+                    {
+                        "key": "shadows",
+                        "label": "Sombras",
+                        "type": "stepper",
+                        "value": "MÉDIA",
+                        "options": [
+                            "BAIXA",
+                            "MÉDIA",
+                            "ALTA",
+                            "ULTRA"
+                        ]
+                    },
+                    {
+                        "key": "foliage",
+                        "label": "Vegetação",
+                        "type": "stepper",
+                        "value": "ALTA",
+                        "options": [
+                            "BAIXA",
+                            "MÉDIA",
+                            "ALTA",
+                            "ULTRA"
+                        ]
+                    },
+                    {
+                        "key": "aa",
+                        "label": "Anti-aliasing",
+                        "type": "stepper",
+                        "value": "TAA",
+                        "options": [
+                            "DESATIVADO",
+                            "FXAA",
+                            "TAA",
+                            "DLSS"
+                        ]
+                    },
+                    {
+                        "key": "render_scale",
+                        "label": "Escala de renderização",
+                        "type": "range",
+                        "value": 100,
+                        "unit": "%"
+                    }
+                ]
+            },
+            {
+                "title": "EFEITOS",
+                "items": [
+                    {
+                        "key": "motion_blur",
+                        "label": "Desfoque de movimento",
+                        "type": "toggle",
+                        "value": false
+                    },
+                    {
+                        "key": "bloom",
+                        "label": "Bloom",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "film_grain",
+                        "label": "Granulação",
+                        "type": "range",
+                        "value": 20,
+                        "unit": "%"
+                    },
+                    {
+                        "key": "fov",
+                        "label": "Campo de visão",
+                        "type": "range",
+                        "value": 90,
+                        "unit": ""
+                    },
+                    {
+                        "key": "brightness",
+                        "label": "Brilho",
+                        "type": "range",
+                        "value": 50,
+                        "unit": "%"
+                    }
+                ]
+            }
+        ],
+        "audio": [
+            {
+                "title": "VOLUMES",
+                "items": [
+                    {
+                        "key": "vol_master",
+                        "label": "Volume geral",
+                        "type": "range",
+                        "value": 80,
+                        "unit": "%"
+                    },
+                    {
+                        "key": "vol_music",
+                        "label": "Música",
+                        "type": "range",
+                        "value": 35,
+                        "unit": "%"
+                    },
+                    {
+                        "key": "vol_sfx",
+                        "label": "Efeitos",
+                        "type": "range",
+                        "value": 90,
+                        "unit": "%"
+                    },
+                    {
+                        "key": "vol_voice",
+                        "label": "Diálogos",
+                        "type": "range",
+                        "value": 75,
+                        "unit": "%"
+                    },
+                    {
+                        "key": "vol_ui",
+                        "label": "Interface",
+                        "type": "range",
+                        "value": 60,
+                        "unit": "%"
+                    }
+                ]
+            },
+            {
+                "title": "DISPOSITIVOS",
+                "items": [
+                    {
+                        "key": "out_device",
+                        "label": "Dispositivo de saída",
+                        "type": "stepper",
+                        "value": "PADRÃO DO SISTEMA",
+                        "options": [
+                            "PADRÃO DO SISTEMA",
+                            "FONES (USB)",
+                            "ALTO-FALANTES"
+                        ]
+                    },
+                    {
+                        "key": "in_device",
+                        "label": "Dispositivo de entrada",
+                        "type": "stepper",
+                        "value": "MICROFONE (USB)",
+                        "options": [
+                            "PADRÃO DO SISTEMA",
+                            "MICROFONE (USB)"
+                        ]
+                    },
+                    {
+                        "key": "spatial",
+                        "label": "Áudio espacial",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "night_mode",
+                        "label": "Modo noturno (compressão)",
+                        "type": "toggle",
+                        "value": false
+                    }
+                ]
+            }
+        ],
+        "interface": [
+            {
+                "title": "HUD",
+                "items": [
+                    {
+                        "key": "hud_scale",
+                        "label": "Escala do HUD",
+                        "type": "range",
+                        "value": 100,
+                        "unit": "%"
+                    },
+                    {
+                        "key": "hud_opacity",
+                        "label": "Opacidade do HUD",
+                        "type": "range",
+                        "value": 85,
+                        "unit": "%"
+                    },
+                    {
+                        "key": "minimap",
+                        "label": "Minimapa",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "hit_marker",
+                        "label": "Marcador de acerto",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "crosshair",
+                        "label": "Estilo da mira",
+                        "type": "stepper",
+                        "value": "PONTO",
+                        "options": [
+                            "PONTO",
+                            "CRUZ",
+                            "CÍRCULO",
+                            "DINÂMICA"
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": "CORES E ACESSIBILIDADE",
+                "items": [
+                    {
+                        "key": "accent",
+                        "label": "Cor de destaque",
+                        "type": "stepper",
+                        "value": "LIME",
+                        "options": [
+                            "LIME",
+                            "CIANO",
+                            "ÂMBAR",
+                            "VERMELHO"
+                        ]
+                    },
+                    {
+                        "key": "colorblind",
+                        "label": "Modo daltonismo",
+                        "type": "stepper",
+                        "value": "DESATIVADO",
+                        "options": [
+                            "DESATIVADO",
+                            "PROTANOPIA",
+                            "DEUTERANOPIA",
+                            "TRITANOPIA"
+                        ]
+                    },
+                    {
+                        "key": "subtitles",
+                        "label": "Legendas",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "reduce_motion",
+                        "label": "Reduzir animações",
+                        "type": "toggle",
+                        "value": false
+                    }
+                ]
+            }
+        ],
+        "comunicacao": [
+            {
+                "title": "VOZ",
+                "items": [
+                    {
+                        "key": "voice_chat",
+                        "label": "Chat de voz",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "voice_mode",
+                        "label": "Ativação",
+                        "type": "stepper",
+                        "value": "PRESSIONAR PARA FALAR",
+                        "options": [
+                            "PRESSIONAR PARA FALAR",
+                            "ATIVAÇÃO POR VOZ"
+                        ]
+                    },
+                    {
+                        "key": "voice_vol",
+                        "label": "Volume de voz",
+                        "type": "range",
+                        "value": 70,
+                        "unit": "%"
+                    },
+                    {
+                        "key": "mic_vol",
+                        "label": "Volume do microfone",
+                        "type": "range",
+                        "value": 65,
+                        "unit": "%"
+                    }
+                ]
+            },
+            {
+                "title": "CHAT E NOTIFICAÇÕES",
+                "items": [
+                    {
+                        "key": "text_chat",
+                        "label": "Chat de texto",
+                        "type": "stepper",
+                        "value": "AMIGOS E SQUAD",
+                        "options": [
+                            "TODOS",
+                            "AMIGOS E SQUAD",
+                            "DESATIVADO"
+                        ]
+                    },
+                    {
+                        "key": "profanity",
+                        "label": "Filtro de linguagem",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "invites",
+                        "label": "Convites de lobby",
+                        "type": "stepper",
+                        "value": "AMIGOS",
+                        "options": [
+                            "TODOS",
+                            "AMIGOS",
+                            "NINGUÉM"
+                        ]
+                    },
+                    {
+                        "key": "notif_friends",
+                        "label": "Notificar amigos online",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "notif_mail",
+                        "label": "Notificar novas mensagens",
+                        "type": "toggle",
+                        "value": true
+                    }
+                ]
+            }
+        ],
+        "conta": [
+            {
+                "title": "PERFIL",
+                "items": [
+                    {
+                        "key": "username",
+                        "label": "Nome de usuário",
+                        "type": "text",
+                        "value": "HUNTER_07"
+                    },
+                    {
+                        "key": "email",
+                        "label": "E-mail",
+                        "type": "text",
+                        "value": "hunter07@extracthunters.gg"
+                    },
+                    {
+                        "key": "region",
+                        "label": "Região preferida",
+                        "type": "stepper",
+                        "value": "AMÉRICA DO SUL",
+                        "options": [
+                            "AMÉRICA DO SUL",
+                            "AMÉRICA DO NORTE",
+                            "EUROPA",
+                            "ÁSIA"
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": "PRIVACIDADE",
+                "items": [
+                    {
+                        "key": "profile_public",
+                        "label": "Perfil público",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "show_online",
+                        "label": "Mostrar status online",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "stats_visible",
+                        "label": "Estatísticas visíveis",
+                        "type": "stepper",
+                        "value": "AMIGOS",
+                        "options": [
+                            "TODOS",
+                            "AMIGOS",
+                            "NINGUÉM"
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": "SEGURANÇA",
+                "items": [
+                    {
+                        "key": "two_factor",
+                        "label": "Autenticação em dois fatores",
+                        "type": "toggle",
+                        "value": false
+                    },
+                    {
+                        "key": "login_alerts",
+                        "label": "Alertas de novo login",
+                        "type": "toggle",
+                        "value": true
+                    },
+                    {
+                        "key": "steam_link",
+                        "label": "Conta Steam vinculada",
+                        "type": "stepper",
+                        "value": "VINCULADA",
+                        "options": [
+                            "VINCULADA",
+                            "DESVINCULAR"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "difficulty": {
+        "title": "DIFICULDADE",
+        "desc": "A dificuldade afeta o comportamento dos inimigos, os recursos disponíveis e a sobrevivência geral.",
+        "image": "ui/difficulty-preview.jpg",
+        "current": "MÉDIA",
+        "options": [
+            {
+                "slug": "facil",
+                "label": "FÁCIL",
+                "icon": "burst:6",
+                "desc": "Inimigos previsíveis e recursos abundantes. Ideal para aprender o básico."
+            },
+            {
+                "slug": "normal",
+                "label": "NORMAL",
+                "icon": "burst:8",
+                "desc": "Desafio moderado com recursos suficientes para explorar sem pressa."
+            },
+            {
+                "slug": "media",
+                "label": "MÉDIA",
+                "icon": "skull",
+                "desc": "Equilíbrio entre desafio e sobrevivência. Recomendado para a maioria dos jogadores.",
+                "active": true
+            },
+            {
+                "slug": "dificil",
+                "label": "DIFÍCIL",
+                "icon": "burst:12",
+                "desc": "Inimigos agressivos, recursos escassos e lesões que exigem tratamento."
+            },
+            {
+                "slug": "extremo",
+                "label": "EXTREMO",
+                "icon": "burst:8:hex",
+                "desc": "Sem segundas chances: morte permanente e perda total de itens."
+            }
+        ],
+        "stats": [
+            {
+                "icon": "groups",
+                "label": "Inimigos",
+                "src": "@level:dificuldade",
+                "field": "enemies",
+                "value": "Média"
+            },
+            {
+                "icon": "work",
+                "label": "Recursos",
+                "src": "@level:dificuldade",
+                "field": "loot",
+                "value": "Médios"
+            },
+            {
+                "icon": "my_location",
+                "label": "Dano do jogador",
+                "src": "@level:dificuldade",
+                "field": "dmg_out",
+                "value": "100%"
+            },
+            {
+                "icon": "close",
+                "label": "Dano recebido",
+                "src": "@level:dificuldade",
+                "field": "dmg_in",
+                "value": "100%"
+            },
+            {
+                "icon": "healing",
+                "label": "Regeneração de vida",
+                "src": "@level:dificuldade",
+                "field": "regen",
+                "value": "Normal"
+            }
+        ],
+        "reset": "RESTAURAR PADRÕES",
+        "apply": "APLICAR ALTERAÇÕES"
+    },
+    "difficulty_levels": {
+        "FÁCIL": {
+            "enemies": "Passivos",
+            "loot": "Abundantes",
+            "dmg_out": "130%",
+            "dmg_in": "70%",
+            "regen": "Rápida"
+        },
+        "NORMAL": {
+            "enemies": "Moderados",
+            "loot": "Suficientes",
+            "dmg_out": "115%",
+            "dmg_in": "85%",
+            "regen": "Normal"
+        },
+        "MÉDIA": {
+            "enemies": "Atentos",
+            "loot": "Médios",
+            "dmg_out": "100%",
+            "dmg_in": "100%",
+            "regen": "Normal"
+        },
+        "DIFÍCIL": {
+            "enemies": "Agressivos",
+            "loot": "Escassos",
+            "dmg_out": "90%",
+            "dmg_in": "125%",
+            "regen": "Lenta"
+        },
+        "EXTREMO": {
+            "enemies": "Letais",
+            "loot": "Raros",
+            "dmg_out": "75%",
+            "dmg_in": "180%",
+            "regen": "Nenhuma"
+        }
+    },
+    "details": {
+        "controles": {
+            "title": "PERFIL DE CONTROLE",
+            "desc": "O perfil define o conjunto base de teclas. Qualquer atalho pode ser reatribuído sem sair do perfil.",
+            "image": "ui/skill-preview.jpg",
+            "current": "PADRÃO",
+            "options": [
+                {
+                    "slug": "padrao",
+                    "label": "PADRÃO",
+                    "icon": "sports_esports",
+                    "desc": "Disposição clássica WASD. Recomendado para teclado e mouse.",
+                    "active": true
+                },
+                {
+                    "slug": "canhoto",
+                    "label": "CANHOTO",
+                    "icon": "swap_horiz",
+                    "desc": "Movimento nas setas e ações espelhadas para a mão esquerda."
+                },
+                {
+                    "slug": "tatico",
+                    "label": "TÁTICO",
+                    "icon": "radar",
+                    "desc": "Agachar e deitar alternados, granadas em teclas dedicadas."
+                },
+                {
+                    "slug": "controle",
+                    "label": "GAMEPAD",
+                    "icon": "videogame_asset",
+                    "desc": "Mapeamento para controle com gatilhos analógicos."
+                },
+                {
+                    "slug": "personalizado",
+                    "label": "CUSTOM",
+                    "icon": "tune",
+                    "desc": "Perfil livre: nenhuma tecla é sobrescrita por atualizações."
+                }
+            ],
+            "stats": [
+                {
+                    "icon": "keyboard",
+                    "label": "Atalhos mapeados",
+                    "src": "@keybinds",
+                    "value": "19"
+                },
+                {
+                    "icon": "warning",
+                    "label": "Conflitos",
+                    "src": "@conflicts",
+                    "value": "Nenhum"
+                },
+                {
+                    "icon": "my_location",
+                    "label": "Sensibilidade",
+                    "src": "sens",
+                    "fmt": "pct",
+                    "value": "45%"
+                },
+                {
+                    "icon": "visibility",
+                    "label": "Sensibilidade ADS",
+                    "src": "sens_ads",
+                    "fmt": "pct",
+                    "value": "70%"
+                },
+                {
+                    "icon": "bolt",
+                    "label": "Entrada direta",
+                    "src": "raw_input",
+                    "fmt": "onoff",
+                    "on": "Ativa",
+                    "off": "Inativa",
+                    "value": "Ativa"
+                }
+            ],
+            "reset": "RESTAURAR PADRÕES",
+            "apply": "APLICAR ALTERAÇÕES"
+        },
+        "video": {
+            "title": "PREDEFINIÇÃO GRÁFICA",
+            "desc": "A predefinição ajusta texturas, sombras e efeitos de uma vez em um único perfil.",
+            "image": "bg/forest-generic.jpg",
+            "current": "ALTA",
+            "options": [
+                {
+                    "slug": "baixa",
+                    "label": "BAIXA",
+                    "icon": "speed",
+                    "desc": "Prioriza taxa de quadros em máquinas modestas."
+                },
+                {
+                    "slug": "media",
+                    "label": "MÉDIA",
+                    "icon": "tune",
+                    "desc": "Equilíbrio entre nitidez e desempenho."
+                },
+                {
+                    "slug": "alta",
+                    "label": "ALTA",
+                    "icon": "desktop_windows",
+                    "desc": "Texturas e vegetação em alta definição, sombras suaves. Perfil recomendado para placas atuais.",
+                    "active": true
+                },
+                {
+                    "slug": "ultra",
+                    "label": "ULTRA",
+                    "icon": "auto_awesome",
+                    "desc": "Máxima qualidade, exige placa de vídeo dedicada recente."
+                },
+                {
+                    "slug": "custom",
+                    "label": "PERSONALIZADA",
+                    "icon": "build",
+                    "desc": "Cada opção é definida manualmente e mantida entre atualizações."
+                }
+            ],
+            "stats": [
+                {
+                    "icon": "monitor",
+                    "label": "Resolução",
+                    "src": "resolution",
+                    "value": "1920 x 1080"
+                },
+                {
+                    "icon": "speed",
+                    "label": "Limite de FPS",
+                    "src": "fps_cap",
+                    "fmt": "title",
+                    "value": "144"
+                },
+                {
+                    "icon": "schedule",
+                    "label": "Atualização",
+                    "src": "refresh",
+                    "value": "144 Hz"
+                },
+                {
+                    "icon": "memory",
+                    "label": "Escala de render.",
+                    "src": "render_scale",
+                    "fmt": "pct",
+                    "value": "100%"
+                },
+                {
+                    "icon": "thermostat",
+                    "label": "Texturas",
+                    "src": "textures",
+                    "fmt": "title",
+                    "value": "Alta"
+                }
+            ],
+            "reset": "RESTAURAR PADRÕES",
+            "apply": "APLICAR ALTERAÇÕES"
+        },
+        "audio": {
+            "title": "MIXAGEM",
+            "desc": "A mixagem define como passos, tiros e diálogos disputam espaço. Fones fechados favorecem a leitura de direção.",
+            "image": "bg/lobby.jpg",
+            "current": "TÁTICA",
+            "options": [
+                {
+                    "slug": "cinema",
+                    "label": "CINEMA",
+                    "icon": "theaters",
+                    "desc": "Trilha e explosões em primeiro plano, faixa dinâmica ampla."
+                },
+                {
+                    "slug": "tatica",
+                    "label": "TÁTICA",
+                    "icon": "hearing",
+                    "desc": "Realça passos e recarregamentos. Recomendado para partidas competitivas.",
+                    "active": true
+                },
+                {
+                    "slug": "fones",
+                    "label": "FONES",
+                    "icon": "headset_mic",
+                    "desc": "Curva otimizada para fones fechados com áudio espacial."
+                },
+                {
+                    "slug": "noturno",
+                    "label": "NOTURNO",
+                    "icon": "bedtime",
+                    "desc": "Compressão forte: reduz picos sem perder detalhes baixos."
+                },
+                {
+                    "slug": "plano",
+                    "label": "PLANO",
+                    "icon": "graphic_eq",
+                    "desc": "Sem equalização, referência para calibrar seu equipamento."
+                }
+            ],
+            "stats": [
+                {
+                    "icon": "volume_up",
+                    "label": "Volume geral",
+                    "src": "vol_master",
+                    "fmt": "pct",
+                    "value": "80%"
+                },
+                {
+                    "icon": "headset_mic",
+                    "label": "Saída",
+                    "src": "out_device",
+                    "fmt": "title",
+                    "value": "Padrão do sistema"
+                },
+                {
+                    "icon": "mic",
+                    "label": "Entrada",
+                    "src": "in_device",
+                    "fmt": "title",
+                    "value": "Microfone (USB)"
+                },
+                {
+                    "icon": "radar",
+                    "label": "Áudio espacial",
+                    "src": "spatial",
+                    "fmt": "onoff",
+                    "value": "Ativo"
+                },
+                {
+                    "icon": "graphic_eq",
+                    "label": "Efeitos",
+                    "src": "vol_sfx",
+                    "fmt": "pct",
+                    "value": "90%"
+                }
+            ],
+            "reset": "RESTAURAR PADRÕES",
+            "apply": "APLICAR ALTERAÇÕES"
+        },
+        "interface": {
+            "title": "ESTILO DO HUD",
+            "desc": "O estilo controla densidade de informação, opacidade e a cor de destaque usada em todos os menus.",
+            "image": "bg/inventario.jpg",
+            "current": "PADRÃO",
+            "options": [
+                {
+                    "slug": "minimo",
+                    "label": "MÍNIMO",
+                    "icon": "visibility_off",
+                    "desc": "Só mira e vida. Máxima limpeza de tela."
+                },
+                {
+                    "slug": "padrao",
+                    "label": "PADRÃO",
+                    "icon": "dashboard",
+                    "desc": "Minimapa, munição e status de squad sempre visíveis. Equilíbrio recomendado.",
+                    "active": true
+                },
+                {
+                    "slug": "completo",
+                    "label": "COMPLETO",
+                    "icon": "grid_view",
+                    "desc": "Adiciona bússola, log de dano e indicadores de missão."
+                },
+                {
+                    "slug": "tatico",
+                    "label": "TÁTICO",
+                    "icon": "radar",
+                    "desc": "Foco em marcações de squad e leitura de mapa."
+                },
+                {
+                    "slug": "alto",
+                    "label": "CONTRASTE",
+                    "icon": "contrast",
+                    "desc": "Cores reforçadas e contornos grossos para acessibilidade."
+                }
+            ],
+            "stats": [
+                {
+                    "icon": "dashboard",
+                    "label": "Escala do HUD",
+                    "src": "hud_scale",
+                    "fmt": "pct",
+                    "value": "100%"
+                },
+                {
+                    "icon": "opacity",
+                    "label": "Opacidade",
+                    "src": "hud_opacity",
+                    "fmt": "pct",
+                    "value": "85%"
+                },
+                {
+                    "icon": "map",
+                    "label": "Minimapa",
+                    "src": "minimap",
+                    "fmt": "onoff",
+                    "value": "Ativo"
+                },
+                {
+                    "icon": "palette",
+                    "label": "Cor de destaque",
+                    "src": "accent",
+                    "fmt": "title",
+                    "value": "Lime"
+                },
+                {
+                    "icon": "closed_caption",
+                    "label": "Legendas",
+                    "src": "subtitles",
+                    "fmt": "onoff",
+                    "on": "Ativas",
+                    "off": "Inativas",
+                    "value": "Ativas"
+                }
+            ],
+            "reset": "RESTAURAR PADRÕES",
+            "apply": "APLICAR ALTERAÇÕES"
+        },
+        "comunicacao": {
+            "title": "PRIVACIDADE DE VOZ",
+            "desc": "Define quem consegue falar com você dentro e fora da partida, e o que gera notificação na HUD.",
+            "image": "bg/admin.jpg",
+            "current": "SQUAD",
+            "options": [
+                {
+                    "slug": "todos",
+                    "label": "TODOS",
+                    "icon": "public",
+                    "desc": "Qualquer jogador da partida pode falar e ouvir você."
+                },
+                {
+                    "slug": "squad",
+                    "label": "SQUAD",
+                    "icon": "group",
+                    "desc": "Apenas o seu esquadrão e amigos na lista. Opção recomendada.",
+                    "active": true
+                },
+                {
+                    "slug": "amigos",
+                    "label": "AMIGOS",
+                    "icon": "handshake",
+                    "desc": "Somente jogadores da sua lista de amigos."
+                },
+                {
+                    "slug": "push",
+                    "label": "PUSH",
+                    "icon": "mic",
+                    "desc": "Microfone aberto só enquanto a tecla estiver pressionada."
+                },
+                {
+                    "slug": "ninguem",
+                    "label": "NINGUÉM",
+                    "icon": "mic_off",
+                    "desc": "Voz totalmente desligada; o chat de texto continua ativo."
+                }
+            ],
+            "stats": [
+                {
+                    "icon": "mic",
+                    "label": "Chat de voz",
+                    "src": "voice_chat",
+                    "fmt": "onoff",
+                    "value": "Ativo"
+                },
+                {
+                    "icon": "volume_up",
+                    "label": "Volume de voz",
+                    "src": "voice_vol",
+                    "fmt": "pct",
+                    "value": "70%"
+                },
+                {
+                    "icon": "group",
+                    "label": "Convites",
+                    "src": "invites",
+                    "fmt": "title",
+                    "value": "Amigos"
+                },
+                {
+                    "icon": "shield",
+                    "label": "Filtro",
+                    "src": "profanity",
+                    "fmt": "onoff",
+                    "value": "Ativo"
+                },
+                {
+                    "icon": "mail",
+                    "label": "Notificações",
+                    "src": "notif_mail",
+                    "fmt": "onoff",
+                    "on": "Ativas",
+                    "off": "Inativas",
+                    "value": "Ativas"
+                }
+            ],
+            "reset": "RESTAURAR PADRÕES",
+            "apply": "APLICAR ALTERAÇÕES"
+        },
+        "conta": {
+            "title": "SEGURANÇA DA CONTA",
+            "desc": "O nível de proteção define quais confirmações são exigidas em novos acessos e em trocas de item.",
+            "image": "portraits/op-assault.jpg",
+            "image_pos": "center top",
+            "current": "PADRÃO",
+            "options": [
+                {
+                    "slug": "basico",
+                    "label": "BÁSICO",
+                    "icon": "lock_open",
+                    "desc": "Somente senha. Não recomendado para contas com itens raros."
+                },
+                {
+                    "slug": "padrao",
+                    "label": "PADRÃO",
+                    "icon": "lock",
+                    "desc": "Senha e alerta por e-mail em cada novo dispositivo. Nível atual da conta.",
+                    "active": true
+                },
+                {
+                    "slug": "forte",
+                    "label": "FORTE",
+                    "icon": "shield",
+                    "desc": "Exige código de dois fatores em todo login novo."
+                },
+                {
+                    "slug": "maximo",
+                    "label": "MÁXIMO",
+                    "icon": "verified_user",
+                    "desc": "Dois fatores e confirmação manual em cada troca de item."
+                },
+                {
+                    "slug": "cofre",
+                    "label": "COFRE",
+                    "icon": "key",
+                    "desc": "Inventário travado: liberação só pelo suporte."
+                }
+            ],
+            "stats": [
+                {
+                    "icon": "account_circle",
+                    "label": "Jogador",
+                    "src": "@player",
+                    "value": "—"
+                },
+                {
+                    "icon": "mail",
+                    "label": "E-mail verificado",
+                    "src": "@email",
+                    "value": "Não"
+                },
+                {
+                    "icon": "lock",
+                    "label": "Dois fatores",
+                    "src": "two_factor",
+                    "fmt": "onoff",
+                    "value": "Inativo"
+                },
+                {
+                    "icon": "schedule",
+                    "label": "Último acesso",
+                    "src": "@last_login",
+                    "value": "Primeiro acesso"
+                },
+                {
+                    "icon": "public",
+                    "label": "Região",
+                    "src": "region",
+                    "fmt": "title",
+                    "value": "América do Sul"
+                }
+            ],
+            "reset": "RESTAURAR PADRÕES",
+            "apply": "APLICAR ALTERAÇÕES"
+        }
+    }
+}

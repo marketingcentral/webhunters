@@ -712,7 +712,7 @@ body.page-mapa .hud-main{padding:0;overflow:hidden}
 .page-mapa .mk__sub--purple{color:#d68cff}
 /* filtro de camada / expiração */
 .page-mapa .mk,.page-mapa .mrisk{transition:opacity var(--t-med) var(--ease)}
-.page-mapa .mk.is-filtered,.page-mapa .mrisk.is-filtered{opacity:0;pointer-events:none}
+.page-mapa .mk.is-filtered,.page-mapa .mrisk.is-filtered{animation:none;opacity:0;pointer-events:none}
 .page-mapa .mk.is-expired{opacity:.25;pointer-events:none}
 
 /* coluna direita: estado do setor */
@@ -777,3 +777,444 @@ body.page-mapa .hud-main{padding:0;overflow:hidden}
 .page-mapa .mgroup--layers{margin-top:.35rem}
 .page-mapa .mlegend__i{height:1.28rem}
 .page-mapa .mp__toggle{margin-top:.5rem}
+
+/* ==========================================================================
+   ARTE NOVA DO MUNDO — nomes das regiões sobre o terreno, taglines dos POIs
+   e a entrada animada dos dizeres (mapa-do-jogo.png como referência).
+   ========================================================================== */
+@keyframes mp-in{from{opacity:0;transform:translate(-50%,calc(-50% + 10px))}to{opacity:1;transform:translate(-50%,-50%)}}
+/* A zona de risco é centrada por transform:translate(-50%,-50%). A animação escreve no
+   mesmo transform, então precisa repetir a centralização — senão o círculo passa a ser
+   ancorado pelo canto e escorrega meio raio para baixo e para a direita do ninho. */
+@keyframes mp-rise{from{opacity:0;transform:translate(-50%,calc(-50% + 6px))}to{opacity:1;transform:translate(-50%,-50%)}}
+
+/* nomes das regiões desenhados sobre o terreno */
+.page-mapa .wlabel{
+  position:absolute; left:var(--x); top:var(--y);
+  transform:translate(-50%,-50%);
+  display:flex; flex-direction:column; align-items:center; gap:.15rem;
+  text-align:center; white-space:nowrap; pointer-events:none; z-index:1;
+  animation:mp-in .7s var(--ease-out, cubic-bezier(.2,.7,.2,1)) both;
+  animation-delay:calc(.1s + var(--i) * .09s);
+}
+.page-mapa .wlabel__name{
+  font-family:var(--font-cond); font-size:1.15rem; font-weight:600;
+  letter-spacing:.2em; color:rgba(255,255,255,.92); line-height:1;
+  text-shadow:0 2px 12px rgba(0,0,0,.95), 0 0 26px rgba(0,0,0,.7);
+}
+.page-mapa .wlabel__tag{
+  font-family:var(--font-cond); font-size:.62rem; letter-spacing:.26em; text-transform:uppercase;
+  color:rgba(168,227,92,.85); text-shadow:0 1px 7px rgba(0,0,0,.95);
+}
+
+/* tagline (o "dizer") sob o nome do POI */
+.page-mapa .mk__tag{
+  display:block; margin-top:.08rem;
+  font-family:var(--font-cond); font-size:.6rem; font-weight:500; letter-spacing:.14em;
+  text-transform:uppercase; color:rgba(232,237,230,.72);
+  text-shadow:0 1px 4px rgba(0,0,0,.95);
+}
+.page-mapa .mk--red .mk__tag{color:rgba(255,150,140,.85)}
+.page-mapa .mk--cyan .mk__tag{color:rgba(124,214,255,.85)}
+.page-mapa .mk--amber .mk__tag{color:rgba(255,195,92,.85)}
+
+/* entrada em cascata dos marcadores */
+.page-mapa .map3d__layer .mk{animation:mp-in .55s var(--ease-out, ease) both; animation-delay:calc(.35s + var(--mki, 0) * .035s)}
+.page-mapa .map3d__layer .mrisk{animation:mp-rise .8s var(--ease) both; animation-delay:.5s}
+
+@media (prefers-reduced-motion: reduce){
+  .page-mapa .wlabel,.page-mapa .map3d__layer .mk,.page-mapa .map3d__layer .mrisk{animation-duration:.01ms;animation-delay:0s}
+}
+
+/* ==========================================================================
+   ARTE DO MUNDO: a ilha é um render acabado (941x1672, EM PÉ), com iluminação
+   própria e fundo recortado — o preto da HUD aparece em volta do litoral.
+   1) o canvas de relevo do map3d sai: ele foi calculado para a arte antiga e,
+      em mix-blend overlay, escurecia quase tudo;
+   2) imagem e camada de marcadores dividem a MESMA caixa travada na proporção
+      da arte. Sem isso o object-fit recorta, e os marcadores — que estão em %
+      DA ARTE, não do palco — deslizam para fora do terreno;
+   3) a arte é RETRATO num palco deitado, então quem manda é a ALTURA:
+      `height:100%` é definido e a largura sai da proporção. NÃO existe um
+      `max-width` de segurança aqui de propósito — com a altura já definida,
+      limitar a largura não reduziria a altura junto: quebraria a proporção e
+      desalinharia todo marcador. Num palco absurdamente estreito é melhor a
+      ilha ser recortada pelo `overflow:hidden` do palco (marcadores continuam
+      colados ao terreno, só saem de vista) do que esticada.
+      (A regra anterior era o espelho disto — width:100% + max-height — porque
+      a arte antiga era deitada.)
+   ========================================================================== */
+.page-mapa .map3d.is-3d .map3d__canvas{display:none}
+
+.page-mapa .map3d__img,
+.page-mapa .map3d__layer{
+  inset:auto;
+  top:50%; left:50%;
+  height:100%; width:auto;
+  aspect-ratio:941 / 1672;
+  transform:translate3d(calc(-50% + var(--mx)), calc(-50% + var(--my)), 0) scale(var(--mz));
+}
+.page-mapa .map3d__img{object-fit:contain}
+
+/* vinheta mais leve: a arte já tem contraste, não precisa de moldura escura forte */
+.page-mapa .map3d__vignette{
+  background:
+    linear-gradient(90deg, rgba(2,5,6,.42) 0%, rgba(2,5,6,0) 4%, rgba(2,5,6,0) 96%, rgba(2,5,6,.42) 100%),
+    linear-gradient(180deg, rgba(2,5,6,.35) 0%, rgba(2,5,6,0) 5%, rgba(2,5,6,0) 95%, rgba(2,5,6,.35) 100%),
+    radial-gradient(125% 100% at 50% 50%, rgba(0,0,0,0) 66%, rgba(0,0,0,.3) 100%);
+}
+
+/* nomes de região: legenda de terreno, discreta e atrás dos marcadores */
+.page-mapa .wlabel{z-index:0}
+.page-mapa .wlabel__name{font-size:.95rem; letter-spacing:.24em; color:rgba(255,255,255,.8)}
+.page-mapa .wlabel__tag{font-size:.55rem; letter-spacing:.22em; color:rgba(168,227,92,.7)}
+.page-mapa .map3d__layer .mk{z-index:2}
+
+/* O filtro de camada precisa vencer a animação de entrada: `animation-fill-mode:both`
+   mantém opacity:1 no estado final e empata em especificidade com a regra de cima.
+   Esta vem depois e é mais específica, então é ela que decide o que some. */
+.page-mapa .map3d__layer .mk.is-filtered,
+.page-mapa .map3d__layer .mrisk.is-filtered{animation:none;opacity:0;pointer-events:none}
+
+/* ==========================================================================
+   CAMADAS CLICÁVEIS — a legenda virou o filtro. Cada linha é um botão que
+   liga/desliga a sua camada; TODOS volta a mostrar o mapa inteiro.
+   ========================================================================== */
+.page-mapa .mlegend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.1rem .35rem;padding:.3rem .4rem .35rem}
+.page-mapa .mlegend__i{
+  display:grid;grid-template-columns:1.15rem minmax(0,1fr);align-items:center;gap:.5rem;
+  height:1.5rem;padding:0 .3rem;border:1px solid transparent;border-radius:var(--r-1);
+  background:transparent;cursor:pointer;text-align:left;font:inherit;
+  opacity:.55;transition:opacity var(--t-fast) var(--ease),border-color var(--t-fast) var(--ease),background var(--t-fast) var(--ease);
+}
+.page-mapa .mlegend__i:hover{opacity:1;border-color:rgba(155,224,74,.35);background:rgba(155,224,74,.07)}
+.page-mapa .mlegend__i.is-active{opacity:1;border-color:rgba(155,224,74,.5);background:rgba(155,224,74,.1)}
+.page-mapa .mlegend__i.is-active .mlegend__label{color:#eef3ea}
+.page-mapa .mlayer--all{grid-column:1/-1}
+.page-mapa .mlegend__i:focus-visible{outline:2px solid var(--c-lime);outline-offset:1px}
+
+/* ==========================================================================
+   ÁREA DE SINAL HUMANO — o sinal é aproximado, então o mapa mostra um raio
+   amarelo pulsante no lugar de um ponto exato. Centrado no marcador; o pulso
+   repete a centralização no transform, senão o círculo escorrega do centro.
+   ========================================================================== */
+.page-mapa .mzone{
+  position:absolute;
+  left:var(--x);top:var(--y);
+  width:calc(var(--rx) * 2);
+  aspect-ratio:1;height:auto;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:0;
+}
+.page-mapa .mzone--human_activity{
+  border:1px dashed rgba(245,190,70,.55);
+  background:
+    repeating-linear-gradient(45deg, rgba(245,190,70,.16) 0 2px, rgba(245,190,70,0) 2px 9px),
+    radial-gradient(closest-side, rgba(245,190,70,.20), rgba(245,166,35,.05));
+  -webkit-mask-image:radial-gradient(circle, #000 58%, transparent 100%);
+  mask-image:radial-gradient(circle, #000 58%, transparent 100%);
+  animation:mzone-pulse 3.2s var(--ease) infinite;
+}
+/* anel que se expande a partir do centro: reforça "é por aqui, não exatamente aqui" */
+.page-mapa .mzone--human_activity::after{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  border:1px solid rgba(245,190,70,.5);
+  animation:mzone-ring 3.2s var(--ease-out, ease) infinite;
+}
+@keyframes mzone-pulse{
+  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.85}
+  50%    {transform:translate(-50%,-50%) scale(1.06);opacity:1}
+}
+@keyframes mzone-ring{
+  0%  {transform:scale(.35);opacity:.85}
+  70% {opacity:.12}
+  100%{transform:scale(1);opacity:0}
+}
+/* o pino deixa de cravar o ponto: fica um alvo discreto no meio da área */
+.page-mapa .mk[data-kind="human_activity"] .mk__glyph::before,
+.page-mapa .mk[data-kind="human_activity"] .mk__glyph::after{display:none}
+.page-mapa .mk[data-kind="human_activity"] .mk__glyph .gl{width:1.15rem;height:1.15rem;color:#f5be46;opacity:.9}
+
+@media (prefers-reduced-motion: reduce){
+  .page-mapa .mzone--human_activity,
+  .page-mapa .mzone--human_activity::after{animation:none}
+}
+
+/* a área de sinal também obedece ao filtro de camadas */
+.page-mapa .map3d__layer .mzone{transition:opacity var(--t-med) var(--ease)}
+.page-mapa .map3d__layer .mzone.is-filtered{animation:none;opacity:0}
+
+/* ==========================================================================
+   BRASÕES DAS ORGANIZAÇÕES no mapa (Hunter Command, Aegis, Frontier).
+   A arte substitui o glifo: some a moldura hexagonal, senão o brasão fica
+   espremido dentro dela e não se lê nada no tamanho de marcador.
+   ========================================================================== */
+.page-mapa .gl--emblema{display:block;width:100%;height:100%}
+.page-mapa .gl--emblema img{width:100%;height:100%;object-fit:contain;display:block;scale: 1.3;}
+
+.page-mapa .mk__glyph--gov-base::before,.page-mapa .mk__glyph--gov-base::after,
+.page-mapa .mk__glyph--aegis::before,.page-mapa .mk__glyph--aegis::after,
+.page-mapa .mk__glyph--frontier::before,.page-mapa .mk__glyph--frontier::after{display:none}
+.page-mapa .mk__glyph--gov-base .gl--emblema,
+.page-mapa .mk__glyph--aegis .gl--emblema,
+.page-mapa .mk__glyph--frontier .gl--emblema{
+  width:2.5rem;height:2.5rem;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.85));
+}
+/* na legenda o brasão entra no mesmo quadradinho dos outros ícones */
+.page-mapa .mlegend__ic .gl--emblema{width:1.15rem;height:1.15rem}
+
+/* ==========================================================================
+   ÍCONES VINDOS DO CATÁLOGO DE PONTOS (map_point_types)
+   Um ponto criado no painel pode desenhar por Material Symbol ou por arte
+   enviada, e não só pelo vetor do jogo. Os três precisam ocupar a MESMA caixa
+   do glifo, senão um café e uma extração ficariam de tamanhos diferentes no
+   mesmo mapa.
+   ========================================================================== */
+.page-mapa .mk__glyph .mk__ms{
+  font-size:1.05rem;
+  line-height:1;
+  display:block;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.75));
+}
+.page-mapa .mk__glyph .mk__art{
+  width:100%;height:100%;
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,.8));
+}
+
+/* ==========================================================================
+   MARCADORES NO PADRÃO DO EDITOR (/admin/mapas/editor)
+   ==========================================================================
+   O mapa do jogador e o editor do painel mostram o MESMO mundo, e mostravam-no
+   de dois jeitos: aqui, hexágonos de 41px com rótulo de 13px; lá, ícone chapado
+   de 20px com uma etiqueta escura de 10px. Quem compõe o mapa no painel não
+   estava vendo o que o jogador ia ver — e, pior, com 43 pontos os hexágonos
+   cobriam o terreno que eles deveriam estar apontando.
+
+   Agora vale o padrão do editor: sem moldura, o ícone é a própria cor do ponto,
+   e o nome vive numa etiqueta escura que se lê por cima de qualquer terreno.
+   Esta seção vem DEPOIS de propósito — ela substitui a moldura hexagonal
+   declarada lá em cima, em vez de apagá-la de lá, para o histórico da tela
+   continuar legível.
+   ========================================================================== */
+
+.page-mapa .mk{
+  width:1.9rem;height:1.9rem;
+}
+.page-mapa .mk--cyan  {--mk-c:#4fd6e8;--mk-rgb:79,214,232}
+.page-mapa .mk--amber {--mk-c:#f0a83c;--mk-rgb:240,168,60}
+.page-mapa .mk--gold  {--mk-c:#e8c65a;--mk-rgb:232,198,90}
+.page-mapa .mk--muted {--mk-c:#97a094;--mk-rgb:151,160,148}
+
+/* a moldura hexagonal sai: era ela que comia o terreno */
+.page-mapa .mk__glyph::before,
+.page-mapa .mk__glyph::after{display:none}
+
+.page-mapa .mk__glyph{
+  width:1.35rem;height:1.35rem;
+  color:var(--mk-c);
+  /* duas sombras: a escura dá contorno sobre areia clara, a colorida dá
+     presença sobre floresta escura. Uma só falha metade do mapa. */
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.95)) drop-shadow(0 0 4px rgba(0,0,0,.7));
+}
+.page-mapa .mk__glyph .gl,
+.page-mapa .mk__glyph .mk__ms,
+.page-mapa .mk__glyph .mk__art{
+  width:100%;height:100%;
+  color:inherit;
+  filter:none;            /* a sombra é do pai; repetida no filho vira borrão */
+}
+.page-mapa .mk__glyph .mk__ms{font-size:1.35rem}
+.page-mapa .mk__glyph .gl--emblema{width:1.55rem;height:1.55rem}
+
+/* os tamanhos especiais herdados da moldura antiga deixam de valer */
+.page-mapa .mk--purple .mk__glyph .gl,
+.page-mapa .mk__glyph--loot .gl,
+.page-mapa .mk__glyph--village .gl,
+.page-mapa .mk__glyph--radio .gl{width:100%;height:100%}
+
+.page-mapa .mk--red .mk__glyph,
+.page-mapa .mk--lime .mk__glyph,
+.page-mapa .mk--purple .mk__glyph{
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.95)) drop-shadow(0 0 5px rgba(var(--mk-rgb),.55));
+}
+
+/* ---- etiqueta: exatamente a do editor ------------------------------------
+   Uma linha, sempre à direita do ícone, cortada com reticências quando não
+   couber. A etiqueta antiga era um bloco CENTRADO de 7,5rem que quebrava em
+   três ou quatro linhas — e quatro linhas de texto ao lado de cada um dos 43
+   pontos é o que fazia o mapa virar uma parede de palavras. O nome inteiro
+   continua acessível no `data-tip` do marcador.
+   ------------------------------------------------------------------------- */
+.page-mapa .mk__label{
+  /* posição: colada à direita e centrada na vertical, como no editor */
+  top:50%;left:100%;
+  transform:translateY(-50%);
+  margin:0 0 0 .2rem;
+  width:max-content;max-width:9rem;
+  padding:.05rem .25rem;
+  border-radius:2px;
+  background:rgba(4,8,10,.78);
+  text-align:left;
+  font-size:.625rem;
+  font-weight:500;
+  line-height:1.4;
+  letter-spacing:.06em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  /* a etiqueta É o contraste; a sombra de texto por cima dela só suja */
+  text-shadow:none;
+}
+/* as duas variações de posição do rótulo deixam de existir: no editor todo
+   rótulo fica à direita, e é esse o padrão que o jogador passa a ver */
+.page-mapa .mk--lab-right .mk__label{
+  top:50%;left:100%;
+  transform:translateY(-50%);
+  margin:0 0 0 .2rem;
+  width:max-content;max-width:9rem;
+}
+.page-mapa .mk--lab-narrow .mk__label{max-width:7rem}
+
+/* a segunda linha (status, casta, dizer) cabe DENTRO da mesma etiqueta, também
+   numa linha só — ela é o que diz "OPERACIONAL" ou "POSIÇÃO APROXIMADA", e
+   jogá-la fora deixaria o mapa bonito e mudo */
+.page-mapa .mk__sub,
+.page-mapa .mk__tag{
+  display:block;
+  margin-top:0;
+  font-size:.5625rem;
+  letter-spacing:.07em;
+  line-height:1.35;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  text-shadow:none;
+}
+.page-mapa .mk:hover{z-index:6}
+.page-mapa .mk:hover .mk__glyph{transform:scale(1.18)}
+
+/* ==========================================================================
+   OPACIDADE DA ARTE — legibilidade do texto sobre o terreno
+   ==========================================================================
+   A arte é um render colorido e de alto contraste; o texto da HUD é claro e
+   fino. Sobre a neve das montanhas ou a areia da praia, rótulo branco
+   simplesmente some. Em vez de pôr uma tarja atrás de cada palavra, a ARTE
+   recua: ela é desenhada sobre o quase-preto do palco com opacidade < 1, o que
+   escurece o terreno inteiro de maneira uniforme e devolve o contraste a tudo
+   que está por cima de uma vez só.
+
+   O valor vem do banco (`maps.meta.map_opacity`), escrito pelo editor do
+   painel e servido como variável no elemento do mapa — o operador ajusta e vê
+   o resultado antes de salvar. 0.65 é o padrão de quando o mapa nada diz.
+   ========================================================================== */
+.page-mapa .map3d__img{opacity:var(--map-art-opacity, .65)}
+
+/* ==========================================================================
+   TAMANHO CONSTANTE DOS MARCADORES — o que faltava para o padrão do editor
+   ==========================================================================
+   `.mk` centra-se e se contra-escala com `scale(var(--mkz))`, onde --mkz é 1/zoom:
+   é isso que faz um marcador ter o MESMO tamanho na tela com a ilha inteira à
+   vista ou com o porto aproximado — exatamente como no editor do painel.
+
+   Só que a animação de entrada (`mp-in`) escreve no MESMO transform e termina em
+   `translate(-50%,-50%)`, sem a escala. Com `animation-fill-mode: both`, esse
+   último quadro fica valendo para sempre: a contra-escala era descartada meio
+   segundo depois de a tela abrir, e os marcadores passavam a CRESCER junto com o
+   zoom. Era isso que transformava o rótulo em texto gigante ao aproximar.
+
+   A correção é a mesma já aplicada em `mp-rise` para a zona de risco: os quadros
+   repetem a centralização E a escala, em vez de apagá-las.
+   ========================================================================== */
+@keyframes mp-in{
+  from{opacity:0;transform:translate(-50%,calc(-50% + 10px)) scale(var(--mkz,1))}
+  to  {opacity:1;transform:translate(-50%,-50%) scale(var(--mkz,1))}
+}
+
+/* ==========================================================================
+   OPACIDADE DA ARTE — controle do jogador, na coluna do zoom
+   ==========================================================================
+   Fica junto de aproximar/afastar/centralizar porque é da mesma família: os
+   quatro gestos de "deixar o mapa do jeito que eu leio". Vertical porque a
+   coluna é vertical — um controle deitado ali empurraria a barra para dentro
+   do terreno e cobriria justamente o que ele serve para revelar.
+   ========================================================================== */
+.page-mapa .mopac{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.4rem;
+  margin-top:.35rem;
+  padding:.5rem .15rem .4rem;
+  /* 2,2rem: a coluna do zoom tem 2rem, mas "100%" não cabe nela. Meio rem a mais
+     mantém o alinhamento visual com os botões acima e deixa o número inteiro. */
+  width:2.2rem;
+  border:1px solid rgba(205,222,196,.2);
+  border-radius:.4rem;
+  background:rgba(9,14,13,.66);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  box-shadow:0 3px 10px rgba(0,0,0,.45);
+}
+.page-mapa .mopac__ic{display:grid;place-items:center;color:#9aa595;line-height:1}
+.page-mapa .mopac__ic .ms{font-size:1.05rem}
+
+/* O RANGE VERTICAL É FEITO POR ROTAÇÃO, e não por `writing-mode: vertical-*`.
+ *
+ * `writing-mode` em <input type=range> é o caminho que a especificação escolheu, mas é
+ * recente: Chrome 121, Safari 17.4 e Firefox só a partir do 137. Num Firefox anterior o
+ * controle DESENHA (a barra e o polegar aparecem, porque a altura é respeitada) e não
+ * ARRASTA — que foi exatamente o defeito relatado: parece pronto e não responde.
+ *
+ * A rotação funciona desde sempre, em todos eles. O receio antigo de que transform quebrasse
+ * o alvo do ponteiro não procede: transform participa do teste de acerto, então o clique cai
+ * onde o desenho está. O que a rotação exige é uma caixa de tamanho fixo em volta — o
+ * elemento rotacionado continua ocupando no fluxo a largura que tinha antes de girar, e sem
+ * a caixa ele empurraria a coluna inteira.
+ *
+ * -90deg deixa o MÁXIMO para cima, que é o sentido que se espera de "mais opaco".
+ */
+.page-mapa .mopac__wrap{
+  position:relative;
+  display:block;
+  width:1.4rem;
+  height:6.5rem;
+  line-height:0;
+}
+.page-mapa .mopac__range{
+  position:absolute;
+  top:50%; left:50%;
+  width:6.5rem;               /* comprimento do curso: vira a ALTURA depois de girar */
+  height:1.4rem;
+  margin:0;
+  transform:translate(-50%,-50%) rotate(-90deg);
+  transform-origin:center center;
+  accent-color:var(--c-lime);
+  cursor:pointer;
+  background:transparent;
+}
+.page-mapa .mopac__range:focus-visible{outline:2px solid var(--c-lime);outline-offset:2px;border-radius:2px}
+
+/* O número é mais largo do que a coluna em "100%", e tudo bem: ele TRANSBORDA
+   centrado em vez de ser espremido. Apertar a coluna para caber o rótulo a
+   desalinharia dos botões de zoom, que é o que dá ordem a esta barra. */
+.page-mapa .mopac__v{
+  display:block;
+  width:auto;
+  white-space:nowrap;
+  text-align:center;
+  font-size:.52rem;
+  line-height:1.2;
+  color:#9aa595;
+  letter-spacing:0;
+}
+/* Os dois botões ocupam a largura da coluna e são menores que os de zoom: são
+   ação secundária, e o que manda aqui é o arrasto. */
+.page-mapa .mopac__apply,
+.page-mapa .mopac__reset{width:1.6rem;height:1.6rem}
+.page-mapa .mopac__apply .ms,
+.page-mapa .mopac__reset .ms{font-size:1rem}
+.page-mapa .mopac__reset.is-hidden{display:none}

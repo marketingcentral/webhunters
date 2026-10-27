@@ -81,6 +81,8 @@ const NEGAR = [
   // e ficavam abertas por HTTP: rope.png sozinha eram 2 MB baixáveis em produção.
   /^assets\/img\/_gen(\/|$)/,      // saídas intermediárias (magenta, keyed) — 81,6 MB
   /^assets\/assets(\/|$)/,         // RAW do usuário, fonte do pipeline — 36,6 MB
+  /^assets\/img\/criaturas\/_orig(\/|$)/, // PNGs originais do Gemini (~13 MB); a tela usa JPEG/WebP
+  /^divulgacao(\/|$)/,             // peças de redes sociais e as artes 2K de origem (~16 MB)
   /^node_modules(\/|$)/,
   /(^|\/)\.DS_Store$/,
   /(^|\/)Thumbs\.db$/,

@@ -1,0 +1,886 @@
+/* ==========================================================================
+   ADMIN · DASHBOARD (/admin)
+
+   Só o que é DESTA tela. Cartão, tabela, selo, botão e vazio vêm de admin.css
+   (.adm-*) — aqui não se redesenha primitivo, só se compõe.
+
+   Carregado por app/Views/layouts/admin.php pelo slug da página
+   (assets/css/admin/admin-dashboard.css), depois de admin.css.
+
+   Namespace .dash-.
+
+   REGRA DE ALTURA DESTA TELA: um painel de visão geral que exige rolagem não
+   é visão geral. A grade abaixo é de ALTURA FECHADA — ela ocupa exatamente a
+   área de conteúdo e distribui o que sobra entre as duas faixas de cartão.
+   Quem rola, quando o dado passa do espaço, é a lista DENTRO do cartão.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. ESQUELETO — conteúdo à esquerda, trilho de operação à direita
+   ========================================================================== */
+
+/* A coluna direita é FIXA em 20rem: ações rápidas e status do sistema são a
+   mesma coisa em qualquer monitor; quem cresce com a tela é o gráfico. */
+.dash{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 20rem;
+  gap:var(--adm-gap);
+  align-items:stretch;
+  /* Altura DEFINIDA (e não min-height): é ela que faz as faixas `1fr` lá embaixo
+     dividirem o espaço em vez de crescerem com o conteúdo — com altura automática
+     um `fr` se comporta como `auto` e a terceira faixa some abaixo da dobra.
+     O piso em rem é o limite: em tela baixa demais, aí sim a página rola. */
+  height:100%;
+  min-height:40rem;
+}
+
+/* As duas faixas de cartão dividem o que sobra da faixa de boas-vindas. O piso
+   de 12rem existe para telas baixas: aí, sim, a página rola. */
+.dash__main{
+  display:grid;
+  grid-template-rows:auto minmax(12rem,1.05fr) minmax(12rem,1fr);
+  gap:var(--adm-gap);
+  min-width:0;
+  min-height:0;
+}
+.dash__side{
+  display:grid;
+  grid-template-rows:auto minmax(8rem,1fr) auto;
+  gap:var(--adm-gap);
+  min-width:0;
+  min-height:0;
+}
+
+/* Cabeçalho de ALTURA FIXA e igual em todos os cartões da tela — não min-height.
+   Com altura própria por cartão, três vizinhos da mesma faixa começavam o conteúdo
+   em 621, 619 e 615: o cabeçalho da tabela, o R$ 18.134,69 e o primeiro evento não
+   compartilhavam eixo nenhum. Título em UMA linha, subtítulo dentro da MESMA altura;
+   título que não caberia em uma linha é encurtado na origem (app/Data), nunca
+   deixado quebrar. */
+.dash .adm-card__head{
+  height:2.75rem;
+  min-height:2.75rem;
+  padding:0 .9rem;
+  gap:.6rem;
+  flex-wrap:nowrap;
+  align-items:center;
+}
+.dash .adm-card__title{
+  font-size:.92rem;
+  min-width:0;
+  display:flex;
+  align-items:baseline;
+  gap:.4rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+/* O subtítulo divide a linha do título em vez de abrir uma segunda: é ele que
+   fazia o cabeçalho do gráfico ter 49px enquanto o vizinho tinha 44. */
+.dash .adm-card__title small{
+  display:inline;
+  margin-top:0;
+  font-size:.7rem;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.dash .adm-card__body{ padding:.75rem .9rem }
+.dash .adm-card__body--flush{ padding:0 }
+.dash .adm-card__foot{ padding:.6rem .9rem }
+.dash .adm-card__link{ font-size:.74rem; white-space:nowrap; flex-shrink:0 }
+.dash .adm-card__tools{ flex-shrink:0 }
+/* Nenhuma tabela desta tela rola na horizontal: coluna escondida atrás de uma barra
+   é coluna perdida. Quando não cabe, some uma coluna inteira (ver 1440px). */
+.dash .adm-tablewrap{ overflow:hidden }
+
+.dash-row{ display:grid; gap:var(--adm-gap); min-width:0; min-height:0 }
+.dash-row--chart{ grid-template-columns:minmax(0,1.7fr) minmax(0,1fr) }
+.dash-row--trio{ grid-template-columns:repeat(3,minmax(0,1fr)) }
+
+/* Painel: cabeçalho fixo em cima, corpo esticando e rolando por dentro. */
+.dash-panel{ display:flex; flex-direction:column; min-width:0; min-height:0 }
+.dash-panel .adm-card__body{ flex:1 1 auto; min-height:0 }
+/* Lista que rola por dentro do cartão. As duas primeiras camadas são o fundo do
+   cartão rolando junto (local) e as duas últimas são a sombra fixa: o resultado é
+   uma sombra que só aparece do lado em que ainda há conteúdo escondido. Sem isso,
+   uma linha cortada pela metade parece defeito de layout, e não "continua". */
+.dash-panel__list{
+  overflow:auto;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,.16) transparent;
+  background:
+    linear-gradient(var(--adm-surface) 40%, rgba(14,19,14,0)) center top,
+    linear-gradient(rgba(14,19,14,0), var(--adm-surface) 65%) center bottom,
+    radial-gradient(farthest-side at 50% 0,    rgba(0,0,0,.45), rgba(0,0,0,0)) center top,
+    radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.45), rgba(0,0,0,0)) center bottom;
+  background-repeat:no-repeat;
+  background-size:100% 1.6rem, 100% 1.6rem, 100% .7rem, 100% .7rem;
+  background-attachment:local, local, scroll, scroll;
+}
+.dash-panel__list::-webkit-scrollbar{ width:6px }
+.dash-panel__list::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.16); border-radius:3px }
+/* Corpo que hospeda gráfico: o SVG ocupa a altura inteira em vez de flutuar. */
+.dash-panel__plot{ display:flex; padding:.75rem 1rem }
+
+/* Corpo que hospeda LISTA DE ENTRADAS (atividade, eventos). Não rola e não corta:
+   a lista de dentro é uma grade de linhas iguais que divide exatamente esta altura,
+   então uma entrada ou aparece inteira ou não existe. O controller já pede o número
+   de entradas que cabe legível nas duas resoluções — o CSS não fatia mais nada. */
+.dash-panel__feed{ overflow:hidden; display:flex; flex-direction:column; min-height:0 }
+
+/* ==========================================================================
+   2. SELO DE PROCEDÊNCIA
+   O compromisso da tela: número medido e número de série nunca têm a mesma
+   cara. Minúsculo de propósito — informa sem competir com o dado. A frase
+   inteira mora no title: nota de rodapé desalinha a base dos cartões.
+   ========================================================================== */
+.dash-src{
+  display:inline-flex;
+  align-items:center;
+  height:1.1rem;
+  padding:0 .35rem;
+  border-radius:2px;
+  border:1px solid currentColor;
+  font-family:var(--font-cond);
+  font-size:.62rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  line-height:1;
+  white-space:nowrap;
+  cursor:help;
+  flex-shrink:0;
+}
+.dash-src--vivo{    color:var(--c-lime-dim) }
+.dash-src--serie{   color:var(--c-amber); opacity:.85 }
+.dash-src--semente{ color:var(--c-amber); opacity:.85 }
+.dash-src--ausente{ color:var(--c-dim) }
+
+/* ==========================================================================
+   3. FAIXA DE BOAS-VINDAS
+   ========================================================================== */
+.dash-hero{
+  position:relative;
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r);
+  background-size:cover;
+  /* Enquadramento no horizonte iluminado (e não no meio da mata escura): é a faixa
+     de céu e a silhueta da torre que ficam atrás dos KPIs. */
+  background-position:center 26%;
+  overflow:hidden;
+}
+/* A foto é cenário, não informação — mas cenário PRECISA ser visto: com o véu antigo
+   (94%/86%/62%) a torre desaparecia e a faixa lia como imagem que não carregou. O
+   degradê continua opaco onde mora o texto (à esquerda) e abre à direita, atrás dos
+   cartões de KPI, que já têm fundo próprio quase sólido. */
+.dash-hero__mask{
+  padding:.9rem 1rem 1rem;
+  background:linear-gradient(100deg, rgba(6,9,6,.90) 0%, rgba(6,9,6,.72) 38%, rgba(6,9,6,.34) 100%);
+}
+.dash-hero__title{
+  display:flex;
+  align-items:center;
+  gap:.45rem;
+  font-family:var(--font-cond);
+  font-size:1.3rem;
+  font-weight:500;
+  letter-spacing:.02em;
+  color:var(--c-text);
+  line-height:1.1;
+}
+.dash-hero__seal{ font-size:1.1rem; color:var(--c-lime) }
+.dash-hero__kpis{
+  margin-top:.7rem;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:.7rem;
+}
+
+/* Os cartões sobre a foto ficam quase opacos — número não se lê sobre floresta.
+   As três linhas do texto têm ALTURA FIXA e igual nos quatro: é o que põe os
+   quatro números na mesma linha de base, em vez de "quase alinhados". */
+.dash-kpi{
+  align-items:center;
+  gap:.6rem;
+  padding:.6rem .7rem;
+  background:rgba(10,14,10,.88);
+  border-color:var(--adm-line-2);
+}
+.dash-kpi .adm-kpi__ico{ width:2.4rem; height:2.4rem }
+.dash-kpi .adm-kpi__ico .ms{ font-size:1.3rem }
+.dash-kpi .adm-kpi__txt{
+  flex:1 1 auto;
+  grid-template-rows:1.05rem 1.55rem .95rem;
+  gap:.1rem;
+  align-content:center;
+}
+/* Rótulo e selo na MESMA linha, em duas colunas: o selo absoluto imprimia a
+   sigla por cima do texto ("JOGADORES ONLI[AO VIVO]"). */
+.dash-kpi__top{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:.35rem;
+  min-width:0;
+}
+.dash-kpi .adm-kpi__label{
+  font-size:.64rem;
+  letter-spacing:.1em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.dash-kpi .adm-kpi__value{
+  font-size:clamp(1rem, 1.15vw, 1.4rem);
+  line-height:1.55rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.dash-kpi .adm-kpi__value small{ font-size:.58em; margin-left:.2rem }
+.dash-kpi .adm-kpi__delta{
+  display:flex;
+  align-items:center;
+  font-size:.7rem;
+  line-height:.95rem;
+  min-width:0;
+}
+.dash-kpi .adm-kpi__delta .ms{ font-size:.9rem; flex-shrink:0 }
+/* Sem base de comparação: UM traço fino e cinza, com a frase no title. Escrito por
+   extenso em três cartões vizinhos, ele fazia a faixa inteira parecer desligada. */
+.adm-kpi__delta.is-void{ color:var(--c-dim); cursor:help }
+.adm-kpi__delta.is-void .ms{ opacity:.7 }
+.dash-kpi .adm-kpi__delta small{
+  margin-left:.25rem;
+  font-size:.66rem;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* ==========================================================================
+   4. GRÁFICOS (SVG gerado no PHP)
+   O SVG estica nos DOIS eixos até o corpo do cartão; a proporção do viewBox é
+   escolhida na view para casar com o painel, então sobra pouca margem morta.
+   ========================================================================== */
+.dash-chart{ display:block; width:100%; height:100%; min-height:0; overflow:visible }
+.dash-chart__grid{ stroke:rgba(255,255,255,.07); stroke-width:1 }
+.dash-chart__tick{
+  fill:var(--c-muted);
+  font-family:var(--font-mono, monospace);
+  font-size:12px;
+}
+.dash-chart__area{ fill:rgba(var(--c-lime-rgb),.14) }
+.dash-chart__line{
+  fill:none;
+  stroke:var(--c-lime);
+  stroke-width:2;
+  stroke-linejoin:round;
+  stroke-linecap:round;
+}
+.dash-chart__dot{ fill:var(--adm-bg); stroke:var(--c-lime); stroke-width:2 }
+.dash-chart__bar{ fill:var(--c-lime-dim); transition:fill var(--t-fast) var(--ease) }
+.dash-chart__bar:hover{ fill:var(--c-lime) }
+
+/* seletor de período — links de verdade (?dias=N), sem JavaScript */
+.dash-seg{
+  display:inline-flex;
+  border:1px solid var(--adm-line-2);
+  border-radius:var(--adm-r-sm);
+  overflow:hidden;
+}
+.dash-seg__op{
+  padding:0 .55rem;
+  height:1.7rem;
+  display:inline-flex;
+  align-items:center;
+  font-family:var(--font-cond);
+  font-size:.75rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  border-left:1px solid var(--adm-line);
+  transition:background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.dash-seg__op:first-child{ border-left:0 }
+.dash-seg__op:hover{ background:var(--adm-hover); color:var(--c-text) }
+.dash-seg__op.is-active{ background:rgba(var(--c-lime-rgb),.14); color:var(--c-lime) }
+
+/* ---- cartão de receita: número em cima, barras ocupando o resto ---------- */
+.dash-rev{ display:flex; flex-direction:column; gap:.25rem; padding:.6rem 1rem .75rem }
+.dash-rev__top{ display:flex; align-items:baseline; gap:.6rem; flex-wrap:wrap }
+.dash-rev__plot{ flex:1 1 auto; min-height:0; display:flex; margin-top:.3rem }
+/* A procedência COLADA no número, e não no cabeçalho: este é o segundo maior número
+   da tela e mora a 300px do KPI "RECEITA (MÊS)" da topbar, que traz outra janela e
+   outro valor. Sem esta linha o operador não tem como saber qual dos dois é medido. */
+.dash-rev__note{
+  font-family:var(--font-cond);
+  font-size:.68rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--c-amber);
+  opacity:.85;
+  line-height:1.1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.dash-money{
+  font-family:var(--font-cond);
+  font-size:1.5rem;
+  color:var(--c-text);
+  line-height:1.05;
+  white-space:nowrap;
+}
+
+/* ==========================================================================
+   5. STATUS DOS SERVIDORES
+   ========================================================================== */
+.dash-srv{ display:flex; flex-direction:column }
+/* Quatro colunas de LARGURA FIXA à direita do nome. Com `auto`, a contagem e o ping
+   dividiam a mesma célula e um ping de três dígitos (208 ms) empurrava o número da
+   esquerda: 12.480, 18.204, 21.870 e 9.310 não compartilhavam eixo nenhum. Agora
+   estado, contagem e ping terminam os três na mesma vertical, em todas as linhas. */
+.dash-srv__row{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) 3.8rem 3.2rem 2.5rem;
+  grid-template-areas:"dot name state count ping" "bar bar bar bar bar";
+  align-items:center;
+  gap:.1rem .4rem;
+  padding:.3rem .8rem;
+  border-bottom:1px solid var(--adm-line);
+}
+.dash-srv__row:last-child{ border-bottom:0 }
+.dash-srv__dot{
+  grid-area:dot;
+  width:.5rem; height:.5rem;
+  border-radius:50%;
+  background:var(--c-lime);
+  box-shadow:0 0 0 3px rgba(var(--c-lime-rgb),.14);
+}
+/* Entrelinha curta E uma linha por dado: as quatro regiões têm de caber sem rolar
+   dentro do cartão. O nome que quebrava em duas e a nota que quebrava em três faziam
+   a primeira região tomar meio cartão — a linha inteira está no title do <li>. */
+.dash-srv__name{
+  grid-area:name;
+  font-size:.82rem;
+  line-height:1.25;
+  color:var(--c-text);
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.dash-srv__name small{
+  display:block;
+  font-size:.68rem;
+  line-height:1.2;
+  color:var(--c-dim);
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.dash-srv__state{
+  grid-area:state;
+  font-family:var(--font-cond);
+  font-size:.72rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--c-lime);
+  white-space:nowrap;
+  text-align:right;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+/* Uma coluna por número, alinhadas à direita e com dígito de largura fixa: é isso
+   que faz a grade existir em vez de "quase alinhar". */
+.dash-srv__count,
+.dash-srv__ping{
+  line-height:1.25;
+  text-align:right;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.dash-srv__count{ grid-area:count; font-size:.82rem; color:var(--c-text-2) }
+.dash-srv__ping{  grid-area:ping;  font-size:.7rem;  color:var(--c-dim) }
+
+/* A barra mede a região contra a mais cheia — ver o title do selo do painel. */
+.dash-srv__bar{
+  grid-area:bar;
+  height:3px;
+  margin-top:.22rem;
+  border-radius:2px;
+  background:var(--c-track);
+  overflow:hidden;
+}
+.dash-srv__bar::after{
+  content:"";
+  display:block;
+  height:100%;
+  width:var(--v,0%);
+  background:var(--c-lime-dim);
+}
+
+/* Manutenção — ativa ou só agendada — nunca sai verde: o estado é reconhecível
+   pela COR e pelo TEXTO, e a nota da linha fala da mesma janela. */
+.dash-srv__row--manutencao .dash-srv__dot,
+.dash-srv__row--agendada .dash-srv__dot{ background:var(--c-amber); box-shadow:0 0 0 3px rgba(var(--c-amber-rgb),.14) }
+.dash-srv__row--manutencao .dash-srv__state,
+.dash-srv__row--agendada .dash-srv__state{ color:var(--c-amber) }
+.dash-srv__row--manutencao .dash-srv__bar::after,
+.dash-srv__row--agendada .dash-srv__bar::after{ background:var(--c-amber) }
+.dash-srv__row--agendada .dash-srv__dot{ box-shadow:none }
+.dash-srv__row--instavel .dash-srv__dot{ background:var(--c-amber) }
+.dash-srv__row--instavel .dash-srv__state{ color:var(--c-amber) }
+.dash-srv__row--fora .dash-srv__dot{ background:var(--c-red); box-shadow:0 0 0 3px rgba(var(--c-red-rgb),.14) }
+.dash-srv__row--fora .dash-srv__state{ color:var(--c-red) }
+.dash-srv__row--fora .dash-srv__bar::after{ background:var(--c-red) }
+
+/* Fileira de RITMO: os chips têm a mesma largura mínima e o estado sai do rótulo.
+   Com "LOJA · MANUTENÇÃO" escrito dentro dele, o terceiro chip tinha o dobro da
+   largura dos vizinhos e a fileira lia como chip transbordando, não como estado. */
+.dash-svc{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(5rem,1fr));
+  gap:.35rem;
+  padding:.5rem .85rem;
+  flex-shrink:0;
+}
+.dash-svc__chip{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.35rem;
+  min-width:0;
+  padding:.2rem .45rem;
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface-2);
+  font-family:var(--font-cond);
+  font-size:.74rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--c-text-2);
+  white-space:nowrap;
+  overflow:hidden;
+  cursor:help;
+}
+/* Todo o estado cabe num ponto de 6px: verde no ar, âmbar em manutenção, vermelho fora. */
+.dash-svc__dot{
+  width:.375rem; height:.375rem;
+  border-radius:50%;
+  background:var(--c-lime);
+  flex-shrink:0;
+}
+.dash-svc__chip--manutencao{ border-color:rgba(var(--c-amber-rgb),.35) }
+.dash-svc__chip--manutencao .dash-svc__dot{ background:var(--c-amber) }
+.dash-svc__chip--fora{ border-color:rgba(var(--c-red-rgb),.40) }
+.dash-svc__chip--fora .dash-svc__dot{ background:var(--c-red) }
+/* A palavra "manutenção" aparece UMA vez, como legenda da fileira — e não dentro de
+   um chip, empurrando os vizinhos. */
+.dash-svc__legenda{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.4rem .85rem;
+  border-top:0;
+  font-size:.7rem;
+  color:var(--c-amber);
+}
+.dash-svc__legenda .adm-card__link{ margin-left:auto }
+
+/* ==========================================================================
+   6. RANKING
+   ========================================================================== */
+.dash-pos{
+  display:inline-grid;
+  place-items:center;
+  width:1.4rem; height:1.4rem;
+  border-radius:50%;
+  border:1px solid var(--adm-line-2);
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  color:var(--c-muted);
+}
+/* Pódio: só os três primeiros ganham cor — o quarto em diante é ruído colorido. */
+.dash-pos--1{ border-color:var(--c-gold);   color:var(--c-gold);   background:rgba(var(--c-gold-rgb),.10) }
+.dash-pos--2{ border-color:var(--adm-line-2); color:var(--c-text-2) }
+.dash-pos--3{ border-color:rgba(var(--c-amber-rgb),.45); color:var(--c-amber) }
+
+/* Cinco posições têm de caber no cartão sem cortar a última: linha de 30px. */
+.dash-rank th,.dash-rank td{ padding:.22rem .6rem }
+.dash-rank .adm-table__who{ gap:.45rem }
+.dash-rank .adm-table__who img,
+.dash-rank .adm-table__ava{ width:1.4rem; height:1.4rem }
+.dash-rank .adm-table__who strong{ font-size:.82rem; line-height:1.15 }
+.dash-rank .adm-table__who small{ font-size:.66rem; line-height:1.1 }
+/* Vaga: a posição existe, o jogador ainda não. Apagada, e não escondida. */
+.dash-rank__vaga td{ color:var(--c-dim) }
+.dash-rank__vaga .adm-table__ava{ opacity:.35 }
+.dash-rank__vaga .dash-pos{ opacity:.5 }
+
+/* Ninguém pontuou ainda: no lugar de uma tabela cujas colunas NÍVEL e XP só contêm
+   zero e travessão, o fato escrito UMA vez e as contas que existem. Cinco linhas de
+   nada faziam o cartão — e a tela — parecer desligado. */
+.dash-rank__none{ padding:.7rem .85rem; display:grid; gap:.55rem; align-content:start }
+.dash-rank__none-txt{
+  display:flex;
+  align-items:flex-start;
+  gap:.4rem;
+  font-size:.76rem;
+  line-height:1.3;
+  color:var(--c-muted);
+}
+.dash-rank__none-txt .ms{ font-size:1.05rem; color:var(--c-dim); flex-shrink:0 }
+.dash-rank__contas{ display:grid; gap:.35rem }
+.dash-rank__contas .adm-table__who{ gap:.45rem }
+.dash-rank__contas .adm-table__who img,
+.dash-rank__contas .adm-table__ava{ width:1.4rem; height:1.4rem }
+.dash-rank__contas .adm-table__who strong{ font-size:.82rem; line-height:1.15 }
+.dash-rank__contas .adm-table__who small{ font-size:.66rem; line-height:1.1 }
+
+/* ==========================================================================
+   7. EVENTOS
+   ========================================================================== */
+/* Mesma grade de linhas iguais da atividade: os três eventos que o controller busca
+   dividem a altura do cartão e aparecem inteiros — nenhum fica cortado pela borda e
+   nenhum some por baixo de uma rolagem. */
+.dash-evt{
+  display:grid;
+  grid-auto-rows:minmax(0,1fr);
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+}
+.dash-evt__row{
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  padding:.3rem .85rem;
+  min-height:0;
+  overflow:hidden;
+  border-bottom:1px solid var(--adm-line);
+}
+.dash-evt__row:last-child{ border-bottom:0 }
+.dash-evt__thumb{
+  width:2.9rem; height:2.25rem;
+  object-fit:cover;
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface-3);
+  border:1px solid var(--adm-line);
+  flex-shrink:0;
+}
+.dash-evt__thumb--ph{ display:grid; place-items:center; color:var(--c-dim) }
+.dash-evt__txt{ display:grid; gap:.15rem; min-width:0; flex:1 1 auto }
+/* Duas linhas em vez de reticências: com o selo de estado na MESMA linha, todos
+   os títulos saíam cortados ("TEMPORADA 04 · MA…") e dois viravam gêmeos. */
+/* Caixa uniforme para os quatro: a origem escreve "Manutenção 12/09 · AMÉRICA DO SUL"
+   e "Temporada 04 · Mata Fechada" com caixas diferentes, e a lista parecia montada
+   por duas mãos. A normalização é aqui — o dado continua legível no banco. */
+.dash-evt__txt strong{
+  font-size:.8rem;
+  color:var(--c-text);
+  font-family:var(--font-cond);
+  font-weight:500;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  line-height:1.2;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.dash-evt__meta{ display:flex; align-items:center; gap:.4rem; min-width:0 }
+.dash-evt__meta .adm-badge{ height:1.15rem; padding:0 .35rem; font-size:.62rem; flex-shrink:0 }
+.dash-evt__txt em{
+  font-style:normal;
+  font-family:var(--font-mono);
+  font-size:.68rem;
+  color:var(--c-lime-dim);
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.dash-evt__row--encerrado .dash-evt__thumb{ filter:grayscale(1); opacity:.55 }
+.dash-evt__row--encerrado .dash-evt__txt strong{ color:var(--c-muted) }
+.dash-evt__row--encerrado .dash-evt__txt em{ color:var(--c-dim) }
+.dash-evt__row--agendado .dash-evt__txt em{ color:var(--c-cyan) }
+/* O rodapé só é IMPRESSO quando /admin/eventos existir (ver a view): enquanto não
+   existe, nenhum evento fica escondido e não haveria destino para ele levar. */
+.dash-evt__foot{ display:flex; justify-content:flex-end; padding:.3rem .85rem }
+
+/* ==========================================================================
+   8. AÇÕES RÁPIDAS
+   ========================================================================== */
+.dash-acts{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.5rem }
+.dash-act{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.55rem .55rem;
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface-2);
+  min-width:0;
+  transition:border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.dash-act__ico{ font-size:1.2rem; color:var(--c-lime); flex-shrink:0 }
+.dash-act__txt{ display:grid; gap:.05rem; min-width:0 }
+.dash-act__txt strong{
+  font-family:var(--font-cond);
+  font-size:.8rem;
+  font-weight:500;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--c-text);
+  line-height:1.15;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.dash-act__txt small{
+  font-size:.66rem;
+  color:var(--c-muted);
+  line-height:1.2;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+a.dash-act:hover,
+button.dash-act:hover{ border-color:var(--adm-line-lime); background:var(--adm-hover) }
+a.dash-act:focus-visible,
+button.dash-act:focus-visible{ outline:none; box-shadow:var(--adm-ring); border-color:var(--c-lime) }
+/* A HUD do jogador não é operação administrativa: link discreto no pé do cartão, e
+   não um bloco do mesmo peso dos atalhos. Sair do painel não mora mais aqui — repetir
+   a mesma ação a 40cm do botão da barra lateral era ocupar meia célula à toa. */
+.dash-acts__go{
+  margin-top:.55rem;
+  padding-top:.5rem;
+  border-top:1px solid var(--adm-line);
+  font-size:.74rem;
+}
+.dash-acts__go a{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  color:var(--c-muted);
+  transition:color var(--t-fast) var(--ease);
+}
+.dash-acts__go a:hover{ color:var(--c-lime) }
+.dash-acts__go .ms{ font-size:1rem }
+
+/* ==========================================================================
+   9. ATIVIDADE RECENTE
+   ========================================================================== */
+/* Grade de linhas IGUAIS ocupando a altura inteira do corpo: com `flex-direction:column`
+   e rolagem, a entrada que não cabia era cortada no meio da linha de meta pela borda do
+   cartão, e as seguintes ficavam invisíveis sem nenhuma pista. Aqui as quatro entradas
+   dividem a altura entre si — sempre inteiras, em qualquer resolução. */
+.dash-feed{
+  display:grid;
+  grid-auto-rows:minmax(0,1fr);
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+}
+.dash-feed__row{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  align-content:center;
+  gap:.55rem;
+  padding:.3rem .85rem;
+  min-height:0;
+  overflow:hidden;
+  border-bottom:1px solid var(--adm-line);
+}
+.dash-feed__row:last-child{ border-bottom:0 }
+.dash-feed__ico{ font-size:1.05rem; color:var(--c-lime) }
+.dash-feed__row--cyan  .dash-feed__ico{ color:var(--c-cyan) }
+.dash-feed__row--amber .dash-feed__ico{ color:var(--c-amber) }
+.dash-feed__row--red   .dash-feed__ico{ color:var(--c-red) }
+.dash-feed__row--gold  .dash-feed__ico{ color:var(--c-gold) }
+.dash-feed__row--muted .dash-feed__ico{ color:var(--c-dim) }
+.dash-feed__txt{ font-size:.8rem; color:var(--c-text-2); line-height:1.25; min-width:0; overflow:hidden }
+/* UMA linha por mensagem, e não duas: com a altura da linha igual para todas as
+   entradas, a linha de meta ("Painel · anônimo") deixa de ser a primeira coisa que a
+   borda do cartão come. O texto inteiro continua no title. */
+.dash-feed__msg{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.dash-feed__txt small{
+  display:block;
+  font-size:.68rem;
+  line-height:1.2;
+  color:var(--c-dim);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+/* Contador do evento repetido: "3×" no lugar de três linhas iguais. */
+.dash-feed__n{
+  display:inline-block;
+  margin-right:.3rem;
+  padding:0 .3rem;
+  border-radius:2px;
+  background:rgba(255,255,255,.07);
+  font-family:var(--font-mono);
+  font-size:.68rem;
+  color:var(--c-text);
+}
+.dash-feed__when{ font-family:var(--font-mono); font-size:.68rem; color:var(--c-dim); white-space:nowrap }
+
+/* ==========================================================================
+   10. STATUS DO SISTEMA
+   ========================================================================== */
+.dash-rings{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.4rem }
+.dash-rings__cell{ display:grid; justify-items:center; gap:.3rem; min-width:0; cursor:help }
+/* Uma linha para todas as legendas: uma quebrando em duas torcia a fileira. */
+.dash-rings__lbl{
+  font-family:var(--font-cond);
+  font-size:.64rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  text-align:center;
+  line-height:1.2;
+  max-width:100%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.dash-ring{ width:100%; max-width:3.75rem; height:auto }
+.dash-ring__track{ fill:none; stroke:var(--c-track); stroke-width:6 }
+/* Zero MEDIDO tem cara própria: pista tracejada e um arco mínimo na cor da métrica.
+   Sem eles, o anel de ocupação ficava 100% cinza ao lado de três anéis coloridos e
+   lia como widget quebrado — e não como "zero de 80". "Sem dado" continua sendo
+   outra coisa: é o chip SEM ORIGEM do rodapé. */
+.dash-ring__track--zero{ stroke-dasharray:2 4; opacity:.8 }
+.dash-ring__arc{ fill:none; stroke:var(--c-lime); stroke-width:6; stroke-linecap:round }
+.dash-ring__arc--zero{ stroke-linecap:butt }
+.dash-ring--cyan  .dash-ring__arc{ stroke:var(--c-cyan) }
+.dash-ring--amber .dash-ring__arc{ stroke:var(--c-amber) }
+.dash-ring--red   .dash-ring__arc{ stroke:var(--c-red) }
+/* Anel fatiado (regiões): uma fatia por região, com a cor do estado dela. Ponta reta,
+   senão a ponta redonda de cada fatia invade a vizinha e some com o vão. A cor da
+   fatia vence a do anel — é ela que carrega o fato. */
+.dash-ring__arc--seg{ stroke-linecap:butt }
+.dash-ring .dash-ring__arc--lime{  stroke:var(--c-lime) }
+.dash-ring .dash-ring__arc--cyan{  stroke:var(--c-cyan) }
+.dash-ring .dash-ring__arc--amber{ stroke:var(--c-amber) }
+.dash-ring .dash-ring__arc--red{   stroke:var(--c-red) }
+.dash-ring__txt{
+  fill:var(--c-text);
+  font-family:var(--font-cond);
+  font-size:15px;
+  letter-spacing:.02em;
+}
+
+/* As três células do rodapé são LINHAS iguais (rótulo, valor, selo), e não três
+   pilhas soltas: era isso que deixava os selos em alturas diferentes. */
+.dash-sys{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.4rem; align-items:stretch }
+.dash-sys__cell{
+  display:grid;
+  grid-template-rows:.95rem 1.1rem auto;
+  gap:.1rem;
+  min-width:0;
+  cursor:help;
+}
+.dash-sys__lbl{
+  font-family:var(--font-cond);
+  font-size:.62rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  line-height:.95rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.dash-sys__val{
+  font-size:.8rem;
+  color:var(--c-text);
+  line-height:1.1rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+/* Sem origem: o travessão é apagado de propósito — é ausência declarada, não zero. */
+.dash-sys__val.is-void{ color:var(--c-dim) }
+.dash-sys .dash-src{ justify-self:start; align-self:start }
+
+/* ==========================================================================
+   11. RESPONSIVO
+   Os cortes seguem os de admin.css: a coluna direita desce quando a tela não
+   comporta mais o trilho, e o trio vira dupla antes de virar pilha. A partir
+   daí a grade volta a ser de altura livre — empilhado, rolar é o certo.
+   ========================================================================== */
+@media (max-width:1500px){
+  .dash-hero__kpis{ grid-template-columns:repeat(4,minmax(0,1fr)) }
+  .dash-kpi .adm-kpi__delta small{ display:none }
+}
+
+/* Notebook: a partir daqui "Jogadores online" não cabe em uma linha ao lado do selo
+   e saía como "JOGADORES O…". O rótulo passa a usar DUAS linhas de altura fixa —
+   fixa e igual nos quatro cartões, senão os quatro números perdem a linha de base
+   comum que é a razão de a faixa existir. Reticência não é dado, é falta de dado. */
+@media (max-width:1440px){
+  .dash-kpi .adm-kpi__txt{ grid-template-rows:2.05rem 1.5rem .95rem }
+  .dash-kpi__top{ align-items:start }
+  .dash-kpi__top .dash-src{ margin-top:.05rem }
+  .dash-kpi .adm-kpi__label{
+    white-space:normal;
+    line-height:1rem;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+  }
+
+  /* A tabela do ranking ganhava rolagem horizontal e escondia a coluna XP atrás de
+     uma barra. Some a coluna NÍVEL inteira — que aqui é a menos informativa das duas
+     — e as três restantes cabem. Barra horizontal não é válvula de escape. */
+  .dash-rank th:nth-child(3),
+  .dash-rank td:nth-child(3){ display:none }
+  .dash-rank th,.dash-rank td{ padding:.22rem .45rem }
+}
+
+/* Notebook de 1366 (a resolução mais comum): a faixa de baixo aperta e as listas
+   dividem menos altura entre as mesmas linhas. Nada é cortado — as grades de linhas
+   iguais (.dash-feed, .dash-evt) encolhem por igual —, só o respiro diminui. */
+@media (max-width:1400px){
+  .dash-evt__row{ padding:.22rem .75rem; gap:.5rem }
+
+  /* O cartão de servidores fica estreito: o ping cede a vez (continua no title da
+     linha) para o nome da região caber em UMA linha. Com o nome quebrando em duas e a
+     nota em três, uma única região tomava o cartão inteiro e as outras saíam de vista. */
+  .dash-srv__row{ grid-template-columns:auto minmax(0,1fr) 3.8rem 3.2rem; grid-template-areas:"dot name state count" }
+  .dash-srv__ping{ display:none }
+  /* A barra de ocupação também sai: com quatro regiões e o rodapé de serviços, ela era
+     a diferença entre mostrar a plataforma inteira e mostrar duas regiões e meia. */
+  .dash-srv__bar{ display:none }
+  .dash-svc{ gap:.25rem; padding:.4rem .8rem }
+  .dash-svc__chip{ padding:.12rem .32rem; font-size:.66rem }
+}
+@media (max-width:1240px){
+  .dash{ grid-template-columns:minmax(0,1fr); height:auto; min-height:0 }
+  .dash__main{ grid-template-rows:auto auto auto }
+  .dash__side{ grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:auto }
+  .dash-row--trio,
+  .dash-row--chart{ grid-auto-rows:minmax(16rem,auto) }
+  .dash-hero__kpis{ grid-template-columns:repeat(2,minmax(0,1fr)) }
+}
+@media (max-width:980px){
+  .dash-row--chart,
+  .dash-row--trio,
+  .dash__side{ grid-template-columns:minmax(0,1fr) }
+}
+@media (max-width:620px){
+  .dash-hero__kpis{ grid-template-columns:minmax(0,1fr) }
+  .dash-acts{ grid-template-columns:minmax(0,1fr) }
+  .dash-rings{ grid-template-columns:repeat(2,minmax(0,1fr)) }
+  .dash-sys{ grid-template-columns:minmax(0,1fr) }
+}

@@ -10,10 +10,17 @@ use App\Core\Response;
 final class ErrorsController extends Controller
 {
     private const TEXT = [
+        // 403 nasceu com o painel administrativo: quem está logado no jogo e bate numa rota
+        // /admin precisa ver "não é seu", e não o 404 genérico que fingia que a rota não existe.
+        403 => ['ACESSO NEGADO',      'Esta área é restrita. Sua conta não tem permissão para acessá-la.'],
         404 => ['ÁREA NÃO MAPEADA',   'A coordenada que você tentou acessar não existe ou foi evacuada. Verifique a rota e tente novamente.'],
         405 => ['MANOBRA INVÁLIDA',   'Este ponto não aceita esse tipo de requisição. Volte e use os controles da interface.'],
         419 => ['SESSÃO EXPIRADA',    'Seu token de segurança expirou ou é inválido. Recarregue a página e envie o formulário novamente.'],
         500 => ['FALHA NO SISTEMA',   'Ocorreu um erro interno. Nossa equipe já foi notificada. Tente novamente em instantes.'],
+        // 503 é o modo manutenção de /admin/configuracoes (App\Core\Maintenance). O texto
+        // abaixo é só a moldura: a frase que o jogador lê vem da chave `maintenance_message`,
+        // escrita no painel, e chega como o "detalhe" da HttpException.
+        503 => ['MANUTENÇÃO EM CURSO', 'O jogo está fora do ar para manutenção. Tente novamente em instantes.'],
     ];
 
     /** @param array<string, string> $params */
@@ -28,7 +35,10 @@ final class ErrorsController extends Controller
         if (!isset(self::TEXT[$status])) {
             $status = $status >= 500 ? 500 : 404;
         }
-        $detail   = $status === 419 && $e->getMessage() !== '' ? $e->getMessage() : null;
+        // 419 e 503 são os dois status cuja mensagem é escrita para ser lida pelo usuário
+        // (token expirado; aviso de manutenção do painel). Nos demais, a mensagem interna
+        // fica no log — ela descreve o defeito, não o que a pessoa deve fazer.
+        $detail   = in_array($status, [419, 503], true) && $e->getMessage() !== '' ? $e->getMessage() : null;
         $response = $this->errorPage($status, $request, $detail);
         foreach ($e->headers() as $k => $v) {
             $response = $response->withHeader($k, $v);

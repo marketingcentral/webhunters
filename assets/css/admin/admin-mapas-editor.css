@@ -1,0 +1,228 @@
+/* ==========================================================================
+   ADMIN · EDITAR MAPA (/admin/mapas/editor)
+   Cartão, botão, campo e badge vêm de admin.css; os ícones de ponto vêm de
+   admin-mapas-pontos.css (.mpt-ic) — aqui só a composição da tela.
+   ========================================================================== */
+
+/* O editor OCUPA a área de conteúdo inteira, e não uma fração calculada da
+   janela: rolar a página para alcançar o sul da ilha tornaria impossível
+   arrastar um ponto até lá. `height:100%` em vez de `calc(100vh - ...)` porque
+   a altura da topbar e do rodapé do painel não são constantes deste arquivo —
+   qualquer mudança neles deixaria a conta errada em silêncio. */
+.mape{
+  display:flex;
+  flex-direction:column;
+  min-height:28rem;
+  height:100%;
+}
+.mape__body{
+  display:grid;
+  grid-template-columns:14.5rem minmax(0,1fr) 17rem;
+  gap:0;
+  flex:1 1 auto;
+  min-height:0;
+}
+@media (max-width:1180px){
+  .mape__body{ grid-template-columns:13rem minmax(0,1fr) }
+  .mape__side{ display:none }
+}
+
+/* ------------------------------------------------------- barra de ferramentas */
+.mape__bar{
+  display:flex; align-items:center; gap:1rem;
+  flex-wrap:wrap;
+}
+.mape__pick{ display:flex; align-items:flex-end; gap:.5rem }
+.adm-field--inline{ display:flex; align-items:center; gap:.5rem }
+.adm-field--inline .adm-label{ margin:0; white-space:nowrap }
+.mape__tools{ display:flex; align-items:center; gap:.75rem; margin-left:auto; flex-wrap:wrap }
+.mape__zoom{ display:flex; align-items:center; gap:.25rem }
+.mape__zoom-v{ min-width:3rem; text-align:center; font-size:.75rem; color:var(--c-muted) }
+.mape__check{ white-space:nowrap }
+.mape__estado{ font-size:.75rem; color:var(--c-amber, #f0a83c); min-width:9rem; text-align:right }
+
+/* ------------------------------------------------------------------- paleta */
+.mape__palette{
+  display:flex; flex-direction:column;
+  min-height:0;
+  overflow-y:auto;
+  border-right:1px solid var(--adm-line);
+  padding:.75rem .6rem;
+  gap:.35rem;
+}
+.mape__search{ margin-bottom:.35rem }
+.mape__group{ border-bottom:1px solid var(--adm-line) }
+.mape__group:last-of-type{ border-bottom:0 }
+.mape__group-t{
+  display:flex; align-items:center; gap:.4rem;
+  padding:.5rem .2rem;
+  cursor:pointer;
+  font-family:var(--font-cond);
+  font-size:.75rem; letter-spacing:.11em; text-transform:uppercase;
+  color:var(--c-text-2);
+  list-style:none;
+}
+.mape__group-t::-webkit-details-marker{ display:none }
+/* a seta é do container, para girar sem depender do marcador nativo, que o
+   Safari desenha de um jeito e o Chrome de outro */
+.mape__group-t::before{
+  content:"chevron_right";
+  font-family:'Material Symbols Outlined';
+  font-size:1rem; line-height:1;
+  transition:transform var(--t-fast) var(--ease);
+}
+.mape__group[open] > .mape__group-t::before{ transform:rotate(90deg) }
+.mape__group-n{ margin-left:auto; font-size:.6875rem; color:var(--c-muted) }
+
+.mape__items{ display:flex; flex-direction:column; gap:.15rem; padding:0 0 .5rem }
+.mape__chip{
+  display:flex; align-items:center; gap:.5rem;
+  width:100%; padding:.35rem .4rem;
+  border:1px solid transparent; border-radius:var(--adm-r-sm);
+  background:none; color:var(--c-text-2);
+  text-align:left; cursor:grab;
+  transition:background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.mape__chip:hover{ background:var(--adm-hover); border-color:var(--adm-line); color:var(--c-text) }
+.mape__chip:active{ cursor:grabbing }
+.mape__chip-txt{ display:grid; min-width:0; gap:.05rem }
+.mape__chip-txt strong{ font-size:.8125rem; font-weight:500; line-height:1.15; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.mape__chip-txt small{ font-family:var(--font-mono); font-size:.625rem; color:var(--c-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.mape__empty{ padding:.4rem .3rem; font-size:.75rem }
+
+/* -------------------------------------------------------------------- palco */
+.mape__stagewrap{ display:flex; flex-direction:column; min-width:0; min-height:0 }
+.mape__stage{
+  position:relative;
+  flex:1 1 auto;
+  min-height:0;
+  overflow:auto;
+  background:#05080a;
+  /* grade discreta: dá noção de escala quando se aproxima muito e a arte vira
+     uma mancha de cor sem referência */
+  background-image:
+    linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
+  background-size:32px 32px;
+}
+.mape__stage.is-drop{ box-shadow:inset 0 0 0 2px var(--c-lime) }
+/* o palco inteiro é arrastável: a mão vai ao ponto e puxa, em vez de caçar a
+   barra de rolagem. O cursor precisa dizer isso antes do primeiro clique. */
+.mape__stage{ cursor:grab }
+.mape__stage.is-pan{ cursor:grabbing }
+.mape__stage.is-pan .mape__mk{ pointer-events:none }
+.mape__canvas{ position:relative; margin:0 auto; line-height:0 }
+/* A arte recua sob os marcadores pelo mesmo motivo do mapa do jogador: texto
+   claro e fino sobre neve ou areia não se lê. O valor é o MESMO que será gravado
+   em maps.meta.map_opacity, então o palco mostra o que o jogador vai ver. */
+.mape__art{
+  width:100%; height:auto; display:block;
+  opacity:var(--mape-art-opacity, .65);
+  user-select:none; -webkit-user-drag:none;
+}
+.mape__markers{ position:absolute; inset:0 }
+
+.mape__help{
+  flex:0 0 auto;
+  display:flex; align-items:center; gap:.4rem;
+  padding:.45rem .7rem;
+  border-top:1px solid var(--adm-line);
+  font-size:.75rem; color:var(--c-muted);
+}
+.mape__help-ic{ font-size:1rem }
+
+/* ---------------------------------------------------------------- marcadores */
+.mape__mk{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  display:grid; place-items:center;
+  width:1.5rem; height:1.5rem;
+  color:#dfe6da;
+  cursor:grab;
+  line-height:0;
+  /* o alvo de clique é maior do que o desenho: 24px é o mínimo em que uma mão
+     humana acerta um ponto sem aproximar o zoom */
+  padding:.25rem;
+  box-sizing:content-box;
+}
+.mape__mk:active{ cursor:grabbing }
+.mape__mk-ic{ display:grid; place-items:center; width:1.25rem; height:1.25rem; font-size:1.25rem }
+.mape__mk-ic svg, .mape__mk-ic img{ width:100%; height:100%; object-fit:contain; display:block }
+.mape__mk-ic .ms{ font-size:1.25rem; line-height:1 }
+.mape__mk-ic svg, .mape__mk-ic .ms, .mape__mk-ic img{
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.9));
+}
+
+/* o nome só aparece quando a barra pede: com 43 pontos, todos rotulados, a ilha
+   some debaixo do próprio texto */
+.mape__mk-n{
+  position:absolute; left:calc(100% + .1rem); top:50%;
+  transform:translateY(-50%);
+  max-width:9rem;
+  padding:.05rem .25rem;
+  border-radius:2px;
+  background:rgba(4,8,10,.72);
+  font-family:var(--font-cond);
+  font-size:.625rem; line-height:1.4; letter-spacing:.06em; text-transform:uppercase;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity var(--t-fast) var(--ease);
+}
+.mape.is-nomes .mape__mk-n,
+.mape__mk:hover .mape__mk-n,
+.mape__mk.is-sel .mape__mk-n{ opacity:1 }
+
+.mape__mk.is-sel{ z-index:3 }
+.mape__mk.is-sel::before{
+  content:"";
+  position:absolute; inset:-.15rem;
+  border:1px solid var(--c-lime);
+  border-radius:50%;
+  box-shadow:0 0 0 1px rgba(0,0,0,.55), 0 0 10px rgba(155,224,74,.45);
+}
+.mape__mk-zone{
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  aspect-ratio:1;
+  border-radius:50%;
+  background:radial-gradient(closest-side, rgba(240,168,60,.22), rgba(240,168,60,.05));
+  border:1px dashed rgba(240,168,60,.5);
+  pointer-events:none;
+}
+
+/* cores: as MESMAS do mapa do jogador, para o que se vê aqui ser o que sai lá */
+.mape__mk--white { color:#dfe6da }
+.mape__mk--lime  { color:var(--c-lime) }
+.mape__mk--cyan  { color:#4fd6e8 }
+.mape__mk--amber { color:#f0a83c }
+.mape__mk--gold  { color:#e8c65a }
+.mape__mk--red   { color:#e8443f }
+.mape__mk--purple{ color:#c56cf5 }
+.mape__mk--muted { color:#8a938a }
+
+/* enquanto se arrasta, nada mais na camada responde ao ponteiro: sem isto o
+   marcador vizinho "rouba" o gesto ao passar por baixo do cursor */
+.mape.is-movendo .mape__mk:not(.is-sel){ pointer-events:none }
+
+/* ----------------------------------------------------------------- detalhes */
+.mape__side{
+  display:flex; flex-direction:column;
+  min-height:0; overflow-y:auto;
+  border-left:1px solid var(--adm-line);
+  padding:.9rem .8rem;
+}
+.mape__none{ display:grid; justify-items:center; gap:.5rem; padding:2rem .5rem; text-align:center }
+.mape__none-ic{ font-size:2rem; color:var(--c-muted); opacity:.6; line-height:1 }
+.mape__none-ic .ms{ font-size:2rem }
+.mape__props{ display:grid; gap:0 }
+.mape__props-foot{ display:flex; gap:.4rem; margin-top:.9rem }
+.mape__extras{ color:var(--c-amber, #f0a83c) }
+
+.mape-nojs{ margin-bottom:.75rem }
+
+/* ------------------------------------------------------ opacidade da arte */
+.mape__op{ display:flex; align-items:center; gap:.4rem; color:var(--c-muted) }
+.mape__op-ic{ font-size:1.05rem }
+.mape__op input[type=range]{ width:6.5rem; accent-color:var(--c-lime); cursor:pointer }
+.mape__op-v{ min-width:2.6rem; font-size:.75rem; text-align:right }

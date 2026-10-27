@@ -56,6 +56,56 @@ On Message Received (Web) ── FunctionName ──> Equal Exactly (String) == 
 Quem cria o widget: `BP_PlayerCharacter :: EventGraph`, no `Create Widget` +
 `Add to Viewport` disparado pela ação de input `IA_ShowInputs` (FlipFlop mostra/esconde).
 
+## O navegador de dentro do jogo é Chromium 90
+
+O CEF que a Unreal 5.6 embarca é **libcef 90.6.7 / Chromium 90.0.4430** (abril de 2021).
+Confira com:
+
+```
+(Get-Item 'C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\CEF3\Win64\libcef.dll').VersionInfo.FileVersion
+```
+
+Isso faz do Chromium 90 a **linha de base real da HUD**, não do navegador em que a tela foi
+desenhada. Quando uma folha de estilo usa algo mais novo, o Chromium 90 descarta a declaração
+inteira **em silêncio**: nada quebra no navegador de desenvolvimento e, dentro do jogo, a regra
+simplesmente não existe.
+
+Foi assim que `height:100dvh` (Chrome 108) tirou a altura da HUD lá dentro: a página passou a
+medir o conteúdo, ficou ~320 px mais alta que a janela, e o rodapé e o pé do mapa saíram
+cortados — sem erro nenhum no console. O mesmo valia para `dialog:modal` (`:modal` é Chrome
+105), que teria devolvido todo modal para o canto superior esquerdo.
+
+**A regra:** recurso novo pode entrar, desde que o equivalente antigo venha ANTES dele na mesma
+declaração. Quem é velho fica com o primeiro, quem é novo sobrescreve com o segundo.
+
+```css
+height:100vh;        /* CEF 90 entende */
+height:100dvh;       /* navegador atual sobrescreve */
+```
+
+**Como conferir:** `php tools/varrer_cef90.php` varre o CSS e o JS que o jogo carrega e
+distingue o que QUEBRA layout ou execução do que é só cosmético (a barra de rolagem sem
+`scrollbar-width`, o controle sem `accent-color`). Sai com código 2 quando encontra uma quebra.
+A varredura ignora `/admin`, que abre no navegador do operador e não no CEF.
+
+Alguns itens que a linha de base proíbe sem fallback: `dvh/svh/lvh`, `:has()`, `:modal`,
+`@container`, `@layer`, `subgrid`, aninhamento de CSS, `color-mix()`, as propriedades soltas
+`translate`/`rotate`/`scale`, e em JavaScript `.at()`, `Object.hasOwn`, `structuredClone`,
+`findLast`, `crypto.randomUUID` e `AbortSignal.timeout`.
+
+### Arrastar o mapa
+
+O `SWebBrowser` da UE 5.6 captura o mouse no botão esquerdo e repassa os movimentos ao CEF
+(`FWebBrowserViewport::OnMouseButtonDown` devolve `Reply.CaptureMouse`), então arrastar chega
+até a página. Mesmo assim `assets/js/three/map3d.js` escuta **pointer events e mouse events**,
+com trava contra o gesto dobrado: depender de um transporte só é apostar que o embutido
+implementa exatamente aquele, e quando a aposta erra o mapa não arrasta e nada aparece no
+console.
+
+Lembre que no zoom 1 **não há o que arrastar**: a ilha inteira cabe no palco e o enquadramento
+fica preso no centro de propósito. O arrasto passa a valer depois do primeiro `+`.
+
+---
 ## Diagnóstico
 
 A ponte não aparece → o console do CEF mostra se `window.WebNative` foi injetado.
@@ -68,6 +118,88 @@ aparece. Injeção por V8 nativo (o normal em CEF) não é afetada. Se a ponte n
 dentro do jogo mas a página carregar, esta é a primeira suspeita.
 
 ---
+
+## Configurações gráficas no menu
+
+A tela `configuracoes/video` é aberta no menu da Unreal, antes de existir um
+personagem em operação. Ao pressionar **APLICAR ALTERAÇÕES**, o site faz duas
+coisas na mesma confirmação:
+
+1. grava a preferência na conta em `player_settings`;
+2. envia a escolha para o `GameInstance` pelo HuntersWeb.
+
+Assim a configuração já está aplicada quando `Game.LoadMap` abre o level da
+operação. Esta fase não depende do HUD durante a partida nem de uma tecla de
+atalho.
+
+### Contrato Web → Unreal
+
+| Direção | Função | Corpo | Efeito |
+|---|---|---|---|
+| Site → UE | `Video.ApplySettings` | JSON canônico `version: 1` | aplica e persiste as opções gráficas |
+
+Exemplo de corpo enviado pela página (sempre JSON, não texto montado na
+Blueprint):
+
+```json
+{
+  "version": 1,
+  "display": {
+    "mode": "fullscreen",
+    "resolution": { "width": 1920, "height": 1080 },
+    "refreshHz": 144,
+    "vsync": false,
+    "fpsLimit": 144
+  },
+  "quality": {
+    "preset": 2,
+    "textures": 2,
+    "shadows": 1,
+    "foliage": 2,
+    "antiAliasing": "taa",
+    "renderScale": 100
+  },
+  "effects": {
+    "motionBlur": false,
+    "bloom": true,
+    "filmGrain": 20,
+    "fov": 90,
+    "brightness": 50
+  }
+}
+```
+
+`fpsLimit: null` significa ilimitado. Os níveis de qualidade já chegam como
+números de 0 a 3 (`BAIXA` a `ULTRA`), e `display.mode` chega como `windowed`,
+`borderless` ou `fullscreen`. O payload inclui campos `*Raw` apenas como apoio
+para diagnóstico; a Unreal deve aplicar os campos canônicos.
+
+### Implementação no projeto Unreal
+
+Os ativos persistentes são:
+
+1. **`BP_HuntersVideoSaveGame`** (`SaveGame`): guarda tanto a struct
+   `S_HuntersVideoSettings` quanto o JSON canônico no slot
+   `HuntersVideoSettings`.
+2. **`Hunters_Instanc`** (`GameInstance` configurado no projeto): em `Init`,
+   carrega o slot e mantém os valores em memória. A função
+   `SaveVideoSettingsJson` atualiza e salva a cópia recebida do navegador.
+3. **`WBP_HuntersWeb`**: no evento `On Message Received`, o caso
+   `Video.ApplySettings` encaminha o corpo para
+   `Hunters_Instanc::SaveVideoSettingsJson`.
+4. **`UHuntersWebBrowser`**: interpreta e valida o JSON antes de aplicar a
+   parte nativa com `UGameUserSettings`.
+
+O navegador não decide valores fora da faixa: resolução mínima de 640×480,
+escala entre 50 e 100, FOV entre 70 e 120 e brilho/granulação entre 0 e 100.
+O handler aplica resolução, modo de tela, V-Sync, limite de FPS, escalabilidade,
+texturas, sombras, vegetação, anti-aliasing, escala de renderização, motion
+blur, bloom, FOV e brilho. Em seguida chama `ApplySettings(false)` e
+`SaveSettings`.
+
+`GameUserSettings` mantém as configurações nativas entre inicializações. O
+`SaveGame` mantém o contrato JSON completo para as opções de câmera e
+pós-processo seguirem disponíveis entre o menu e a partida.
 
 ## HUD in-game (`/hud`)
 

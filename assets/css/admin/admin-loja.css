@@ -1,0 +1,410 @@
+/* ==========================================================================
+   ADMIN · LOJA (/admin/loja)
+
+   Só o que é DESTA tela. Cartão, tabela, formulário, selo, botão, paginador e
+   estado vazio vêm de admin.css (.adm-*) — aqui não se redesenha primitivo,
+   só se compõe. Namespace .loja-.
+
+   Carregado por app/Views/layouts/admin.php pelo slug da página
+   (assets/css/admin/admin-loja.css), depois de admin.css.
+
+   AS TRÊS DECISÕES QUE MANDAM NESTE ARQUIVO
+
+   1. A PÁGINA NUNCA ROLA NA HORIZONTAL. A tabela tem oito colunas e a área de
+      conteúdo do painel tem ~1.060px em 1366. Quando aperta, colunas somem em
+      ordem de REDUNDÂNCIA — primeiro o preço cheio (que só existe quando há
+      desconto e está riscado ao lado do final), depois o selo de desconto (que
+      já está implícito no preço riscado). Nada é cortado por reticências ou
+      empurrado para fora: ou a coluna cabe inteira, ou ela sai de cena.
+
+   2. DINHEIRO É COLUNA, NÃO FRASE. Todo número monetário é tabular, alinhado à
+      direita e com o glifo da moeda à esquerda do valor, na mesma posição em
+      todas as linhas: é assim que uma coluna de preços vira comparável de
+      relance, e é por isso que o glifo tem largura fixa.
+
+   3. ESTADO TEM COR E TEXTO. Destaque é estrela cheia + linha marcada; desconto
+      é selo âmbar com o número; aba travada é cadeado com title. Nenhum estado
+      desta tela depende só de cor.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. ESQUELETO
+   ========================================================================== */
+
+/* Empilhamento simples: indicadores, painel de escrita (quando aberto) e lista.
+   Nada de altura fechada como no dashboard — esta tela é uma LISTA, e lista que
+   se recusa a crescer esconde linha. Quem rola aqui é a página, na vertical. */
+.loja{ display:grid; gap:var(--adm-gap); align-content:start; min-width:0 }
+
+/* ---- faixa de indicadores ----------------------------------------------- */
+.loja-kpis{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:var(--adm-gap);
+  min-width:0;
+}
+.loja-kpis .adm-kpi{ min-width:0 }
+.loja-kpis .adm-kpi__label{
+  /* Rótulo em UMA linha: com duas, os quatro valores paravam de compartilhar
+     a mesma linha de base e a faixa deixava de ser lida como faixa. */
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* A nota de moeda atravessa a faixa inteira: é o aviso de que nada aqui é R$,
+   e ele precisa estar perto dos números, não num rodapé de página. */
+.loja-kpis__nota{
+  grid-column:1 / -1;
+  display:flex; align-items:center; gap:.4rem;
+  font-size:.78rem;
+  color:var(--c-dim);
+}
+.loja-kpis__nota .ms{ font-size:1rem; color:var(--c-muted) }
+
+/* ==========================================================================
+   2. PAINEL DE CONFIRMAÇÃO DE EXCLUSÃO
+
+   Abre no topo, acima da lista, com a borda vermelha: é a única coisa da tela
+   que apaga dado, e ela não pode parecer mais um cartão.
+   ========================================================================== */
+.loja-conf{ border-color:rgba(var(--c-red-rgb),.35) }
+.loja-conf .adm-card__head{ background:rgba(var(--c-red-rgb),.07) }
+.loja-conf .adm-card__title .ms{ color:#ff8f92; font-size:1.15rem }
+
+/* Recusa não é perigo: quando a exclusão está BLOQUEADA, nada será apagado, e
+   a moldura vermelha viraria alarme falso. Vira âmbar — aviso, não ameaça. */
+.loja-conf--bloqueada{ border-color:rgba(var(--c-amber-rgb),.4) }
+.loja-conf--bloqueada .adm-card__head{ background:rgba(var(--c-amber-rgb),.07) }
+.loja-conf--bloqueada .adm-card__title .ms{ color:var(--c-amber) }
+
+.loja-conf__body{ display:grid; gap:.75rem; max-width:56rem }
+
+.loja-conf__alvo{ display:flex; align-items:center; gap:.75rem; min-width:0 }
+.loja-conf__id{ display:grid; min-width:0 }
+.loja-conf__id strong{ color:var(--c-text); font-size:1rem }
+.loja-conf__id small{ color:var(--c-muted); font-size:.8rem }
+
+.loja-conf__pergunta{ font-family:var(--font-cond); font-size:1.05rem; letter-spacing:.04em; color:var(--c-text) }
+.loja-conf__efeito{ font-size:.88rem; color:var(--c-text-2); max-width:52rem }
+
+.loja-conf__hist,
+.loja-conf__bloqueio{
+  display:flex; align-items:flex-start; gap:.5rem;
+  padding:.6rem .75rem;
+  border-radius:var(--adm-r-sm);
+  font-size:.85rem;
+  line-height:1.5;
+}
+.loja-conf__hist{ background:var(--adm-surface-2); color:var(--c-text-2) }
+.loja-conf__hist .ms{ color:var(--c-muted); font-size:1.1rem }
+.loja-conf__bloqueio{
+  background:rgba(var(--c-amber-rgb),.10);
+  border:1px solid rgba(var(--c-amber-rgb),.3);
+  color:var(--c-text);
+}
+.loja-conf__bloqueio .ms{ color:var(--c-amber); font-size:1.2rem }
+
+/* O botão que apaga fica na PONTA DIREITA, longe do "Cancelar": os dois lado a
+   lado, com o destrutivo primeiro, é como se erra por músculo e não por decisão. */
+.loja-conf__acoes{ border-top:0; padding-top:0 }
+.loja-conf__acoes .adm-spacer{ margin-left:auto }
+
+/* ==========================================================================
+   3. FORMULÁRIO
+   ========================================================================== */
+.loja-form{ border-color:var(--adm-line-lime) }
+.loja-form .adm-card__head{ background:rgba(var(--c-lime-rgb),.05) }
+.loja-form .adm-card__title .ms{ color:var(--c-lime); font-size:1.1rem }
+.loja-form .adm-card__title small{ color:var(--c-muted); font-weight:400 }
+
+/* Aviso de "corrija os campos": no TOPO do formulário, porque num formulário de
+   oito campos o erro do primeiro campo já saiu da tela quando o operador aperta
+   salvar lá embaixo. */
+.loja-form__aviso{
+  display:flex; align-items:center; gap:.5rem;
+  padding:.6rem .75rem;
+  border-radius:var(--adm-r-sm);
+  background:rgba(var(--c-red-rgb),.10);
+  border:1px solid rgba(var(--c-red-rgb),.3);
+  color:#ffb4b6;
+  font-size:.85rem;
+}
+.loja-form__aviso .ms{ color:#ff8f92; font-size:1.1rem }
+
+/* O interruptor ocupa a mesma altura de um input, para os três campos da linha
+   terminarem no mesmo eixo em vez de o terceiro flutuar meio centímetro acima. */
+.loja-form__switch{ min-height:2.5rem }
+
+/* Dica sob o campo: duas linhas no máximo, e reservadas — sem a altura mínima,
+   um campo com dica curta e o vizinho com dica longa desalinhavam a linha
+   inteira do formulário a cada recarga. */
+.loja-form .adm-hint{ min-height:2.1rem; line-height:1.35 }
+
+/* ==========================================================================
+   4. BARRA DE FILTROS E ABAS
+   ========================================================================== */
+.loja-bar{ row-gap:.5rem }
+.loja-bar__sel{ display:block; min-width:0; flex:0 1 11rem }
+.loja-bar__sel .adm-select{ min-width:0 }
+
+/* Chips de aba: filtro, contador e alerta na mesma peça. */
+.loja-abas{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.4rem;
+  padding:.6rem 1rem;
+  border-bottom:1px solid var(--adm-line);
+}
+.loja-aba{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  height:1.85rem;
+  padding:0 .6rem;
+  border:1px solid var(--adm-line);
+  border-radius:999px;
+  background:var(--adm-surface-2);
+  color:var(--c-text-2);
+  font-family:var(--font-cond);
+  font-size:.8rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  transition:border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.loja-aba:hover{ border-color:var(--adm-line-lime); color:var(--c-text) }
+.loja-aba.is-active{
+  border-color:var(--c-lime);
+  background:rgba(var(--c-lime-rgb),.12);
+  color:var(--c-lime);
+}
+.loja-aba__n{
+  font-family:var(--font-mono);
+  font-size:.75rem;
+  color:var(--c-muted);
+  padding-left:.4rem;
+  border-left:1px solid var(--adm-line-2);
+}
+.loja-aba.is-active .loja-aba__n{ color:var(--c-lime) }
+.loja-aba__ico{ font-size:.95rem }
+
+/* Os três estados de aba têm COR E ÍCONE (a frase inteira mora no title):
+   vazia = a vitrine do jogo está sem produto; travada = a última oferta, que a
+   exclusão recusa; cheia = passou dos doze nichos que a vitrine desenha. */
+.loja-aba--vazia{ border-style:dashed; color:var(--c-dim) }
+.loja-aba--vazia .loja-aba__ico{ color:var(--c-dim) }
+.loja-aba--travada .loja-aba__ico{ color:var(--c-muted) }
+.loja-aba--cheia{ border-color:rgba(var(--c-amber-rgb),.4) }
+.loja-aba--cheia .loja-aba__ico{ color:var(--c-amber) }
+
+/* ==========================================================================
+   5. TABELA
+   ========================================================================== */
+
+/* A tabela é fixa: sem isto o navegador dá a largura ao conteúdo mais teimoso
+   (o nome do item) e as sete outras colunas brigam pelo que sobra a cada
+   página, mudando de largura conforme o dado. */
+.loja-tabela{ table-layout:fixed; width:100% }
+
+.loja-col-ordem{ width:6.5rem }
+.loja-col-desc { width:6rem }
+.loja-col-preco{ width:9.5rem }
+.loja-col-dest { width:5rem }
+.loja-tabela th:nth-child(3){ width:12rem }   /* categoria + raridade */
+.loja-tabela .adm-table__acts{ width:5.5rem }
+
+/* Cabeçalho clicável: o <a> ocupa a célula inteira para o alvo de clique ser a
+   coluna, não as sete letras da palavra. */
+.loja-th{
+  display:inline-flex;
+  align-items:center;
+  gap:.25rem;
+  color:inherit;
+  white-space:nowrap;
+}
+.loja-th:hover{ color:var(--c-text) }
+.loja-th__seta{ font-size:1rem; color:var(--c-lime) }
+.loja-tabela th.is-sorted{ color:var(--c-text) }
+.loja-tabela th.tr .loja-th{ flex-direction:row-reverse }
+
+/* ---- coluna ORDEM -------------------------------------------------------- */
+.loja-ordem{ display:flex; align-items:center; gap:.35rem }
+.loja-ordem__n{
+  min-width:1.75rem;
+  text-align:right;
+  color:var(--c-text-2);
+  font-size:.85rem;
+}
+/* As setas empilhadas ocupam a altura de uma linha só — duas fileiras de botões
+   por linha dobrariam a altura da tabela inteira por causa de um controle. */
+.loja-ordem__setas{ display:grid; gap:1px }
+.loja-ordem__setas .adm-btn{
+  height:1.05rem;
+  min-height:0;
+  width:1.5rem;
+  padding:0;
+  border-radius:.2rem;
+}
+.loja-ordem__setas .adm-btn .ms{ font-size:1rem }
+.loja-acao{ display:contents }   /* o <form> não pode virar caixa e quebrar a grade */
+
+/* ---- coluna ITEM --------------------------------------------------------- */
+.loja-item{ display:flex; align-items:center; gap:.6rem; min-width:0 }
+.loja-item__txt{ display:grid; min-width:0 }
+.loja-item__txt strong{
+  color:var(--c-text);
+  font-weight:500;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.loja-item__txt small{
+  display:flex;
+  align-items:center;
+  gap:.35rem;
+  min-width:0;
+  color:var(--c-dim);
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.loja-thumb{
+  width:2.25rem; height:2.25rem;
+  flex-shrink:0;
+  border-radius:var(--adm-r-sm);
+  border:1px solid var(--adm-line);
+  background:var(--adm-surface-3);
+  object-fit:contain;
+  padding:.15rem;
+}
+.loja-thumb--ph{ display:grid; place-items:center }
+.loja-thumb--ph .ms{ font-size:1.15rem; color:var(--c-dim) }
+.loja-conf .loja-thumb{ width:3.5rem; height:3.5rem }
+
+/* A etiqueta da oferta (NOVO, LIMITADO) é o selo que o jogador vê sobre a arte:
+   aqui ela vive junto do slug, em caixa alta e pequena, para não competir com o
+   nome do produto. */
+.loja-tag{
+  flex-shrink:0;
+  padding:0 .3rem;
+  border:1px solid rgba(var(--c-gold-rgb),.35);
+  border-radius:.2rem;
+  background:rgba(var(--c-gold-rgb),.10);
+  color:var(--c-gold);
+  font-family:var(--font-cond);
+  font-size:.68rem;
+  letter-spacing:.08em;
+}
+
+/* ---- coluna CATEGORIA ---------------------------------------------------- */
+.loja-cat{
+  display:block;
+  color:var(--c-text);
+  font-family:var(--font-cond);
+  font-size:.85rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.loja-rar{ height:1.25rem; font-size:.66rem; margin-top:.15rem }
+
+/* ---- coluna PREÇO -------------------------------------------------------- */
+/* Duas informações na MESMA célula, empilhadas e alinhadas à direita: em cima o
+   preço cheio riscado (só quando existe desconto), embaixo o que o jogador
+   paga. Empilhar mantém a coluna estreita e põe os dois números num eixo só —
+   é essa vizinhança que faz o desconto ser lido como desconto. */
+.loja-col-preco{ line-height:1.25 }
+.loja-cheio{
+  display:block;
+  color:var(--c-dim);
+  font-size:.75rem;
+  text-decoration-color:rgba(var(--c-red-rgb),.7);
+}
+.loja-tabela .is-void{ color:var(--c-dim) }
+
+/* O chip de preço final: glifo de largura FIXA + número tabular. É a largura
+   fixa do glifo que faz os doze preços da página compartilharem um eixo. */
+.loja-preco{
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:.35rem;
+  font-size:.9rem;
+  color:var(--c-text);
+}
+.loja-preco__coin{ width:1.05em; height:1.05em; flex-shrink:0 }
+.loja-preco--lime  .loja-preco__coin{ color:var(--c-lime) }
+.loja-preco--cyan  .loja-preco__coin{ color:var(--c-cyan) }
+.loja-preco--amber .loja-preco__coin{ color:var(--c-amber) }
+
+/* ---- coluna DESTAQUE ----------------------------------------------------- */
+/* A estrela não some no repouso como os outros botões de linha: ela é ESTADO
+   antes de ser botão, e um estado que só aparece no hover não é um estado. */
+.loja-tabela .loja-star{ opacity:1 }
+.loja-star .ms{ font-size:1.15rem }
+.loja-star.is-on{
+  border-color:rgba(var(--c-gold-rgb),.45);
+  background:rgba(var(--c-gold-rgb),.12);
+  color:var(--c-gold);
+}
+.loja-star.is-on .ms{ font-variation-settings:'FILL' 1 }
+
+/* A linha em destaque ganha um fio dourado na borda esquerda: é o mesmo produto
+   que aparece na aba DESTAQUES do jogo, e isso tem de ser visível varrendo a
+   coluna da esquerda, sem procurar a estrela na sétima coluna. */
+.loja-tabela tbody tr.is-destaque td:first-child{ box-shadow:inset 2px 0 0 rgba(var(--c-gold-rgb),.55) }
+
+/* Linha recém-escrita: pisca uma vez e fica marcada. Depois de salvar, é ela
+   que responde "onde foi parar o que eu acabei de mexer?". */
+.loja-tabela tbody tr.is-recente{ background:rgba(var(--c-lime-rgb),.09) }
+.loja-tabela tbody tr.is-recente td:first-child{ box-shadow:inset 2px 0 0 var(--c-lime) }
+
+.loja-acoes{ flex-wrap:nowrap; justify-content:flex-end }
+.loja-tabela .loja-del:hover{
+  border-color:rgba(var(--c-red-rgb),.5);
+  background:rgba(var(--c-red-rgb),.12);
+  color:#ff8f92;
+}
+
+/* Alturas de linha: 2,25rem de miniatura + respiro. Fechada aqui para as doze
+   linhas da página caberem em 1366×768 junto da faixa de KPIs. */
+.loja-tabela td{ padding-top:.4rem; padding-bottom:.4rem }
+
+/* ==========================================================================
+   6. RESPONSIVO — colunas saem por REDUNDÂNCIA, nunca por corte
+
+   O único corte é o selo de desconto — e ele não perde informação: o percentual
+   sai, mas o preço cheio riscado continua logo acima do preço final, na mesma
+   célula, dizendo a mesma coisa com dois números em vez de um percentual. A
+   página não rola na horizontal em nenhum destes tamanhos.
+   ========================================================================== */
+@media (max-width:1400px){
+  .loja-kpis{ gap:1rem }
+  .loja-tabela th:nth-child(3){ width:10rem }
+}
+
+@media (max-width:1080px){
+  /* Quatro indicadores numa linha viram números de 11px: duas colunas. */
+  .loja-kpis{ grid-template-columns:repeat(2,minmax(0,1fr)) }
+  .loja-col-desc{ display:none }
+  .loja-bar__sel{ flex:1 1 9rem }
+}
+
+@media (max-width:860px){
+  .loja-kpis{ grid-template-columns:minmax(0,1fr) }
+  .loja-col-ordem{ width:4.5rem }
+  .loja-ordem__setas{ display:none }   /* reordenar é trabalho de tela larga */
+  .loja-tabela th:nth-child(3){ width:8rem }
+  .loja-rar{ display:none }
+}
+
+/* Notebook baixo (768px de altura): a faixa de indicadores encolhe para a
+   tabela começar acima da dobra em vez de estrear na terceira linha. */
+@media (max-height:840px){
+  .loja-kpis .adm-kpi{ padding:.6rem .75rem }
+  .loja-kpis__nota{ display:none }     /* a mesma frase está no title do KPI */
+  .loja-form .adm-hint{ min-height:0 }
+}

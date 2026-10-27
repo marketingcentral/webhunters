@@ -1,0 +1,190 @@
+{
+    "title": "RELATÓRIO DE BUG",
+    "tag": "BUILD 2417",
+    "intro": "Encontrou algo quebrado? Descreva o problema com o máximo de detalhes para que possamos reproduzir e corrigir.",
+    "panel": "NOVO RELATÓRIO",
+    "required": "CAMPOS OBRIGATÓRIOS",
+    "areas": [
+        {
+            "slug": "interface",
+            "label": "INTERFACE / HUD",
+            "icon": "dashboard"
+        },
+        {
+            "slug": "gameplay",
+            "label": "JOGABILIDADE",
+            "icon": "sports_esports"
+        },
+        {
+            "slug": "mapa",
+            "label": "MAPA / AMBIENTE",
+            "icon": "map"
+        },
+        {
+            "slug": "inventario",
+            "label": "INVENTÁRIO / ITENS",
+            "icon": "backpack"
+        },
+        {
+            "slug": "audio",
+            "label": "ÁUDIO",
+            "icon": "volume_up"
+        },
+        {
+            "slug": "desempenho",
+            "label": "DESEMPENHO / TRAVAMENTOS",
+            "icon": "speed"
+        },
+        {
+            "slug": "rede",
+            "label": "CONEXÃO / REDE",
+            "icon": "signal_cellular_alt"
+        },
+        {
+            "slug": "outro",
+            "label": "OUTRO",
+            "icon": "help"
+        }
+    ],
+    "severities": [
+        {
+            "slug": "baixa",
+            "label": "BAIXA",
+            "desc": "Visual ou cosmético",
+            "cls": "muted",
+            "icon": "visibility"
+        },
+        {
+            "slug": "media",
+            "label": "MÉDIA",
+            "desc": "Atrapalha, mas tem contorno",
+            "cls": "amber",
+            "icon": "warning"
+        },
+        {
+            "slug": "alta",
+            "label": "ALTA",
+            "desc": "Impede uma funcionalidade",
+            "cls": "gold",
+            "icon": "error"
+        },
+        {
+            "slug": "critica",
+            "label": "CRÍTICA",
+            "desc": "Travamento, perda de progresso",
+            "cls": "red",
+            "icon": "skull"
+        }
+    ],
+    "form": {
+        "title_label": "TÍTULO DO PROBLEMA",
+        "title_ph": "Ex.: Inventário não abre após extração",
+        "title_max": 120,
+        "area_label": "CATEGORIA",
+        "area_hint": "Use as setas para percorrer as áreas do jogo.",
+        "severity_label": "GRAVIDADE",
+        "description_label": "DESCRIÇÃO",
+        "description_ph": "O que aconteceu, com que frequência e o que você esperava que acontecesse.",
+        "description_max": 600,
+        "steps_label": "PASSOS PARA REPRODUZIR",
+        "steps_ph": "1. Entre em uma partida na Floresta Verde\n2. Extraia pela plataforma norte\n3. Pressione TAB no lobby",
+        "steps_max": 3000,
+        "attach_label": "ANEXAR LOGS DA SESSÃO",
+        "attach_on": "ANEXADO",
+        "attach_off": "NÃO ANEXAR",
+        "attach_file": "eh_client.log",
+        "submit": "ENVIAR RELATÓRIO",
+        "reset": "LIMPAR"
+    },
+    "detail": null,
+    "detail_labels": {
+        "panel": "DETALHE DO RELATÓRIO",
+        "area": "CATEGORIA",
+        "severity": "GRAVIDADE",
+        "opened": "ABERTO EM",
+        "closed": "ENCERRADO EM",
+        "open_yet": "EM ABERTO",
+        "logs": "LOGS DA SESSÃO",
+        "logs_on": "ANEXADOS",
+        "logs_off": "NÃO ANEXADOS",
+        "description": "DESCRIÇÃO",
+        "steps": "PASSOS PARA REPRODUZIR",
+        "empty": "Não informado neste relatório.",
+        "back": "NOVO RELATÓRIO",
+        "intro": "Relatório registrado na sua conta. O acompanhamento é feito por este código."
+    },
+    "tips_title": "DICAS",
+    "tips": [
+        {
+            "icon": "my_location",
+            "title": "SEJA ESPECÍFICO",
+            "text": "Diga o que quebrou e onde. Título curto vale mais que um parágrafo."
+        },
+        {
+            "icon": "replay",
+            "title": "PASSO A PASSO",
+            "text": "Liste a sequência exata que provoca o erro."
+        },
+        {
+            "icon": "photo_camera",
+            "title": "ANEXE OS LOGS",
+            "text": "O log traz build, driver e o instante da falha."
+        },
+        {
+            "icon": "local_fire_department",
+            "title": "UM BUG POR RELATÓRIO",
+            "text": "Problemas separados são resolvidos mais rápido."
+        }
+    ],
+    "system_title": "DADOS DA SESSÃO",
+    "system": [],
+    "clock_label": "HORA DO REGISTRO",
+    "recent_title": "SEUS RELATÓRIOS",
+    "recent_count": "NO HISTÓRICO",
+    "recent": [],
+    "recent_empty": "Nenhum relatório enviado ainda. Use o formulário ao lado.",
+    "recent_seed": [
+        {
+            "id": "BUG-4812",
+            "title": "Mira trava ao trocar de arma no rig",
+            "status": "analise",
+            "area": "gameplay",
+            "severity": "media",
+            "days_ago": 9,
+            "description": "Ao trocar da arma primária para a secundária com o rig cheio, a mira fica presa no centro da tela e só volta ao normal depois de recarregar.",
+            "steps": "1. Equipe uma primária e uma secundária\n2. Encha o rig até o último compartimento\n3. Pressione 2 para trocar de arma durante a corrida"
+        },
+        {
+            "id": "BUG-4790",
+            "title": "Textura piscando na Base Ártica",
+            "status": "corrigido",
+            "area": "mapa",
+            "severity": "baixa",
+            "days_ago": 16,
+            "description": "A parede do hangar oeste pisca entre a textura de gelo e o material padrão quando a lanterna aponta para ela.",
+            "steps": "1. Entre na Base Ártica pelo desembarque leste\n2. Vá até o hangar oeste\n3. Ligue a lanterna e olhe para a parede do fundo"
+        },
+        {
+            "id": "BUG-4711",
+            "title": "Chat do lobby não rola automaticamente",
+            "status": "corrigido",
+            "area": "interface",
+            "severity": "baixa",
+            "days_ago": 24,
+            "description": "Com mais de doze mensagens no lobby, a lista para de acompanhar a última linha e é preciso rolar à mão.",
+            "steps": "1. Entre em um lobby com amigos\n2. Envie mais de doze mensagens seguidas\n3. Observe que a lista não desce sozinha"
+        },
+        {
+            "id": "BUG-4655",
+            "title": "Passos abafados no Porto Industrial",
+            "status": "duplicado",
+            "area": "audio",
+            "severity": "baixa",
+            "days_ago": 35,
+            "description": "Os passos de outros jogadores somem quase por completo sobre as passarelas metálicas do pátio de contêineres.",
+            "steps": "1. Entre no Porto Industrial em dupla\n2. Suba na passarela metálica do pátio\n3. Peça para o parceiro correr a dez metros de distância"
+        }
+    ],
+    "recent_foot": "Tempo médio de resposta",
+    "recent_sla": "36 h"
+}

@@ -1,0 +1,267 @@
+/* ==========================================================================
+   ADMIN · BANIMENTOS (/admin/banimentos)
+
+   Só o que é DESTA tela. Cartão, tabela, formulário, selo, botão, vazio e
+   paginação vêm de admin.css (.adm-*) — aqui não se redesenha primitivo.
+
+   Carregado por app/Views/layouts/admin.php pelo slug da página
+   (assets/css/admin/admin-banimentos.css), depois de admin.css.
+
+   Namespace .ban-.
+
+   REGRA DESTA TELA: sete colunas têm de caber em 1366px sem rolagem
+   horizontal. Toda coluna estreita tem largura declarada e não quebra; a
+   ÚNICA elástica é o motivo, e é ela que aparava a diferença entre um monitor
+   e outro. Se algum dia entrar uma oitava coluna, é o motivo que some — não a
+   largura da página que cresce.
+   ========================================================================== */
+
+.ban{ display:flex; flex-direction:column; gap:var(--adm-gap); min-width:0 }
+
+/* ==========================================================================
+   1. NÚMEROS DO TOPO — cada cartão é também um filtro
+   ========================================================================== */
+
+/* Os quatro KPIs são <a>, e um <a> herdaria sublinhado e cor de link da HUD.
+   `is-active` é o cartão que está filtrando agora: borda lime + o rótulo da
+   ação trocado para "filtrando", porque só a borda não diz o que aconteceu. */
+.ban-kpi{
+  position:relative;
+  color:inherit;
+  text-decoration:none;
+  transition:border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.ban-kpi__acao{
+  position:absolute;
+  right:.85rem; bottom:.6rem;
+  font-family:var(--font-cond);
+  font-size:.7rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  opacity:0;
+  transition:opacity var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.ban-kpi:hover{ border-color:var(--adm-line-lime); background:var(--adm-surface-2) }
+.ban-kpi:hover .ban-kpi__acao{ opacity:1 }
+.ban-kpi:focus-visible{ outline:none; box-shadow:var(--adm-ring); border-color:var(--c-lime) }
+.ban-kpi.is-active{ border-color:var(--c-lime); background:rgba(var(--c-lime-rgb),.06) }
+.ban-kpi.is-active .ban-kpi__acao{ opacity:1; color:var(--c-lime) }
+
+/* O cartão "contas fora do ar" não filtra (conta contas, não linhas): sem
+   afordância de clique nenhuma, para não prometer o que não faz. */
+.ban-kpi--fixo{ cursor:default }
+
+/* ==========================================================================
+   2. PAINEL DE AÇÃO — aplicar / revogar / apagar
+   ========================================================================== */
+
+/* Faixa de cor à esquerda: o painel de punir, o de revogar e o de apagar
+   precisam ser reconhecíveis antes da leitura do título. */
+.ban-painel{ border-left:3px solid var(--c-lime) }
+.ban-painel--novo{ border-left-color:var(--c-amber) }
+.ban-painel--revogar{ border-left-color:var(--c-lime) }
+.ban-painel--remover{ border-left-color:var(--c-red) }
+
+.ban-painel__ico{ font-size:1.25rem; margin-right:.45rem; vertical-align:-.2rem }
+.ban-painel--novo .ban-painel__ico{ color:var(--c-amber) }
+.ban-painel--revogar .ban-painel__ico{ color:var(--c-lime) }
+.ban-painel--remover .ban-painel__ico{ color:var(--c-red) }
+
+/* O subtítulo do painel é uma frase inteira (o que a ação faz de verdade), e
+   não um rótulo: ele precisa quebrar em várias linhas sem apertar o título. */
+.ban-painel .adm-card__title small{ max-width:62ch; line-height:1.4 }
+
+/* Resumo do registro à esquerda, formulário à direita: quem vai revogar lê o
+   que está revogando na MESMA altura em que escreve o motivo. Abaixo de
+   1100px vira uma coluna só (ver responsivo). */
+.ban-painel__corpo{ display:grid; grid-template-columns:minmax(0,20rem) minmax(0,1fr); gap:1.5rem; align-items:start }
+
+.ban-resumo{
+  padding:.85rem 1rem;
+  background:var(--adm-surface-2);
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+  align-content:start;
+}
+.ban-resumo dd{ min-width:0; overflow-wrap:anywhere }
+.ban-resumo__motivo{ line-height:1.45 }
+
+/* Bloqueio explicado: o painel de apagar abre mesmo quando a ação é proibida,
+   e o conteúdo dele passa a ser a razão da recusa. Vermelho + ícone + frase —
+   nunca só a cor. */
+.ban-trava{
+  display:flex; gap:.6rem; align-items:flex-start;
+  padding:.8rem .9rem;
+  border:1px solid rgba(var(--c-red-rgb),.35);
+  border-left:3px solid var(--c-red);
+  border-radius:var(--adm-r-sm);
+  background:rgba(var(--c-red-rgb),.08);
+  color:#ffb9bb;
+  font-size:.88rem;
+  line-height:1.45;
+}
+.ban-trava .ms{ font-size:1.15rem; color:var(--c-red); flex-shrink:0 }
+
+/* ---- escolha do tipo de punição ---------------------------------------- */
+
+/* Três cartões de rádio em vez de um <select>: o tipo decide se existe prazo e
+   o que vai para users.status, e essas duas consequências têm de estar VISÍVEIS
+   na hora de escolher — dentro de um select fechado, ninguém as lê. */
+.ban-tipos{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.6rem }
+.ban-tipo{ display:block; cursor:pointer; min-width:0 }
+.ban-tipo input{ position:absolute; opacity:0; width:0; height:0 }
+.ban-tipo__box{
+  display:grid;
+  gap:.2rem;
+  height:100%;
+  padding:.7rem .8rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-bg);
+  transition:border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.ban-tipo__box strong{ font-family:var(--font-cond); font-size:.95rem; letter-spacing:.06em; text-transform:uppercase; color:var(--c-text) }
+.ban-tipo__box small{ font-size:.78rem; color:var(--c-muted); line-height:1.35 }
+.ban-tipo__box em{ font-family:var(--font-mono); font-style:normal; font-size:.72rem; color:var(--c-dim) }
+.ban-tipo:hover .ban-tipo__box{ border-color:rgba(255,255,255,.2); background:var(--adm-surface) }
+.ban-tipo input:checked + .ban-tipo__box{ border-color:var(--c-lime); background:rgba(var(--c-lime-rgb),.08) }
+.ban-tipo input:checked + .ban-tipo__box strong{ color:var(--c-lime) }
+.ban-tipo input:focus-visible + .ban-tipo__box{ box-shadow:var(--adm-ring) }
+
+/* Punição definitiva não tem data de término: com "Definitivo" marcado, o campo
+   de prazo sai do formulário em vez de ficar lá pedindo um valor que o servidor
+   vai ignorar. Onde :has() não existir, o campo permanece — e o servidor segue
+   ignorando, então nada quebra. */
+.ban-form:has(#ban-tipo-perma:checked) .ban-field--prazo{ display:none }
+
+/* ==========================================================================
+   3. TABELA DO HISTÓRICO
+   ========================================================================== */
+
+.ban-campo{ display:block; min-width:0 }
+.ban-campo .adm-select{ min-width:10.5rem }
+
+/* `table-layout:fixed` não é preferência: com layout automático o navegador mede o
+   MOTIVO pelo texto inteiro (motivos passam de 150 caracteres), a tabela fica mais
+   larga que o cartão e as três últimas colunas somem atrás de uma barra de rolagem
+   dentro do .adm-tablewrap. Fixo, a soma é decidida aqui e o motivo recebe o resto.
+
+   As larguras vão por `nth-child` porque no layout fixo quem manda é a PRIMEIRA
+   linha — o <thead>, que não carrega as classes das células de dados. */
+.ban-t{ table-layout:fixed; width:100% }
+.ban-t th:nth-child(1),.ban-t td:nth-child(1){ width:13rem }   /* conta        */
+.ban-t th:nth-child(2),.ban-t td:nth-child(2){ width:6.75rem } /* tipo         */
+.ban-t th:nth-child(3),.ban-t td:nth-child(3){ width:auto }    /* motivo: sobra */
+.ban-t th:nth-child(4),.ban-t td:nth-child(4){ width:9rem }    /* aplicado por */
+.ban-t th:nth-child(5),.ban-t td:nth-child(5){ width:8.5rem }  /* prazo        */
+.ban-t th:nth-child(6),.ban-t td:nth-child(6){ width:7.5rem }  /* estado       */
+.ban-t th:nth-child(7),.ban-t td:nth-child(7){ width:7rem }    /* ações        */
+
+/* `.adm-table td` é `nowrap` por padrão no sistema — e com nowrap herdado o
+   -webkit-line-clamp abaixo nunca quebrava: o motivo virava UMA linha cortada a
+   seco no meio da palavra. Esta é a única célula que precisa fluir.
+   O seletor leva o `td` junto porque `.adm-table td` (classe+elemento) vence de
+   `.ban-t__motivo` (classe) no desempate de especificidade. */
+.ban-t td.ban-t__motivo{ white-space:normal }
+
+.ban-t__tipo{ white-space:nowrap }
+.ban-t__admin{ white-space:nowrap }
+/* Números à direita, e o CABEÇALHO junto: rótulo à esquerda sobre uma coluna
+   alinhada à direita deixa os dois desencontrados no topo da tabela. */
+.ban-t th:nth-child(5){ text-align:right }
+.ban-t__prazo{ white-space:nowrap; text-align:right }
+.ban-t__estado{ white-space:nowrap }
+
+/* Célula estreita com conteúdo comprido (nome de conta, e-mail) corta com
+   reticências em vez de esticar a coluna — no layout fixo, esticar não é opção:
+   o texto simplesmente vazaria por cima da vizinha. */
+.ban-t .adm-table__who span{ min-width:0 }
+.ban-t .adm-table__who strong,
+.ban-t .adm-table__who small,
+.ban-t__admin strong{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+
+/* Duas linhas e reticências. O motivo inteiro continua no HTML (title), então
+   nada é perdido — o que é limitado é a ALTURA da linha, para a tabela manter
+   o mesmo ritmo com motivos de 20 e de 400 caracteres. */
+.ban-t__clamp{
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+}
+.ban-t__revmotivo{
+  display:flex; align-items:center; gap:.3rem;
+  margin-top:.25rem;
+  font-size:.78rem;
+  color:var(--c-lime-dim, var(--c-muted));
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ban-t__revmotivo .ms{ font-size:.9rem; flex-shrink:0 }
+
+/* Duas informações empilhadas na mesma célula (quem/quando, quando/quanto falta):
+   a de cima é o dado, a de baixo é o contexto. */
+.ban-t__admin strong,
+.ban-t__prazo strong{ display:block; line-height:1.25 }
+.ban-t__admin small,
+.ban-t__prazo small{ display:block; font-size:.75rem; color:var(--c-dim); line-height:1.25 }
+.ban-t__prazo small,
+.ban-t__prazo strong{ font-family:var(--font-mono) }
+.ban-t__semprazo{ font-family:var(--font-cond); letter-spacing:.08em; text-transform:uppercase; font-size:.8rem; color:var(--c-muted) }
+.ban-t__estado small{ display:block; margin-top:.2rem; font-size:.72rem }
+.ban-t__encerrado{ font-size:.78rem; color:var(--c-dim); padding-right:.25rem }
+
+/* A linha em vigor é a única que exige ação: um fio vermelho à esquerda a
+   separa das encerradas sem precisar ler a coluna de estado. As encerradas
+   recuam de contraste — continuam legíveis, deixam de competir. */
+.ban-t__linha--ativo td:first-child{ box-shadow:inset 3px 0 0 var(--c-red) }
+.ban-t__linha--expirado,
+.ban-t__linha--revogado{ color:var(--c-muted) }
+.ban-t__linha--expirado .adm-table__who strong,
+.ban-t__linha--revogado .adm-table__who strong{ color:var(--c-text-2) }
+
+/* A ação da linha é texto + ícone (não só ícone): "Revogar" e "Apagar" fazem
+   coisas diferentes e irreversíveis — um glifo sozinho não basta. */
+.ban-t .adm-table__acts .adm-btn{ white-space:nowrap }
+
+/* ==========================================================================
+   4. RESPONSIVO
+   ========================================================================== */
+
+/* Notebook 1366: a coluna de e-mail da conta é a primeira a sair — o nome de
+   usuário identifica, o e-mail só confirma, e o motivo precisa do espaço. */
+@media (max-width:1400px){
+  .ban-t th:nth-child(1),.ban-t td:nth-child(1){ width:11.5rem }
+  .ban-t th:nth-child(4),.ban-t td:nth-child(4){ width:8rem }
+  /* O resumo cede pouco: quem revoga precisa LER o motivo original inteiro, e a
+     coluna do formulário (uma caixa de texto) sobra largura em qualquer monitor. */
+  .ban-painel__corpo{ grid-template-columns:minmax(0,19rem) minmax(0,1fr); gap:1.15rem }
+}
+@media (max-width:1240px){
+  /* O e-mail confirma a conta; o nome de usuário já a identifica. Ele é o
+     primeiro a sair para o motivo não ficar com menos de ~14rem. */
+  .ban-t .adm-table__who small{ display:none }
+  .ban-tipos{ grid-template-columns:repeat(2,minmax(0,1fr)) }
+}
+@media (max-width:1100px){
+  .ban-painel__corpo{ grid-template-columns:minmax(0,1fr) }
+  .ban-t__admin small{ display:none }
+}
+@media (max-width:820px){
+  .ban-tipos{ grid-template-columns:minmax(0,1fr) }
+  .ban-campo .adm-select{ min-width:0; width:100% }
+  /* Sete colunas não cabem: as duas de contexto saem INTEIRAS (cabeçalho junto,
+     senão o layout fixo desalinha) antes de a página rolar de lado. O dado delas
+     continua no painel de revogação. */
+  .ban-t th:nth-child(2),.ban-t td:nth-child(2),
+  .ban-t th:nth-child(4),.ban-t td:nth-child(4){ display:none }
+  .ban-t th:nth-child(1),.ban-t td:nth-child(1){ width:10rem }
+  .ban-t th:nth-child(5),.ban-t td:nth-child(5){ width:7.5rem }
+  .ban-t th:nth-child(6),.ban-t td:nth-child(6){ width:6.5rem }
+  .ban-t th:nth-child(7),.ban-t td:nth-child(7){ width:6.5rem }
+}

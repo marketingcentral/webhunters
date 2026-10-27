@@ -1,0 +1,31 @@
+{
+  "_nota": "Fundo das peças de divulgação (enredo v6). A arte NÃO tem texto: logo (media/logo/logo-final.png) e slogan entram por cima em tools/divulgacao.mjs, com as fontes do site. Cada formato é gerado à parte (e não recortado de um só) para a composição respirar: céu escuro e vazio no terço de cima, onde a logo pousa. Gerar com: node tools/gen_art.mjs --manifest tools/divulgacao_art_manifest.json --out divulgacao/_arte",
+
+  "styleSuffix": "Cinematic AAA video game key art for a slow, tactical survival extraction game about a meteorite that brought an alien FUNGUS to Earth. Infected people are living humans overtaken by pale grey mycelium and shelf-fungus, faint sickly lime-green bioluminescence, unsettling but NOT gory. Overcast dusk, volumetric fog, muted olive greens, ash greys and cold blacks with lime-green accents, dramatic rim light, photorealistic, extremely detailed. The upper third of the frame is calm dark stormy sky with NO important detail, reserved for a title logo. Absolutely no text, no letters, no logo, no watermark, no UI, single continuous scene, no border, no frame, not a diptych.",
+
+  "defaults": { "model": "gemini-3-pro-image", "aspectRatio": "16:9" },
+
+  "jobs": [
+    {
+      "file": "keyart-16x9.png",
+      "aspectRatio": "16:9",
+      "imageSize": "2K",
+      "prompt": "Modern advertising key art poster composition, epic and clean like a AAA game launch banner. HERO: one tactical soldier in dark olive gear, helmet and gas mask hanging on the chest, rifle held low and ready, standing firm in the RIGHT-CENTER foreground, lit by a strong lime-green rim light from behind, determined, facing three-quarters toward the camera. AROUND AND BEHIND HIM, arranged in depth like a cast lineup and clearly readable as separate figures: towering in the hazy background behind him the AMÁLGAMA, a four-meter mass of several infected human bodies fused together by thick grey mycelium; to his left a FEBRIL infected man sprinting toward him with hot breath steaming; on a broken rooftop above a VIGIA infected crouched with antenna-like fungal stalks growing from its skull; near his feet a LOBO-CINZA infected grey wolf snarling with fungus on its spine; a bloated SEMEADOR infected with yellow spore sacs in the mid-ground haze; a flock of infected crows (REVOADA) circling in the sky; clusters of glowing lime-green mushrooms (FAROL) on the ground. Setting: ruined industrial zone at night with a green glowing meteor crater far behind, falling ash and spores, volumetric light beams. The LEFT 40% of the frame is darker and calmer (fog and sky, few details) to hold a title logo and slogan"
+    },
+    {
+      "file": "fundo-16x9.jpg",
+      "aspectRatio": "16:9",
+      "prompt": "Seen from behind, a squad of four tactical operators in dark olive gear crouched on a rocky forested ridge in the lower foreground, one pointing, one with binoculars, looking down at a ruined coastal industrial town in a valley; at the center of the town a deep impact crater glows faintly lime-green, the half-buried black porous meteorite core visible, grey mycelium spreading out over roofs and roads like frost; small infected silhouettes wander the streets far below; clusters of glowing green mushrooms on the pine trunks near the squad; a faint old scar of smoke across the sky where the meteor came in; pine forest and mountains framing the valley"
+    },
+    {
+      "file": "fundo-4x5.jpg",
+      "aspectRatio": "4:5",
+      "prompt": "Seen from behind, a squad of three tactical operators in dark olive gear on a rocky forested ridge in the lower third of the frame, one with binoculars, overlooking a ruined industrial town in the valley below with a deep crater glowing faintly lime-green at its center and a black porous meteorite core half buried in it, grey mycelium spreading over the roofs, small infected silhouettes in the streets, glowing green mushrooms on nearby pine trunks, mountains and fog framing the valley"
+    },
+    {
+      "file": "fundo-9x16.jpg",
+      "aspectRatio": "9:16",
+      "prompt": "Vertical composition: in the lower third, seen from behind, a single tactical operator in dark olive gear and a backpack standing on the edge of a rocky ridge between tall pines, rifle lowered, looking down into a foggy valley; in the middle third, a ruined industrial town with a deep crater glowing faintly lime-green and a black porous meteorite core, grey mycelium spreading over roofs like frost, tiny infected silhouettes in the streets; glowing green mushrooms on the pine trunks beside the operator; tall dark stormy sky above"
+    }
+  ]
+}

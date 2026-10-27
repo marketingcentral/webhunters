@@ -120,11 +120,24 @@ final class MessageRepo
         return (int)Database::value('SELECT COUNT(*) FROM message_threads WHERE user_id = :u AND unread = 1', ['u' => $userId]);
     }
 
-    /** Avisos do painel lateral. @return list<array<string,mixed>> */
+    /**
+     * Avisos do painel lateral: os desta conta MAIS os globais.
+     *
+     * `system_notices.user_id NULL` é o aviso para todo mundo — é assim que o painel grava
+     * quando o operador escolhe "aviso global" (App\Controllers\Admin\EventsController::
+     * salvarAviso) e é assim que a tela conta os globais no resumo. Antes esta consulta
+     * pedia `user_id = :u` e só isso: o aviso global era gravado, contado no painel e
+     * nunca chegava a ninguém. Os globais vêm primeiro em empate de ordem porque é um
+     * recado da operação — normalmente manutenção ou evento — e ele lidera a lista.
+     *
+     * @return list<array<string,mixed>>
+     */
     public static function notices(int $userId): array
     {
         $rows = Database::all(
-            'SELECT * FROM system_notices WHERE user_id = :u ORDER BY sort_order, id',
+            'SELECT * FROM system_notices
+              WHERE user_id = :u OR user_id IS NULL
+              ORDER BY sort_order, user_id IS NOT NULL, id',
             ['u' => $userId]
         );
         return array_map(static fn(array $r): array => [

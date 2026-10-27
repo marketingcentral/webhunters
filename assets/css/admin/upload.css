@@ -1,0 +1,121 @@
+/* ==========================================================================
+   Campo de imagem com envio — app/Views/components/admin-upload.php
+   Carregado pelo próprio componente, só nas telas que têm campo de imagem.
+
+   Arquivo separado de propósito: admin.css é o sistema das 14 telas e está sendo
+   mexido em paralelo; um componente novo não precisa entrar lá para funcionar.
+
+   Nenhuma cor literal aqui. Tudo sai dos tokens --adm-*/--c-*, que o modo claro do
+   painel redefine — é o que faz este campo mudar de tema junto com o resto sem uma
+   única regra dedicada ao claro.
+   ========================================================================== */
+
+.adm-up{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:.6rem;
+  align-items:start;
+  min-width:0;
+}
+/* Sem prop `entidade`: só o campo de texto, sem moldura sobrando na linha. */
+.adm-up--so-texto{ grid-template-columns:minmax(0,1fr) }
+.adm-up--so-texto .adm-up__prev{ display:none }
+
+/* ---------------------------------------------------------------- miniatura */
+/* Proporção 16/10: é a forma da arte que estes campos guardam (banner de missão,
+   cartão de mapa, capa de notícia). Um quadrado mentiria sobre o recorte. */
+.adm-up__prev{
+  position:relative;
+  display:grid;
+  place-items:center;
+  width:6.5rem;
+  aspect-ratio:16/10;
+  overflow:hidden;
+  border:1px solid var(--adm-line-2);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-input);
+}
+.adm-up__img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  /* z-index para a <img> cobrir o ícone de "vazio" que fica sempre no DOM: assim o
+     onerror do JS só precisa remover a imagem, e a moldura vazia reaparece sozinha. */
+  z-index:1;
+}
+.adm-up__vazio{ color:var(--c-dim); opacity:.5 }
+.adm-up__vazio .ms{ font-size:1.6rem }
+
+/* ------------------------------------------------------------------- corpo */
+.adm-up__corpo{ display:grid; gap:.4rem; min-width:0 }
+
+.adm-up__acoes{
+  position:relative;   /* bloco de contenção do <input type=file> escondido abaixo */
+  display:flex; align-items:center; gap:.6rem;
+  flex-wrap:wrap; min-width:0;
+}
+
+/* O <input type=file> some da tela mas CONTINUA focável e no fluxo do teclado —
+   display:none o tiraria da ordem de tabulação e o botão viraria armadilha para
+   quem navega sem mouse. */
+.adm-up__file{
+  position:absolute;
+  width:1px; height:1px;
+  padding:0; margin:-1px; border:0;
+  overflow:hidden; clip-path:inset(50%);
+}
+.adm-up__btn{ cursor:pointer; flex:none }
+/* O foco mora no <input type=file> escondido; o anel precisa aparecer no <label>,
+   que é o que o operador enxerga. */
+.adm-up__file:focus-visible + .adm-up__btn{
+  outline:none;
+  box-shadow:var(--adm-ring);
+  border-color:var(--c-lime);
+}
+.adm-up__btn[aria-disabled="true"]{ opacity:.45; pointer-events:none }
+
+.adm-up__estado{
+  font-size:.78rem;
+  color:var(--c-dim);
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.adm-up__estado.is-ok{ color:var(--c-lime) }
+.adm-up__estado.is-erro{ color:var(--adm-danger) }
+.adm-up__estado.is-andando{ color:var(--c-text-2) }
+
+/* ------------------------------------------------------------------- barra */
+/* --v vem do JS como inline style (a CSP do projeto libera style ATTR, não <style>
+   inline) — o mesmo contrato do componente `progress` da HUD. */
+.adm-up__barra{
+  --v:0%;
+  height:3px;
+  border-radius:999px;
+  background:var(--adm-line-2);
+  overflow:hidden;
+}
+.adm-up__barra-in{
+  display:block;
+  width:var(--v);
+  height:100%;
+  background:var(--c-lime);
+  transition:width var(--t-fast) linear;
+}
+
+/* ---------------------------------------------------------------- estados */
+.adm-up.is-enviando .adm-up__prev{ opacity:.65 }
+.adm-up.is-sobre .adm-up__prev{
+  border-color:var(--c-lime);
+  box-shadow:var(--adm-ring);
+}
+
+/* No estreito a miniatura vira faixa: 6,5rem ao lado de um input de caminho em tela
+   de celular deixaria o input com menos da metade da largura. */
+@media (max-width:640px){
+  .adm-up{ grid-template-columns:minmax(0,1fr) }
+  .adm-up__prev{ width:100%; max-width:12rem }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .adm-up__barra-in{ transition:none }
+}

@@ -18,11 +18,15 @@ import { aoSair } from '../spa.js';
 
 const root = document.getElementById('map3d');
 
-const PLANE_W = 12.155;          // = 1240/1020, a mesma proporção da imagem e do palco
+const PLANE_W = 5.628;           // = 941/1672: a arte do mundo é RETRATO, o plano segue a arte
 const PLANE_H = 10;
 const RELIEF = 0.5;
-const ZOOM_MIN = 1, ZOOM_MAX = 3.2;
-const START_ZOOM = 1.12;         // enquadra o terreno preenchendo o palco, como na referencia
+/* A ilha em pé cabe pela ALTURA num palco deitado, então na abertura ela ocupa pouco mais de
+   metade da largura disponível. Daí o teto de zoom mais alto que o antigo (3.2): é assim que
+   se lê o nome de uma rua do porto sem sair da tela. A arte entregue tem 1600px de largura,
+   resolução de sobra para 5x. */
+const ZOOM_MIN = 1, ZOOM_MAX = 5;
+const START_ZOOM = 1;            // abre mostrando a ilha inteira
 
 function hasWebGL() {
   try {
@@ -60,8 +64,8 @@ export function initMap3d(target = root) {
 
   /* ---- estado do enquadramento ------------------------------------------- */
   /* zoom = escala; (cx,cy) = ponto da imagem, em 0..1, que fica no centro do palco */
-  const view = { zoom: START_ZOOM, cx: 0.5, cy: 0.455 };
-  const want = { zoom: START_ZOOM, cx: 0.5, cy: 0.455 };
+  const view = { zoom: START_ZOOM, cx: 0.5, cy: 0.5 };
+  const want = { zoom: START_ZOOM, cx: 0.5, cy: 0.5 };
   let cw = 1, ch = 1, dirty = true, running = true, raf = 0;
 
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -157,30 +161,96 @@ export function initMap3d(target = root) {
 
   target.classList.add('is-grab');
 
-  /* ---- arrastar ----------------------------------------------------------- */
-  let dragId = null, lastX = 0, lastY = 0;
-  target.addEventListener('pointerdown', (ev) => {
-    if (ev.button !== 0 || (ev.target.closest && ev.target.closest('.mctrl'))) return;
-    dragId = ev.pointerId; lastX = ev.clientX; lastY = ev.clientY;
-    try { target.setPointerCapture(dragId); } catch { /* ignora */ }
+  /* ---- arrastar ------------------------------------------------------------
+   * DOIS TRANSPORTES, UMA LÓGICA. O gesto é sempre o mesmo — anotar onde o dedo
+   * estava, medir quanto andou, mover o enquadramento —, mas ele chega por dois
+   * caminhos diferentes conforme onde a HUD está rodando:
+   *
+   *   - pointer events, o caminho normal do navegador (e o único que atende
+   *     toque e caneta);
+   *   - mouse events, o caminho antigo, para embutidos que não sintetizam
+   *     pointer events a partir do mouse.
+   *
+   * Isto importa porque este site não é só um site: ele é a HUD dentro do jogo,
+   * desenhada pelo CEF embarcado na Unreal. Depender de um transporte só é
+   * apostar que o embutido implementa exatamente aquele — e quando a aposta dá
+   * errado o mapa simplesmente não arrasta, sem erro nenhum no console.
+   *
+   * `pointerMandou` evita o gesto dobrado: o navegador que entrega pointer events
+   * entrega TAMBÉM os mouse events equivalentes, e sem essa trava cada pixel de
+   * arrasto seria contado duas vezes.
+   * -------------------------------------------------------------------------- */
+  let arrastando = false, lastX = 0, lastY = 0, pointerMandou = false, dragId = null;
+
+  /** O gesto começa aqui? Fora dos controles, botão esquerdo, e só. */
+  const podeArrastar = (ev) =>
+    ev.button === 0 && !(ev.target.closest && ev.target.closest('.map3d__controls'));
+
+  function comecar(x, y) {
+    arrastando = true;
+    lastX = x; lastY = y;
     target.classList.add('is-grabbing');
-  });
-  target.addEventListener('pointermove', (ev) => {
-    if (ev.pointerId !== dragId) return;
-    want.cx -= (ev.clientX - lastX) / (cw * want.zoom);
-    want.cy -= (ev.clientY - lastY) / (ch * want.zoom);
-    lastX = ev.clientX; lastY = ev.clientY;
+  }
+
+  function mover(x, y) {
+    if (!arrastando) return;
+    want.cx -= (x - lastX) / (cw * want.zoom);
+    want.cy -= (y - lastY) / (ch * want.zoom);
+    lastX = x; lastY = y;
     clampWant(); kick();
+  }
+
+  function terminar() {
+    if (!arrastando) return;
+    arrastando = false;
+    target.classList.remove('is-grabbing');
+  }
+
+  /* --- caminho 1: pointer events --- */
+  target.addEventListener('pointerdown', (ev) => {
+    /* A BARRA DE CONTROLES INTEIRA fica de fora do arrasto, e não só os botões `.mctrl`.
+     *
+     * Enquanto a exceção era só `.mctrl`, qualquer controle novo naquela coluna nascia morto:
+     * o palco capturava o ponteiro no `pointerdown` e o controle nunca via o arrasto. Foi o
+     * que aconteceu com o controle de opacidade — ele desenhava certo, respondia ao teclado e
+     * não respondia ao mouse. Perguntar pela BARRA, e não pelo botão, impede que o próximo
+     * controle repita a história. */
+    if (!podeArrastar(ev)) return;
+    pointerMandou = true;
+    dragId = ev.pointerId;
+    /* A captura é um CONFORTO (seguir o cursor para fora do palco), não um requisito:
+       os ouvintes de movimento estão na janela, então o arrasto continua valendo se o
+       embutido não implementar captura de ponteiro. */
+    try { target.setPointerCapture(dragId); } catch { /* ignora */ }
+    comecar(ev.clientX, ev.clientY);
   });
-  const endDrag = (ev) => {
-    if (ev.pointerId !== dragId) return;
+  window.addEventListener('pointermove', (ev) => {
+    if (dragId !== null && ev.pointerId !== dragId) return;
+    mover(ev.clientX, ev.clientY);
+  });
+  const soltarPonteiro = (ev) => {
+    if (dragId !== null && ev.pointerId !== dragId) return;
     try { target.releasePointerCapture(dragId); } catch { /* ignora */ }
     dragId = null;
-    target.classList.remove('is-grabbing');
+    terminar();
   };
-  target.addEventListener('pointerup', endDrag);
-  target.addEventListener('pointercancel', endDrag);
+  window.addEventListener('pointerup', soltarPonteiro);
+  window.addEventListener('pointercancel', soltarPonteiro);
 
+  /* --- caminho 2: mouse events, para quem não entrega pointer events --- */
+  target.addEventListener('mousedown', (ev) => {
+    if (pointerMandou || !podeArrastar(ev)) return;
+    ev.preventDefault();               // sem isto o navegador tenta arrastar a imagem
+    comecar(ev.clientX, ev.clientY);
+  });
+  window.addEventListener('mousemove', (ev) => {
+    if (pointerMandou) return;
+    mover(ev.clientX, ev.clientY);
+  });
+  window.addEventListener('mouseup', () => {
+    if (pointerMandou) return;
+    terminar();
+  });
   /* ---- roda / botões ------------------------------------------------------ */
   function zoomAt(factor, ox, oy) {
     const before = want.zoom;
@@ -192,6 +262,8 @@ export function initMap3d(target = root) {
   }
 
   target.addEventListener('wheel', (ev) => {
+    // mesma razão do arrasto: a roda sobre um controle é do controle, não do mapa
+    if (ev.target.closest && ev.target.closest('.map3d__controls')) return;
     ev.preventDefault();
     const r = target.getBoundingClientRect();
     zoomAt(ev.deltaY < 0 ? 1.16 : 1 / 1.16,

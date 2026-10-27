@@ -15,7 +15,8 @@ use App\Repo\OperationalRepo;
  * Dois cards, AEGIS e FRONTIER, com reputação, faixa, relação, contratos disponíveis e
  * instalações conhecidas. Assinar/romper passa SEMPRE por confirmação explícita: o POST sem
  * `confirm=1` é recusado com 422 — a confirmação não é decoração de interface, é a regra que
- * dá peso à troca (romper zera a reputação da facção abandonada).
+ * dá peso ao passo. Não há migração direta entre facções: encerrar o contrato devolve o
+ * personagem ao Hunter Command, e só a partir daí é possível assinar com a outra.
  */
 final class FactionsController extends Controller
 {
@@ -37,7 +38,9 @@ final class FactionsController extends Controller
             $surv   = $op['state'] === GameRules::STATE_SURVIVOR;
 
             $relKey = $surv ? 'survivor' : ($lockedAtiva ? 'locked' : ($ativa ? 'active' : ($outra ? 'rival' : 'none')));
-            $ctaKey = $surv ? 'survivor' : ($lockedAtiva ? 'locked' : ($ativa ? 'active' : ($outra ? 'switch' : 'sign')));
+            // Sem migração direta: para trocar de facção é preciso ENCERRAR o contrato atual
+            // (volta ao Hunter Command) e só então assinar o novo.
+            $ctaKey = $surv ? 'survivor' : ($lockedAtiva ? 'locked' : ($ativa ? 'active' : ($outra ? 'blocked' : 'sign')));
 
             $data['factions'][] = [
                 'slug'          => $slug,
@@ -57,7 +60,7 @@ final class FactionsController extends Controller
                 'locked_until'  => $lockedAtiva ? (string)$locked : null,
                 'cta_key'       => $ctaKey,
                 'cta'           => (string)($data['cta'][$ctaKey] ?? ''),
-                'can_sign'      => in_array($ctaKey, ['sign', 'switch'], true),
+                'can_sign'      => $ctaKey === 'sign',
                 'needs_confirm' => true,
                 'contracts'     => $this->contratos($slug),
                 'installations' => $this->instalacoes($slug),
@@ -94,7 +97,14 @@ final class FactionsController extends Controller
             ]);
         }
 
+        // Sem migração direta (regra de tela E de servidor): quem já tem contrato precisa
+        // encerrá-lo antes — encerrar devolve ao Hunter Command sem zerar a reputação.
         $antes = $this->operational();
+        $atual = $antes['faction'] ?? null;
+        if ($atual !== null && $atual !== $faction) {
+            flash('error', 'Encerre o contrato com ' . (GameRules::FACTIONS[$atual]['label'] ?? strtoupper($atual)) . ' antes de assinar com ' . GameRules::FACTIONS[$faction]['label'] . '.');
+            return $this->redirect('faccoes');
+        }
         $res   = OperationalRepo::sign($uid, $faction, true);
         if (!($res['ok'] ?? false)) {
             flash('error', (string)($res['error'] ?? 'Não foi possível assinar o contrato.'));

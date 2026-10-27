@@ -1,0 +1,518 @@
+{
+    "title": "CONQUISTAS",
+    "progress_title": "PROGRESSO GERAL",
+    "done": 45,
+    "total": 98,
+    "sort_label": "ORDENAR:",
+    "sorts": [
+        {
+            "slug": "recentes",
+            "label": "MAIS RECENTES"
+        },
+        {
+            "slug": "nome",
+            "label": "NOME"
+        },
+        {
+            "slug": "progresso",
+            "label": "PROGRESSO"
+        }
+    ],
+    "categories_title": "CATEGORIAS",
+    "categories": [
+        {
+            "slug": "todas",
+            "label": "TODAS",
+            "icon": "military_tech",
+            "done": 45,
+            "total": 98
+        },
+        {
+            "slug": "combate",
+            "label": "COMBATE",
+            "icon": "my_location",
+            "done": 12,
+            "total": 24
+        },
+        {
+            "slug": "sobrevivencia",
+            "label": "SOBREVIVÊNCIA",
+            "icon": "park",
+            "done": 10,
+            "total": 20
+        },
+        {
+            "slug": "exploracao",
+            "label": "EXPLORAÇÃO",
+            "icon": "map",
+            "done": 8,
+            "total": 17
+        },
+        {
+            "slug": "progressao",
+            "label": "PROGRESSÃO",
+            "icon": "keyboard_double_arrow_up",
+            "done": 7,
+            "total": 15
+        },
+        {
+            "slug": "equipamento",
+            "label": "EQUIPAMENTO",
+            "icon": "backpack",
+            "done": 5,
+            "total": 12
+        },
+        {
+            "slug": "faccoes",
+            "label": "FACÇÕES",
+            "icon": "shield",
+            "done": 3,
+            "total": 10
+        },
+        {
+            "slug": "eventos",
+            "label": "EVENTOS",
+            "icon": "star",
+            "done": 0,
+            "total": 8
+        }
+    ],
+    "filter": {
+        "label": "FILTRAR",
+        "key": "R",
+        "icon": "filter_alt",
+        "label_on": "MOSTRAR TODAS"
+    },
+    "status_labels": {
+        "done": "CONCLUÍDA",
+        "progress": "EM PROGRESSO",
+        "locked": "BLOQUEADA"
+    },
+    "items": [
+        {
+            "slug": "sinal-perdido",
+            "title": "SINAL PERDIDO",
+            "desc": "Restaure a comunicação do posto avançado norte.",
+            "icon": "cell_tower",
+            "color": "lime",
+            "category": "exploracao",
+            "status": "done",
+            "date": "12/05/2024",
+            "selected": true,
+            "unlocked_at": "12/05/2024 16:42",
+            "rewards": [
+                {
+                    "type": "xp",
+                    "value": 6500,
+                    "text": "+6.500 XP"
+                },
+                {
+                    "type": "cash",
+                    "value": 2400,
+                    "text": "+2.400"
+                },
+                {
+                    "type": "points",
+                    "value": 1200,
+                    "text": "+1.200"
+                }
+            ],
+            "reward_item": {
+                "name": "AK-103",
+                "desc": "FUZIL DE ASSALTO",
+                "image": "items/ak103.png"
+            }
+        },
+        {
+            "slug": "cacador-experiente",
+            "title": "CAÇADOR EXPERIENTE",
+            "desc": "Elimine 100 inimigos.",
+            "icon": "skull",
+            "color": "amber",
+            "category": "combate",
+            "status": "done",
+            "date": "10/05/2024",
+            "unlocked_at": "10/05/2024 21:10",
+            "rewards": [
+                {
+                    "type": "xp",
+                    "value": 5000,
+                    "text": "+5.000 XP"
+                },
+                {
+                    "type": "cash",
+                    "value": 1500,
+                    "text": "+1.500"
+                }
+            ],
+            "reward_item": {
+                "name": "M4A1",
+                "desc": "FUZIL DE ASSALTO",
+                "image": "items/m4a1.png"
+            }
+        },
+        {
+            "slug": "sobrevivente",
+            "title": "SOBREVIVENTE",
+            "desc": "Sobreviva 10 dias em uma única campanha.",
+            "icon": "backpack",
+            "color": "gold",
+            "category": "sobrevivencia",
+            "status": "done",
+            "date": "08/05/2024",
+            "unlocked_at": "08/05/2024 23:05",
+            "rewards": [
+                {
+                    "type": "xp",
+                    "value": 4000,
+                    "text": "+4.000 XP"
+                },
+                {
+                    "type": "points",
+                    "value": 800,
+                    "text": "+800"
+                }
+            ],
+            "reward_item": {
+                "name": "TRILHA 45L",
+                "desc": "MOCHILA TÁTICA",
+                "image": "items/backpack-45l.png"
+            }
+        },
+        {
+            "slug": "bom-negocio",
+            "title": "BOM NEGÓCIO",
+            "desc": "Conclua 50 trocas com comerciantes.",
+            "icon": "handshake",
+            "color": "lime",
+            "category": "faccoes",
+            "status": "done",
+            "date": "06/05/2024",
+            "unlocked_at": "06/05/2024 14:20",
+            "rewards": [
+                {
+                    "type": "cash",
+                    "value": 3000,
+                    "text": "+3.000"
+                },
+                {
+                    "type": "xp",
+                    "value": 1500,
+                    "text": "+1.500 XP"
+                }
+            ],
+            "reward_item": null
+        },
+        {
+            "slug": "matilha",
+            "title": "MATILHA",
+            "desc": "Elimine 20 lobos.",
+            "icon": "pets",
+            "color": "gold",
+            "category": "combate",
+            "status": "done",
+            "date": "03/05/2024",
+            "unlocked_at": "03/05/2024 19:48",
+            "rewards": [
+                {
+                    "type": "xp",
+                    "value": 2500,
+                    "text": "+2.500 XP"
+                }
+            ],
+            "reward_item": {
+                "name": "BAIONETA",
+                "desc": "FACA DE COMBATE",
+                "image": "items/knife-bayonet.png"
+            }
+        },
+        {
+            "slug": "explorador",
+            "title": "EXPLORADOR",
+            "desc": "Descubra 50 pontos de interesse.",
+            "icon": "map",
+            "color": "muted",
+            "category": "exploracao",
+            "status": {
+                "total": 50,
+                "current": 32
+            },
+            "rewards": [
+                {
+                    "type": "xp",
+                    "value": 3500,
+                    "text": "+3.500 XP"
+                },
+                {
+                    "type": "cash",
+                    "value": 900,
+                    "text": "+900"
+                }
+            ],
+            "reward_item": {
+                "name": "BÚSSOLA",
+                "desc": "EQUIPAMENTO",
+                "image": "items/compass.png"
+            }
+        },
+        {
+            "slug": "suprimentos",
+            "title": "SUPRIMENTOS",
+            "desc": "Extraia com sucesso 100 suprimentos.",
+            "icon": "inventory_2",
+            "color": "muted",
+            "category": "sobrevivencia",
+            "status": {
+                "total": 100,
+                "current": 68
+            },
+            "rewards": [
+                {
+                    "type": "cash",
+                    "value": 2000,
+                    "text": "+2.000"
+                }
+            ],
+            "reward_item": {
+                "name": "CAIXA DE CARGA",
+                "desc": "CONTÊINER",
+                "image": "items/supply-crate.png"
+            }
+        },
+        {
+            "slug": "veterano",
+            "title": "VETERANO",
+            "desc": "Alcance o nível 20.",
+            "icon": "keyboard_double_arrow_up",
+            "color": "lime",
+            "category": "progressao",
+            "status": "done",
+            "date": "28/04/2024",
+            "unlocked_at": "28/04/2024 20:15",
+            "rewards": [
+                {
+                    "type": "points",
+                    "value": 500,
+                    "text": "+500"
+                },
+                {
+                    "type": "xp",
+                    "value": 2000,
+                    "text": "+2.000 XP"
+                }
+            ],
+            "reward_item": null
+        },
+        {
+            "slug": "anjo-da-guarda",
+            "title": "ANJO DA GUARDA",
+            "desc": "Reviva aliados 25 vezes.",
+            "icon": "add",
+            "color": "muted",
+            "category": "combate",
+            "status": {
+                "total": 25,
+                "current": 14
+            },
+            "rewards": [
+                {
+                    "type": "xp",
+                    "value": 3000,
+                    "text": "+3.000 XP"
+                }
+            ],
+            "reward_item": {
+                "name": "KIT CIRÚRGICO",
+                "desc": "MÉDICO",
+                "image": "items/surgical-kit.png"
+            }
+        },
+        {
+            "slug": "tiro-certo",
+            "title": "TIRO CERTO",
+            "desc": "Realize 50 tiros na cabeça.",
+            "icon": "my_location",
+            "color": "muted",
+            "category": "combate",
+            "status": {
+                "total": 50,
+                "current": 33
+            },
+            "rewards": [
+                {
+                    "type": "xp",
+                    "value": 3000,
+                    "text": "+3.000 XP"
+                },
+                {
+                    "type": "cash",
+                    "value": 1000,
+                    "text": "+1.000"
+                }
+            ],
+            "reward_item": null
+        },
+        {
+            "slug": "chave-mestra",
+            "title": "CHAVE MESTRA",
+            "desc": "Abra 25 cofres ou portas trancadas.",
+            "icon": "lock",
+            "color": "muted",
+            "category": "exploracao",
+            "status": {
+                "total": 25,
+                "current": 11
+            },
+            "rewards": [
+                {
+                    "type": "cash",
+                    "value": 1800,
+                    "text": "+1.800"
+                }
+            ],
+            "reward_item": {
+                "name": "CARTÃO DE ACESSO",
+                "desc": "CHAVE",
+                "image": "items/keycard.png"
+            }
+        },
+        {
+            "slug": "lider-da-resistencia",
+            "title": "CADEIA DE COMANDO",
+            "desc": "Conclua todas as operações do Hunter Command de uma região.",
+            "icon": "workspace_premium",
+            "color": "muted",
+            "category": "faccoes",
+            "status": "locked",
+            "rewards": [
+                {
+                    "type": "xp",
+                    "value": 10000,
+                    "text": "+10.000 XP"
+                },
+                {
+                    "type": "points",
+                    "value": 2000,
+                    "text": "+2.000"
+                }
+            ],
+            "reward_item": {
+                "name": "BRAÇADEIRA USEC",
+                "desc": "INSÍGNIA DE FACÇÃO",
+                "image": "items/armband-usec.png"
+            }
+        },
+        {
+            "slug": "colecionador",
+            "title": "COLECIONADOR",
+            "desc": "Colete 100 itens raros.",
+            "icon": "lock",
+            "color": "muted",
+            "category": "equipamento",
+            "status": "locked",
+            "rewards": [
+                {
+                    "type": "points",
+                    "value": 1000,
+                    "text": "+1.000"
+                }
+            ],
+            "reward_item": {
+                "name": "MALA DE ARMA",
+                "desc": "CONTÊINER",
+                "image": "items/weapon-case.png"
+            }
+        },
+        {
+            "slug": "lendario",
+            "title": "LENDÁRIO",
+            "desc": "Obtenha um equipamento lendário.",
+            "icon": "lock",
+            "color": "muted",
+            "category": "equipamento",
+            "status": "locked",
+            "rewards": [
+                {
+                    "type": "xp",
+                    "value": 5000,
+                    "text": "+5.000 XP"
+                },
+                {
+                    "type": "cash",
+                    "value": 2500,
+                    "text": "+2.500"
+                }
+            ],
+            "reward_item": null
+        },
+        {
+            "slug": "mestre-das-armas",
+            "title": "MESTRE DAS ARMAS",
+            "desc": "Melhore uma arma ao nível máximo.",
+            "icon": "lock",
+            "color": "muted",
+            "category": "equipamento",
+            "status": "locked",
+            "rewards": [
+                {
+                    "type": "xp",
+                    "value": 5000,
+                    "text": "+5.000 XP"
+                }
+            ],
+            "reward_item": {
+                "name": "CAMUFLAGEM",
+                "desc": "SKIN DE ARMA",
+                "image": "items/skin-camo.png"
+            }
+        },
+        {
+            "slug": "sobrevivente-extremo",
+            "title": "SOBREVIVENTE EXTREMO",
+            "desc": "Sobreviva 30 dias em uma única campanha.",
+            "icon": "lock",
+            "color": "muted",
+            "category": "sobrevivencia",
+            "status": "locked",
+            "rewards": [
+                {
+                    "type": "xp",
+                    "value": 15000,
+                    "text": "+15.000 XP"
+                },
+                {
+                    "type": "points",
+                    "value": 3000,
+                    "text": "+3.000"
+                }
+            ],
+            "reward_item": null
+        }
+    ],
+    "pagination": {
+        "current": 1,
+        "pages": 13,
+        "visible": [
+            1,
+            2,
+            3,
+            4,
+            5
+        ]
+    },
+    "detail": {
+        "done_label": "CONQUISTA CONCLUÍDA",
+        "progress_label": "EM PROGRESSO",
+        "locked_label": "CONQUISTA BLOQUEADA",
+        "rewards_title": "RECOMPENSAS",
+        "unlocked_title": "DESBLOQUEADA EM",
+        "progress_title": "PROGRESSO ATUAL",
+        "locked_title": "REQUISITO",
+        "locked_text": "Ainda não disponível.",
+        "cta": {
+            "label": "ACOMPANHAR",
+            "label_on": "ACOMPANHANDO",
+            "icon": "star"
+        }
+    }
+}

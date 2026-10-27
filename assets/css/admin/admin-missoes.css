@@ -1,0 +1,328 @@
+/* ==========================================================================
+   ADMIN · MISSÕES (/admin/missoes)
+
+   Só o que é DESTA tela. Cartão, tabela, selo, botão, formulário, vazio e
+   paginação vêm de admin.css (.adm-*) — aqui não se redesenha primitivo.
+
+   Carregado por app/Views/layouts/admin.php pelo slug da página
+   (assets/css/admin/admin-missoes.css), depois de admin.css.
+
+   Namespace .mis-.
+
+   REGRA DE LARGURA DESTA TELA: a tabela tem dez colunas e NÃO pode rolar na
+   horizontal. Ela consegue isso porque só duas colunas são elásticas (missão e
+   recompensas) e todas as outras têm largura declarada — e porque, abaixo de
+   1500px, as duas menos decisivas (origem e dificuldade) migram para dentro da
+   célula da missão, em vez de encolherem até virar reticências.
+   ========================================================================== */
+
+.mis{ min-width:0 }
+
+/* ==========================================================================
+   1. RESUMO — quatro números antes de qualquer rolagem
+   ========================================================================== */
+
+/* auto-fit e não repeat(4): em 1366px com a barra lateral aberta, quatro
+   cartões de 15rem estouravam a linha e o quarto saía cortado pela direita. */
+.mis-kpis{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));
+  gap:var(--adm-gap);
+  min-width:0;
+}
+.mis-kpis .adm-kpi__value{ font-size:1.5rem }
+.mis-kpis .adm-kpi__value small{ display:block; margin:.1rem 0 0; font-size:.5em; letter-spacing:.04em }
+
+/* ==========================================================================
+   2. BARRA DE FERRAMENTAS
+   ========================================================================== */
+
+/* Os cinco selects têm a MESMA largura e não crescem: com flex livre, "Todas as
+   dificuldades" empurrava os vizinhos e a fileira mudava de desenho a cada
+   filtro escolhido. Quem cresce é só a busca. */
+.mis-filtro{
+  flex:0 0 auto;
+  width:11.5rem;
+  min-height:2.25rem;
+  padding-block:.3rem;
+  font-size:.85rem;
+}
+/* O botão de criar fica colado à direita, separado dos filtros: ele não filtra
+   nada e não pode parecer o sexto select da fileira. */
+.mis-toolbar__nova{ margin-left:auto }
+
+/* ==========================================================================
+   3. TABELA
+   ========================================================================== */
+
+.mis-table{ table-layout:fixed }
+
+/* Larguras declaradas. Só "missão" e "recompensas" ficam elásticas — são as
+   duas cujo conteúdo varia de verdade. */
+.mis-c-ord{ width:3.25rem }
+.mis-c-tipo{ width:7.5rem }
+.mis-c-orig{ width:9.5rem }
+.mis-c-dif{ width:8.5rem }
+.mis-c-nvl{ width:5.25rem }
+.mis-c-cmp{ width:5rem }
+.mis-c-est{ width:7.25rem }
+.mis-table .adm-table__acts{ width:5.5rem }
+
+/* Cada célula de texto corta com reticência em vez de esticar a coluna, e o
+   conteúdo inteiro continua no `title` da célula. */
+.mis-table td,.mis-table th{ overflow:hidden; text-overflow:ellipsis }
+
+.mis-name{ display:grid; gap:.1rem; min-width:0 }
+.mis-name strong{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.mis-name small{
+  display:block;
+  color:var(--c-dim);
+  font-size:.75rem;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.mis-slug{
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  color:var(--c-muted);
+  background:var(--adm-surface-3);
+  border-radius:var(--adm-r-sm);
+  padding:.05rem .3rem;
+}
+
+/* Linha bloqueada continua legível — ela não está desativada, está fora do
+   quadro. Uma barra à esquerda diz isso sem apagar o texto. */
+.mis-row--locked > td:first-child{ box-shadow:inset 3px 0 0 var(--c-amber) }
+.mis-row--locked .mis-name strong{ color:var(--c-text-2) }
+
+/* A missão que acabou de ser salva, para o operador reencontrá-la na lista sem
+   procurar. Sem animação: o realce vive enquanto a URL tiver ?destaque. */
+.mis-row--novo{ background:rgba(var(--c-lime-rgb),.07) !important }
+.mis-row--novo > td:first-child{ box-shadow:inset 3px 0 0 var(--c-lime) }
+
+/* --- valor ausente ------------------------------------------------------- */
+.mis-none{ color:var(--c-dim) }
+
+/* --- dificuldade: pips + palavra ----------------------------------------- */
+/* Cor E texto: quatro pips coloridos sem a palavra ao lado obrigariam a contar
+   quadradinhos, e quem não distingue as cores não leria nada. */
+.mis-dif{ display:inline-flex; align-items:center; gap:.4rem; min-width:0 }
+.mis-dif__pips{ display:inline-flex; gap:2px; flex-shrink:0 }
+.mis-dif__pip{
+  width:4px; height:11px;
+  border-radius:1px;
+  background:var(--adm-surface-3);
+  border:1px solid var(--adm-line-2);
+}
+.mis-dif__txt{
+  font-family:var(--font-cond);
+  font-size:.78rem;
+  letter-spacing:.06em;
+  color:var(--c-text-2);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.mis-dif--ok     .mis-dif__pip.is-on{ background:var(--c-lime);   border-color:var(--c-lime) }
+.mis-dif--info   .mis-dif__pip.is-on{ background:var(--c-cyan);   border-color:var(--c-cyan) }
+.mis-dif--warn   .mis-dif__pip.is-on{ background:var(--c-amber);  border-color:var(--c-amber) }
+.mis-dif--danger .mis-dif__pip.is-on{ background:var(--c-red);    border-color:var(--c-red) }
+.mis-dif--purple .mis-dif__pip.is-on{ background:var(--c-purple); border-color:var(--c-purple) }
+
+/* --- nível + esquadrão na mesma coluna ----------------------------------- */
+/* Os dois são requisitos numéricos e compartilham o eixo direito. Fonte
+   tabular nos dois, para os algarismos se alinharem entre as linhas. */
+.mis-num{ display:grid; justify-items:end; gap:.05rem; font-variant-numeric:tabular-nums }
+.mis-num small{ color:var(--c-dim); font-size:.7rem; letter-spacing:.02em }
+
+/* --- recompensas --------------------------------------------------------- */
+.mis-prem{ display:flex; flex-wrap:nowrap; align-items:center; gap:.3rem; min-width:0 }
+.mis-prem__chip{
+  flex:0 1 auto;
+  min-width:0;
+  padding:.1rem .4rem;
+  border:1px solid var(--adm-line-2);
+  border-left-width:3px;
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface-2);
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  color:var(--c-text-2);
+  white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis;
+}
+.mis-prem__chip--ok    { border-left-color:var(--c-lime) }
+.mis-prem__chip--info  { border-left-color:var(--c-cyan) }
+.mis-prem__chip--warn  { border-left-color:var(--c-amber) }
+.mis-prem__chip--gold  { border-left-color:var(--c-gold) }
+.mis-prem__chip--purple{ border-left-color:var(--c-purple) }
+.mis-prem__chip--muted { border-left-color:var(--adm-line-2) }
+.mis-prem__mais{
+  flex:0 0 auto;
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  color:var(--c-muted);
+  cursor:help;
+}
+
+/* --- jogadores em campo -------------------------------------------------- */
+/* Zero é mudo de propósito: só o que impede uma exclusão merece cor. */
+.mis-campo{ display:inline-flex; align-items:center; gap:.25rem; color:var(--c-dim); font-variant-numeric:tabular-nums }
+.mis-campo.is-on{ color:var(--c-amber); font-weight:500 }
+
+/* Valor que está no banco mas não no vocabulário do jogo: o selo ganha borda
+   tracejada. Não é erro do operador — é dado legado, e ele precisa ver isso. */
+.mis-orfao{ border-style:dashed !important }
+
+/* ==========================================================================
+   4. FORMULÁRIO
+   ========================================================================== */
+
+.mis-form__body{ display:grid; gap:1.25rem; padding:1rem }
+
+.mis-form__alerta{
+  display:flex; align-items:center; gap:.5rem;
+  margin:0;
+  padding:.6rem 1rem;
+  background:rgba(var(--c-red-rgb),.10);
+  border-block:1px solid rgba(var(--c-red-rgb),.3);
+  color:#ff8f92;
+  font-size:.88rem;
+}
+.mis-form__alerta .ms{ font-size:1.15rem }
+
+/* Bloco por assunto. A borda separa sem ocupar altura de cabeçalho: um <h3>
+   por seção somava quatro linhas de título num formulário que já tem 22
+   campos e empurrava o botão Salvar para fora da primeira tela. */
+.mis-fs{
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r);
+  padding:1rem;
+  margin:0;
+  display:grid;
+  gap:1rem;
+  min-width:0;
+}
+.mis-fs__leg{
+  display:flex; align-items:center; gap:.4rem;
+  padding:0 .45rem;
+  margin-left:-.45rem;
+  font-family:var(--font-cond);
+  font-size:.85rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--c-lime);
+}
+.mis-fs__leg .ms{ font-size:1.1rem }
+
+/* O objetivo é o único campo longo do formulário: fica com duas frações e a
+   meta, que é o número que ele descreve, ao lado. */
+.mis-row--objetivo{ grid-template-columns:minmax(0,3fr) minmax(0,1fr) }
+
+/* O interruptor precisa da mesma altura de um input para a linha de três
+   colunas não ficar com o rótulo do meio flutuando. */
+.mis-field--switch .adm-switch{ min-height:2.5rem }
+
+/* --- grade de recompensas ------------------------------------------------ */
+.mis-rw{ display:grid; gap:.5rem; min-width:0 }
+.mis-rw__head,
+.mis-rw__row{
+  display:grid;
+  grid-template-columns:minmax(0,1.1fr) 8rem minmax(0,1.4fr);
+  gap:.6rem;
+  align-items:center;
+  min-width:0;
+}
+.mis-rw__head{
+  font-family:var(--font-cond);
+  font-size:.75rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+}
+.mis-rw__head .tr{ text-align:right }
+.mis-rw__row .adm-error{ grid-column:1 / -1 }
+.mis-rw__row.is-invalid .adm-select,
+.mis-rw__row.is-invalid .adm-input{ border-color:rgba(var(--c-red-rgb),.6) }
+.mis-rw__aviso{ display:flex; align-items:center; gap:.4rem }
+
+/* ==========================================================================
+   5. EXCLUSÃO
+   ========================================================================== */
+
+.mis-danger{ border-color:rgba(var(--c-red-rgb),.35) }
+/* Bloqueio não é perigo: é impedimento. Âmbar, e não vermelho — o vermelho
+   aqui sugeriria que algo deu errado, quando o painel apenas protegeu dados. */
+.mis-danger.is-blocked{ border-color:rgba(var(--c-amber-rgb),.4) }
+.mis-danger .adm-card__title .ms{ color:var(--c-red) }
+.mis-danger.is-blocked .adm-card__title .ms{ color:var(--c-amber) }
+
+.mis-danger__body{ display:grid; gap:.85rem; max-width:52rem }
+.mis-danger__lead{ margin:0; font-size:1rem; color:var(--c-text); line-height:1.5 }
+.mis-danger__note{ margin:0; font-size:.88rem; color:var(--c-muted); line-height:1.5 }
+.mis-danger__out{
+  display:flex; align-items:flex-start; gap:.5rem;
+  margin:0;
+  padding:.7rem .85rem;
+  border:1px solid rgba(var(--c-lime-rgb),.3);
+  border-radius:var(--adm-r-sm);
+  background:rgba(var(--c-lime-rgb),.07);
+  font-size:.88rem;
+  color:var(--c-text-2);
+  line-height:1.5;
+}
+.mis-danger__out .ms{ color:var(--c-lime); font-size:1.15rem; flex-shrink:0 }
+
+.mis-danger__facts{
+  display:flex; flex-wrap:wrap; gap:.5rem;
+  list-style:none; margin:0; padding:0;
+}
+.mis-danger__facts li{
+  display:flex; align-items:center; gap:.5rem;
+  padding:.3rem .6rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface-2);
+  font-size:.8rem;
+}
+.mis-danger__k{
+  font-family:var(--font-cond);
+  letter-spacing:.08em;
+  color:var(--c-muted);
+}
+
+/* ==========================================================================
+   6. CORTES DE LARGURA
+
+   Nenhum corte esconde dado: o que sai da coluna reaparece na célula da
+   missão ou no `title`. Rolagem horizontal continua proibida.
+   ========================================================================== */
+
+/* Notebook de 1366px com a barra lateral aberta: a área útil da tabela cai
+   para ~1000px. Dificuldade sai da grade — a palavra continua no filtro e no
+   formulário, e a coluna era a que menos muda a decisão do operador. */
+@media (max-width:1500px){
+  .mis-c-dif{ display:none }
+  .mis-c-orig{ width:8.5rem }
+  .mis-filtro{ width:10.5rem }
+}
+
+@media (max-width:1200px){
+  .mis-c-orig{ display:none }
+  .mis-c-ord{ display:none }
+  .mis-rw__head,.mis-rw__row{ grid-template-columns:minmax(0,1fr) 6.5rem minmax(0,1fr) }
+}
+
+@media (max-width:1000px){
+  .mis-c-est{ display:none }
+  /* Sem a coluna de estado, o bloqueio passa a ser dito pela barra âmbar e
+     pelo nome em tom secundário — cor E texto continuam no filtro. */
+  .mis-row--locked .mis-name small::after{ content:" · BLOQUEADA"; color:var(--c-amber) }
+  .mis-row--objetivo,
+  .mis-form__body .adm-form__row{ grid-template-columns:minmax(0,1fr) }
+  .mis-toolbar__nova{ margin-left:0 }
+}
+
+@media (max-width:720px){
+  .mis-rw__head{ display:none }
+  .mis-rw__row{ grid-template-columns:minmax(0,1fr) }
+  .mis-rw__row{ padding:.6rem; border:1px solid var(--adm-line); border-radius:var(--adm-r-sm) }
+  .mis-filtro{ width:100% }
+}

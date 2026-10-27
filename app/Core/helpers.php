@@ -238,15 +238,30 @@ if (!function_exists('data_mock')) {
 
 if (!function_exists('current_user_id')) {
     /**
-     * ID do usuário logado (sessão). Sem login, cai para o usuário demo (menor id) para que
-     * a HUD sempre renderize dados reais do banco durante navegação/QA. Retorna 0 se o banco
-     * ainda não estiver instalado.
+     * ID do usuário logado (sessão). 0 quando não há login.
+     *
+     * POR QUE NÃO EXISTE MAIS "USUÁRIO DEMO" SOLTO
+     * Esta função caía, sem sessão, para `SELECT id FROM users ORDER BY id LIMIT 1` em
+     * QUALQUER ambiente. O atalho era de QA, mas valia em produção: um visitante anônimo
+     * recebia o arsenal, o perfil e o inventário de um jogador REAL — e, como todo GET
+     * também entrega um _csrf válido, o caminho de escrita (comprar na loja, por exemplo)
+     * aceitava a mesma identidade emprestada, já que os controllers só recusavam id <= 0.
+     *
+     * Agora o atalho tem DUAS trancas:
+     *   1. só em localhost (Config::debug()) — em produção não existe;
+     *   2. nunca em POST, nem em localhost: ler uma tela de QA com dado real é uma coisa,
+     *      GRAVAR na carteira/inventário de um jogador sem login é outra.
+     * A tranca que vale de verdade, porém, é a da porta: App\Core\LoginGuard recusa visitante
+     * anônimo em toda rota do jogo antes de qualquer controller. Esta aqui é a segunda.
      */
     function current_user_id(): int
     {
         $sess = (int)($_SESSION['user_id'] ?? 0);
         if ($sess > 0) {
             return $sess;
+        }
+        if (!Config::debug() || strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET')) === 'POST') {
+            return 0;
         }
         static $demo = null;
         if ($demo === null) {
@@ -265,5 +280,94 @@ if (!function_exists('is_authenticated')) {
     function is_authenticated(): bool
     {
         return (int)($_SESSION['user_id'] ?? 0) > 0;
+    }
+}
+
+if (!function_exists('map_glyph')) {
+    /**
+     * Um glifo do mapa como <svg> inline — ou o brasão, quando o id é de uma organização.
+     *
+     * Vivia como closure dentro de pages/mapa.php. Virou função porque o MESMO desenho é usado
+     * em três lugares que não compartilham escopo: a tela do mapa, o parcial do palco
+     * (partials/map-stage.php, que a página de divulgação também renderiza) e a legenda.
+     *
+     * $set permite passar outra tabela (os glifos das regiões, na coluna esquerda do mapa);
+     * sem ele vale app/Data/map_glyphs.php, o repertório operacional do jogo.
+     *
+     * @param array<string,string>|null $set
+     */
+    function map_glyph(string $id, string $cls = '', ?array $set = null): string
+    {
+        /* As três organizações têm brasão próprio (assets/img/emblemas): o mapa usa a arte no
+           lugar do glifo desenhado, para Hunter Command, Aegis e Frontier serem reconhecidos de
+           relance. Os demais tipos continuam em SVG, que escala melhor nos marcadores pequenos. */
+        static $emblemas = ['gov-base' => 'hunter', 'aegis' => 'aegis', 'frontier' => 'frontier'];
+        if ($set === null && isset($emblemas[$id])) {
+            $arq = 'img/emblemas/' . $emblemas[$id] . '-sm';
+            return '<picture class="gl gl--emblema' . ($cls !== '' ? ' ' . e($cls) : '') . '">'
+                 . '<source srcset="' . e(asset($arq . '.webp')) . '" type="image/webp">'
+                 . '<img src="' . e(asset($arq . '.png')) . '" alt="" loading="lazy" decoding="async">'
+                 . '</picture>';
+        }
+        $set ??= data_mock('map_glyphs');
+        if (!isset($set[$id])) {
+            return '';
+        }
+        return '<svg class="gl' . ($cls !== '' ? ' ' . e($cls) : '') . '" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">'
+             . $set[$id] . '</svg>';
+    }
+}
+
+if (!function_exists('map_point_icon')) {
+    /**
+     * Ícone de um marcador que veio do CATÁLOGO DE PONTOS (`map_point_types.icon`).
+     *
+     * O catálogo guarda a origem no prefixo, e cada origem desenha de um jeito:
+     *   glyph:<id>    -> um dos vetores de map_glyphs, o repertório operacional do jogo;
+     *   symbol:<nome> -> Material Symbol, a fonte que a HUD inteira já carrega — é o que faz
+     *                    "café", "shopping" e "farmácia" existirem sem desenhar nada;
+     *   image:<path>  -> arte enviada pelo painel.
+     * Sem catálogo (ou com valor estragado) cai no vetor do `kind`, que é o que o mapa sempre
+     * fez: nenhum ponto some da tela por causa de um ícone quebrado.
+     *
+     * @param array<string,mixed> $m marcador já decorado (App\Core\WorldMap::decorate)
+     */
+    function map_point_icon(array $m, string $fallback): string
+    {
+        $p = explode(':', (string)($m['icon'] ?? ''), 2);
+        if (count($p) === 2 && $p[1] !== '') {
+            if ($p[0] === 'symbol') { return icon($p[1], 'mk__ms'); }
+            if ($p[0] === 'image')  { return '<img class="mk__art" src="' . e(media($p[1])) . '" alt="" loading="lazy" decoding="async">'; }
+            if ($p[0] === 'glyph' && ($g = map_glyph($p[1])) !== '') { return $g; }
+        }
+        return map_glyph($fallback);
+    }
+}
+
+if (!function_exists('creature_img')) {
+    /**
+     * Retrato de uma criatura do Bestiário (app/Data/criaturas.php) ou da arte do enredo
+     * (a-queda, cratera): assets/img/criaturas/<slug>.webp, depois .jpg.
+     *
+     * Devolve null quando a arte ainda não foi gerada — quem chama desenha o quadro vazio.
+     * Uma criatura nova entra no catálogo antes de ter imagem, e a tela não pode quebrar
+     * por isso (a geração depende de uma chave Gemini que pode estar fora do ar).
+     */
+    function creature_img(string $slug): ?string
+    {
+        static $cache = [];
+        if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
+            return null;
+        }
+        if (!array_key_exists($slug, $cache)) {
+            $cache[$slug] = null;
+            foreach (['webp', 'jpg'] as $ext) {
+                if (is_file(Config::root() . '/assets/img/criaturas/' . $slug . '.' . $ext)) {
+                    $cache[$slug] = img('criaturas/' . $slug . '.' . $ext);
+                    break;
+                }
+            }
+        }
+        return $cache[$slug];
     }
 }

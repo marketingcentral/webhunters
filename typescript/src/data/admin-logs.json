@@ -1,0 +1,146 @@
+{
+    "titulos": {
+        "lista": "Trilha de auditoria",
+        "detalhe": "Detalhe do registro",
+        "resumo": "Resumo do recorte",
+        "filtros": "Filtrar"
+    },
+    "filtros": {
+        "busca_rotulo": "Buscar",
+        "busca_dica": "Ação, alvo, IP, operador ou trecho do resumo",
+        "acao_rotulo": "Ação",
+        "acao_todas": "Todas as ações",
+        "quem_rotulo": "Quem fez",
+        "quem_todos": "Qualquer pessoa",
+        "quem_anonimo": "Sem conta identificada",
+        "de_rotulo": "De",
+        "ate_rotulo": "Até",
+        "aplicar": "Filtrar",
+        "limpar": "Limpar filtros",
+        "periodo_rotulo": "Período"
+    },
+    "periodos": [
+        {
+            "chave": "hoje",
+            "label": "Hoje",
+            "dias": 0
+        },
+        {
+            "chave": "7d",
+            "label": "7 dias",
+            "dias": 6
+        },
+        {
+            "chave": "30d",
+            "label": "30 dias",
+            "dias": 29
+        },
+        {
+            "chave": "tudo",
+            "label": "Tudo",
+            "dias": null
+        }
+    ],
+    "colunas": {
+        "id": "#",
+        "quando": "Quando",
+        "acao": "Ação",
+        "quem": "Quem fez",
+        "alvo": "Alvo",
+        "resumo": "O que aconteceu",
+        "ip": "IP"
+    },
+    "acoes": {
+        "login": {
+            "label": "Entrou no painel",
+            "icone": "login",
+            "tom": "ok",
+            "nota": "Sessão administrativa aberta com sucesso."
+        },
+        "logout": {
+            "label": "Saiu do painel",
+            "icone": "logout",
+            "tom": "muted",
+            "nota": "Sessão administrativa encerrada pelo próprio operador."
+        },
+        "login_falhou": {
+            "label": "Falha de login",
+            "icone": "gpp_maybe",
+            "tom": "warn",
+            "nota": "Tentativa recusada. O campo \"motivo\" no meta separa senha incorreta de conta sem acesso ao painel."
+        },
+        "login_bloqueado": {
+            "label": "Login bloqueado",
+            "icone": "block",
+            "tom": "danger",
+            "nota": "Tentativa durante a espera imposta pelo excesso de falhas do mesmo IP."
+        },
+        "sessao_expirada": {
+            "label": "Sessão expirada",
+            "icone": "timer_off",
+            "tom": "muted",
+            "nota": "A sessão do painel caiu por inatividade — o painel derrubou, não a pessoa."
+        },
+        "acesso_revogado": {
+            "label": "Acesso revogado",
+            "icone": "shield_lock",
+            "tom": "danger",
+            "nota": "A conta perdeu o papel administrativo (ou foi banida) com a sessão aberta e foi derrubada na hora."
+        },
+        "escrita_recusada": {
+            "label": "Escrita recusada",
+            "icone": "lock",
+            "tom": "danger",
+            "nota": "Alguém tentou gravar ou apagar pela rota da tela de logs. A trilha é somente leitura; a tentativa virou registro."
+        }
+    },
+    "papeis": {
+        "owner": "Dono do jogo",
+        "admin": "Administrador",
+        "player": "Jogador"
+    },
+    "atores": {
+        "anonimo": "Sem conta identificada",
+        "removido": "Conta removida",
+        "nota_papel": "Papel atual da conta (users.role de agora, não o do momento do fato).",
+        "nota_anonimo": "A tentativa não bateu em nenhuma conta existente — não há a quem atribuir.",
+        "nota_removido": "A conta #%s não existe mais em users. A prova do que ela fez sobrevive: a trilha não tem chave estrangeira justamente para isto.",
+        "nota_jogador": "Conta SEM acesso ao painel. Aparece na trilha porque bateu na porta dele."
+    },
+    "detalhe": {
+        "vazio": "Escolha uma linha da trilha para ler o registro inteiro, com o meta em JSON.",
+        "sem_meta": "Este registro não guardou meta — a ação não tinha contexto técnico a anexar.",
+        "json_bruto": "JSON como está no banco",
+        "campo_id": "Registro",
+        "campo_quando": "Quando",
+        "campo_acao": "Ação",
+        "campo_quem": "Quem fez",
+        "campo_alvo": "Alvo",
+        "campo_ip": "IP de origem",
+        "campo_resumo": "Resumo",
+        "campo_meta": "Meta",
+        "fechar": "Fechar detalhe",
+        "nao_achado": "O registro pedido não existe (ou já não está nesta trilha)."
+    },
+    "resumo": {
+        "total": "Registros no recorte",
+        "operadores": "Contas distintas",
+        "periodo": "Período coberto",
+        "acoes": "Ações no recorte",
+        "sem_periodo": "sem registro"
+    },
+    "vazios": {
+        "trilha": "A trilha está vazia: nenhuma ação do painel foi registrada em admin_audit_log até agora.",
+        "filtro": "Nenhum registro bate com este recorte. Amplie o período ou limpe os filtros.",
+        "falha": "Não foi possível ler admin_audit_log agora. O painel continua de pé, mas esta tela não pode afirmar nada sobre o que aconteceu — o erro está no log do PHP."
+    },
+    "micro": {
+        "somente_leitura": "Somente leitura: a trilha de auditoria não é editável pelo painel.",
+        "origem": "Leitura direta de admin_audit_log, com users apenas para dar nome a quem fez.",
+        "ver_detalhe": "Ver este registro",
+        "de_ate": "%s até %s",
+        "contando": "%s de %s registro(s)",
+        "ordenar": "Ordenar por %s",
+        "pagina": "Página %s de %s"
+    }
+}

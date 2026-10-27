@@ -4,6 +4,14 @@
    ========================================================================== */
 *,*::before,*::after{box-sizing:border-box}
 *{margin:0}
+/* O reset acima zera tambem o `margin:auto` com que o navegador centraliza um <dialog>
+   aberto por showModal(); sem isto todo modal encosta no canto superior esquerdo.
+   A primeira linha é a que vale dentro da Unreal: o CEF dela é Chromium 90 e `:modal`
+   só existe a partir do 105 — lá a segunda regra é descartada inteira e o modal voltaria
+   para o canto. `dialog{margin:auto}` é o próprio padrão da folha do navegador, então
+   restaurá-lo não muda nada onde `:modal` funciona. */
+dialog{margin:auto}
+dialog:modal{margin:auto}
 html{
   -webkit-text-size-adjust:100%;
   text-size-adjust:100%;

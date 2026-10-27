@@ -1,0 +1,1436 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — PAINEL ADMIN
+   Sistema visual do back-office: casca (sidebar + topbar + conteúdo) e os
+   primitivos que TODAS as telas do admin herdam (.adm-*).
+
+   Mesma marca da HUD do jogo — mesma paleta, mesma tipografia — porém sóbria:
+   menos brilho, menos vidro, mais densidade. O lime deixa de ser ambiente e
+   passa a significar UMA coisa: "é aqui que você está / é isto que confirma".
+
+   Carregado por app/Views/layouts/admin.php, depois de tokens.css, base.css e
+   components.css. Namespace .adm- para nunca colidir com a HUD.
+   ========================================================================== */
+
+/* ---- escala ------------------------------------------------------------
+   tokens.css escala o rem pela viewport (a HUD é uma tela de jogo 16:9 e
+   precisa disso). Painel administrativo não: texto de tabela tem que ter o
+   mesmo tamanho no monitor de 24" e no notebook. Aqui o rem volta a ser px. */
+:root{ font-size:16px }
+
+/* ---- medidas (não dependem de tema) ------------------------------------- */
+:root{
+  --adm-side-w:16rem;
+  --adm-top-h:5.25rem;
+  --adm-foot-h:2.75rem;
+  --adm-gap:1.25rem;
+  --adm-pad:1.5rem;
+
+  --adm-r:.5rem;          /* raio dos painéis  */
+  --adm-r-sm:.3125rem;    /* raio de controles */
+}
+
+/* ==========================================================================
+   0. TEMA — TODA cor do painel sai daqui
+   --------------------------------------------------------------------------
+   Dois temas, trocados pelo atributo data-tema no <html> (layouts/admin.php
+   escreve "escuro" no servidor e o script inline do <head> corrige ANTES da
+   primeira pintura, lendo a escolha salva — é o que evita o flash branco).
+
+   Por que redefinir também tokens --c-* aqui, e não só os --adm-*:
+   as 14 telas do painel (assets/css/admin/*.css) pintam com var(--c-text),
+   var(--c-lime), rgba(var(--c-red-rgb),…) — tokens globais de tokens.css.
+   Como admin.css só é carregado pelos layouts do painel, redefinir esses
+   tokens DENTRO do seletor de tema veste as 14 telas de uma vez e não
+   encosta na HUD do jogador, que continua escura em qualquer caso.
+
+   O tema ESCURO repete valor por valor o painel de hoje.
+   ========================================================================== */
+:root,
+:root[data-tema="escuro"]{
+  color-scheme:dark;
+
+  /* superfícies — leve transparência para o overlay de fundo aparecer atrás */
+  --adm-bg:#080b08;
+  --adm-side:rgba(11,15,11,.86);
+  --adm-surface:rgba(14,19,14,.84);
+  --adm-surface-2:rgba(18,24,18,.90);
+  --adm-surface-3:#161d16;
+  --adm-thead:#121812;              /* cabeçalho grudado: precisa ser OPACO (= o antigo surface-2) */
+  --adm-pop:#0e130e;                /* popover sobre conteúdo: idem */
+  --adm-input:#080b08;
+  --adm-hover:rgba(var(--c-lime-rgb),.07);
+  --adm-zebra:rgba(255,255,255,.014);
+  --adm-chip:rgba(255,255,255,.05);
+  --adm-blur:10px;
+
+  --adm-line:rgba(255,255,255,.07);
+  --adm-line-2:rgba(255,255,255,.12);
+  --adm-line-3:rgba(255,255,255,.20);   /* borda de controle em hover */
+  --adm-line-lime:rgba(var(--c-lime-rgb),.35);
+  --adm-scroll:rgba(255,255,255,.16);
+  --adm-side-fade:rgba(11,15,11,0);     /* véu do rodapé do menu */
+
+  --adm-shadow:0 1px 2px rgba(0,0,0,.5), 0 8px 24px rgba(0,0,0,.28);
+  --adm-ring:0 0 0 3px rgba(var(--c-lime-rgb),.18);
+
+  /* texto sobre preenchimento cheio de acento (botão primário, contador, selo) */
+  --adm-on-lime:#0a1206;
+  /* vermelho ESCRITO — o --c-red puro não tem contraste suficiente como texto */
+  --adm-danger:#ff8f92;
+  --adm-danger-hi:#ffb9bb;
+
+  /* seta do <select>: a cor mora na data URI, então são duas — uma por tema */
+  --adm-caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238f998d'><path d='M7 10l5 5 5-5z'/></svg>");
+
+  /* camadas do fundo (seção 1.0) */
+  --adm-bg-glow:
+    radial-gradient(1100px 620px at 14% -10%, rgba(var(--c-lime-rgb),.085), transparent 62%),
+    radial-gradient(900px 560px at 94% 4%,    rgba(var(--c-cyan-rgb),.045), transparent 60%),
+    radial-gradient(1300px 760px at 50% 114%, rgba(10,24,6,.55), transparent 66%);
+  --adm-bg-grid:rgba(var(--c-lime-rgb),.05);
+  --adm-bg-grain:.055;
+  --adm-bg-vig:radial-gradient(ellipse 86% 76% at 50% 44%, rgba(0,0,0,0) 46%, rgba(0,0,0,.34) 84%, rgba(0,0,0,.58) 100%);
+}
+
+/* --------------------------------------------------------------------------
+   MODO CLARO — vale SÓ para o /admin.
+   Não é o escuro invertido: o papel é levemente esverdeado (some com o azul
+   frio de tela de escritório), e TODO acento foi reescolhido escuro o bastante
+   para passar de 4.5:1 sobre painel branco — o lime #9be04a da HUD, em texto
+   sobre branco, dá 1.9:1 e seria ilegível. O acento continua significando a
+   mesma coisa; só mudou a luminosidade.
+   -------------------------------------------------------------------------- */
+:root[data-tema="claro"]{
+  color-scheme:light;
+  scrollbar-color:rgba(28,38,20,.28) rgba(28,38,20,.06);
+
+  --adm-bg:#e8ece2;
+  --adm-side:rgba(244,246,240,.88);
+  --adm-surface:rgba(255,255,255,.86);
+  --adm-surface-2:rgba(240,243,235,.92);
+  --adm-surface-3:#e5e9dd;
+  --adm-thead:#eff2e9;
+  --adm-pop:#ffffff;
+  --adm-input:#fbfcf8;
+  --adm-hover:rgba(var(--c-lime-rgb),.10);
+  --adm-zebra:rgba(28,38,20,.028);
+  --adm-chip:rgba(28,38,20,.05);
+  --adm-blur:12px;
+
+  --adm-line:rgba(28,38,20,.13);
+  --adm-line-2:rgba(28,38,20,.22);
+  --adm-line-3:rgba(28,38,20,.34);
+  --adm-line-lime:rgba(var(--c-lime-rgb),.45);
+  --adm-scroll:rgba(28,38,20,.26);
+  --adm-side-fade:rgba(244,246,240,0);
+
+  --adm-shadow:0 1px 2px rgba(30,42,22,.07), 0 10px 26px rgba(30,42,22,.09);
+  --adm-ring:0 0 0 3px rgba(var(--c-lime-rgb),.22);
+
+  --adm-on-lime:#ffffff;
+  --adm-danger:#a81c23;
+  --adm-danger-hi:#8b141a;
+
+  --adm-caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%235a6650'><path d='M7 10l5 5 5-5z'/></svg>");
+
+  /* fundo claro: mesma composição, um terço da força — papel técnico, não tela de jogo */
+  --adm-bg-glow:
+    radial-gradient(1100px 620px at 14% -10%, rgba(120,170,70,.16), transparent 62%),
+    radial-gradient(900px 560px at 94% 4%,    rgba(96,150,186,.10), transparent 60%),
+    radial-gradient(1300px 780px at 50% 116%, rgba(120,130,105,.20), transparent 66%);
+  --adm-bg-grid:rgba(40,62,22,.055);
+  --adm-bg-grain:.030;
+  --adm-bg-vig:radial-gradient(ellipse 92% 82% at 50% 44%, rgba(0,0,0,0) 50%, rgba(56,66,46,.09) 86%, rgba(56,66,46,.17) 100%);
+
+  /* ---- paleta global reescrita para fundo claro ------------------------- */
+  --c-bg:#e8ece2; --c-bg-2:#dfe4d7;
+  --c-text:#131a10;      /* 16.9:1 sobre branco */
+  --c-text-2:#39422f;    /*  9.4:1 */
+  --c-muted:#56624c;     /*  6.2:1 */
+  /* O --c-dim é o menor texto do painel (rótulo de grupo do menu, KPI da topbar,
+     rodapé) e quase sempre cai sobre a BARRA, que é mais clara que o painel —
+     por isso ele é medido contra rgb(243,245,238), e não contra branco. */
+  --c-dim:#65705c;       /*  4.7:1 sobre a barra | 5.2:1 sobre branco */
+
+  /* Medido no pior caso real: texto lime sobre CHIP lime (rgba(lime,.14) por cima
+     do painel), que é onde o acento fica mais perto do próprio fundo. */
+  --c-lime:#3a7212;      --c-lime-rgb:58,114,18;      /* 4.7:1 no chip | 5.9:1 no branco */
+  --c-lime-2:#2d5c0d;    /* hover: escurece, não clareia */
+  --c-lime-dim:#4a7f22;
+  --c-cyan:#0a6c8f;      --c-cyan-rgb:10,108,143;     /* 5.1:1 */
+  --c-amber:#8a5300;     --c-amber-rgb:138,83,0;      /* 5.6:1 */
+  --c-gold:#7d5a00;      --c-gold-rgb:125,90,0;       /* 5.8:1 */
+  --c-red:#bf1f26;       --c-red-rgb:191,31,38;       /* 5.4:1 */
+  --c-purple:#6b2bb8;    --c-purple-rgb:107,43,184;   /* 7.6:1 */
+  --c-blue:#1a5ccc;
+  --c-line:rgba(40,62,22,.22); --c-line-2:rgba(40,62,22,.12); --c-line-hot:#3d7a14;
+  --c-track:rgba(28,38,20,.14);
+  --c-panel:rgba(255,255,255,.86); --c-panel-2:rgba(255,255,255,.86);
+  --c-panel-3:rgba(240,243,235,.9); --c-panel-hi:rgba(232,237,224,.95);
+  --c-panel-solid:#ffffff;
+
+  /* brilhos viram sombras: luz neon sobre papel não existe */
+  --glow-lime:0 0 0 1px rgba(var(--c-lime-rgb),.45), 0 2px 10px rgba(var(--c-lime-rgb),.18);
+  --glow-lime-strong:0 0 0 1px rgba(var(--c-lime-rgb),.65), 0 3px 14px rgba(var(--c-lime-rgb),.26);
+  --glow-cyan:0 0 0 1px rgba(var(--c-cyan-rgb),.45), 0 2px 10px rgba(var(--c-cyan-rgb),.18);
+  --glow-red:0 0 0 1px rgba(var(--c-red-rgb),.45), 0 2px 10px rgba(var(--c-red-rgb),.18);
+  --glow-gold:0 0 0 1px rgba(var(--c-gold-rgb),.45), 0 2px 10px rgba(var(--c-gold-rgb),.18);
+  --glow-soft:0 2px 10px rgba(var(--c-lime-rgb),.16);
+  --shadow-panel:0 10px 26px rgba(30,42,22,.10);
+  --shadow-inset:inset 0 1px 0 rgba(255,255,255,.6), inset 0 -1px 0 rgba(28,38,20,.06);
+  --c-active-grad:linear-gradient(100deg, rgba(var(--c-lime-rgb),.16) 0%, rgba(var(--c-lime-rgb),.08) 45%, rgba(var(--c-lime-rgb),.03) 100%);
+  --c-primary-grad:linear-gradient(180deg, #4a8c1b 0%, #3d7a14 48%, #31640f 100%);
+  --c-primary-grad-hover:linear-gradient(180deg, #56a021 0%, #47881a 48%, #3a7212 100%);
+}
+
+/* ==========================================================================
+   1.0 OVERLAY DE FUNDO — em TODAS as telas do painel
+   --------------------------------------------------------------------------
+   Marcação em app/Views/layouts/admin.php e admin-auth.php:
+     .adm-bg > .adm-bg__glow + .adm-bg__grid + .adm-bg__grain + .adm-bg__vig
+
+   É a mesma linguagem do fundo da HUD (partials/background.php + hud.css:
+   véu em degradê, grão, vinheta), traduzida para ferramenta de trabalho:
+   sem foto, sem canvas de atmosfera, sem parallax, e com um terço da força.
+   O objetivo é dar PROFUNDIDADE ao chapado — nunca competir com a leitura.
+
+   Por isso a ordem das camadas importa: o brilho e a grade ficam ABAIXO do
+   grão e da vinheta, e a vinheta escurece só as beiradas, onde não há tabela.
+   Fica tudo em position:fixed atrás do .adm (z-index 0 contra 1), então não
+   entra no scroll do conteúdo nem custa repintura ao rolar a tabela.
+   ========================================================================== */
+.adm-bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  overflow:hidden;
+  pointer-events:none;
+  background:var(--adm-bg);
+}
+.adm-bg > span{ position:absolute; inset:0; display:block }
+
+.adm-bg__glow{ background:var(--adm-bg-glow) }
+
+/* Grade discreta: dá escala ao vazio e some no centro, sob a máscara radial —
+   linha de grade cruzando número de tabela é ruído, não textura. */
+.adm-bg__grid{
+  background-image:
+    linear-gradient(to right,  var(--adm-bg-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--adm-bg-grid) 1px, transparent 1px);
+  background-size:72px 72px;
+  -webkit-mask-image:radial-gradient(ellipse 78% 72% at 50% 42%, rgba(0,0,0,.28) 0%, rgba(0,0,0,.9) 55%, #000 100%);
+  mask-image:radial-gradient(ellipse 78% 72% at 50% 42%, rgba(0,0,0,.28) 0%, rgba(0,0,0,.9) 55%, #000 100%);
+}
+
+/* Mesmo grão da HUD (hud.css .bg__grain), com metade da opacidade. */
+.adm-bg__grain{
+  inset:-2%;
+  opacity:var(--adm-bg-grain);
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n' x='0' y='0'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size:220px 220px;
+}
+
+.adm-bg__vig{ background:var(--adm-bg-vig) }
+
+/* ==========================================================================
+   1. CASCA
+   ========================================================================== */
+.adm-body{ background:var(--adm-bg); overflow:hidden }
+
+.adm{
+  position:relative;
+  z-index:1;                       /* acima do .adm-bg, que é fixo em z-index 0 */
+  display:grid;
+  grid-template-columns:var(--adm-side-w) minmax(0,1fr);
+  height:100vh;
+  height:100dvh;
+  min-height:100vh;
+  min-height:100dvh;
+}
+
+/* ---- sidebar ------------------------------------------------------------ */
+.adm-side{
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  min-height:0;
+  background:var(--adm-side);
+  -webkit-backdrop-filter:blur(var(--adm-blur));
+  backdrop-filter:blur(var(--adm-blur));
+  border-right:1px solid var(--adm-line);
+  /* Mesma armadilha da topbar: a barra vem ANTES do conteúdo no HTML, então sem z-index
+     próprio qualquer card com desfoque passaria por cima dela na borda. */
+  position:relative;
+  z-index:var(--z-float);
+}
+
+.adm-brand{
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  height:var(--adm-top-h);
+  padding:0 1rem;
+  border-bottom:1px solid var(--adm-line);
+}
+.adm-brand__mark .logo__emblem{ width:2.25rem }
+.adm-brand__txt{ display:grid; gap:.15rem; min-width:0 }
+.adm-brand__name{
+  font-family:var(--font-cond);
+  font-size:1.15rem;
+  font-weight:500;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--c-text);
+  line-height:1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.adm-brand__env{
+  font-family:var(--font-cond);
+  font-size:.72rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--c-lime);
+  line-height:1;
+}
+
+/* Os 18 itens precisam caber em 900px de altura SEM ROLAR: é o menu que o
+   operador vê o dia todo, e um item cortado ao meio acima do botão de sair é
+   defeito de leitura, não de gosto. Daí o ritmo apertado (item de 2rem,
+   respiro de .1rem) em vez do confortável — a conta fecha em ~722px. */
+.adm-nav{ padding:.6rem .6rem; display:flex; flex-direction:column; gap:.55rem }
+.adm-nav__group{ display:flex; flex-direction:column; gap:.1rem }
+.adm-nav__label{
+  font-family:var(--font-cond);
+  font-size:.66rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  padding:0 .5rem;
+  margin-bottom:.1rem;
+  line-height:1.2;
+}
+
+.adm-nav__item{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  height:2rem;
+  padding:0 .55rem;
+  border-radius:var(--adm-r-sm);
+  color:var(--c-text-2);
+  font-family:var(--font-body);
+  font-size:.875rem;
+  line-height:1;
+  transition:background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.adm-nav__ico{ font-size:1.15rem; color:var(--c-muted); transition:color var(--t-fast) var(--ease) }
+.adm-nav__txt{ flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+/* fora do fluxo: o chevron só aparece no item ativo e não pode roubar largura
+   do rótulo dos outros ("Configurações do Jogo" não cabe se ele reservar lugar) */
+.adm-nav__chev{
+  position:absolute;
+  right:.5rem;
+  font-size:1.1rem;
+  color:var(--c-lime);
+  opacity:0;
+  transform:translateX(-.25rem);
+  transition:opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.adm-nav__item.is-active .adm-nav__txt{ padding-right:1.1rem }
+.adm-nav__count{
+  font-size:.7rem;
+  min-width:1.35rem;
+  height:1.15rem;
+  padding:0 .35rem;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  background:rgba(var(--c-red-rgb),.18);
+  color:var(--adm-danger-hi);
+}
+
+.adm-nav__item:hover{ background:var(--adm-hover); color:var(--c-text) }
+.adm-nav__item:hover .adm-nav__ico{ color:var(--c-lime-dim) }
+
+.adm-nav__item.is-active{
+  background:linear-gradient(90deg, rgba(var(--c-lime-rgb),.16), rgba(var(--c-lime-rgb),.03));
+  color:var(--c-lime);
+  font-weight:500;
+}
+.adm-nav__item.is-active .adm-nav__ico{ color:var(--c-lime) }
+.adm-nav__item.is-active .adm-nav__chev{ opacity:1; transform:none }
+/* a barra à esquerda é o "você está aqui" — o mesmo sinal da topbar do jogo */
+.adm-nav__item.is-active::before{
+  content:"";
+  position:absolute;
+  left:0; top:.35rem; bottom:.35rem;
+  width:2px;
+  border-radius:2px;
+  background:var(--c-lime);
+  box-shadow:0 0 8px rgba(var(--c-lime-rgb),.7);
+}
+
+/* item em destaque (Dashboard): caixa, não linha */
+.adm-nav__item--feature{
+  height:2.4rem;
+  padding:0 .7rem;
+  border:1px solid var(--adm-line-lime);
+  background:rgba(var(--c-lime-rgb),.08);
+  color:var(--c-lime);
+  font-family:var(--font-cond);
+  font-size:1rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:.15rem;
+}
+.adm-nav__item--feature .adm-nav__ico{ color:var(--c-lime) }
+.adm-nav__item--feature .adm-nav__chev{ opacity:.55; transform:none }
+.adm-nav__item--feature:hover{ background:rgba(var(--c-lime-rgb),.14); color:var(--c-lime-2) }
+.adm-nav__item--feature.is-active{
+  background:rgba(var(--c-lime-rgb),.14);
+  border-color:var(--c-lime);
+  box-shadow:inset 0 0 22px rgba(var(--c-lime-rgb),.10);
+}
+.adm-nav__item--feature.is-active::before{ display:none }
+.adm-nav__item--feature.is-active .adm-nav__chev{ opacity:1 }
+
+/* Item cuja rota ainda não existe (layouts/admin.php troca o <a> por <span>).
+   Ele fica no menu porque a lista é o mapa do painel, mas não pode PARECER
+   clicável — e também não pode ANUNCIAR-SE: dezessete pílulas "EM BREVE"
+   alinhadas à direita viravam uma segunda coluna de texto, mais repetida do
+   que os próprios rótulos. Sobrou o que basta: meia opacidade e um cadeado
+   mudo. A frase vive no title e no aria-label do item. */
+.adm-nav__item.is-soon{ opacity:.5; cursor:default }
+.adm-nav__item.is-soon:hover{ background:transparent; color:var(--c-text-2) }
+.adm-nav__item.is-soon:hover .adm-nav__ico{ color:var(--c-muted) }
+.adm-nav__lock{
+  margin-left:auto;
+  flex-shrink:0;
+  font-size:12px;
+  color:var(--c-dim);
+}
+/* Quando o GRUPO inteiro ainda não existe, a palavra aparece UMA vez — no
+   rótulo do grupo. É a única forma escrita do aviso que sobrou na barra. */
+.adm-nav__label-soon{ text-transform:none; letter-spacing:.02em; opacity:.75 }
+.adm-nav__item--feature.is-soon{ opacity:.5 }
+
+/* Rede de segurança do menu: se um dia entrar mais item do que cabe, a barra
+   fina fica sempre visível e o véu acima do rodapé mostra que a lista continua
+   — nunca uma linha decapitada fingindo ser o fim da navegação. Sobre menu que
+   já coube, o degradê cai sobre o próprio fundo da barra e não aparece. */
+.adm-nav{ scrollbar-width:thin; scrollbar-color:var(--adm-scroll) transparent }
+.adm-nav::-webkit-scrollbar{ width:6px }
+.adm-nav::-webkit-scrollbar-thumb{ background:var(--adm-scroll); border-radius:3px }
+
+.adm-side__foot{ position:relative; padding:.75rem; border-top:1px solid var(--adm-line) }
+.adm-side__foot::before{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:100%;
+  height:1.75rem;
+  background:linear-gradient(to top, var(--adm-side), var(--adm-side-fade));
+  pointer-events:none;
+}
+.adm-side__out{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.6rem;
+  width:100%;
+  height:2.6rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:var(--adm-r-sm);
+  background:transparent;
+  color:var(--c-text-2);
+  font-family:var(--font-cond);
+  font-size:.9rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  transition:border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.adm-side__out .ms{ font-size:1.15rem }
+.adm-side__out:hover{ border-color:rgba(var(--c-red-rgb),.55); color:var(--c-red); background:rgba(var(--c-red-rgb),.08) }
+
+/* ---- área principal ----------------------------------------------------- */
+.adm-main{
+  display:grid;
+  grid-template-rows:var(--adm-top-h) minmax(0,1fr) auto;
+  min-width:0;
+  min-height:0;
+}
+
+.adm-top{
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:0 var(--adm-pad);
+  background:var(--adm-side);
+  -webkit-backdrop-filter:blur(var(--adm-blur));
+  backdrop-filter:blur(var(--adm-blur));
+  border-bottom:1px solid var(--adm-line);
+  min-width:0;
+  /* `backdrop-filter` cria contexto de empilhamento. Sem z-index próprio, a topbar e os
+     cards viram contextos irmãos em `auto` e quem pinta por cima é quem vem depois no HTML
+     — os cards. O menu do administrador e o sino ficavam POR BAIXO do conteúdo, porque o
+     z-index deles é resolvido DENTRO deste contexto, que já tinha perdido a disputa. */
+  position:relative;
+  z-index:var(--z-float);
+}
+.adm-top__rail{
+  display:none;
+  width:2.25rem; height:2.25rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:var(--adm-r-sm);
+  color:var(--c-text-2);
+  place-items:center;
+}
+.adm-top__id{ min-width:0; margin-right:auto }
+.adm-top__title{
+  font-family:var(--font-cond);
+  font-size:1.5rem;
+  font-weight:500;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--c-text);
+  line-height:1.1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.adm-top__sub{ font-size:.85rem; color:var(--c-muted); line-height:1.3; margin-top:.15rem }
+.adm-top__actions{ display:flex; align-items:center; gap:.5rem; flex-shrink:0 }
+
+.adm-top__kpis{ display:flex; align-items:center; gap:1.5rem; flex-shrink:0 }
+.adm-top__kpi{ display:flex; align-items:center; gap:.6rem }
+.adm-top__kpi-ico{
+  font-size:1.15rem;
+  width:2.15rem; height:2.15rem;
+  display:grid; place-items:center;
+  border-radius:var(--adm-r-sm);
+  background:rgba(var(--c-lime-rgb),.10);
+  color:var(--c-lime);
+}
+.adm-top__kpi--cyan   .adm-top__kpi-ico{ background:rgba(var(--c-cyan-rgb),.10);   color:var(--c-cyan) }
+.adm-top__kpi--amber  .adm-top__kpi-ico{ background:rgba(var(--c-amber-rgb),.10);  color:var(--c-amber) }
+.adm-top__kpi--gold   .adm-top__kpi-ico{ background:rgba(var(--c-gold-rgb),.10);   color:var(--c-gold) }
+.adm-top__kpi--purple .adm-top__kpi-ico{ background:rgba(var(--c-purple-rgb),.10); color:var(--c-purple) }
+.adm-top__kpi--red    .adm-top__kpi-ico{ background:rgba(var(--c-red-rgb),.10);    color:var(--c-red) }
+.adm-top__kpi-txt{ display:grid; gap:.1rem; min-width:0 }
+.adm-top__kpi-lbl{
+  font-family:var(--font-cond);
+  font-size:.7rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  line-height:1;
+  white-space:nowrap;
+}
+.adm-top__kpi-val{ font-size:.95rem; color:var(--c-text); line-height:1.1; white-space:nowrap }
+.adm-top__kpi-val small{ color:var(--c-muted); margin-left:.25rem }
+
+.adm-top__tools{ display:flex; align-items:center; gap:.6rem; flex-shrink:0 }
+.adm-top__tools::before{
+  content:"";
+  width:1px; height:2.25rem;
+  background:var(--adm-line);
+  margin-right:.4rem;
+}
+
+.adm-icobtn{
+  position:relative;
+  display:grid; place-items:center;
+  width:2.4rem; height:2.4rem;
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface);
+  color:var(--c-text-2);
+  transition:border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.adm-icobtn .ms{ font-size:1.25rem }
+.adm-icobtn:hover,.adm-icobtn[aria-expanded="true"]{ border-color:var(--adm-line-lime); color:var(--c-lime) }
+.adm-icobtn__count{
+  position:absolute;
+  top:-.35rem; right:-.35rem;
+  min-width:1.15rem; height:1.15rem;
+  padding:0 .25rem;
+  display:grid; place-items:center;
+  border-radius:999px;
+  background:var(--c-lime);
+  color:var(--adm-on-lime);
+  font-size:.68rem;
+  border:2px solid var(--adm-side);
+}
+
+.adm-user{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  height:2.75rem;
+  padding:0 .5rem 0 .35rem;
+  border:1px solid transparent;
+  border-radius:var(--adm-r-sm);
+  transition:border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.adm-user:hover,.adm-user[aria-expanded="true"]{ border-color:var(--adm-line); background:var(--adm-surface) }
+.adm-user__ava{
+  width:2.15rem; height:2.15rem;
+  border-radius:50%;
+  object-fit:cover;
+  border:1px solid var(--adm-line-lime);
+  background:var(--adm-surface-2);
+  flex-shrink:0;
+}
+.adm-user__ava--ph{ display:grid; place-items:center; color:var(--c-lime) }
+.adm-user__ava--ph .ms{ font-size:1.25rem }
+.adm-user__txt{ display:grid; gap:.1rem; text-align:left; min-width:0 }
+.adm-user__name{
+  font-family:var(--font-cond);
+  font-size:.95rem;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--c-text);
+  line-height:1;
+}
+.adm-user__role{ font-size:.75rem; color:var(--c-muted); line-height:1 }
+.adm-user__chev{ font-size:1.15rem; color:var(--c-muted); transition:transform var(--t-fast) var(--ease) }
+.adm-user[aria-expanded="true"] .adm-user__chev{ transform:rotate(180deg) }
+
+/* ---- popovers (sino e menu do administrador) ---------------------------- */
+.adm-pop-wrap{ position:relative }
+.adm-pop{
+  position:absolute;
+  top:calc(100% + .5rem);
+  right:0;
+  z-index:var(--z-float);
+  min-width:15rem;
+  padding:.4rem;
+  /* popover fica SOBRE conteúdo: aqui a cor é cheia, com o blur só arredondando
+     o que passa nas beiradas. Menu translúcido sobre tabela é ilegível. */
+  background:var(--adm-pop);
+  -webkit-backdrop-filter:blur(calc(var(--adm-blur) * 1.6));
+  backdrop-filter:blur(calc(var(--adm-blur) * 1.6));
+  border:1px solid var(--adm-line-2);
+  border-radius:var(--adm-r);
+  box-shadow:var(--adm-shadow);
+  animation:adm-pop-in var(--t-fast) var(--ease) both;
+}
+.adm-pop--alerts{ width:22rem; max-width:min(22rem, calc(100vw - 2rem)) }
+@keyframes adm-pop-in{ from{ opacity:0; transform:translateY(-.25rem) } to{ opacity:1; transform:none } }
+.adm-pop__head{
+  font-family:var(--font-cond);
+  font-size:.75rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  padding:.4rem .6rem;
+}
+.adm-pop__empty{ padding:.6rem; font-size:.85rem; color:var(--c-muted) }
+.adm-pop__list{ display:flex; flex-direction:column; max-height:20rem; overflow-y:auto }
+.adm-pop__item{ display:flex; gap:.6rem; padding:.55rem .6rem; border-top:1px solid var(--adm-line) }
+.adm-pop__item:first-child{ border-top:0 }
+.adm-pop__ico{ font-size:1.1rem; color:var(--c-lime); margin-top:.1rem }
+.adm-pop__item--red .adm-pop__ico{ color:var(--c-red) }
+.adm-pop__item--amber .adm-pop__ico{ color:var(--c-amber) }
+.adm-pop__item--cyan .adm-pop__ico{ color:var(--c-cyan) }
+.adm-pop__txt{ font-size:.85rem; color:var(--c-text-2); line-height:1.35 }
+.adm-pop__txt small{ display:block; color:var(--c-dim); font-size:.75rem }
+.adm-pop__link{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  width:100%;
+  padding:.5rem .6rem;
+  border-radius:var(--adm-r-sm);
+  color:var(--c-text-2);
+  font-size:.88rem;
+  text-align:left;
+}
+.adm-pop__link .ms{ font-size:1.15rem; color:var(--c-muted) }
+.adm-pop__link:hover{ background:var(--adm-hover); color:var(--c-text) }
+.adm-pop__link:hover .ms{ color:var(--c-lime) }
+.adm-pop__link--danger:hover{ background:rgba(var(--c-red-rgb),.10); color:var(--c-red) }
+.adm-pop__link--danger:hover .ms{ color:var(--c-red) }
+
+/* ---- conteúdo e rodapé -------------------------------------------------- */
+.adm-content{ padding:var(--adm-pad); min-width:0; min-height:0 }
+.adm-content > *+*{ margin-top:var(--adm-gap) }
+
+.adm-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  height:var(--adm-foot-h);
+  padding:0 var(--adm-pad);
+  border-top:1px solid var(--adm-line);
+  background:var(--adm-side);
+  -webkit-backdrop-filter:blur(var(--adm-blur));
+  backdrop-filter:blur(var(--adm-blur));
+  font-size:.75rem;
+  color:var(--c-dim);
+}
+.adm-foot__ver{ font-family:var(--font-cond); letter-spacing:.08em; text-transform:uppercase }
+
+/* ---- flash -------------------------------------------------------------- */
+.adm-flashes{ display:flex; flex-direction:column; gap:.5rem; margin-bottom:var(--adm-gap) }
+.adm-flash{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  padding:.65rem .85rem;
+  border:1px solid var(--adm-line-2);
+  border-left:3px solid var(--c-lime);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface);
+  font-size:.9rem;
+  color:var(--c-text);
+}
+.adm-flash .ms{ font-size:1.2rem; color:var(--c-lime) }
+.adm-flash--error{ border-left-color:var(--c-red) }
+.adm-flash--error .ms{ color:var(--c-red) }
+.adm-flash--info{ border-left-color:var(--c-cyan) }
+.adm-flash--info .ms{ color:var(--c-cyan) }
+.adm-flash__x{ margin-left:auto; color:var(--c-dim) }
+.adm-flash__x:hover{ color:var(--c-text) }
+
+/* ==========================================================================
+   2. PRIMITIVOS — usados por todas as telas
+   ========================================================================== */
+
+/* ---- grade -------------------------------------------------------------- */
+.adm-grid{ display:grid; gap:var(--adm-gap); grid-template-columns:repeat(var(--adm-cols,1),minmax(0,1fr)) }
+.adm-grid--2{ --adm-cols:2 }
+.adm-grid--3{ --adm-cols:3 }
+.adm-grid--4{ --adm-cols:4 }
+.adm-span-2{ grid-column:span 2 }
+.adm-span-3{ grid-column:span 3 }
+
+/* ---- painel ------------------------------------------------------------- */
+/* O painel é translúcido de propósito (ver 1.0): o brilho e a grade do fundo
+   passam por baixo e dão profundidade. A transparência é fraca (14%) e o blur
+   segura o contraste — texto de 12px em tabela densa continua sobre cor cheia. */
+.adm-card{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  background:var(--adm-surface);
+  -webkit-backdrop-filter:blur(var(--adm-blur));
+  backdrop-filter:blur(var(--adm-blur));
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r);
+  box-shadow:var(--adm-shadow);
+}
+.adm-card__head{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  min-height:3.25rem;
+  padding:.75rem 1rem;
+  border-bottom:1px solid var(--adm-line);
+}
+.adm-card__title{
+  font-family:var(--font-cond);
+  font-size:1rem;
+  font-weight:500;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--c-text);
+  line-height:1.1;
+}
+.adm-card__title small{ display:block; font-family:var(--font-body); font-size:.75rem; letter-spacing:0; text-transform:none; color:var(--c-muted); margin-top:.15rem }
+.adm-card__tools{ margin-left:auto; display:flex; align-items:center; gap:.5rem }
+.adm-card__link{
+  font-family:var(--font-cond);
+  font-size:.8rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--c-lime);
+  display:inline-flex; align-items:center; gap:.3rem;
+}
+.adm-card__link:hover{ color:var(--c-lime-2) }
+/* Mesma promessa do menu: o cartão continua dizendo para onde leva, sem virar
+   um link que devolve 404 enquanto a tela de destino não existe. */
+.adm-card__link.is-soon{ color:var(--c-dim); cursor:default }
+.adm-card__link.is-soon:hover{ color:var(--c-dim) }
+.adm-card__link.is-soon .adm-card__soon{
+  border:1px solid currentColor;
+  border-radius:2px;
+  padding:0 .25rem;
+  font-size:.62rem;
+  letter-spacing:.12em;
+  line-height:1.05rem;
+}
+.adm-card__body{ padding:1rem; min-width:0 }
+.adm-card__body--flush{ padding:0 }
+.adm-card__foot{
+  display:flex; align-items:center; gap:.75rem;
+  padding:.75rem 1rem;
+  border-top:1px solid var(--adm-line);
+}
+
+/* ---- KPI ---------------------------------------------------------------- */
+.adm-kpi{
+  display:flex;
+  align-items:center;
+  gap:.9rem;
+  padding:1rem;
+  background:var(--adm-surface);
+  -webkit-backdrop-filter:blur(var(--adm-blur));
+  backdrop-filter:blur(var(--adm-blur));
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r);
+  min-width:0;
+}
+.adm-kpi__ico{
+  width:3rem; height:3rem;
+  display:grid; place-items:center;
+  border-radius:var(--adm-r-sm);
+  background:rgba(var(--c-lime-rgb),.10);
+  color:var(--c-lime);
+  flex-shrink:0;
+}
+.adm-kpi__ico .ms{ font-size:1.6rem }
+.adm-kpi--cyan   .adm-kpi__ico{ background:rgba(var(--c-cyan-rgb),.10);   color:var(--c-cyan) }
+.adm-kpi--amber  .adm-kpi__ico{ background:rgba(var(--c-amber-rgb),.10);  color:var(--c-amber) }
+.adm-kpi--gold   .adm-kpi__ico{ background:rgba(var(--c-gold-rgb),.10);   color:var(--c-gold) }
+.adm-kpi--purple .adm-kpi__ico{ background:rgba(var(--c-purple-rgb),.10); color:var(--c-purple) }
+.adm-kpi--red    .adm-kpi__ico{ background:rgba(var(--c-red-rgb),.10);    color:var(--c-red) }
+.adm-kpi__txt{ display:grid; gap:.2rem; min-width:0 }
+.adm-kpi__label{
+  font-family:var(--font-cond);
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  line-height:1;
+}
+.adm-kpi__value{ font-size:1.65rem; color:var(--c-text); line-height:1.1 }
+.adm-kpi__value small{ font-size:.55em; color:var(--c-muted); margin-left:.25rem }
+.adm-kpi__delta{
+  display:inline-flex; align-items:center; gap:.15rem;
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  color:var(--c-muted);
+}
+.adm-kpi__delta .ms{ font-size:1rem }
+.adm-kpi__delta.is-up{ color:var(--c-lime) }
+.adm-kpi__delta.is-down{ color:var(--c-red) }
+.adm-kpi__delta small{ color:var(--c-dim); font-family:var(--font-body); margin-left:.25rem }
+
+/* ---- tabela ------------------------------------------------------------- */
+.adm-tablewrap{
+  overflow:auto;
+  min-width:0;
+  max-height:var(--adm-table-h,none);
+  scrollbar-gutter:stable;
+}
+.adm-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  font-size:.875rem;
+}
+.adm-table th,.adm-table td{
+  padding:.6rem .85rem;
+  text-align:left;
+  vertical-align:middle;
+  border-bottom:1px solid var(--adm-line);
+  white-space:nowrap;
+}
+.adm-table thead th{
+  position:sticky;
+  top:0;
+  z-index:2;
+  /* OPACO, não var(--adm-surface-2): o cabeçalho fica grudado enquanto as linhas
+     passam por baixo — qualquer transparência aqui deixa o texto da linha
+     atravessar o nome da coluna. */
+  background:var(--adm-thead);
+  font-family:var(--font-cond);
+  font-size:.75rem;
+  font-weight:500;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  border-bottom:1px solid var(--adm-line-2);
+}
+.adm-table tbody tr{ transition:background var(--t-fast) var(--ease) }
+.adm-table tbody tr:nth-child(even){ background:var(--adm-zebra) }
+.adm-table tbody tr:hover{ background:var(--adm-hover) }
+.adm-table tbody tr:last-child td{ border-bottom:0 }
+.adm-table td{ color:var(--c-text-2) }
+.adm-table td strong,.adm-table td b{ color:var(--c-text); font-weight:500 }
+.adm-table .num{ font-size:.85rem; color:var(--c-text) }
+.adm-table__wrap{ white-space:normal }
+.adm-table--compact th,.adm-table--compact td{ padding:.4rem .65rem }
+.adm-table th.tr,.adm-table td.tr{ text-align:right }
+.adm-table th.tc,.adm-table td.tc{ text-align:center }
+
+/* coluna de ações: alinhada à direita, controles só aparecem de verdade no hover da linha */
+.adm-table__acts{ width:1%; text-align:right }
+.adm-table__acts .adm-btn{ opacity:.55; transition:opacity var(--t-fast) var(--ease) }
+.adm-table tbody tr:hover .adm-table__acts .adm-btn,
+.adm-table__acts .adm-btn:focus-visible{ opacity:1 }
+/* célula com identidade (avatar + nome + e-mail) */
+.adm-table__who{ display:flex; align-items:center; gap:.6rem; min-width:0 }
+.adm-table__who img,.adm-table__ava{
+  width:2rem; height:2rem; border-radius:50%;
+  object-fit:cover; background:var(--adm-surface-3);
+  border:1px solid var(--adm-line); flex-shrink:0;
+}
+.adm-table__who span{ display:grid; min-width:0 }
+.adm-table__who small{ color:var(--c-dim); font-size:.75rem }
+
+/* ---- badge -------------------------------------------------------------- */
+.adm-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.3rem;
+  height:1.5rem;
+  padding:0 .5rem;
+  border-radius:999px;
+  border:1px solid var(--adm-line-2);
+  background:var(--adm-chip);
+  color:var(--c-text-2);
+  font-family:var(--font-cond);
+  font-size:.72rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  line-height:1;
+  white-space:nowrap;
+}
+.adm-badge .ms{ font-size:.9rem }
+.adm-badge::before{
+  content:"";
+  width:.4rem; height:.4rem;
+  border-radius:50%;
+  background:currentColor;
+  flex-shrink:0;
+}
+.adm-badge--nodot::before{ display:none }
+.adm-badge--ok,.adm-badge--ativo{        color:var(--c-lime);   border-color:rgba(var(--c-lime-rgb),.35);   background:rgba(var(--c-lime-rgb),.10) }
+.adm-badge--danger,.adm-badge--banido{   color:var(--adm-danger);         border-color:rgba(var(--c-red-rgb),.40);    background:rgba(var(--c-red-rgb),.12) }
+.adm-badge--warn,.adm-badge--pendente{   color:var(--c-amber);  border-color:rgba(var(--c-amber-rgb),.35);  background:rgba(var(--c-amber-rgb),.10) }
+.adm-badge--info,.adm-badge--manutencao{ color:var(--c-cyan);   border-color:rgba(var(--c-cyan-rgb),.35);   background:rgba(var(--c-cyan-rgb),.10) }
+.adm-badge--gold{                        color:var(--c-gold);   border-color:rgba(var(--c-gold-rgb),.35);   background:rgba(var(--c-gold-rgb),.10) }
+.adm-badge--purple{                      color:var(--c-purple); border-color:rgba(var(--c-purple-rgb),.35); background:rgba(var(--c-purple-rgb),.10) }
+.adm-badge--muted,.adm-badge--inativo{   color:var(--c-muted) }
+/* variante cheia: para o estado que precisa gritar numa lista longa */
+.adm-badge--solid{ background:var(--c-lime); border-color:var(--c-lime); color:var(--adm-on-lime) }
+.adm-badge--solid::before{ display:none }
+
+/* ---- botões ------------------------------------------------------------- */
+.adm-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.4rem;
+  height:2.4rem;
+  padding:0 .9rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface-2);
+  color:var(--c-text);
+  font-family:var(--font-cond);
+  font-size:.88rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  line-height:1;
+  white-space:nowrap;
+  cursor:pointer;
+  transition:background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease),
+             color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+.adm-btn .ms{ font-size:1.15rem }
+.adm-btn:hover{ background:var(--adm-surface-3); border-color:var(--adm-line-3) }
+.adm-btn:active{ transform:translateY(1px) }
+.adm-btn:focus-visible{ outline:none; box-shadow:var(--adm-ring); border-color:var(--c-lime) }
+
+.adm-btn--primary{ background:var(--c-lime); border-color:var(--c-lime); color:var(--adm-on-lime); font-weight:500 }
+.adm-btn--primary:hover{ background:var(--c-lime-2); border-color:var(--c-lime-2) }
+
+.adm-btn--ghost{ background:transparent; border-color:var(--adm-line-2); color:var(--c-text-2) }
+.adm-btn--ghost:hover{ background:var(--adm-hover); border-color:var(--adm-line-lime); color:var(--c-lime) }
+
+.adm-btn--danger{ background:transparent; border-color:rgba(var(--c-red-rgb),.45); color:var(--adm-danger) }
+.adm-btn--danger:hover{ background:rgba(var(--c-red-rgb),.12); border-color:var(--c-red); color:var(--adm-danger-hi) }
+
+.adm-btn--icon{ width:2.4rem; padding:0 }
+.adm-btn--sm{ height:2rem; padding:0 .65rem; font-size:.8rem }
+.adm-btn--sm.adm-btn--icon{ width:2rem }
+.adm-btn--lg{ height:2.85rem; padding:0 1.35rem; font-size:.95rem }
+.adm-btn[disabled],.adm-btn.is-disabled{ opacity:.45; pointer-events:none }
+.adm-btns{ display:flex; align-items:center; gap:.5rem; flex-wrap:wrap }
+
+/* barra de ferramentas de uma listagem (busca + filtros + botão de criar) */
+.adm-toolbar{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  flex-wrap:wrap;
+  padding:.75rem 1rem;
+  border-bottom:1px solid var(--adm-line);
+}
+.adm-toolbar__grow{ flex:1 1 12rem; min-width:0 }
+.adm-search{ position:relative; display:flex; align-items:center; min-width:0 }
+.adm-search .ms{ position:absolute; left:.6rem; font-size:1.15rem; color:var(--c-muted); pointer-events:none }
+.adm-search .adm-input{ padding-left:2.15rem }
+
+/* ---- formulários -------------------------------------------------------- */
+.adm-form{ display:grid; gap:1rem; min-width:0 }
+.adm-form__row{ display:grid; gap:1rem; grid-template-columns:repeat(var(--adm-form-cols,2),minmax(0,1fr)) }
+.adm-form__row--3{ --adm-form-cols:3 }
+.adm-form__actions{
+  display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+  padding-top:.5rem;
+  border-top:1px solid var(--adm-line);
+}
+.adm-form__actions .adm-spacer{ margin-left:auto }
+
+.adm-field{ display:grid; gap:.35rem; min-width:0 }
+.adm-label{
+  font-family:var(--font-cond);
+  font-size:.78rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--c-text-2);
+}
+.adm-label__req{ color:var(--c-lime); margin-left:.15rem }
+
+.adm-input,.adm-select,.adm-textarea{
+  width:100%;
+  min-height:2.5rem;
+  padding:.45rem .7rem;
+  background:var(--adm-input);
+  border:1px solid var(--adm-line-2);
+  border-radius:var(--adm-r-sm);
+  color:var(--c-text);
+  font-family:var(--font-body);
+  font-size:.9rem;
+  line-height:1.4;
+  box-shadow:none;
+  transition:border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.adm-input::placeholder,.adm-textarea::placeholder{ color:var(--c-dim) }
+.adm-input:hover,.adm-select:hover,.adm-textarea:hover{ border-color:var(--adm-line-3) }
+.adm-input:focus,.adm-select:focus,.adm-textarea:focus{
+  outline:none;
+  border-color:var(--c-lime);
+  box-shadow:var(--adm-ring);
+  background:var(--adm-surface);
+}
+.adm-textarea{ min-height:6.5rem; resize:vertical }
+.adm-select{
+  appearance:none;
+  padding-right:2rem;
+  background-image:var(--adm-caret);
+  background-repeat:no-repeat;
+  background-position:right .45rem center;
+  background-size:1.15rem;
+  cursor:pointer;
+}
+.adm-hint{ font-size:.78rem; color:var(--c-dim) }
+.adm-error{
+  display:flex; align-items:center; gap:.3rem;
+  font-family:var(--font-cond);
+  font-size:.78rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--c-red);
+}
+.adm-error .ms{ font-size:1rem }
+.adm-field.is-invalid .adm-input,
+.adm-field.is-invalid .adm-select,
+.adm-field.is-invalid .adm-textarea{ border-color:rgba(var(--c-red-rgb),.6) }
+.adm-field.is-invalid .adm-input:focus{ box-shadow:0 0 0 3px rgba(var(--c-red-rgb),.18) }
+
+/* caixa de seleção e interruptor */
+.adm-check{ display:flex; align-items:center; gap:.55rem; font-size:.88rem; color:var(--c-text-2); cursor:pointer }
+.adm-check input{ width:1rem; height:1rem; accent-color:var(--c-lime); cursor:pointer }
+
+.adm-switch{ display:inline-flex; align-items:center; gap:.6rem; cursor:pointer; font-size:.88rem; color:var(--c-text-2) }
+.adm-switch__in{ position:absolute; opacity:0; width:0; height:0 }
+.adm-switch__ui{
+  position:relative;
+  width:2.5rem; height:1.35rem;
+  border-radius:999px;
+  background:var(--adm-surface-3);
+  border:1px solid var(--adm-line-2);
+  transition:background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+  flex-shrink:0;
+}
+.adm-switch__ui::after{
+  content:"";
+  position:absolute;
+  top:50%; left:.15rem;
+  width:.95rem; height:.95rem;
+  border-radius:50%;
+  background:var(--c-muted);
+  transform:translateY(-50%);
+  transition:transform var(--t-med) var(--ease), background var(--t-fast) var(--ease);
+}
+.adm-switch__in:checked + .adm-switch__ui{ background:rgba(var(--c-lime-rgb),.25); border-color:var(--c-lime) }
+.adm-switch__in:checked + .adm-switch__ui::after{ transform:translate(1.05rem,-50%); background:var(--c-lime) }
+.adm-switch__in:focus-visible + .adm-switch__ui{ box-shadow:var(--adm-ring) }
+.adm-switch__in:disabled + .adm-switch__ui{ opacity:.45 }
+
+/* ---- estado vazio ------------------------------------------------------- */
+.adm-empty{
+  display:grid;
+  justify-items:center;
+  gap:.5rem;
+  padding:3rem 1.5rem;
+  text-align:center;
+}
+.adm-empty .ms{ font-size:2.5rem; color:var(--c-dim) }
+.adm-empty__title{
+  font-family:var(--font-cond);
+  font-size:1.05rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--c-text-2);
+}
+.adm-empty__txt{ font-size:.85rem; color:var(--c-muted); max-width:28rem }
+.adm-empty .adm-btn{ margin-top:.5rem }
+
+/* ---- paginação ---------------------------------------------------------- */
+.adm-pager{
+  display:flex;
+  align-items:center;
+  gap:.35rem;
+  flex-wrap:wrap;
+}
+.adm-pager__info{ margin-right:auto; font-size:.8rem; color:var(--c-dim) }
+.adm-pager__btn{
+  display:grid;
+  place-items:center;
+  min-width:2.1rem;
+  height:2.1rem;
+  padding:0 .5rem;
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface-2);
+  color:var(--c-text-2);
+  font-family:var(--font-mono);
+  font-size:.82rem;
+  transition:border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.adm-pager__btn .ms{ font-size:1.1rem }
+.adm-pager__btn:hover{ border-color:var(--adm-line-lime); color:var(--c-text) }
+.adm-pager__btn.is-active{ border-color:var(--c-lime); background:rgba(var(--c-lime-rgb),.12); color:var(--c-lime) }
+.adm-pager__btn.is-disabled,.adm-pager__btn[disabled]{ opacity:.35; pointer-events:none }
+.adm-pager__gap{ color:var(--c-dim); padding:0 .15rem }
+
+/* ---- apoios ------------------------------------------------------------- */
+.adm-sep{ height:1px; background:var(--adm-line); margin:.5rem 0 }
+.adm-meta{ font-size:.78rem; color:var(--c-dim) }
+.adm-dl{ display:grid; grid-template-columns:auto 1fr; gap:.4rem 1rem; font-size:.88rem }
+.adm-dl dt{ font-family:var(--font-cond); letter-spacing:.08em; text-transform:uppercase; color:var(--c-dim); font-size:.78rem; align-self:center }
+.adm-dl dd{ color:var(--c-text-2) }
+
+/* ==========================================================================
+   3. RESPONSIVO — até 1280px o painel encolhe; abaixo disso a sidebar vira trilho
+   ========================================================================== */
+@media (max-width:1520px){
+  :root{ --adm-side-w:15rem }
+}
+@media (max-width:1400px){
+  :root{ font-size:15px; --adm-pad:1.25rem; --adm-gap:1rem }
+  .adm-top__kpis{ gap:1rem }
+}
+@media (max-width:1280px){
+  .adm-top__kpi:nth-child(3){ display:none }        /* o terceiro KPI é o menos crítico */
+  .adm-top__kpi-lbl{ display:none }
+  .adm-grid--4{ --adm-cols:2 }
+}
+@media (max-width:1100px){
+  :root{ font-size:14px; --adm-side-w:4.25rem }
+  .adm-brand{ justify-content:center; padding:0 }
+  .adm-brand__txt,
+  .adm-nav__label,
+  .adm-nav__txt,
+  .adm-nav__chev,
+  .adm-nav__count,
+  .adm-nav__lock,
+  .adm-side__out span{ display:none }
+  .adm-nav{ padding:.75rem .5rem }
+  .adm-nav__item,.adm-nav__item--feature{ justify-content:center; padding:0; height:2.6rem }
+  .adm-top__kpis{ display:none }
+  .adm-top__rail{ display:none }
+  .adm-grid--3,.adm-grid--4{ --adm-cols:2 }
+}
+@media (max-width:820px){
+  .adm-grid--2,.adm-grid--3,.adm-grid--4{ --adm-cols:1 }
+  .adm-span-2,.adm-span-3{ grid-column:span 1 }
+  .adm-form__row{ --adm-form-cols:1 }
+  .adm-user__txt{ display:none }
+  .adm-top__sub{ display:none }
+}
+
+/* Notebook de 768px de altura: o menu tem 18 itens e a conta não fecha com o
+   ritmo normal. Aqui a casca inteira encolhe na VERTICAL — topo, item e botão
+   de sair — em vez de deixar a navegação cortada. */
+@media (max-height:840px){
+  :root{ --adm-top-h:4.5rem }
+  .adm-nav{ gap:.4rem }
+  .adm-nav__item{ height:1.85rem }
+  .adm-nav__item--feature{ height:2.2rem }
+  .adm-side__out{ height:2.35rem }
+}
+
+/* Trilho manual (botão da topbar / assets/js/admin.js): o operador escolhe
+   esconder os rótulos para ganhar largura de tabela numa tela cheia de colunas. */
+@media (min-width:1101px){
+  .adm-top__rail{ display:grid }
+  .adm-body.is-rail{ --adm-side-w:4.25rem }
+  .adm-body.is-rail .adm-brand{ justify-content:center; padding:0 }
+  .adm-body.is-rail .adm-brand__txt,
+  .adm-body.is-rail .adm-nav__label,
+  .adm-body.is-rail .adm-nav__txt,
+  .adm-body.is-rail .adm-nav__chev,
+  .adm-body.is-rail .adm-nav__count,
+  .adm-body.is-rail .adm-nav__lock,
+  .adm-body.is-rail .adm-side__out span{ display:none }
+  .adm-body.is-rail .adm-nav{ padding:.75rem .5rem }
+  .adm-body.is-rail .adm-nav__item,
+  .adm-body.is-rail .adm-nav__item--feature{ justify-content:center; padding:0; height:2.6rem }
+  .adm-body.is-rail .adm-top__rail .ms{ transform:rotate(180deg) }
+}
+
+/* ==========================================================================
+   4. MOVIMENTO REDUZIDO
+   ========================================================================== */
+@media (prefers-reduced-motion:reduce){
+  .adm-body *,.adm-body *::before,.adm-body *::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+  }
+  .adm-btn:active{ transform:none }
+}
+
+
+/* ==========================================================================
+   5. ALTERNADOR DE TEMA (topbar e porta do painel)
+   Controle segmentado de duas casas, não um botão que "faz alguma coisa": o
+   operador vê QUAL tema está ligado sem precisar clicar para descobrir.
+   ========================================================================== */
+.adm-tema{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  padding:2px;
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface);
+  flex-shrink:0;
+}
+.adm-tema__opt{
+  display:grid;
+  place-items:center;
+  width:2rem; height:2rem;
+  border-radius:calc(var(--adm-r-sm) - 1px);
+  color:var(--c-muted);
+  cursor:pointer;
+  transition:background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.adm-tema__opt .ms{ font-size:1.15rem }
+.adm-tema__opt:hover{ background:var(--adm-hover); color:var(--c-text) }
+.adm-tema__opt[aria-pressed="true"]{
+  background:rgba(var(--c-lime-rgb),.14);
+  color:var(--c-lime);
+  box-shadow:inset 0 0 0 1px var(--adm-line-lime);
+}
+.adm-tema__opt:focus-visible{ outline:none; box-shadow:var(--adm-ring) }
+
+/* A porta do painel também ganhou o overlay: o conteúdo precisa subir acima dele. */
+.adm-auth{ position:relative; z-index:1 }
+
+/* Na porta do painel (admin-auth) não há topbar: o alternador flutua no canto. */
+.adm-auth-body .adm-tema{
+  position:fixed;
+  top:1rem; right:1rem;
+  z-index:var(--z-float);
+  -webkit-backdrop-filter:blur(var(--adm-blur));
+  backdrop-filter:blur(var(--adm-blur));
+}
+
+/* ==========================================================================
+   6. MODO CLARO — acertos pontuais fora de assets/css/admin.css
+   --------------------------------------------------------------------------
+   As 14 telas são quase todas feitas de token, então a troca de paleta da
+   seção 0 já as veste. Sobraram ~20 declarações com cor LITERAL escritas
+   quando só existia o tema escuro (branco translúcido para separar, vermelho
+   claro para texto de perigo). Elas moram em assets/css/admin/*.css, que
+   pertencem a outras telas — então o acerto vem daqui, só sob o tema claro e
+   com especificidade maior (atributo + classe), nunca editando o arquivo alheio.
+   Quando aquelas linhas virarem variável, este bloco pode sumir sem dor.
+   ========================================================================== */
+
+/* ---- vermelho escrito: #ff8f92 some sobre papel branco ------------------- */
+:root[data-tema="claro"] .cfg-item.is-invalid .cfg-item__chave,
+:root[data-tema="claro"] .cfg-remover:hover,
+:root[data-tema="claro"] .cfg-confirma__ico,
+:root[data-tema="claro"] .cq-del .adm-card__title,
+:root[data-tema="claro"] .ev-tinta--red,
+:root[data-tema="claro"] .loja-conf .adm-card__title .ms,
+:root[data-tema="claro"] .loja-form__aviso .ms,
+:root[data-tema="claro"] .loja-tabela .loja-del:hover,
+:root[data-tema="claro"] .mapas-confirma .adm-card__title,
+:root[data-tema="claro"] .rel-chip--danger,
+:root[data-tema="claro"] .rel-move__op--danger{ color:var(--adm-danger) }
+:root[data-tema="claro"] .cq-del__aviso{ color:var(--adm-danger-hi) }
+
+/* ---- branco translúcido: separador que vira invisível no claro ----------- */
+:root[data-tema="claro"] .cfg-item:hover,
+:root[data-tema="claro"] .lg-quick{ background:var(--adm-zebra) }
+:root[data-tema="claro"] .cq-nome__hex,
+:root[data-tema="claro"] .cq-tag,
+:root[data-tema="claro"] .rel-chip b,
+:root[data-tema="claro"] .dash-feed__n{ background:var(--adm-chip) }
+:root[data-tema="claro"] .ban-tipo:hover .ban-tipo__box{ border-color:var(--adm-line-3) }
+
+/* ---- gráficos SVG: grade e barra neutra ---------------------------------
+   A grade é o esqueleto do gráfico: branco a 7% sobre papel branco não existe.
+   A barra "muda" (mês sem dado) precisa continuar LENDO como cinza deliberado. */
+:root[data-tema="claro"] .dash-chart__grid,
+:root[data-tema="claro"] .txn-chart__grid{ stroke:rgba(28,38,20,.14) }
+:root[data-tema="claro"] .txn-chart__bar--muted{ fill:rgba(28,38,20,.26) }
+:root[data-tema="claro"] .txn-chart__bar--muted:hover{ fill:rgba(28,38,20,.42) }
+:root[data-tema="claro"] .txn-chart__bar.is-zero{ fill:rgba(28,38,20,.12) }
+/* o ponto da linha é um furo na cor do cartão, não do fundo da página */
+:root[data-tema="claro"] .dash-chart__dot{ fill:var(--c-panel-solid) }
+
+/* ---- sombra de rolagem e barra da lista do dashboard --------------------- */
+:root[data-tema="claro"] .dash-panel__list{
+  scrollbar-color:var(--adm-scroll) transparent;
+  background:
+    linear-gradient(var(--adm-surface) 40%, rgba(255,255,255,0)) center top,
+    linear-gradient(rgba(255,255,255,0), var(--adm-surface) 65%) center bottom,
+    radial-gradient(farthest-side at 50% 0,    rgba(28,38,20,.16), rgba(28,38,20,0)) center top,
+    radial-gradient(farthest-side at 50% 100%, rgba(28,38,20,.16), rgba(28,38,20,0)) center bottom;
+  background-repeat:no-repeat;
+  background-size:100% 1.6rem, 100% 1.6rem, 100% .7rem, 100% .7rem;
+  background-attachment:local, local, scroll, scroll;
+}
+:root[data-tema="claro"] .dash-panel__list::-webkit-scrollbar-thumb{ background:var(--adm-scroll) }
+
+/* ---- ILHA ESCURA: a arte da marca na porta do painel ---------------------
+   O logotipo é um PNG pintado para fundo escuro (silhueta + brilho). Sobre
+   papel branco ele lê como borrão, e clarear a arte por filtro estragaria a
+   marca. A saída é a mesma do dashboard: uma placa escura só atrás dele. */
+:root[data-tema="claro"] .adm-login__logo{
+  padding:.85rem 1.25rem;
+  border-radius:var(--adm-r);
+  background:radial-gradient(ellipse at 50% 40%, #12180f 0%, #080b08 100%);
+  box-shadow:inset 0 0 0 1px rgba(28,38,20,.18);
+}
+
+/* ---- ILHA ESCURA: a faixa de boas-vindas do dashboard --------------------
+   Ela é uma FOTO com véu preto por cima. No claro a foto continua escura (é o
+   cenário do jogo), então inverter o texto ali seria o erro: o que se faz é
+   devolver a paleta ESCURA para dentro da faixa, e só para ela. Texto claro
+   sobre foto escura continua sendo a leitura certa. */
+:root[data-tema="claro"] .dash-hero{
+  --c-text:#eef2ea;
+  --c-text-2:#ccd5c6;
+  --c-muted:#a6b0a0;
+  --c-dim:#8e9889;
+  --c-lime:#9be04a;      --c-lime-rgb:155,224,74;
+  --c-lime-dim:#b6f25a;
+  --c-cyan:#3ec9f0;      --c-cyan-rgb:62,201,240;
+  --c-amber:#f5a623;     --c-amber-rgb:245,166,35;
+  --c-gold:#f5c518;      --c-gold-rgb:245,197,24;
+  --c-red:#e5484d;       --c-red-rgb:229,72,77;
+  --adm-line:rgba(255,255,255,.10);
+  --adm-line-2:rgba(255,255,255,.18);
+  --adm-danger:#ff8f92;
+  border-color:rgba(28,38,20,.22);
+}
+/* ==========================================================================
+   SUBMENU DA BARRA LATERAL
+   Um item de primeiro nível pode abrir um segundo ("Mapas" -> criar pontos /
+   editar mapa). Os filhos ficam SEMPRE à vista: submenu que só aparece depois
+   de acertar o pai é submenu que ninguém descobre. O que os separa do primeiro
+   nível é o trilho à esquerda e o recuo, não um clique a mais.
+   ========================================================================== */
+.adm-nav__sub{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  gap:.1rem;
+  margin:.15rem 0 .25rem 1.15rem;
+  padding-left:.7rem;
+}
+/* o trilho mora no ::before do container, e não numa borda de cada filho,
+   para não se partir no espaçamento entre as linhas */
+.adm-nav__sub::before{
+  content:"";
+  position:absolute;
+  left:0; top:.15rem; bottom:.15rem;
+  width:1px;
+  background:var(--adm-line);
+}
+/* Duas linhas em vez de reticências: "Criar pontos no mapa" é o nome que o
+   operador procura, e um item de menu cortado no meio obriga a passar o mouse
+   para descobrir o que ele é. */
+.adm-nav__item--child{
+  height:auto;
+  min-height:1.8rem;
+  padding:.3rem .45rem .3rem .45rem;
+  font-size:.8125rem;
+  line-height:1.2;
+  align-items:center;
+}
+.adm-nav__item--child .adm-nav__txt{ white-space:normal; overflow:visible; text-overflow:clip }
+.adm-nav__item--child .adm-nav__ico{ font-size:1rem }
+/* o marcador do item ativo é o mesmo do primeiro nível, mas encostado no
+   trilho — é ele que diz de qual pai este filho é */
+.adm-nav__item--child.is-active::before{ left:-.7rem }
+/* pai de um filho aberto: realce fraco, sem o marcador de "você está aqui" — esse
+   pertence ao filho */
+.adm-nav__item.is-branch{ color:var(--c-text) }
+.adm-nav__item.is-branch .adm-nav__ico{ color:var(--c-lime-dim) }
+
+/* ==========================================================================
+   ÍCONE DE PONTO DO MAPA — component('map-point-icon')
+   Mora aqui, e não na folha de uma tela, porque DUAS telas o desenham: o
+   catálogo de pontos e a paleta do editor de mapa. Deixá-lo na folha de uma
+   delas faria a outra carregar ícones sem estilo — quadrados de 1em onde
+   deveria haver um café.
+   ========================================================================== */
+.mpt-ic{
+  display:inline-grid;
+  place-items:center;
+  flex:0 0 auto;
+  color:var(--c-text);
+  line-height:0;
+}
+.mpt-ic svg,
+.mpt-ic img{ width:100%; height:100%; object-fit:contain; display:block }
+.mpt-ic .ms{ font-size:inherit; line-height:1 }
+
+.mpt-ic--sm{ width:1.25rem; height:1.25rem; font-size:1.25rem }
+.mpt-ic--md{ width:1.75rem; height:1.75rem; font-size:1.75rem }
+.mpt-ic--lg{ width:3.25rem; height:3.25rem; font-size:3.25rem }
+
+/* As cores são as MESMAS do mapa do jogador (assets/css/pages/mapa.css): o
+   operador escolhe "âmbar" aqui e vê o âmbar que o jogador vai ver. */
+.mpt-ic--white { color:#dfe6da }
+.mpt-ic--lime  { color:var(--c-lime) }
+.mpt-ic--cyan  { color:#4fd6e8 }
+.mpt-ic--amber { color:#f0a83c }
+.mpt-ic--gold  { color:#e8c65a }
+.mpt-ic--red   { color:#e8443f }
+.mpt-ic--purple{ color:#c56cf5 }
+.mpt-ic--muted { color:#8a938a }
+.mpt-ic__faltando{ color:var(--c-muted); opacity:.7 }
+
+
+/* O editor de mapa é a única tela do painel que precisa de ALTURA, e não de
+   rolagem: ela é um palco. A área de conteúdo deixa de rolar só nela — as
+   colunas internas do editor rolam sozinhas. */
+.page-admin-mapas-editor .adm-content{ overflow:hidden; display:flex; flex-direction:column }
+.page-admin-mapas-editor .adm-content > .mape{ flex:1 1 auto; min-height:0 }

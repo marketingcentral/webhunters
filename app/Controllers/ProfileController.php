@@ -276,9 +276,9 @@ final class ProfileController extends Controller
                 $dep('ENCONTROS HOSTIS', 'radar'),
             ]],
             ['slug' => 'veyra', 'label' => 'VEYRA', 'items' => [
-                $dep('CRIATURAS ABATIDAS', 'pest_control'),
-                $dep('NINHOS DESTRUÍDOS', 'local_fire_department'),
-                $dep('COLOSSI ELIMINADOS', 'skull'),
+                $dep('INFECTADOS ABATIDOS', 'pest_control'),
+                $dep('MATRIZES DESTRUÍDAS', 'local_fire_department'),
+                $dep('AMÁLGAMAS ELIMINADOS', 'skull'),
             ]],
         ];
     }

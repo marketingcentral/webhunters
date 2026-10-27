@@ -67,6 +67,47 @@ final class Router
         throw new HttpException(404, 'Página não encontrada');
     }
 
+    /**
+     * Caminhos GET FIXOS declarados na whitelist ('/admin/jogadores'), já sem o trecho
+     * opcional do padrão e sem os que dependem de {param}.
+     *
+     * Existe porque a INTERFACE precisa saber o que ainda não nasceu: um item de menu ou um
+     * atalho apontando para rota inexistente joga o operador num 404 — e, no caso do painel,
+     * num 404 desenhado com a arte do jogo, ou seja, para fora do produto. Quem desenha
+     * pergunta aqui e, quando a rota entra na tabela, o link acende sozinho.
+     *
+     * @return list<string>
+     */
+    public static function caminhosGet(): array
+    {
+        static $cache = null;
+        if ($cache !== null) {
+            return $cache;
+        }
+
+        $arquivo = Config::root() . '/app/routes.php';
+        $tabela  = is_file($arquivo) ? (array)require $arquivo : [];
+
+        $cache = [];
+        foreach ($tabela as $linha) {
+            if (!in_array('GET', array_map('strtoupper', (array)($linha[0] ?? [])), true)) {
+                continue;
+            }
+            $padrao = preg_replace('/\[.*$/', '', (string)($linha[1] ?? '')) ?? '';
+            if ($padrao !== '' && !str_contains($padrao, '{')) {
+                $cache[] = rtrim($padrao, '/') ?: '/';
+            }
+        }
+        return $cache;
+    }
+
+    /** A rota ('admin/logs', sem barra inicial) já responde a GET? */
+    public static function existeGet(string $rota): bool
+    {
+        $rota = '/' . trim($rota, '/');
+        return $rota !== '/' && in_array($rota, self::caminhosGet(), true);
+    }
+
     /** @param class-string $controller @param array<string, string> $params */
     private function invoke(string $controller, string $action, Request $request, array $params): Response
     {

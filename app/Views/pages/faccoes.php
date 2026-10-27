@@ -52,7 +52,12 @@ $back     = (array)($data['back'] ?? []);
           <h2 id="fac-<?= e($slug) ?>" class="fac-card__name"><?= e((string)$f['label']) ?></h2>
           <p class="fac-card__tag"><?= e((string)$f['tagline']) ?></p>
         </div>
-        <?php component('badge', ['kind' => 'faction', 'value' => $slug, 'lg' => true, 'solid' => !empty($f['active'])]) ?>
+        <span class="fac-card__emblem" aria-hidden="true">
+          <picture>
+            <source srcset="<?= e(asset('img/emblemas/' . $slug . '.webp')) ?>" type="image/webp">
+            <img src="<?= e(asset('img/emblemas/' . $slug . '.png')) ?>" alt="" loading="lazy" decoding="async">
+          </picture>
+        </span>
       </header>
 
       <ul class="fac-card__rows">
@@ -113,7 +118,7 @@ $back     = (array)($data['back'] ?? []);
         </form>
 <?php elseif (!empty($f['active'])): ?>
         <form class="fac-card__form" method="post" action="<?= e(url('faccoes/romper')) ?>" data-needs-confirm
-              data-confirm-title="ENCERRAR CONTRATO?" data-confirm-body="Você volta ao Hunter Command. A reputação com a <?= e((string)$f['label']) ?> é mantida — só a TROCA por outra facção a zera."
+              data-confirm-title="ENCERRAR CONTRATO?" data-confirm-body="Você volta a operar sob o Hunter Command. A reputação com a <?= e((string)$f['label']) ?> é mantida. Para assinar com outra facção é preciso encerrar este contrato antes."
               data-confirm-ok="ENCERRAR CONTRATO" data-confirm-cancel="CANCELAR">
           <?= csrf_field() ?>
           <input type="hidden" name="confirm" value="0" data-confirm-field>

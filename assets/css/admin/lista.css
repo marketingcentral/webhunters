@@ -1,0 +1,80 @@
+/* =========================================================================================
+   PAINEL · ATUALIZAÇÃO DE LISTA SEM RECARGA
+   Par de assets/js/admin/lista.js. Duas coisas, só: dizer que está carregando e não deixar
+   a tela pular enquanto carrega.
+
+   Carregado em todas as telas do painel (layouts/admin.php), antes do CSS da tela — a tela
+   continua podendo sobrescrever. Sem JavaScript nada aqui é acionado: as classes abaixo são
+   escritas pelo script, nunca pelo PHP.
+   ========================================================================================= */
+
+/* ------------------------------------------------------------------ 1. barra de progresso
+   FIXA no alto da janela, fora do fluxo: não empurra nada, não muda altura nenhuma e é
+   visível mesmo com a lista rolada para baixo. Some com a transição para não piscar quando
+   a resposta volta em 40 ms. */
+.adm-lista-barra {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 2px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms linear;
+}
+
+.adm-lista-barra.is-on { opacity: 1; }
+
+.adm-lista-barra i {
+  display: block;
+  width: 40%;
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(var(--c-lime-rgb), .35) 20%,
+    rgb(var(--c-lime-rgb)) 50%,
+    rgba(var(--c-lime-rgb), .35) 80%,
+    transparent);
+  transform: translateX(-100%);
+  animation: adm-lista-corre 1.05s linear infinite;
+}
+
+@keyframes adm-lista-corre {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(350%); }
+}
+
+/* --------------------------------------------------------------- 2. a lista carregando
+   O que esmaece é SÓ o corpo da tabela (ou o bloco de lista vazia). A barra de filtros, as
+   abas e a paginação continuam em opacidade cheia porque continuam clicáveis — esmaecer um
+   controle que funciona é dizer que ele não funciona.
+
+   Nada aqui muda altura, largura, margem ou display: a lista antiga fica exatamente onde
+   está até a nova chegar. É assim que a tabela não "pula" durante a espera. */
+.is-lista-ocupada .adm-table tbody,
+.is-lista-ocupada .adm-empty {
+  opacity: .45;
+  transition: opacity 120ms linear;
+}
+
+/* Enquanto espera, a lista velha ainda está desenhada e clicar nela levaria a uma linha que
+   pode já não existir no recorte novo. Os filtros seguem livres. */
+.is-lista-ocupada .adm-table tbody { pointer-events: none; }
+
+/* --------------------------------------------------------------- 3. movimento reduzido
+   Quem pediu menos movimento continua vendo que algo acontece — a barra fica parada e
+   pulsando em vez de correr de um lado para o outro. */
+@media (prefers-reduced-motion: reduce) {
+  .adm-lista-barra i {
+    width: 100%;
+    animation: adm-lista-pulsa 1.2s ease-in-out infinite;
+    transform: none;
+  }
+  @keyframes adm-lista-pulsa {
+    0%, 100% { opacity: .35; }
+    50%      { opacity: 1; }
+  }
+  .is-lista-ocupada .adm-table tbody,
+  .is-lista-ocupada .adm-empty { transition: none; }
+}

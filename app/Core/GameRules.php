@@ -7,14 +7,15 @@ namespace App\Core;
  *
  * Tudo que o PRD v3 manda "não hardcodar fundo nos componentes" mora aqui: tamanho da unidade
  * Hunter, patentes, as quatro funções, as duas facções, faixas de reputação, escalas de
- * infestação e de atividade, tipos de extração, castas Veyra e eventos de ciclo de mundo.
+ * infestação e de atividade, tipos de extração, criaturas (via app/Data/criaturas.php) e
+ * eventos de ciclo de mundo.
  * Views e controllers consultam estas constantes; nenhuma tela inventa a sua própria lista.
  *
  * Capacidade por Base Governamental NÃO está aqui de propósito: é dado da tabela
  * `government_bases` (capacity), para poder mudar sem deploy.
  *
  * ---------------------------------------------------------------------------------------
- * GLOSSÁRIO (Bíblia de Universo v5.1)
+ * GLOSSÁRIO (Bíblia de Universo v6.0 — docs/Extract_Hunters_Biblia_Canon_v6_0.md)
  *   Hunter          soldado de elite do governo, membro do Hunter Command.
  *   Hunter Command  Comando de Operações de Reconquista da Autoridade de Reconquista.
  *   Mercenário      o MESMO personagem sob contrato exclusivo com Aegis ou Frontier.
@@ -22,10 +23,16 @@ namespace App\Core;
  *                   oficial nem de facção, permanece no mundo até morrer.
  *   Aegis           facção militarizada — força, blindagem, veículos, postos fortificados.
  *   Frontier        facção de rotas ocultas, túneis, contrabando e medicina de campo.
- *   Veyra           ecossistema extraterrestre adaptativo (terraformação), não uma raça.
- *   Coro            rede de comunicação biológica distribuída da Veyra.
- *   Núcleo Negro    estrutura que armazena e redistribui a memória ecológica da Veyra.
- *   Icarus          instituto científico que decodifica o Coro; origem das missões de Ciência.
+ *   Vesper          meteoro que caiu na ilha em 14/out/2058 (o nome vem do Projeto Vesper, o
+ *                   programa de rastreio que o catalogou). Fragmentos Vesper = recurso mais valioso.
+ *   Veyra           fungo de outro mundo que veio no Vesper. Infecta pessoas VIVAS (infectados,
+ *                   divididos em classes), animais e o solo, e trouxe plantas alienígenas.
+ *                   Contágio: mordida/arranhão e nuvem densa de esporo; ar comum não infecta.
+ *   Axiom           conglomerado que recolheu os fragmentos depois da Queda — e sabia antes.
+ *   Coro            pulsos elétricos que correm pelo micélio entre colônias distantes.
+ *   Núcleo Negro    o corpo principal do meteoro, enterrado sob a Zona Industrial; centro do Coro.
+ *   Icarus          instituto científico que batizou a Veyra e estuda o Coro; missões de Ciência.
+ *   Surto           infestação no limite num setor; é quando surge o Amálgama.
  *   Licença Cinza   política que permite ao Hunter suspender o IFF do governo e assinar contrato.
  *   Sanção Faixa Branca  revogação da autoridade Hunter após quebra grave -> Sobrevivente.
  *   Operação        incursão com objetivo definido no mundo persistente.
@@ -72,7 +79,7 @@ final class GameRules
                          'desc'  => 'Estabiliza feridos, administra recursos médicos e reduz a chance de uma baixa virar morte definitiva.',
                          'legacy' => ['MÉDICO', 'MEDICO', 'SUPORTE']],
         'RASTREADOR' => ['label' => 'RASTREADOR', 'icon' => 'class-scout',   'ms' => 'visibility',
-                         'desc'  => 'Lê sinais da Veyra, atividade humana, pegadas, ruído e rotas recentes.',
+                         'desc'  => 'Lê o setor antes do contato: rastros de infectados, Vigias no alto, pegadas, ruído e rotas recentes.',
                          'legacy' => ['BATEDOR']],
     ];
 
@@ -179,18 +186,63 @@ final class GameRules
 
     // ---------------------------------------------------------------------------------- Veyra
 
-    /** Castas conhecidas (Bíblia §2). Usadas em marcadores (meta.caste), conquistas e boletins. */
-    public const VEYRA_CASTES = [
-        'runners'      => 'Predadores rápidos. Pressionam flancos e perseguem operadores isolados.',
-        'burrowers'    => 'Escavam túneis, rompem perímetros e criam emboscadas subterrâneas.',
-        'sporecasters' => 'Negam área com esporos e contaminação biológica.',
-        'bulwarks'     => 'Organismos pesados destinados a romper defesas e veículos.',
-        'harvesters'   => 'Movem biomassa e recursos entre estruturas; revelam rotas de ninho.',
-        'listeners'    => 'Detectam vibração e atividade eletrônica, aumentando a pressão do enxame.',
-        'mimics'       => 'Camuflagem e adaptação ao ambiente; provocam dúvida e paranoia.',
-        'colossi'      => 'A resposta extrema da Veyra quando uma região entra em guerra aberta.',
+    /**
+     * Grafias do enredo antigo (castas da Bíblia v5.1) -> criatura do catálogo novo. Só existe
+     * para marcador que ainda guarde `meta.caste` antigo (banco não migrado pelo patch v10, ou
+     * um backup restaurado): a tela continua mostrando uma criatura que existe no Bestiário.
+     */
+    public const LEGACY_CASTES = [
+        'runners'      => 'febril',
+        'burrowers'    => 'rastejante',
+        'sporecasters' => 'semeador',
+        'bulwarks'     => 'couracado',
+        'harvesters'   => 'matriz',
+        'listeners'    => 'vigia',
+        'mimics'       => 'eco',
+        'colossi'      => 'amalgama',
     ];
 
+    /**
+     * Catálogo de criaturas, slug => ficha. A fonte única é app/Data/criaturas.php (a mesma da
+     * landing e do Bestiário); aqui só se indexa por slug, uma vez por requisição.
+     *
+     * @return array<string,array<string,mixed>>
+     */
+    public static function creatures(): array
+    {
+        static $cache = null;
+        if ($cache === null) {
+            $cat = function_exists('data_mock')
+                ? \data_mock('criaturas')
+                : (array)(require Config::data() . '/criaturas.php');
+            $cache = [];
+            foreach ((array)($cat['lista'] ?? []) as $c) {
+                if (is_array($c) && isset($c['slug'])) {
+                    $cache[(string)$c['slug']] = $c;
+                }
+            }
+        }
+        return $cache;
+    }
+
+    /** Ficha de uma criatura; aceita a grafia antiga das castas (LEGACY_CASTES). */
+    public static function creature(?string $slug): ?array
+    {
+        $k = strtolower(trim((string)$slug));
+        $k = self::LEGACY_CASTES[$k] ?? $k;
+        return self::creatures()[$k] ?? null;
+    }
+
+    /**
+     * Substitui a antiga constante VEYRA_CASTES com o mesmo formato (slug => descrição de uma
+     * linha), agora derivado do catálogo. Usado por marcadores (meta.caste) e boletins.
+     *
+     * @return array<string,string>
+     */
+    public static function veyraCastes(): array
+    {
+        return array_map(static fn(array $c): string => (string)($c['linha'] ?? ''), self::creatures());
+    }
     /** Contaminação Veyra 0–100 -> estado (PRD §20.1). */
     public const CONTAMINATION = [
         ['max' => 0,   'label' => 'LIMPO',              'color' => 'lime'],
@@ -212,7 +264,7 @@ final class GameRules
         'resupply'        => ['label' => 'REABASTECIMENTO',      'logistic' => true],
         'abandoned_cargo' => ['label' => 'CARGA ABANDONADA',     'logistic' => true],
         'faction_move'    => ['label' => 'MOVIMENTAÇÃO DE FACÇÃO','logistic' => false],
-        'veyra_bloom'     => ['label' => 'NOVA FORMAÇÃO VEYRA',  'logistic' => false],
+        'veyra_bloom'     => ['label' => 'NOVA COLÔNIA VEYRA',   'logistic' => false],
         'storm'           => ['label' => 'TEMPESTADE',           'logistic' => false],
         'bio_regrowth'    => ['label' => 'REBROTA BIOLÓGICA',    'logistic' => false],
         'surge'           => ['label' => 'SURTO',                'logistic' => false],
@@ -375,7 +427,7 @@ final class GameRules
         'medico' => [
             'label' => 'MÉDICO DA ZONA', 'ms' => 'medical_services', 'color' => 'red',
             'summary' => 'Atende ferimentos e contaminação.',
-            'desc'    => 'Trata quem voltou inteiro por pouco: hemorragia, fratura, infecção e exposição a esporos Veyra.',
+            'desc'    => 'Trata quem voltou inteiro por pouco: hemorragia, fratura, mordida, arranhão e contaminação por esporo.',
             'gain'    => 'Pagamento por atendimento e acesso ao estoque médico da enfermaria.',
             'req'     => ['level' => 8,  'rank' => null,       'state' => null, 'faction' => false, 'role' => 'MEDICAL'],
         ],
@@ -389,7 +441,7 @@ final class GameRules
         'analista' => [
             'label' => 'ANALISTA ICARUS', 'ms' => 'biotech', 'color' => 'purple',
             'summary' => 'Decodifica amostras, sinais e intel.',
-            'desc'    => 'Cruza gravações do Coro, amostras biológicas e registros recuperados em campo para o Instituto Icarus.',
+            'desc'    => 'Cruza gravações do Coro, tecido de infectados, Fragmentos Vesper e registros recuperados em campo para o Instituto Icarus.',
             'gain'    => 'Intel utilizável em operação e crédito científico com o Icarus.',
             'req'     => ['level' => 12, 'rank' => 'SARGENTO', 'state' => self::STATE_HUNTER, 'faction' => false, 'role' => null],
         ],

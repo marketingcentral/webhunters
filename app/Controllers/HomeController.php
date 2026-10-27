@@ -24,7 +24,12 @@ final class HomeController extends Controller
     public function index(Request $request, array $params = []): Response
     {
         $data = data_mock('inicio');
-        $data['news'] = array_slice(data_mock('noticias')['items'] ?? [], 0, 3);
+        // O carrossel de notícias da home passa a ler as MESMAS linhas que /noticias lê
+        // (tabela `news`, publicadas). Antes ele vinha inteiro de app/Data/inicio.php: o
+        // operador publicava em /admin/eventos, a notícia aparecia em /noticias e a home
+        // continuava mostrando a lista de 2024 escrita no arquivo.
+        $data['news_pages'] = $this->newsPages((array)($data['news_pages'] ?? []));
+        $data['news']       = array_slice($data['news_pages'][0] ?? [], 0, 3);
 
         $uid = $this->userId();
         $data['season']   = $this->season((array)($data['season'] ?? []), $uid);
@@ -38,6 +43,48 @@ final class HomeController extends Controller
             'three'  => ['atmosphere' => true, 'hero' => false],
         ]);
         return $this->render('inicio', $page, $data);
+    }
+
+    /* =================================================================== notícias */
+
+    /**
+     * Páginas do carrossel de notícias da home, montadas da tabela `news`.
+     *
+     * Duas por página e no máximo quatro páginas: é o que cabe no painel ao lado da faixa
+     * STATUS OPERACIONAL — o mesmo recorte que app/Data/inicio.php já fazia, mantido aqui
+     * para a home não transbordar quando o operador publicar a décima notícia.
+     *
+     * Cai para $fallback (o carrossel estático do cromo) quando o banco não responde ou
+     * quando ainda não há notícia publicada: a home nunca fica com um painel vazio.
+     *
+     * @param list<list<array<string,mixed>>> $fallback
+     * @return list<list<array<string,mixed>>>
+     */
+    private function newsPages(array $fallback): array
+    {
+        try {
+            $rows = \App\Repo\CatalogRepo::news();
+        } catch (\Throwable) {
+            return $fallback;
+        }
+        if ($rows === []) {
+            return $fallback;
+        }
+
+        $itens = [];
+        foreach ($rows as $n) {
+            $slug = (string)($n['slug'] ?? '');
+            $ts   = strtotime((string)($n['published'] ?? ''));
+            $itens[] = [
+                'title'   => (string)($n['title'] ?? ''),
+                'summary' => (string)($n['excerpt'] ?? ''),
+                'date'    => $ts !== false ? date('d/m/Y', $ts) : '',
+                'image'   => (string)($n['image'] ?? 'news/news-atualizacao.jpg'),
+                // /noticias/{slug} devolve 404 para slug inexistente; sem slug, manda para a lista.
+                'route'   => $slug !== '' ? 'noticias/' . $slug : 'noticias',
+            ];
+        }
+        return array_slice(array_chunk($itens, 2), 0, 4);
     }
 
     /* ================================================================== temporada */

@@ -1,0 +1,48 @@
+{
+  "_nota": "Arte da landing page. Castas Veyra da Bíblia v5.1 §02 — rede ecológica de plantas e fungos, NÃO insetos. Segunda passagem (2026-09-17): a primeira saiu apelona — tudo parecia chefe de fase. Um jogador com uma pistola precisa olhar para a maioria destas criaturas e pensar 'dá', não 'morri'. Por isso: ESCALA HUMANA na maior parte, sempre um Hunter em quadro engajando (mira, recua, cobre), e a criatura reagindo a tiro — ferida, cambaleando, com casca estilhaçada. Só o Colossi fica colossal, porque é a resposta extrema por definição. Gerar com: node tools/gen_art.mjs --manifest tools/lp_art_manifest.json --out assets/img/lp",
+
+  "styleSuffix": "Creature concept art for a dark military survival extraction shooter. The organism is BIOLOGICAL AND BOTANICAL, not an insect and not a machine: bark-like plating, fungal tissue, root systems, moss and lichen, pale bioluminescent veins in sickly lime-green. A human Hunter operator in dark olive tactical gear is in frame for scale and is ACTIVELY ENGAGING — this is a fight the human can win with the right weapon. Deep temperate pine forest at overcast dusk, volumetric fog, muted olive greens and cold blacks, dramatic rim light, photorealistic, extremely detailed, cinematic AAA key art, no text, no watermark, no UI, no logo, no letters.",
+
+  "defaults": { "model": "gemini-3-pro-image", "aspectRatio": "3:4" },
+
+  "jobs": [
+    {
+      "file": "veyra/runners.jpg",
+      "prompt": "RUNNERS — a fast quadruped predator the size of a large dog, woody sinew and dark fibrous root-muscle, slender limbs ending in claw-roots, a smooth tapering bud for a head split by a vertical seam, caught mid-lunge one meter from a Hunter who is backpedaling and firing a pistol at it point-blank, muzzle flash lighting both, chunks of bark splintering off the creature's shoulder where rounds hit, a second Runner circling wide in the fog"
+    },
+    {
+      "file": "veyra/burrowers.jpg",
+      "prompt": "BURROWERS — a stocky digging organism about the size of a bear, flattened blade-root forelimbs caked in wet earth, overlapping bark plating on its back, blind wedge head, breaking upward through soil and torn roots right behind a Hunter's sandbag position, the Hunter spinning around with a carbine raised, dirt still falling, the tunnel mouth breathing mist behind it"
+    },
+    {
+      "file": "veyra/sporecasters.jpg",
+      "prompt": "SPORECASTERS — a stationary fungal organism about two meters tall, a pale swollen puffball body on short woody legs, gill-vents on top releasing a drifting cloud of glowing pale-green spores, a Hunter in a respirator mask holding position at the edge of the spore cloud and taking aimed rifle shots into the sac from twenty meters, dead bleached grass in a ring around the creature"
+    },
+    {
+      "file": "veyra/bulwarks.jpg",
+      "prompt": "BULWARKS — a heavy quadruped siege organism the size of a pickup truck, thick knotted bark armor plates over its front half scarred and cracked by gunfire, one plate blown open exposing pale wet tissue underneath, short powerful root-limbs sinking into mud, charging down a forest road while a Hunter braces a light machine gun on a fallen log and fires into the exposed wound, tracer streaks, mud spray"
+    },
+    {
+      "file": "veyra/harvesters.jpg",
+      "prompt": "HARVESTERS — a gaunt long-limbed organism about the height of a tall man, six thin articulated root-limbs, its torso a woven basket of fibers carrying a wet bundle of collected biomass, trailing pulsing tubes back into the underbrush, walking away unaware while a Hunter crouched behind a pine trunk tracks it with a rifle and marks its route on a wrist device — quiet, unarmored, a target of opportunity rather than a threat"
+    },
+    {
+      "file": "veyra/listeners.jpg",
+      "prompt": "LISTENERS — a slender immobile sentinel organism about three meters tall, a smooth dark trunk-body opening at the top into a fan of membranous fungal fronds like a dish, fine trembling filaments along its length, rooted into cracked asphalt beside a dead power pylon, a Hunter approaching low and slow from behind it with a suppressed pistol drawn, careful not to make a sound, faint lime light flickering through the fronds"
+    },
+    {
+      "file": "veyra/mimics.jpg",
+      "prompt": "MIMICS — an organism the size of a person mid-reveal from camouflage: from one side indistinguishable from a moss-covered rotting tree stump, the bark splitting open into limbs and a seamed head, standing among real identical stumps in fog, a Hunter two meters away frozen with a pistol half-raised, unsure which stump is alive, tense and ambiguous rather than monstrous"
+    },
+    {
+      "file": "veyra/colossi.jpg",
+      "prompt": "COLOSSI — a towering thirty-meter organism like an ancient tree that learned to walk, columnar root-legs, an immense trunk body draped in hanging vines and fungal shelves, a crown of splayed branch-limbs, glowing lime fissures running up its core, seen from far below through heavy fog in a burning forest clearing, a four-person Hunter squad in the foreground RETREATING toward a helicopter extraction, one of them firing a flare — this is not a fight, it is an evacuation, apocalyptic and slow",
+      "aspectRatio": "9:16"
+    },
+    {
+      "file": "nucleo-negro.jpg",
+      "prompt": "NÚCLEO NEGRO — a vast underground chamber discovered beneath the forest: a monolithic structure of seamless matte black organic material, its surface covered in repeating geometric patterns far too regular to be mineral, half-swallowed by pale root systems and fungal growth, thin lime-green light bleeding from the seams, scientific field lamps and cabling from a small human survey camp at its base for scale, cold damp air, awe and dread, no creatures",
+      "aspectRatio": "16:9"
+    }
+  ]
+}

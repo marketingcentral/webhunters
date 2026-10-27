@@ -415,7 +415,7 @@
 .hex--ring .hex__in > *{position:relative;z-index:1}
 .hex--hot{filter:drop-shadow(0 0 8px rgba(var(--hex-rgb),.7)) drop-shadow(0 0 16px rgba(var(--hex-rgb),.35))}
 .hex--hot::before{background:var(--hex-c)}
-.hex--hot .hex__in{--hex-fill:linear-gradient(160deg, rgba(60,96,30,.9) 0%, rgba(18,30,12,.98) 100%)}
+.hex--hot .hex__in{--hex-fill:linear-gradient(160deg, rgba(0, 0, 0, 0.9) 0%, rgba(18,30,12,.98) 100%)}
 .hex--muted{--hex-c:var(--c-muted);--hex-rgb:143,153,141;filter:none;color:var(--c-text-2)}
 .hex--muted::before{background:linear-gradient(180deg, rgba(200,210,195,.5), rgba(120,130,118,.35))}
 .hex--gold{--hex-c:var(--c-gold);--hex-rgb:var(--c-gold-rgb)}

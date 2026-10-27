@@ -8,6 +8,108 @@
    Steppers/toggles/ranges/seleção já são tratados por hud.js.
    ========================================================================== */
 
+import { enviar, pronta } from '../unreal.js';
+
+/**
+ * Contrato site -> Unreal para a aba VÍDEO.
+ *
+ * A UI usa rótulos em português; a Unreal recebe também os valores canônicos e níveis
+ * numéricos, para poder alimentar UGameUserSettings sem depender de texto localizado.
+ * `raw` preserva o valor exibido caso uma Blueprint precise refletir exatamente a escolha.
+ */
+const COMANDO_VIDEO = 'Video.ApplySettings';
+const NIVEL_QUALIDADE = { 'BAIXA': 0, 'MÉDIA': 1, 'ALTA': 2, 'ULTRA': 3 };
+const MODO_EXIBICAO = {
+  'JANELA': 'windowed',
+  'JANELA SEM BORDA': 'borderless',
+  'TELA CHEIA': 'fullscreen',
+};
+const AA = {
+  'DESATIVADO': 'off',
+  'FXAA': 'fxaa',
+  'TAA': 'taa',
+  'DLSS': 'dlss',
+};
+
+const textoCampo = (form, nome) => String(new FormData(form).get(nome) || '').trim();
+const inteiroCampo = (form, nome, fallback) => {
+  const n = Number(textoCampo(form, nome).replace(/[^0-9]/g, ''));
+  return Number.isFinite(n) ? n : fallback;
+};
+const ligadoCampo = (form, nome) => new FormData(form).get(nome) !== null;
+const normalizar = (valor) => String(valor || '').trim().toLocaleUpperCase('pt-BR');
+const nivel = (valor) => NIVEL_QUALIDADE[normalizar(valor)] ?? null;
+
+function resolucao(form) {
+  const raw = textoCampo(form, 'resolution');
+  const partes = raw.match(/(\d+)\s*x\s*(\d+)/i);
+  return {
+    raw,
+    width: partes ? Number(partes[1]) : 0,
+    height: partes ? Number(partes[2]) : 0,
+  };
+}
+
+/** Corpo JSON estável que `WBP_HuntersWeb` recebe em OnMessageReceived. */
+function configuracaoVideo(form) {
+  const displayMode = textoCampo(form, 'display_mode');
+  const preset = textoCampo(form, 'preset');
+  const textures = textoCampo(form, 'textures');
+  const shadows = textoCampo(form, 'shadows');
+  const foliage = textoCampo(form, 'foliage');
+  const antiAliasing = textoCampo(form, 'aa');
+  const fpsRaw = normalizar(textoCampo(form, 'fps_cap'));
+
+  return {
+    version: 1,
+    display: {
+      mode: MODO_EXIBICAO[normalizar(displayMode)] || 'fullscreen',
+      modeRaw: displayMode,
+      resolution: resolucao(form),
+      refreshHz: inteiroCampo(form, 'refresh', 0),
+      vsync: ligadoCampo(form, 'vsync'),
+      // null significa ilimitado: evita um número mágico no Blueprint.
+      fpsLimit: fpsRaw === 'ILIMITADO' ? null : inteiroCampo(form, 'fps_cap', 0),
+    },
+    quality: {
+      preset: nivel(preset),
+      presetRaw: preset,
+      textures: nivel(textures),
+      texturesRaw: textures,
+      shadows: nivel(shadows),
+      shadowsRaw: shadows,
+      foliage: nivel(foliage),
+      foliageRaw: foliage,
+      antiAliasing: AA[normalizar(antiAliasing)] || 'off',
+      antiAliasingRaw: antiAliasing,
+      renderScale: inteiroCampo(form, 'render_scale', 100),
+    },
+    effects: {
+      motionBlur: ligadoCampo(form, 'motion_blur'),
+      bloom: ligadoCampo(form, 'bloom'),
+      filmGrain: inteiroCampo(form, 'film_grain', 0),
+      fov: inteiroCampo(form, 'fov', 90),
+      brightness: inteiroCampo(form, 'brightness', 50),
+    },
+  };
+}
+
+/**
+ * O POST continua sendo responsabilidade do formulário/SPA. Esta função só entrega a
+ * mesma configuração para a Unreal; se a injeção da ponte ainda estiver chegando,
+ * tenta de novo em segundo plano sem atrasar o salvamento no navegador comum.
+ */
+function aplicarVideoNaUnreal(form) {
+  const payload = configuracaoVideo(form);
+  // WebNative define o corpo da mensagem como string. Serializar aqui também
+  // mantém o plugin comercial e o shim HuntersWeb no mesmo protocolo.
+  const corpo = JSON.stringify(payload);
+  if (enviar(COMANDO_VIDEO, corpo)) return;
+  pronta().then((ok) => {
+    if (ok) enviar(COMANDO_VIDEO, corpo);
+  });
+}
+
 const root = document.querySelector('.set');
 if (root) {
   /* ---- 1. stagger dos grupos -------------------------------------------- */
@@ -174,6 +276,20 @@ if (root) {
   const form = root.closest('form') || (root.tagName === 'FORM' ? root : null);
   const apply = root.querySelector('.set-btn--apply');
   if (form && apply) {
+    // Só a confirmação explícita da aba VÍDEO dispara efeitos no jogo. RESTAURAR
+    // PADRÕES continua sendo uma ação apenas do banco até o jogador decidir aplicar.
+    form.addEventListener('submit', (event) => {
+      let path = '';
+      // `action` também é o nome dos botões de submit; em formulários DOM esse
+      // campo pode mascarar a propriedade `form.action`. O atributo é a fonte
+      // inequívoca da rota e funciona igual no CEF embarcado.
+      try { path = new URL(form.getAttribute('action') || location.href, location.href).pathname; } catch { return; }
+      const action = event.submitter && event.submitter.value ? event.submitter.value : 'apply';
+      if (action === 'apply' && /\/configuracoes\/video\/?$/.test(path)) {
+        aplicarVideoNaUnreal(form);
+      }
+    });
+
     const fields = () => Array.from(form.elements).filter(
       (el) => el.name && el.name !== '_csrf' && el.name !== 'action' && !el.disabled && el.type !== 'submit',
     );
@@ -199,4 +315,5 @@ if (root) {
     ['input', 'change', 'stepper:change', 'toggle:change'].forEach((ev) => form.addEventListener(ev, sync));
     sync();
   }
+
 }

@@ -1,0 +1,136 @@
+{
+    "categorias": {
+        "combate": {
+            "label": "Combate",
+            "icone": "my_location"
+        },
+        "sobrevivencia": {
+            "label": "Sobrevivência",
+            "icone": "park"
+        },
+        "exploracao": {
+            "label": "Exploração",
+            "icone": "map"
+        },
+        "progressao": {
+            "label": "Progressão",
+            "icone": "keyboard_double_arrow_up"
+        },
+        "equipamento": {
+            "label": "Equipamento",
+            "icone": "backpack"
+        },
+        "faccoes": {
+            "label": "Facções",
+            "icone": "shield"
+        },
+        "hunter": {
+            "label": "Hunter",
+            "icone": "workspace_premium"
+        },
+        "eventos": {
+            "label": "Eventos",
+            "icone": "star"
+        }
+    },
+    "estados": {
+        "desbloqueada": {
+            "label": "Desbloqueada",
+            "tom": "ok",
+            "texto": "Pelo menos um jogador concluiu esta conquista (player_achievements.completed_at)."
+        },
+        "progresso": {
+            "label": "Em progresso",
+            "tom": "info",
+            "texto": "Ninguém concluiu ainda, mas há progresso registrado por algum jogador."
+        },
+        "parada": {
+            "label": "Sem uso",
+            "tom": "muted",
+            "texto": "Nenhum jogador concluiu nem começou. Conquista viva no catálogo e morta no jogo."
+        }
+    },
+    "recompensas": {
+        "xp": {
+            "label": "XP",
+            "icone": "trending_up",
+            "tom": "lime",
+            "sufixo": "XP"
+        },
+        "cash": {
+            "label": "Dinheiro",
+            "icone": "payments",
+            "tom": "cyan",
+            "sufixo": ""
+        },
+        "points": {
+            "label": "Pontos",
+            "icone": "stars",
+            "tom": "amber",
+            "sufixo": "pts"
+        },
+        "item": {
+            "label": "Item",
+            "icone": "inventory_2",
+            "tom": "gold",
+            "sufixo": ""
+        }
+    },
+    "ordens": {
+        "ordem": "Ordem no jogo",
+        "nome": "Nome",
+        "desbloqueios": "Mais desbloqueadas",
+        "meta": "Maior meta"
+    },
+    "titulos": {
+        "lista": "Catálogo de conquistas",
+        "novo": "Nova conquista",
+        "editar": "Editar conquista",
+        "excluir": "Excluir conquista",
+        "bloqueio": "Exclusão bloqueada",
+        "categorias": "Categorias no banco"
+    },
+    "vazios": {
+        "catalogo": "A tabela achievements está vazia. Nenhuma conquista foi cadastrada ainda — o jogo não tem o que premiar.",
+        "filtro": "Nenhuma conquista responde a estes filtros. O catálogo continua com %s no total.",
+        "sem_recompensa": "sem recompensa"
+    },
+    "micro": {
+        "meta_um": "Conquista de passo único: basta acontecer uma vez.",
+        "meta_n": "O jogador precisa chegar a %s para concluir.",
+        "progresso_n": "%s em progresso",
+        "nunca": "ninguém ainda",
+        "ordem": "Posição dentro da categoria (achievements.sort_order).",
+        "slug_travado": "O slug é a chave que o jogo usa para conceder a conquista. Mudar depois de publicada quebra quem já a concede.",
+        "trava_excluir": "Não dá para excluir: %s já está no histórico de %s. Apagar levaria o registro junto.",
+        "perde_progresso": "Atenção: %s tem progresso registrado nesta conquista e vai perdê-lo.",
+        "sem_vinculo": "Nenhum jogador tem registro nesta conquista.",
+        "recompensa_som": "Sem recompensa configurada — o jogador conclui e não recebe nada.",
+        "categoria_nova": "categoria fora do catálogo de rótulos",
+        "confirmar": "Esta ação não tem desfazer."
+    },
+    "erros": {
+        "slug_vazio": "Informe o slug (ou preencha o nome para gerar um).",
+        "slug_formato": "Use apenas minúsculas, números e hífen. Ex.: cacador-experiente",
+        "slug_repetido": "Já existe uma conquista com este slug: %s.",
+        "slug_longo": "No máximo 64 caracteres.",
+        "nome_vazio": "Informe o nome que o jogador vê.",
+        "nome_longo": "No máximo 120 caracteres.",
+        "categoria": "Escolha uma categoria.",
+        "descricao": "No máximo 400 caracteres — a descrição está com %s.",
+        "icone": "Ligadura Material Symbols: minúsculas, números e sublinhado.",
+        "meta": "A meta é um número inteiro de 1 a 1.000.000.",
+        "ordem": "A ordem é um número inteiro de 0 a 65535.",
+        "recompensa_tipo": "Tipo de recompensa desconhecido.",
+        "recompensa_valor": "Recompensa em %s precisa de um valor maior que zero.",
+        "recompensa_item": "Escolha o item desta recompensa.",
+        "recompensa_dupla": "Recompensa em %s aparece duas vezes — some os valores numa linha só.",
+        "recompensa_demais": "No máximo %s recompensas por conquista."
+    },
+    "auditoria": {
+        "criada": "Criou a conquista \"%s\".",
+        "editada": "Editou a conquista \"%s\".",
+        "excluida": "Excluiu a conquista \"%s\".",
+        "bloqueada": "Tentou excluir \"%s\", já desbloqueada por jogador."
+    }
+}

@@ -32,6 +32,15 @@ return [
             'status'  => 'TOKEN VENCIDO',
             'accent'  => 'amber',
         ],
+        // 503 = modo manutenção ligado em /admin/configuracoes. A frase que explica a janela
+        // vem da chave `maintenance_message` e aparece no bloco de detalhe desta mesma tela.
+        503 => [
+            'title'   => 'MANUTENÇÃO EM CURSO',
+            'message' => 'O mundo está fechado para manutenção programada. '
+                       . 'Nenhum progresso é perdido: volte em instantes e a operação segue de onde parou.',
+            'status'  => 'OPERAÇÃO SUSPENSA',
+            'accent'  => 'amber',
+        ],
         500 => [
             'title'   => 'FALHA NO SISTEMA',
             'message' => 'Ocorreu um erro interno no núcleo. A equipe já foi notificada. '

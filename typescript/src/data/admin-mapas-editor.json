@@ -1,0 +1,32 @@
+{
+    "titulo": "Editar mapa",
+    "ajuda": {
+        "arrastar": "Arraste um ícone da paleta para cima do mapa.",
+        "mover": "Arraste um marcador já posto para movê-lo. Clique para abrir os detalhes.",
+        "apagar": "Com um marcador selecionado, Delete remove.",
+        "desfazer": "Ctrl+Z desfaz o último gesto; Ctrl+S salva.",
+        "salvar": "Nada vai para o banco até você salvar."
+    },
+    "grupos": {
+        "missoes": "Missões cadastradas",
+        "paleta": "Pontos do catálogo"
+    },
+    "missao_dica": "Arraste para fixar esta missão no terreno. O marcador herda o nome dela; objetivo, recompensa e requisito continuam sendo editados em Missões.",
+    "rotulos": {
+        "": "Sem nome no mapa",
+        "right": "Nome à direita do ícone",
+        "below": "Nome abaixo do ícone"
+    },
+    "vazios": {
+        "mapa": "Este mapa ainda não tem nenhum marcador. Arraste um ícone da paleta para começar.",
+        "missoes": "Nenhuma missão cadastrada ainda.",
+        "paleta": "Nenhum ponto no catálogo.",
+        "busca": "Nada com esse nome na paleta."
+    },
+    "notas": {
+        "extras": "Este marcador tem dados que o editor não mostra (%s). Eles são preservados ao salvar.",
+        "semjs": "O editor de mapa precisa de JavaScript para arrastar. Sem ele, a grade de marcadores do cadastro do mapa continua aceitando as coordenadas digitadas.",
+        "raio": "Em % da largura do mapa. Use para sinal de posição aproximada; 0 desliga.",
+        "naosalvo": "Há alterações não salvas."
+    }
+}

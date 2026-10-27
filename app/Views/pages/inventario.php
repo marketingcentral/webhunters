@@ -3,7 +3,7 @@
  * INVENTÁRIO — layout GEAR (Tarkov), dirigido pelo banco (InventoryRepo::tree).
  *
  * Quatro colunas:
- *   1. PERSONAGEM — só a silhueta por enquanto (lugar reservado para o boneco 3D)
+ *   1. PERSONAGEM — modelo 3D com órbita, zoom e visualização em tela cheia
  *   2. EQUIPAMENTO — paperdoll + barra de vitais (peso/saúde/hidratação/energia)
  *   3. CONTÊINERES — colete tático, bolsos e mochila: célula do ícone + grade lado a lado
  *   4. STASH — trilha de filtros à esquerda + grade
@@ -56,12 +56,26 @@ $bag = static function (string $slot, string $label, string $icon) use ($ACCEPTS
          data-weight-max="<?= e($wmax) ?>">
 
   <!-- ======================= COLUNA 1: PERSONAGEM ======================= -->
-  <!-- Por enquanto só a silhueta; é o lugar reservado para o boneco 3D do jogador. -->
   <div class="inv2-col inv2-col--char">
     <h2 class="gear__tab">PERSONAGEM</h2>
-    <div class="char">
-      <img class="char__body" src="<?= e(media('ui/body-silhouette.png')) ?>" alt=""
-           width="444" height="1030" decoding="async">
+    <div class="char" data-character-viewer data-model="<?= e(asset('models/soldier.glb')) ?>" aria-busy="true">
+      <div class="char__stage">
+        <img class="char__body" src="<?= e(media('ui/body-silhouette.png')) ?>" alt=""
+             width="444" height="1030" decoding="async">
+        <canvas class="char__canvas" tabindex="0" role="img" aria-label="Personagem 3D. Use as setas para rotacionar, mais e menos para zoom e Home para restaurar." aria-describedby="character-help"></canvas>
+        <span class="char__badge" aria-hidden="true">3D</span>
+        <button type="button" class="char__expand" data-character-action="fullscreen" aria-label="Abrir personagem em tela cheia" title="Tela cheia" disabled><?= icon('fullscreen') ?></button>
+        <p class="char__status" role="status" aria-live="polite">Carregando personagem…</p>
+      </div>
+      <div class="char__controls" role="group" aria-label="Controles do personagem">
+        <button type="button" data-character-action="left" aria-label="Rotacionar personagem para a esquerda" title="Girar à esquerda" disabled><?= icon('rotate_left') ?></button>
+        <button type="button" data-character-action="reset" aria-label="Restaurar posição do personagem" title="Restaurar posição" disabled><?= icon('restart_alt') ?></button>
+        <button type="button" data-character-action="right" aria-label="Rotacionar personagem para a direita" title="Girar à direita" disabled><?= icon('rotate_right') ?></button>
+        <button type="button" data-character-action="out" aria-label="Afastar personagem" title="Afastar" disabled><?= icon('remove') ?></button>
+        <button type="button" data-character-action="auto" aria-label="Giro automático do personagem" aria-pressed="false" title="Giro automático" disabled><?= icon('360') ?></button>
+        <button type="button" data-character-action="in" aria-label="Aproximar personagem" title="Aproximar" disabled><?= icon('add') ?></button>
+      </div>
+      <p class="char__hint" id="character-help">Arraste para girar · role para zoom</p>
     </div>
   </div>
 

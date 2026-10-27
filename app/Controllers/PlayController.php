@@ -25,9 +25,15 @@ final class PlayController extends Controller
         $data = data_mock('jogar');
         $op   = $this->operational();
 
-        $data['maps']       = $this->matchMaps();
-        $data['challenges'] = array_slice(data_mock('desafios')['daily'] ?? [], 0, 4);
-        $data['reset_in']   = data_mock('desafios')['reset_in'] ?? '';
+        $data['maps'] = $this->matchMaps();
+        // O painel de desafios diários desta tela lê o MESMO quadro de /desafios (tabela
+        // `challenges` + progresso do jogador). Antes vinha de app/Data/desafios.php: o
+        // operador criava um desafio em /admin/eventos, ele aparecia em /desafios e aqui
+        // continuavam os quatro de exemplo, com progresso inventado.
+        [$data['challenges'], $data['reset_in']] = $this->dailyChallenges(
+            (array)(data_mock('desafios')['daily'] ?? []),
+            (string)(data_mock('desafios')['reset_in'] ?? '')
+        );
 
         $data['modes']    = $this->modes((array)($data['modes'] ?? []), (array)($data['survivor_mode'] ?? []), $op);
         $data['hero']     = $this->hero((array)($data['heroes'] ?? []), (array)($data['hero_labels'] ?? []), $op, $data['maps']);
@@ -193,6 +199,46 @@ final class PlayController extends Controller
     {
         $s = max(0, time() - (int)strtotime($desde));
         return $s >= 3600 ? sprintf('%dh %02dmin', intdiv($s, 3600), intdiv($s % 3600, 60)) : sprintf('%d min', intdiv($s, 60));
+    }
+
+    /**
+     * Quatro desafios DIÁRIOS do jogador + quanto falta para o quadro virar.
+     *
+     * A fonte é ChallengeRepo::board(), a mesma de /desafios — aqui só cabem quatro linhas,
+     * então a tela mostra as primeiras e manda o resto para VER TODOS. Sem banco (ou sem
+     * desafio cadastrado) devolve o cromo estático recebido, e a tela segue desenhando.
+     *
+     * @param list<array<string,mixed>> $cromo  desafios de exemplo de app/Data/desafios.php
+     * @return array{0:list<array<string,mixed>>,1:string}
+     */
+    private function dailyChallenges(array $cromo, string $resetCromo): array
+    {
+        try {
+            $board = \App\Repo\ChallengeRepo::board($this->userId());
+        } catch (\Throwable) {
+            return [array_slice($cromo, 0, 4), $resetCromo];
+        }
+        $diarios = (array)($board['diarios'] ?? []);
+        $itens   = array_values((array)($diarios['items'] ?? []));
+        if ($itens === []) {
+            return [array_slice($cromo, 0, 4), $resetCromo];
+        }
+        return [array_slice($itens, 0, 4), $this->tempoCurto((int)($diarios['seconds'] ?? 0)) ?: $resetCromo];
+    }
+
+    /** Segundos -> "4d 06h" / "12h 45m" / "45m", no formato que o contador da view espera. */
+    private function tempoCurto(int $segundos): string
+    {
+        if ($segundos <= 0) {
+            return '';
+        }
+        $d = intdiv($segundos, 86400);
+        $h = intdiv($segundos % 86400, 3600);
+        $m = intdiv($segundos % 3600, 60);
+        if ($d > 0) {
+            return $d . 'd ' . str_pad((string)$h, 2, '0', STR_PAD_LEFT) . 'h';
+        }
+        return $h > 0 ? $h . 'h ' . str_pad((string)$m, 2, '0', STR_PAD_LEFT) . 'm' : $m . 'm';
     }
 
     /**

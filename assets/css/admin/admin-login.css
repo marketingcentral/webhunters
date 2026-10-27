@@ -1,0 +1,118 @@
+/* ==========================================================================
+   ADMIN · LOGIN — porta do painel (layouts/admin-auth.php + pages/admin-login.php)
+
+   Um cartão só, centrado no vazio. Tudo que é primitivo (.adm-form, .adm-field,
+   .adm-input, .adm-btn, .adm-error, .adm-flash) vem de admin.css: aqui mora só o
+   que é desta tela.
+   ========================================================================== */
+
+/* admin.css trava o scroll para a casca de grade fixa; aqui a página é uma só e
+   precisa rolar em notebook baixo. */
+.adm-auth-body{ overflow:auto }
+
+.adm-auth{
+  position:relative;
+  min-height:100vh;
+  min-height:100dvh;
+  display:grid;
+  place-items:center;
+  padding:2rem 1.25rem;
+  background:
+    radial-gradient(70rem 40rem at 50% -10%, rgba(var(--c-lime-rgb),.07), transparent 65%),
+    var(--adm-bg);
+}
+
+/* filete de marca no topo: o mesmo sinal que a sidebar do painel dá */
+.adm-auth::before{
+  content:'';
+  position:absolute; inset:0 0 auto 0; height:2px;
+  background:linear-gradient(90deg, transparent, rgba(var(--c-lime-rgb),.55), transparent);
+}
+
+.adm-auth__flashes{
+  position:absolute;
+  top:1.25rem; left:50%; transform:translateX(-50%);
+  width:min(28rem, calc(100% - 2.5rem));
+  z-index:2;
+}
+
+/* ---- cartão -------------------------------------------------------------- */
+.adm-login{
+  width:min(26rem, 100%);
+  display:grid;
+  gap:1.5rem;
+  padding:2rem;
+  background:var(--adm-surface);
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r);
+  box-shadow:var(--adm-shadow);
+}
+
+.adm-login__head{ display:grid; justify-items:center; gap:.5rem; text-align:center }
+
+.adm-login__logo{ width:11rem; max-width:70%; margin-bottom:.25rem }
+.adm-login__logo img{ width:100%; height:auto; display:block }
+
+.adm-login__eyebrow{
+  display:inline-flex; align-items:center; gap:.4rem;
+  font-family:var(--font-cond); font-size:.75rem;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--c-lime);
+}
+.adm-login__eyebrow .ms{ font-size:1.05rem }
+
+.adm-login__title{
+  font-family:var(--font-cond); font-weight:600;
+  font-size:1.65rem; line-height:1.1;
+  letter-spacing:.06em; text-transform:uppercase;
+  color:var(--c-text);
+}
+
+.adm-login__sub{ font-size:.85rem; line-height:1.45; color:var(--c-muted); text-wrap:balance }
+
+/* ---- formulário ---------------------------------------------------------- */
+.adm-login__form{ gap:1.1rem }
+
+.adm-login__erro{ margin:0 }
+
+/* o olho fica sobre o campo: o rótulo ocupa a primeira linha da grade */
+.adm-login__senha{ position:relative }
+.adm-login__eye{
+  position:absolute; right:.35rem; bottom:.35rem;
+  width:2.1rem; height:2.1rem;
+  display:grid; place-items:center;
+  border:0; border-radius:var(--adm-r-sm);
+  background:transparent; color:var(--c-muted);
+  cursor:pointer;
+  transition:color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.adm-login__eye:hover{ color:var(--c-lime); background:var(--adm-hover) }
+.adm-login__eye:focus-visible{ outline:none; box-shadow:var(--adm-ring); color:var(--c-lime) }
+.adm-login__eye .ms{ font-size:1.2rem }
+.adm-login__senha .adm-input{ padding-right:2.6rem }
+
+.adm-login__submit{ height:2.75rem; justify-content:center; width:100% }
+
+/* ---- rodapé -------------------------------------------------------------- */
+.adm-login__foot{
+  display:grid; justify-items:center; gap:.6rem;
+  padding-top:1.25rem;
+  border-top:1px solid var(--adm-line);
+  text-align:center;
+}
+
+.adm-login__back{
+  display:inline-flex; align-items:center; gap:.35rem;
+  font-family:var(--font-cond); font-size:.8rem;
+  letter-spacing:.1em; text-transform:uppercase;
+  color:var(--c-text-2); text-decoration:none;
+  transition:color var(--t-fast) var(--ease);
+}
+.adm-login__back:hover{ color:var(--c-lime) }
+.adm-login__back .ms{ font-size:1.05rem }
+
+.adm-login__nota{ font-size:.72rem; color:var(--c-dim); line-height:1.4 }
+
+@media (max-width:30rem){
+  .adm-login{ padding:1.5rem 1.25rem }
+}

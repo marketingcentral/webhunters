@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /**
  * Tela PERFIL — layout hud, três colunas (operador | estatísticas | histórico).
- * Sem referência própria; âncora de estilo: 09-conquistas.png.
+ * Painéis compactos em grafite, conforme a referência visual do perfil.
  *
  * Escopo: $page, $player, $nav, $server, $data, $flash, $csrf.
  * $data: app/Data/perfil.php (operator, stats, achievements, weapons, classes, recent, badges, actions).
@@ -53,8 +53,6 @@ $colorClass = static function (string $c): string {
     <section class="panel panel--hot panel--flush panel--grow op" data-boot>
       <div class="op__media">
         <img class="op__img" src="<?= e(media($portrait)) ?>" alt="<?= e($pName) ?>" decoding="async">
-        <span class="op__grid" aria-hidden="true"></span>
-        <span class="op__scan" aria-hidden="true"></span>
         <span class="op__tag op__tag--class"><?= svg((string)($op['class_icon'] ?? 'class-assault')) ?><?= e((string)($op['class'] ?? 'ASSAULT')) ?></span>
         <span class="op__tag op__tag--status"><i aria-hidden="true"></i><?= e((string)($op['status'] ?? '')) ?></span>
         <div class="op__id">
@@ -242,7 +240,9 @@ $colorClass = static function (string $c): string {
         <div class="fc__row fc__row--<?= e((string)$f['color']) ?><?= !empty($f['active']) ? ' is-active' : '' ?>">
           <?php component('badge', ['kind' => 'faction', 'value' => (string)$f['slug']]) ?>
           <span class="fc__rep"><b class="num"><?= e(num((int)$f['rep'])) ?></b><small><?= e((string)$f['tier']) ?></small></span>
+<?php if ((string)$f['state'] !== (string)$f['tier'] || !empty($f['locked_until'])): ?>
           <span class="fc__state<?= !empty($f['locked']) ? ' is-locked' : '' ?>"><?= e((string)$f['state']) ?><?php if (!empty($f['locked_until'])): ?> <span class="num" data-countdown-to="<?= e((string)$f['locked_until']) ?>"><?= e(date('H:i:s', (int)strtotime((string)$f['locked_until']))) ?></span><?php endif; ?></span>
+<?php endif; ?>
         </div>
 <?php endforeach; ?>
         <div class="fc__actions">

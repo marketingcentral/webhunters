@@ -139,7 +139,8 @@
   display: flex;
   align-items: center;
   height: 100%;
-  padding: 0 1.35rem;
+  /* era 1.35rem com 7 itens; o BESTIÁRIO (8º) estourava a barra em ~70px a 1672 de largura */
+  padding: 0 .95rem;
   font-size: 1.22rem;
   font-weight: 400;
   letter-spacing: .03em;

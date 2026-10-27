@@ -1,0 +1,402 @@
+/* ==========================================================================
+   ADMIN · LOGS DO SISTEMA (/admin/logs)
+
+   Só o que é DESTA tela. Cartão, tabela, crachá, botão, formulário, paginação
+   e estado vazio vêm de admin.css (.adm-*) — aqui não se redesenha primitivo,
+   só se compõe.
+
+   Carregado por app/Views/layouts/admin.php pelo slug da página
+   (assets/css/admin/admin-logs.css), depois de admin.css.
+
+   Namespace .lg-.
+
+   REGRA DE ALTURA: a PÁGINA não rola. A trilha é longa por natureza — se o
+   corpo da página crescesse, o cabeçalho das colunas e a paginação sairiam da
+   vista e ler a página 7 viraria uma caçada. Aqui a grade tem altura fechada,
+   quem rola é a tabela por dentro (com o thead preso no topo) e o pé do cartão
+   fica sempre visível.
+
+   REGRA DE LARGURA: nenhuma rolagem horizontal em 1600×900 nem em 1366×768.
+   Uma única coluna é elástica (o resumo) e ela encolhe com reticências; as
+   outras têm largura de conteúdo. As menos críticas (IP, alvo) saem de cena em
+   tela estreita — e nunca sem ter o mesmo dado no title da linha e no detalhe.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. ESQUELETO
+   ========================================================================== */
+
+/* Coluna direita FIXA em 23rem: o detalhe do meta é texto técnico (user agent,
+   caminho de rota) e precisa de largura previsível para não virar uma coluna
+   de duas palavras. Quem cresce com o monitor é a trilha. */
+.lg{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 23rem;
+  gap:var(--adm-gap);
+  align-items:stretch;
+  /* Altura DEFINIDA (e não min-height): é ela que faz o corpo da tabela virar
+     a área que rola. Com altura automática o cartão cresceria com as 25 linhas
+     e a paginação desceria para fora da tela. O piso em rem é o limite: em
+     tela baixa demais, aí sim a página rola. */
+  height:100%;
+  min-height:38rem;
+}
+
+.lg-list{ min-width:0; min-height:0 }
+.lg-side{
+  display:grid;
+  grid-template-rows:minmax(0,1.35fr) minmax(0,1fr);
+  gap:var(--adm-gap);
+  min-width:0;
+  min-height:0;
+}
+
+/* O cartão da trilha é uma pilha: cabeçalho, filtros, atalhos, TABELA (1fr) e
+   paginação. Só a tabela cresce. */
+.lg-list__body{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column }
+.lg-wrap{ flex:1 1 auto; min-height:0 }
+
+/* ==========================================================================
+   2. CABEÇALHO — procedência e a promessa de não escrever
+   ========================================================================== */
+
+/* A tela declara de onde lê e que não escreve. Numa prova de auditoria isso não
+   é enfeite: é a primeira pergunta de quem abre a página. */
+.lg-src,
+.lg-ro{
+  display:inline-flex;
+  align-items:center;
+  gap:.25rem;
+  padding:.1rem .4rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:2px;
+  font-family:var(--font-mono);
+  font-size:.7rem;
+  line-height:1.4;
+  color:var(--c-muted);
+  white-space:nowrap;
+  cursor:help;
+}
+.lg-ro{ font-family:var(--font-cond); letter-spacing:.1em; text-transform:uppercase; color:var(--c-amber);
+        border-color:rgba(var(--c-amber-rgb),.35); background:rgba(var(--c-amber-rgb),.08) }
+.lg-ro .ms{ font-size:.9rem }
+
+/* ==========================================================================
+   3. FILTROS
+   ========================================================================== */
+
+/* Flex com quebra, e não grade fixa: em 1366px os seis controles descem para
+   duas fileiras inteiras em vez de espremer o campo de busca até ele não caber
+   mais um termo. */
+/* Cada linha do topo do cartão é altura roubada da trilha: com rótulo e campo em
+   tamanho normal, a barra ocupava 154px e sobravam oito linhas visíveis numa tela de
+   900px. Aqui os cinco campos cabem em UMA fileira a partir de 1500px, e o botão de
+   limpar desce para a fileira dos atalhos, onde já há espaço sobrando. */
+.lg-filters{
+  display:flex;
+  align-items:flex-end;
+  gap:.5rem;
+  flex-wrap:wrap;
+  padding:.55rem 1rem;
+  border-bottom:1px solid var(--adm-line);
+}
+.lg-filters .adm-field{ gap:.2rem }
+.lg-filters__busca{ flex:3 1 10rem; min-width:8rem }
+.lg-filters__acao { flex:2 1 8rem;   min-width:7rem }
+.lg-filters__quem { flex:2 1 8rem;   min-width:7rem }
+/* 7,5rem é o piso do campo de data: abaixo disso o controle nativo corta o
+   "dd/mm/aaaa" ou engole o ícone do calendário. */
+.lg-filters__data { flex:0 1 7.5rem; min-width:7.5rem }
+.lg-filters .adm-label{ font-size:.68rem; letter-spacing:.12em }
+.lg-filters .adm-input,
+.lg-filters .adm-select{ min-height:2.15rem; padding-top:.25rem; padding-bottom:.25rem; font-size:.85rem }
+.lg-filters .adm-btn{ height:2.15rem }
+/* O seletor nativo de data desenha o ícone do calendário em preto sobre fundo
+   quase preto: sem isto o controle parece vazio. */
+.lg-filters input[type="date"]{ font-family:var(--font-mono); font-size:.82rem }
+.lg-filters input[type="date"]::-webkit-calendar-picker-indicator{ filter:invert(.75); cursor:pointer }
+
+/* ---- atalhos de período ------------------------------------------------- */
+.lg-quick{
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  flex-wrap:wrap;
+  padding:.5rem 1rem;
+  border-bottom:1px solid var(--adm-line);
+  background:rgba(255,255,255,.012);
+}
+.lg-quick__lbl{
+  font-family:var(--font-cond);
+  font-size:.72rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  margin-right:.15rem;
+}
+.lg-chip{
+  padding:.15rem .6rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:999px;
+  font-family:var(--font-cond);
+  font-size:.8rem;
+  letter-spacing:.06em;
+  color:var(--c-text-2);
+  transition:border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.lg-chip:hover{ border-color:var(--adm-line-lime); color:var(--c-text) }
+.lg-chip.is-active{ border-color:var(--c-lime); background:rgba(var(--c-lime-rgb),.12); color:var(--c-lime) }
+/* A janela em uso escrita por extenso, à direita: o chip diz o atalho, isto diz
+   a data que está valendo — inclusive quando ela foi digitada à mão. */
+.lg-quick__janela{ margin-left:auto; font-family:var(--font-mono); font-size:.78rem; color:var(--c-muted) }
+/* Filtrar e Limpar moram aqui, no fim da fileira dos atalhos (que também são filtro).
+   O "Filtrar" continua submetendo o formulário de cima pelo atributo `form` — é isso que
+   permite à fileira dos campos ocupar a largura inteira e caber em uma linha só. */
+.lg-quick__acoes{ display:flex; align-items:center; gap:.4rem; margin-left:auto }
+.lg-quick__janela ~ .lg-quick__acoes{ margin-left:.75rem }
+.lg-quick .adm-btn{ height:1.9rem; font-size:.75rem }
+
+/* ==========================================================================
+   4. TABELA
+   ========================================================================== */
+
+/* LARGURA FIXA POR COLUNA, e não "cada uma com o tamanho do seu conteúdo".
+   A trilha tem colunas de conteúdo imprevisível: `entity_id` guarda desde "3" até um
+   e-mail inteiro, e com largura automática uma única linha comprida roubava 217px e
+   espremia O QUE ACONTECEU em 28px — a coluna mais importante da tela virava reticência.
+   Aqui cada coluna tem o seu teto, o resumo fica com TODO o resto e o que não couber é
+   cortado com reticências (a frase inteira está no title e no painel de detalhe). */
+.lg-table{ width:100%; table-layout:fixed }
+/* Densidade: cada 10px a mais de linha é uma linha a menos visível sem rolar. O piso é
+   a legibilidade da célula de duas linhas (nome + papel), não a vontade de apertar. */
+.lg-table th,
+.lg-table td{ overflow:hidden; text-overflow:ellipsis; padding:.28rem .55rem }
+.lg-col-id    { width:3rem;   color:var(--c-dim); font-size:.8rem }
+.lg-col-quando{ width:7rem }
+.lg-col-acao  { width:8.5rem }
+.lg-col-quem  { width:8.5rem }
+.lg-col-alvo  { width:5.5rem }
+.lg-col-ip    { width:6.5rem }
+.lg-col-ver   { width:3rem; text-align:right; overflow:visible }
+.lg-col-quando time{ font-size:.78rem; color:var(--c-text-2) }
+.lg-col-resumo{ color:var(--c-text-2) }   /* sem largura: fica com o que sobra */
+/* Crachá e nome também precisam ceder: dentro de uma célula de largura fixa, um rótulo
+   comprido (ação sem verbete vem de uma coluna de 64 caracteres) estouraria a célula. */
+.lg-col-acao .adm-badge{ max-width:100%; min-width:0 }
+.lg-acao__txt{ min-width:0; overflow:hidden; text-overflow:ellipsis }
+.lg-col-ver .adm-btn{ opacity:.45; transition:opacity var(--t-fast) var(--ease) }
+.lg-row:hover .lg-col-ver .adm-btn,
+.lg-col-ver .adm-btn:focus-visible{ opacity:1 }
+
+/* Linha aberta no detalhe: barra lime à esquerda, do mesmo jeito que a sidebar
+   marca "você está aqui". Sem ela, clicar numa linha abria um painel à direita
+   sem nenhuma pista de qual das 25 linhas era. */
+.lg-row.is-selected{ background:rgba(var(--c-lime-rgb),.10) }
+.lg-row.is-selected td:first-child{ box-shadow:inset 3px 0 0 var(--c-lime) }
+.lg-row.is-selected .lg-col-id{ color:var(--c-lime) }
+
+/* ---- cabeçalho ordenável ------------------------------------------------ */
+.lg-sort{ display:inline-flex; align-items:center; gap:.25rem; color:inherit }
+.lg-sort:hover{ color:var(--c-text) }
+.lg-sort__ico{ font-size:.95rem; opacity:.35 }
+.lg-sort:hover .lg-sort__ico{ opacity:.7 }
+.lg-table th.is-sorted{ color:var(--c-lime) }
+.lg-table th.is-sorted .lg-sort__ico{ opacity:1 }
+
+/* ---- crachá de ação ----------------------------------------------------- */
+/* Ação sem verbete: o traço pontilhado diz "este rótulo é o nome cru do banco,
+   ninguém o traduziu ainda" sem precisar de uma segunda cor na tabela. */
+.lg-badge--crua{ border-style:dashed }
+
+/* ---- quem fez ----------------------------------------------------------- */
+.lg-who{ display:grid; min-width:0; line-height:1.15 }
+.lg-who strong,
+.lg-who small{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.lg-who strong{ font-size:.82rem; color:var(--c-text) }
+.lg-who small{ font-size:.68rem; color:var(--c-dim) }
+/* O papel vira cor: um JOGADOR na trilha administrativa é sempre notícia, e
+   quem lê 25 linhas de relance não vai parar para conferir o crachá de cada uma. */
+.lg-who--owner  strong{ color:var(--c-lime) }
+.lg-who--admin  strong{ color:var(--c-text) }
+.lg-who--player strong{ color:var(--c-amber) }
+.lg-who--player small{ color:var(--c-amber); opacity:.75 }
+.lg-who--anonimo strong,
+.lg-who--removido strong{ color:var(--c-muted); font-style:italic; font-weight:400 }
+
+.lg-alvo{ font-family:var(--font-mono); font-size:.78rem; color:var(--c-muted) }
+.lg-void{ color:var(--c-dim) }
+
+/* Rótulo só para leitor de tela (o cabeçalho da coluna do botão de detalhe). */
+.lg-sr{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+
+/* ---- vazio e rodapé ----------------------------------------------------- */
+.lg-empty{ margin:auto; padding:2.5rem 1.5rem }
+.lg-empty--sm{ padding:1.5rem .5rem }
+.lg-empty--sm .ms{ font-size:2rem }
+.lg-foot{ flex:0 0 auto }
+.lg-foot .adm-pager{ width:100% }
+
+/* ==========================================================================
+   5. DETALHE DO REGISTRO
+   ========================================================================== */
+
+.lg-detail{ min-height:0 }
+.lg-detail__body{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; gap:.6rem }
+
+.lg-detail__acao{ display:flex; align-items:center; gap:.5rem; flex-wrap:wrap }
+.lg-detail__nota{ font-size:.8rem; color:var(--c-muted); line-height:1.4 }
+.lg-detail__nota--void{ color:var(--c-dim) }
+.lg-detail__sub{
+  font-family:var(--font-cond);
+  font-size:.78rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  padding-top:.4rem;
+  border-top:1px solid var(--adm-line);
+}
+
+/* O identificador cru: mono, discreto e SEMPRE presente. É ele que o operador
+   copia para conferir no banco. */
+.lg-code{
+  font-family:var(--font-mono);
+  font-size:.75rem;
+  color:var(--c-cyan);
+  background:rgba(var(--c-cyan-rgb),.08);
+  border:1px solid rgba(var(--c-cyan-rgb),.2);
+  border-radius:2px;
+  padding:.05rem .3rem;
+}
+
+/* A lista de campos quebra em duas linhas em coluna estreita: user agent tem
+   180 caracteres e não pode empurrar o painel nem sair pela borda. */
+.lg-dl{ grid-template-columns:7rem minmax(0,1fr); gap:.35rem .7rem; font-size:.82rem }
+.lg-dl dd{ min-width:0; overflow-wrap:anywhere }
+.lg-dl dd small{ display:block; color:var(--c-dim); font-size:.72rem }
+.lg-dl--meta dt{ font-family:var(--font-mono); text-transform:none; letter-spacing:0; color:var(--c-muted) }
+.lg-meta__val{ font-family:var(--font-mono); font-size:.78rem; color:var(--c-text-2) }
+.lg-detail__resumo{ line-height:1.35 }
+
+/* JSON bruto: fechado por padrão (é longo), aberto com um clique e sem uma
+   linha de JavaScript. */
+.lg-raw{ border:1px solid var(--adm-line); border-radius:var(--adm-r-sm); background:var(--adm-bg) }
+.lg-raw > summary{
+  display:flex; align-items:center; gap:.35rem;
+  padding:.4rem .55rem;
+  font-family:var(--font-cond);
+  font-size:.78rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  cursor:pointer;
+  list-style:none;
+}
+.lg-raw > summary::-webkit-details-marker{ display:none }
+.lg-raw > summary:hover{ color:var(--c-lime) }
+.lg-raw > summary .ms{ font-size:1rem }
+.lg-raw__pre{
+  margin:0;
+  padding:.55rem;
+  border-top:1px solid var(--adm-line);
+  font-family:var(--font-mono);
+  font-size:.75rem;
+  line-height:1.45;
+  color:var(--c-text-2);
+  white-space:pre-wrap;      /* quebra dentro do painel em vez de rolar de lado */
+  overflow-wrap:anywhere;
+  max-height:14rem;
+  overflow:auto;
+}
+
+/* ==========================================================================
+   6. RESUMO DO RECORTE
+   ========================================================================== */
+
+.lg-resumo__body{ display:flex; flex-direction:column; gap:.6rem; min-height:0; overflow-y:auto }
+
+.lg-stats{ display:grid; grid-template-columns:1fr 1fr; gap:.6rem }
+.lg-stat{
+  display:grid; gap:.15rem;
+  padding:.5rem .6rem;
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface-2);
+}
+.lg-stat__lbl{
+  font-family:var(--font-cond);
+  font-size:.7rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+}
+/* Número grande e tabular, alinhado à direita como todo número do painel. */
+.lg-stat__val{ font-size:1.3rem; color:var(--c-text); text-align:right; line-height:1.1 }
+.lg-periodo{ display:grid; gap:.15rem; font-size:.82rem; color:var(--c-text-2) }
+.lg-periodo .num{ font-size:.8rem }
+
+/* ---- barras por ação ---------------------------------------------------- */
+.lg-bars{ display:flex; flex-direction:column; gap:.45rem }
+.lg-bar{ display:grid; gap:.2rem }
+.lg-bar__link{ display:flex; align-items:baseline; gap:.5rem; color:var(--c-text-2) }
+.lg-bar__link:hover{ color:var(--c-lime) }
+.lg-bar__lbl{ font-size:.8rem; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.lg-bar__n{ margin-left:auto; font-size:.8rem; color:var(--c-text) }
+.lg-bar__track{ height:.3rem; border-radius:999px; background:var(--adm-surface-3); overflow:hidden }
+.lg-bar__fill{ display:block; height:100%; width:var(--v,0%); border-radius:999px; background:var(--c-muted) }
+/* Mesma cor do crachá da ação: a barra e a linha da tabela falam a mesma língua. */
+.lg-bar--ok     .lg-bar__fill{ background:var(--c-lime) }
+.lg-bar--warn   .lg-bar__fill{ background:var(--c-amber) }
+.lg-bar--danger .lg-bar__fill{ background:var(--c-red) }
+.lg-bar--info   .lg-bar__fill{ background:var(--c-cyan) }
+
+/* ==========================================================================
+   7. RESPONSIVO — o que sai de cena, sai porque está garantido em outro lugar
+   ========================================================================== */
+
+/* O IP é o primeiro a sair, e sai cedo: ele custa 6,5rem da coluna do resumo e está
+   garantido em três outros lugares — no title da linha, no painel de detalhe e na busca
+   (digitar o IP filtra a trilha por ele). */
+@media (max-width:1700px){
+  .lg-col-ip{ display:none }
+}
+@media (max-width:1500px){
+  .lg{ grid-template-columns:minmax(0,1fr) 21rem }
+}
+
+/* Depois o alvo (entity · entity_id), pelo mesmo motivo — e antes do que parece
+   necessário: em 1366px, mantê-lo deixava O QUE ACONTECEU com 209px, e a frase da
+   auditoria é o que o operador veio ler. Sem ele são 292px. */
+@media (max-width:1450px){
+  .lg-col-alvo{ display:none }
+}
+
+/* Abaixo disto a coluna direita não cabe ao lado sem esmagar a tabela: ela
+   passa para baixo e a página, aí sim, rola. */
+@media (max-width:1100px){
+  .lg{ grid-template-columns:minmax(0,1fr); height:auto }
+  .lg-side{ grid-template-rows:auto auto }
+  .lg-list{ min-height:28rem }
+  .lg-detail__body{ max-height:32rem }
+}
+
+@media (max-width:820px){
+  .lg-filters{ align-items:stretch }
+  .lg-filters__busca,
+  .lg-filters__acao,
+  .lg-filters__quem,
+  .lg-filters__data{ flex:1 1 100% }
+  .lg-stats{ grid-template-columns:1fr }
+}
+
+/* Notebook de 768px de altura: a mesma compressão vertical da casca, aplicada
+   à densidade da trilha — 25 linhas continuam cabendo sem a página rolar. */
+@media (max-height:840px){
+  .lg{ min-height:32rem }
+  .lg-filters{ padding:.55rem 1rem }
+  .lg-quick{ padding:.35rem 1rem }
+  .lg-table th,.lg-table td{ padding:.3rem .6rem }
+  .lg .adm-card__head{ min-height:2.85rem; padding:.5rem 1rem }
+}

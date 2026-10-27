@@ -17,7 +17,12 @@ final class View
     private static array $page = [];
 
     /**
-     * @param string $layout   'hud' | 'auth'  -> app/Views/layouts/{layout}.php
+     * @param string $layout   'hud' | 'auth' | 'overlay' | 'partial' | 'admin'
+     *                         -> app/Views/layouts/{layout}.php. Qualquer nome [a-z0-9_-]
+     *                         que exista como arquivo vale: quem manda é assertName() + o
+     *                         is_file() abaixo, não uma lista. O painel administrativo usa
+     *                         'admin', que monta a própria lista de assets (não passa por
+     *                         pageAssets(), que descreve só o casco da HUD do jogador).
      * @param string $pageView 'inicio' | '_404' -> app/Views/pages/{pageView}.php
      * @param array<string, mixed> $data
      */

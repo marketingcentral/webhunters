@@ -1,0 +1,34 @@
+# Extract Hunters — Cloudflare Workers + D1 + R2.
+# Nada aqui é segredo: os ids abaixo são preenchidos depois de `wrangler d1 create` /
+# `wrangler r2 bucket create` (ver README). Em `wrangler dev` o D1 e o R2 são locais
+# (.wrangler/state) e o id não precisa existir na conta.
+name = "extracthunters"
+main = "src/index.ts"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# CSS/JS/fontes/imagens fixas do jogo. public/ é GERADO por `npm run build` a partir de
+# ../assets (sem _gen/ e assets/assets/, que não sobem nem no deploy PHP).
+# run_worker_first: o Worker vê primeiro só /media e o que não for arquivo; o resto sai
+# direto do cache de assets, com os cabeçalhos de public/_headers.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "none"
+run_worker_first = false
+
+[[d1_databases]]
+binding = "DB"
+database_name = "extracthunters"
+database_id = "ccbcdb65-3010-45ea-bade-00380542cfa4"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "extracthunters-media"
+
+# "production": página de erro sem stack trace. Em `wrangler dev` o host é 127.0.0.1/localhost,
+# e isso já liga o modo debug (mesmo critério do Config::debug() do PHP).
+[vars]
+APP_ENV = "production"
+# PASSWORD_ALGO = "pbkdf2"   # ver README, "Senhas"

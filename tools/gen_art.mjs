@@ -3,16 +3,25 @@
 //   node tools/gen_art.mjs --force       regenerate everything
 //   node tools/gen_art.mjs --only bg/    only files whose path starts with the prefix
 //   node tools/gen_art.mjs --list        show what would run, generate nothing
+//   node tools/gen_art.mjs --manifest tools/x.json --out lp/img
+//                                        use another manifest and another target folder
+//
+// O manifesto e a pasta de saida sao parametros porque este projeto tem MAIS DE UM conjunto
+// de arte: a do jogo (art_manifest.json -> assets/img/_gen, ja concluida e que nao se
+// regenera) e a da landing page. Duplicar o arquivo inteiro para trocar duas constantes
+// deixaria duas copias da conversa com o Gemini para manter em dia.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
-const IMG = path.join(ROOT, 'assets/img/_gen');
 
 const args = process.argv.slice(2);
 const FORCE = args.includes('--force');
 const LIST = args.includes('--list');
-const ONLY = (() => { const i = args.indexOf('--only'); return i >= 0 ? args[i + 1] : null; })();
+const arg = (nome) => { const i = args.indexOf(nome); return i >= 0 ? args[i + 1] : null; };
+const ONLY = arg('--only');
+const MANIFEST = arg('--manifest') || 'tools/art_manifest.json';
+const IMG = path.join(ROOT, arg('--out') || 'assets/img/_gen');
 const CONCURRENCY = 3;
 
 const env = {};
@@ -23,7 +32,7 @@ for (const line of readFileSync(path.join(ROOT, '.env'), 'utf8').split(/\r?\n/))
 const KEY = env.GEMINI_APIKEY;
 if (!KEY) { console.error('GEMINI_APIKEY missing from .env'); process.exit(1); }
 
-const mf = JSON.parse(readFileSync(path.join(ROOT, 'tools/art_manifest.json'), 'utf8'));
+const mf = JSON.parse(readFileSync(path.join(ROOT, MANIFEST), 'utf8'));
 
 // Fallback chain: if the preferred model refuses or is busy, try the next.
 const FALLBACK = {
@@ -38,6 +47,8 @@ function buildJob(j) {
     file: j.file,
     prompt: `${j.prompt}. ${suffix}`,
     aspectRatio: j.aspectRatio || (isIcon ? '1:1' : mf.defaults.aspectRatio),
+    // '2K'/'4K' só para peças grandes (divulgação): o padrão (~1376 px) basta para a HUD
+    imageSize: j.imageSize || mf.defaults.imageSize || null,
     model: j.model || (isIcon ? 'gemini-2.5-flash-image' : mf.defaults.model),
     out: path.join(IMG, j.file),
   };
@@ -55,7 +66,7 @@ async function generate(job) {
           contents: [{ parts: [{ text: job.prompt }] }],
           generationConfig: {
             responseModalities: ['IMAGE'],
-            imageConfig: { aspectRatio: job.aspectRatio },
+            imageConfig: job.imageSize ? { aspectRatio: job.aspectRatio, imageSize: job.imageSize } : { aspectRatio: job.aspectRatio },
           },
         }),
       });

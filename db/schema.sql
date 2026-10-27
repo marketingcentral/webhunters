@@ -41,6 +41,7 @@ DROP TABLE IF EXISTS achievements;
 DROP TABLE IF EXISTS mission_rewards;
 DROP TABLE IF EXISTS missions;
 DROP TABLE IF EXISTS map_markers;
+DROP TABLE IF EXISTS map_point_types;
 DROP TABLE IF EXISTS maps;
 DROP TABLE IF EXISTS news;
 DROP TABLE IF EXISTS skills;
@@ -126,6 +127,28 @@ CREATE TABLE map_markers (
   PRIMARY KEY (id),
   KEY idx_marker_map (map_id),
   CONSTRAINT fk_marker_map FOREIGN KEY (map_id) REFERENCES maps(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Catálogo de ícones pré-fabricados que o painel arrasta para o mapa (/admin/mapas/pontos).
+-- `icon` traz a ORIGEM no prefixo: glyph:<id> (vetor da tela do mapa), symbol:<nome>
+-- (Material Symbol) ou image:<caminho> (arte enviada pelo painel).
+-- `is_system` = tipo que o jogo conhece de nascença; o painel edita, mas não apaga.
+CREATE TABLE map_point_types (
+  id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  slug        VARCHAR(48)  NOT NULL,
+  label       VARCHAR(60)  NOT NULL,
+  category    VARCHAR(32)  NOT NULL,   -- operacional,hostil,logistica,combustivel,alimentacao,comercio,saude,outros
+  kind        VARCHAR(24)  NOT NULL,   -- map_markers.kind que este ponto grava
+  icon        VARCHAR(180) NOT NULL DEFAULT 'symbol:place',
+  color       VARCHAR(16)  NOT NULL DEFAULT 'white',
+  layer       VARCHAR(24)  NULL,       -- camada do filtro; NULL = a padrão do kind
+  show_label  TINYINT(1)   NOT NULL DEFAULT 0,
+  description VARCHAR(255) NULL,
+  is_system   TINYINT(1)   NOT NULL DEFAULT 0,
+  sort_order  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_mpt_slug (slug),
+  KEY idx_mpt_cat (category)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE missions (
@@ -331,6 +354,9 @@ CREATE TABLE users (
   password_hash VARCHAR(255) NOT NULL,
   created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   last_login    DATETIME NULL,
+  role          VARCHAR(16) NOT NULL DEFAULT 'player',  -- player | admin | owner  (patch v6)
+  status        VARCHAR(16) NOT NULL DEFAULT 'active',  -- active | banned | suspended
+  last_ip       VARCHAR(45) NULL,                       -- 45 = IPv6 com mapeamento IPv4
   PRIMARY KEY (id),
   UNIQUE KEY uq_users_username (username),
   UNIQUE KEY uq_users_email (email)
@@ -787,4 +813,72 @@ CREATE TABLE `player_safe_roles` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_safe_role_user` (`user_id`),         -- um papel por vez
   KEY `ix_safe_role_zone` (`zone_slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================================
+-- PAINEL ADMINISTRATIVO (patch v6): punição, auditoria, configuração e métricas.
+-- users.role / users.status / users.last_ip estão declarados junto de `users`.
+-- ============================================================================
+DROP TABLE IF EXISTS `admin_metrics_daily`;
+DROP TABLE IF EXISTS `admin_settings`;
+DROP TABLE IF EXISTS `admin_audit_log`;
+DROP TABLE IF EXISTS `bans`;
+
+-- Histórico de punição. Sem FOREIGN KEY de propósito: o registro precisa sobreviver à
+-- remoção da conta punida ou do admin que puniu — apagar o admin não pode apagar a prova.
+CREATE TABLE `bans` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` INT UNSIGNED NOT NULL,
+  `admin_id` INT UNSIGNED NULL,
+  `reason` TEXT NULL,
+  `kind` VARCHAR(16) NOT NULL DEFAULT 'temp',           -- temp | perma
+  `expires_at` DATETIME NULL,                           -- só faz sentido em temp
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `revoked_at` DATETIME NULL,
+  `revoked_by` INT UNSIGNED NULL,
+  PRIMARY KEY (`id`),
+  KEY `ix_bans_user` (`user_id`, `created_at`),
+  KEY `ix_bans_admin` (`admin_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Trilha de auditoria: toda ação de admin vira uma linha aqui. É a fonte da tela LOGS DO SISTEMA.
+CREATE TABLE `admin_audit_log` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `admin_id` INT UNSIGNED NULL,
+  `action` VARCHAR(64) NOT NULL,                        -- ex.: user.ban, settings.update
+  `entity` VARCHAR(48) NOT NULL,                        -- tabela/domínio afetado
+  `entity_id` VARCHAR(64) NULL,                         -- texto: nem toda entidade tem id numérico
+  `summary` VARCHAR(255) NOT NULL DEFAULT '',
+  `meta` JSON NULL,                                     -- antes/depois, payload da ação
+  `ip` VARCHAR(45) NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `ix_audit_admin` (`admin_id`, `created_at`),
+  KEY `ix_audit_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Parâmetros do jogo editáveis pelo admin sem deploy. Quando a chave existe aqui ela manda;
+-- senão vale o padrão de App\Core\GameRules. `kind` diz como interpretar o TEXT.
+CREATE TABLE `admin_settings` (
+  `key` VARCHAR(64) NOT NULL,
+  `value` TEXT NULL,
+  `kind` VARCHAR(16) NOT NULL DEFAULT 'string',         -- string | int | bool | json
+  `label` VARCHAR(120) NOT NULL DEFAULT '',
+  `grupo` VARCHAR(32) NOT NULL DEFAULT 'geral',         -- aba do formulário de configuração
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_by` INT UNSIGNED NULL,
+  PRIMARY KEY (`key`),
+  KEY `ix_settings_grupo` (`grupo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Série diária do dashboard (gráficos de 7 e de 30 dias). Uma linha por dia fechado.
+-- Enquanto não existir telemetria real, db/patch_v6_admin.php semeia 30 dias de demonstração.
+CREATE TABLE `admin_metrics_daily` (
+  `day` DATE NOT NULL,
+  `players_online` INT UNSIGNED NOT NULL DEFAULT 0,     -- pico de simultâneos no dia
+  `new_players` INT UNSIGNED NOT NULL DEFAULT 0,
+  `sessions` INT UNSIGNED NOT NULL DEFAULT 0,
+  `revenue_cents` BIGINT UNSIGNED NOT NULL DEFAULT 0,
+  `avg_session_sec` INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

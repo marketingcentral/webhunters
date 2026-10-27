@@ -1,0 +1,333 @@
+/* ==========================================================================
+   ADMIN · SERVIDORES (/admin/servidores)
+
+   Só o que é DESTA tela. Cartão, tabela, badge, botão, formulário, vazio e
+   paginação vêm de admin.css (.adm-*) — aqui não se redesenha primitivo.
+
+   Carregado por app/Views/layouts/admin.php pelo slug da página
+   (assets/css/admin/admin-servidores.css), depois de admin.css.
+
+   Namespace .srv-.
+
+   REGRA DE LARGURA DESTA TELA: nenhuma das três tabelas rola na horizontal.
+   Coluna escondida atrás de uma barra é coluna perdida — e numa tela de
+   plantão, é o estado do servidor que fica escondido. As larguras abaixo são
+   fixas onde o conteúdo é previsível (ordem, ping, jogadores, estado, ações) e
+   o que sobra vai para as colunas de texto, que truncam com reticências. Se
+   ainda assim não couber, uma coluna INTEIRA sai (ver os @media no fim) — o
+   operador perde uma informação secundária, nunca meia informação.
+   ========================================================================== */
+
+.srv{ display:flex; flex-direction:column; gap:var(--adm-gap); min-width:0 }
+
+/* ==========================================================================
+   1. FAIXA DE INDICADORES
+   ========================================================================== */
+
+/* O KPI desta tela tem uma terceira linha (a procedência do número). Sem ela,
+   "ping médio 119ms" se leria como medição de rede, e é valor digitado. */
+.srv-kpis .adm-kpi{ align-items:flex-start }
+.srv-kpi__sub{
+  /* Duas linhas no máximo: a faixa inteira precisa manter a mesma altura, e
+     um KPI mais alto que os vizinhos desalinha a base dos quatro. */
+  display:-webkit-box;
+  margin-top:.15rem;
+  font-size:.72rem;
+  line-height:1.25;
+  color:var(--c-dim);
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+/* ==========================================================================
+   2. BLOCOS DE LISTA
+   ========================================================================== */
+
+.srv-bloco{ min-width:0 }
+.srv-bloco .adm-card__head{ gap:.6rem }
+.srv-bloco .adm-card__title{ display:flex; align-items:baseline; gap:.45rem; min-width:0 }
+.srv-bloco .adm-card__title .ms{ font-size:1.05rem; color:var(--c-lime); align-self:center }
+.srv-bloco .adm-card__title small{
+  display:inline;
+  margin-top:0;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* Contagem de linhas ao lado do link do cartão: o operador precisa saber se a
+   lista está filtrada sem contar as linhas com o dedo. */
+.srv-count{
+  display:inline-grid;
+  place-items:center;
+  min-width:1.75rem;
+  height:1.4rem;
+  padding:0 .4rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:999px;
+  font-size:.78rem;
+  color:var(--c-text-2);
+  background:var(--adm-surface-2);
+}
+
+/* A frase de ALCANCE. Fica entre o cabeçalho e a tabela porque é o aviso que
+   precisa ser lido ANTES de mexer: o que se edita aqui aparece na tela do
+   jogador. Discreta na cor, presente na posição. */
+.srv-scope{
+  display:flex;
+  align-items:flex-start;
+  gap:.4rem;
+  padding:.5rem 1rem;
+  border-bottom:1px solid var(--adm-line);
+  font-size:.78rem;
+  line-height:1.35;
+  color:var(--c-dim);
+  background:rgba(var(--c-cyan-rgb),.035);
+}
+.srv-scope .ms{ font-size:1rem; color:var(--c-cyan); flex-shrink:0 }
+
+/* ==========================================================================
+   3. TABELAS
+   ========================================================================== */
+
+/* `fixed` é o que faz as larguras abaixo valerem de verdade: sem ele o
+   navegador redistribui tudo pelo conteúdo e uma nota comprida empurra a
+   coluna de ações para fora. */
+.srv-table{ table-layout:fixed; width:100% }
+.srv .adm-tablewrap{ overflow:hidden }
+
+/* Cabeçalho que ordena: o link ocupa a célula inteira (alvo de clique de
+   verdade, não só as letras) e a seta mostra o sentido corrente. */
+.srv-th{
+  display:inline-flex;
+  align-items:center;
+  gap:.2rem;
+  color:inherit;
+  white-space:nowrap;
+}
+.srv-th:hover{ color:var(--c-lime) }
+.srv-th__ar{ font-size:.9rem; color:var(--c-lime) }
+.adm-table th.is-sorted{ color:var(--c-text) }
+.adm-table th.tr .srv-th{ flex-direction:row-reverse }
+
+/* Nome + identificador na mesma célula: duas linhas, a de baixo apagada. */
+.srv-nome{ display:grid; gap:.1rem; min-width:0 }
+.srv-nome strong{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.srv-nome small{
+  font-size:.72rem;
+  color:var(--c-dim);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.mono{ font-family:var(--font-mono); letter-spacing:.01em }
+.srv-vazio{ color:var(--c-dim) }
+.srv-c-num small{ margin-left:.15rem; color:var(--c-dim); font-size:.72rem }
+
+/* Nota do estado (janela ativa / valor gravado divergente). A célula inteira é
+   `nowrap` (admin.css), então a nota TEM de truncar sozinha — sem isto ela
+   empurra a coluna e leva a tabela junto. */
+.srv-nota{
+  display:block;
+  margin-top:.2rem;
+  font-size:.72rem;
+  color:var(--c-dim);
+  line-height:1.25;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.srv-nota-txt{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--c-text-2);
+}
+.srv-slug{ display:inline-flex; align-items:center; gap:.2rem; font-size:.7rem; color:var(--c-dim) }
+.srv-slug .ms{ font-size:.85rem }
+.srv-orfa{ display:inline-flex; align-items:center; gap:.2rem; color:var(--c-amber) }
+.srv-orfa .ms{ font-size:.9rem }
+
+/* Selo "no ar": a linha que está NESTE momento na contagem regressiva da tela
+   do jogador. É a única marcação da tabela que fala do agora. */
+.srv-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:.15rem;
+  margin-top:.2rem;
+  padding:0 .35rem;
+  height:1.15rem;
+  border-radius:999px;
+  border:1px solid rgba(var(--c-lime-rgb),.4);
+  background:rgba(var(--c-lime-rgb),.12);
+  color:var(--c-lime);
+  font-family:var(--font-cond);
+  font-size:.68rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.srv-tag .ms{ font-size:.85rem }
+
+/* Linha que está no ar agora (serviço na contagem, janela em andamento). */
+.adm-table tbody tr.is-live{ background:rgba(var(--c-cyan-rgb),.05) }
+.adm-table tbody tr.is-live:hover{ background:rgba(var(--c-cyan-rgb),.09) }
+
+/* ---- barra de ocupação --------------------------------------------------- */
+.srv-bar{
+  display:inline-block;
+  vertical-align:middle;
+  width:calc(100% - 3rem);
+  min-width:2.5rem;
+  height:.4rem;
+  border-radius:999px;
+  background:var(--adm-surface-3);
+  overflow:hidden;
+}
+.srv-bar__fill{ display:block; height:100%; border-radius:999px; background:var(--c-lime) }
+.srv-bar__pct{ margin-left:.4rem; font-size:.75rem; color:var(--c-muted) }
+
+/* ---- troca rápida de estado --------------------------------------------- */
+/* Três botões numa linha: é a operação mais frequente do plantão, e abrir o
+   formulário inteiro para trocar uma palavra custa tempo com o jogo fora do ar.
+   O estado corrente fica ACESO e sem sombra de foco — dá para ver qual é sem ler. */
+.srv-troca{ display:flex; gap:.2rem }
+.srv-troca__b{
+  display:grid;
+  place-items:center;
+  width:1.9rem;
+  height:1.9rem;
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface-2);
+  color:var(--c-dim);
+  cursor:pointer;
+  transition:color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.srv-troca__b .ms{ font-size:1.05rem }
+.srv-troca__b:hover{ background:var(--adm-surface-3); color:var(--c-text) }
+.srv-troca__b:focus-visible{ outline:none; box-shadow:var(--adm-ring); border-color:var(--c-lime) }
+.srv-troca__b--ok:hover{ color:var(--c-lime); border-color:rgba(var(--c-lime-rgb),.5) }
+.srv-troca__b--warn:hover{ color:var(--c-amber); border-color:rgba(var(--c-amber-rgb),.5) }
+.srv-troca__b--down:hover{ color:var(--c-red); border-color:rgba(var(--c-red-rgb),.5) }
+.srv-troca__b--ok.is-on{ color:var(--c-lime); border-color:var(--c-lime); background:rgba(var(--c-lime-rgb),.14) }
+.srv-troca__b--warn.is-on{ color:var(--c-amber); border-color:var(--c-amber); background:rgba(var(--c-amber-rgb),.14) }
+.srv-troca__b--down.is-on{ color:var(--c-red); border-color:var(--c-red); background:rgba(var(--c-red-rgb),.14) }
+
+/* ---- larguras ------------------------------------------------------------ */
+.srv-c-ord{ width:2.75rem }
+.srv-c-num{ width:6.5rem }
+.srv-c-quando{ width:9.5rem }
+.srv-c-estado{ width:10.5rem }
+.srv-c-troca{ width:7rem }
+.srv-c-ocup{ width:9rem }
+.srv-c-rot{ width:11rem }
+.srv-c-escopo{ width:9rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.srv-c-janela{ width:12rem }
+.srv-c-nome,.srv-c-nota{ width:auto; min-width:0 }
+.srv-table .adm-table__acts{ width:5.5rem; white-space:nowrap }
+.srv-table .adm-table__acts .adm-btn+.adm-btn{ margin-left:.25rem }
+
+/* ==========================================================================
+   4. FILTROS
+   ========================================================================== */
+
+.srv-filtros .adm-toolbar{ border-bottom:0 }
+.srv-sel{ display:grid; gap:.2rem; min-width:9rem }
+.srv-sel .adm-label{ font-size:.7rem }
+.srv-sel .adm-select{ min-height:2.25rem; padding-top:.25rem; padding-bottom:.25rem }
+.srv-filtros .adm-search .adm-input{ min-height:2.25rem }
+
+/* ==========================================================================
+   5. FORMULÁRIO E EXCLUSÃO
+   ========================================================================== */
+
+/* Os dois painéis de ação nascem no topo da tela e precisam ser encontrados de
+   relance depois de um clique lá embaixo — daí a borda de cor. */
+.srv-form{ border-color:var(--adm-line-lime) }
+.srv-form.is-invalid{ border-color:rgba(var(--c-red-rgb),.45) }
+.srv-form .adm-card__title .ms{ font-size:1.05rem; color:var(--c-lime) }
+.srv-form .adm-card__title small{ font-family:var(--font-mono); color:var(--c-dim) }
+
+/* O campo ocupa a altura que precisa, não a da linha. Sem isto, o vizinho de
+   um campo COM texto de ajuda esticava o próprio controle para empatar a
+   altura — e o <select> "Estado" aparecia com o dobro da altura do <input> ao
+   lado, na mesma linha. Os controles passam a compartilhar a linha de base. */
+.srv-form .adm-field{ align-content:start }
+
+/* Campo que não é campo: a nota de alcance ao lado do último controle da linha.
+   Existe para a linha do formulário não terminar em meia célula vazia. */
+.srv-field--note{ align-content:start }
+.srv-field--note .adm-hint{ line-height:1.4 }
+
+.srv-danger{ border-color:rgba(var(--c-red-rgb),.45) }
+.srv-danger .adm-card__title .ms{ font-size:1.05rem; color:var(--c-red) }
+.srv-danger__body{ display:grid; gap:.75rem }
+.srv-danger__what{ font-size:.95rem; color:var(--c-text-2) }
+.srv-danger__what strong{ color:var(--c-text) }
+.srv-danger__dl{
+  padding:.6rem .8rem;
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-bg);
+}
+
+/* Motivo do bloqueio / resumo de erro: uma faixa, não um parágrafo solto. */
+.srv-block{
+  display:flex;
+  align-items:flex-start;
+  gap:.5rem;
+  padding:.6rem .75rem;
+  border:1px solid rgba(var(--c-red-rgb),.4);
+  border-left-width:3px;
+  border-radius:var(--adm-r-sm);
+  background:rgba(var(--c-red-rgb),.08);
+  font-size:.85rem;
+  line-height:1.4;
+  color:#ffb9bb;
+}
+.srv-block .ms{ font-size:1.1rem; color:var(--c-red); flex-shrink:0 }
+.srv-block--warn{
+  border-color:rgba(var(--c-amber-rgb),.4);
+  background:rgba(var(--c-amber-rgb),.08);
+  color:var(--c-amber);
+}
+.srv-block--warn .ms{ color:var(--c-amber) }
+.srv-form .srv-block{ margin-bottom:1rem }
+
+/* ==========================================================================
+   6. RESPONSIVO — some COLUNA INTEIRA, nunca meia coluna
+   ========================================================================== */
+
+/* Notebook de 1440px: o escopo do serviço já aparece no formulário e no aviso
+   de manutenção; é a primeira coluna dispensável. */
+@media (max-width:1440px){
+  .srv-c-escopo{ display:none }
+  .srv-c-rot{ width:9.5rem }
+}
+
+/* 1280px: a barra de ocupação vira só o número (a proporção continua legível
+   na coluna JOGADORES) e as duas colunas de texto ganham o espaço. */
+@media (max-width:1280px){
+  .srv-bar{ display:none }
+  .srv-bar__pct{ margin-left:0 }
+  .srv-c-ocup{ width:4rem; text-align:right }
+  .srv-c-estado{ width:9.5rem }
+  .srv-c-janela{ width:10.5rem }
+}
+
+/* 1100px: a barra lateral já virou trilho de ícones e sobra largura, mas a
+   coluna de ordem e a de ocupação deixaram de pagar o próprio espaço. */
+@media (max-width:1100px){
+  .srv-c-ord,.srv-c-ocup{ display:none }
+  .srv-kpis{ --adm-cols:2 }
+}
+
+/* Abaixo disto o painel não é mais ferramenta de plantão e sim consulta: as
+   tabelas podem rolar dentro do próprio cartão, que é o mal menor. */
+@media (max-width:900px){
+  .srv .adm-tablewrap{ overflow-x:auto }
+  .srv-table{ table-layout:auto; min-width:44rem }
+  .srv-scope{ font-size:.75rem }
+}

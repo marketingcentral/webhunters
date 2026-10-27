@@ -2,7 +2,7 @@
  * SAFE ZONE — papéis civis entre operações.
  *
  * Cobre o que a tela promete e o que o servidor tem de garantir:
- *   - as quatro zonas aparecem, com situação e movimento;
+ *   - as zonas aparecem, com situação e movimento;
  *   - o estado operacional decide onde se entra: Sobrevivente perde as zonas do governo e
  *     cai na ZONA FRANCA; Mercenário perde os papéis exclusivos do Hunter Command;
  *   - nenhum papel oferece botão que o servidor recusaria — e o servidor recusa mesmo assim
@@ -81,7 +81,8 @@ async function post(acao, campos) {
 {
   const r = await abrir('safe-zone');
   check('safe-zone: 200 sem aviso PHP', r.status === 200 && !r.phpErro, `status=${r.status}`);
-  check('safe-zone: quatro zonas conhecidas', r.zonas.length === 4, r.zonas.join(' | '));
+  // 3 governamentais (Vigia/Bravo/Charlie) + ZONA FRANCA + ENTREPOSTO CENTRAL
+  check('safe-zone: as zonas conhecidas aparecem', r.zonas.length === 5, r.zonas.join(' | '));
   check('safe-zone: ZONA FRANCA existe ao lado das governamentais', r.zonas.some((z) => z.includes('FRANCA')));
   check('safe-zone: os seis papéis civis aparecem', r.papeis.length === 6, r.papeis.map((p) => p.nome).join(','));
   check('safe-zone: Hunter tem ao menos um papel assumível', r.papeis.some((p) => p.pode), r.papeis.filter((p) => p.pode).map((p) => p.key).join(','));

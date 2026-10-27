@@ -9,7 +9,7 @@ return [
     'title'    => 'FACÇÕES',
     'subtitle' => 'CONTRATO MERCENÁRIO',
     'intro'    => 'Sob a Licença Cinza, um Hunter pode suspender o IFF do governo e atuar para uma facção. É o mesmo personagem, o mesmo inventário e o mesmo mundo — muda quem reconhece você, quem o protege e quem o caça.',
-    'rule'     => 'Só uma facção por vez. Romper um contrato zera a reputação da facção abandonada.',
+    'rule'     => 'Só uma facção por vez. Para trocar, encerre o contrato atual e volte ao Hunter Command.',
 
     'labels' => [
         'reputation'    => 'REPUTAÇÃO',
@@ -39,6 +39,7 @@ return [
         'sign'     => 'ASSINAR CONTRATO',
         'active'   => 'CONTRATO ATIVO',
         'switch'   => 'ROMPER CONTRATO ATUAL E ASSINAR',
+        'blocked'  => 'ENCERRE O CONTRATO ATUAL PARA ASSINAR',
         'release'  => 'ENCERRAR CONTRATO',
         'locked'   => 'ACESSO TEMPORARIAMENTE BLOQUEADO',
         'survivor' => 'INDISPONÍVEL PARA SOBREVIVENTES',

@@ -1,0 +1,183 @@
+<?php declare(strict_types=1);
+
+/**
+ * Cromo da tela ADMIN · LOJA (/admin/loja).
+ *
+ * Só TEXTO mora aqui. Nenhum número, nenhuma regra: quantidade, preço e estado vêm de
+ * App\Repo\ShopOfferRepo, e quem decide o que é válido é App\Controllers\Admin\ShopController.
+ *
+ * O motivo de existir é o mesmo do app/Data/admin-dashboard.php: a frase que explica uma
+ * recusa ("por que não dá para excluir esta oferta") é escrita uma vez, revisada como texto,
+ * e não fica picada dentro de três `if` no controller.
+ *
+ * Os rótulos de MOEDA e de CATEGORIA são deliberadamente os mesmos de app/Data/loja.php — o
+ * operador edita aqui e confere na vitrine do jogo; duas grafias para a mesma aba fariam ele
+ * duvidar de estar mexendo na coisa certa.
+ */
+
+return [
+
+    'titulos' => [
+        'lista'     => 'Ofertas publicadas',
+        'formulario_novo'    => 'Nova oferta',
+        'formulario_editar'  => 'Editando oferta',
+        'exclusao'  => 'Excluir oferta',
+    ],
+
+    /* Faixa de indicadores. O rótulo é curto porque divide a linha com o selo de contagem. */
+    'kpis' => [
+        'ofertas'  => 'Ofertas publicadas',
+        'destaque' => 'Na aba Destaques',
+        'promo'    => 'Com desconto ativo',
+        'catalogo' => 'Itens sem oferta',
+    ],
+
+    'kpi_notas' => [
+        'ofertas'  => 'Linhas de shop_offers com item existente em items. É o que a loja do jogo consegue vender.',
+        'destaque' => 'A aba DESTAQUES da loja do jogo não tem conteúdo próprio: ela mostra exatamente as ofertas marcadas como destaque.',
+        'promo'    => 'Ofertas com discount > 0. O preço final é calculado na hora da compra, não gravado.',
+        'catalogo' => 'Itens do catálogo (items) que ainda não estão à venda em lugar nenhum da loja.',
+    ],
+
+    /* Abas da loja do jogo. 'destaques' fica de fora de propósito: ela não é uma categoria
+       gravada em shop_offers, é o filtro de `featured` — por isso não pode ser escolhida no
+       formulário. Ver app/Views/pages/loja.php. */
+    'categorias' => [
+        'armas'       => 'Armas',
+        'equipamento' => 'Equipamento',
+        'suprimentos' => 'Suprimentos',
+        'cosmeticos'  => 'Skins',
+        'passe'       => 'Pacotes',
+    ],
+
+    'moedas' => [
+        'credits' => ['label' => 'Créditos', 'curto' => 'CRD', 'svg' => 'coin-credit', 'tom' => 'lime'],
+        'cash'    => ['label' => 'Dinheiro', 'curto' => 'DIN', 'svg' => 'coin-cash',   'tom' => 'cyan'],
+        'points'  => ['label' => 'Pontos',   'curto' => 'PTS', 'svg' => 'coin-points', 'tom' => 'amber'],
+    ],
+
+    'raridades' => [
+        'comum'    => ['label' => 'Comum',    'tom' => 'muted'],
+        'incomum'  => ['label' => 'Incomum',  'tom' => 'ok'],
+        'raro'     => ['label' => 'Raro',     'tom' => 'info'],
+        'epico'    => ['label' => 'Épico',    'tom' => 'purple'],
+        'lendario' => ['label' => 'Lendário', 'tom' => 'gold'],
+    ],
+
+    'filtros' => [
+        'busca'        => 'Buscar por item, slug ou etiqueta',
+        'categoria'    => 'Todas as categorias',
+        'moeda'        => 'Todas as moedas',
+        'estado'       => 'Qualquer estado',
+        'limpar'       => 'Limpar filtros',
+    ],
+
+    'estados' => [
+        'destaque' => 'Só em destaque',
+        'comum'    => 'Fora do destaque',
+        'promo'    => 'Só com desconto',
+        'cheio'    => 'Só a preço cheio',
+    ],
+
+    'colunas' => [
+        'ordem'     => 'Ordem',
+        'item'      => 'Item',
+        'categoria' => 'Categoria',
+        'preco'     => 'Preço',
+        'desconto'  => 'Desc.',
+        'final'     => 'Preço final',
+        'destaque'  => 'Destaque',
+    ],
+
+    'campos' => [
+        'item'       => 'Item do catálogo',
+        'categoria'  => 'Categoria (aba da loja)',
+        'preco'      => 'Preço',
+        'moeda'      => 'Moeda',
+        'desconto'   => 'Desconto (%)',
+        'tag'        => 'Etiqueta',
+        'ordem'      => 'Ordem na aba',
+        'destaque'   => 'Mostrar na aba Destaques',
+    ],
+
+    'ajudas' => [
+        'item'      => 'Um item só deveria aparecer uma vez por aba — o mesmo produto duas vezes na mesma vitrine parece defeito para o jogador.',
+        'categoria' => 'É a aba em que o jogador encontra o produto. O número ao lado é quantas ofertas a aba já tem.',
+        'preco'     => 'Em unidades da moeda escolhida, sem centavos. Vazio usa o preço de catálogo do item.',
+        'desconto'  => 'Vazio ou 0 = sem promoção. O preço final é calculado na compra: preço × (100 − desconto) ÷ 100.',
+        'tag'       => 'Selo curto sobre a arte do item na loja (NOVO, POPULAR, LIMITADO…). Não muda preço nenhum.',
+        'ordem'     => 'Menor primeiro, dentro da própria aba. Empate resolve pelo id da oferta.',
+        'destaque'  => 'A aba DESTAQUES mostra exatamente as ofertas marcadas aqui, de todas as categorias.',
+        'moeda'     => 'A carteira do jogador é separada por moeda: trocar a moeda muda quem consegue comprar.',
+    ],
+
+    'vazios' => [
+        'sem_oferta'  => 'A loja do jogo não tem nenhuma oferta publicada. Enquanto isso, todas as abas da vitrine aparecem vazias para o jogador.',
+        'sem_filtro'  => 'Nenhuma oferta corresponde a esta busca. Os filtros continuam aplicados — limpe-os para ver a loja inteira.',
+        'sem_item'    => 'Não há item no catálogo para vender. Cadastre itens em items antes de montar a vitrine.',
+    ],
+
+    'acoes' => [
+        'nova'      => 'Nova oferta',
+        'editar'    => 'Editar oferta',
+        'excluir'   => 'Excluir oferta',
+        'salvar'    => 'Salvar oferta',
+        'cancelar'  => 'Cancelar',
+        'subir'     => 'Subir na aba',
+        'descer'    => 'Descer na aba',
+        'destacar'  => 'Pôr em destaque',
+        'tirar'     => 'Tirar do destaque',
+        'confirmar' => 'Excluir definitivamente',
+    ],
+
+    'confirmacao' => [
+        'pergunta' => 'Excluir esta oferta da loja?',
+        'efeito'   => 'O item continua no catálogo e no inventário de quem já comprou — o que some é a possibilidade de comprá-lo na loja.',
+        'historico' => '%s compra(s) já registradas deste item; o histórico não é apagado.',
+        'sem_historico' => 'Nenhuma compra registrada deste item até agora.',
+    ],
+
+    /* Recusas. Cada uma diz o FATO e o caminho de saída — recusa sem saída é beco. */
+    'bloqueios' => [
+        'ultima_da_aba' => 'Esta é a única oferta de %s. Excluindo-a, a aba %s da loja do jogo fica vazia para todos os jogadores. Mova outra oferta para esta categoria antes de excluir.',
+    ],
+
+    'erros' => [
+        'item_vazio'      => 'Escolha o item que esta oferta vende.',
+        'item_inexistente'=> 'Este item não existe mais no catálogo.',
+        'item_duplicado'  => 'Este item já está à venda em %s. Edite a oferta existente em vez de criar uma segunda.',
+        'categoria'       => 'Escolha uma das abas da loja do jogo.',
+        'categoria_destaque' => 'DESTAQUES não é uma aba própria: para aparecer nela, marque a oferta como destaque.',
+        'preco_vazio'     => 'Informe o preço — este item não tem preço de catálogo para herdar.',
+        'preco_invalido'  => 'O preço é um número inteiro de 1 a %s.',
+        'moeda'           => 'Escolha uma moeda válida.',
+        'desconto'        => 'O desconto vai de 0 a %s%%. Acima disso o preço final vira esmola e o jogador desconfia da loja.',
+        'tag'             => 'A etiqueta tem no máximo %s caracteres — é um selo sobre a arte, não uma frase.',
+        'ordem'           => 'A ordem é um número inteiro de 0 a %s.',
+        'nao_encontrada'  => 'Oferta não encontrada — talvez outro operador já a tenha excluído.',
+        'geral'           => 'Corrija os campos marcados para salvar.',
+    ],
+
+    'ok' => [
+        'criada'    => 'Oferta de %s publicada em %s.',
+        'atualizada'=> 'Oferta de %s atualizada.',
+        'excluida'  => 'Oferta de %s removida da loja.',
+        'destacada' => '%s entrou na aba Destaques.',
+        'tirada'    => '%s saiu da aba Destaques.',
+        'movida'    => '%s agora é a %sª oferta de %s.',
+    ],
+
+    'micro' => [
+        /* A vitrine do jogo desenha 6×2 nichos por aba (app/Views/pages/loja.php). Passar de
+           12 não quebra nada, mas muda o desenho da tela do jogador — e o operador merece
+           saber disso na hora em que publica a 13ª. */
+        'aba_cheia'      => 'A aba %s tem %s ofertas; a vitrine do jogo desenha 12 nichos e cresce a partir daí.',
+        'preco_catalogo' => 'Catálogo: %s',
+        'sem_desconto'   => 'preço cheio',
+        'moeda_nota'     => 'Preço em moeda do jogo — não é real. Receita em dinheiro fica no painel principal.',
+        'ordem_col'      => 'Posição dentro da própria aba',
+        'ordem_val'      => 'Valor de sort_order — a aba mostra do menor para o maior; é este número que o formulário edita.',
+        'total'          => '%s de %s ofertas',
+        'pagina'         => 'Página %s de %s',
+    ],
+];

@@ -1,0 +1,16 @@
+# media/uploads/ guarda arquivo enviado por operador do painel. NADA aqui pode ser
+# executado: esta pasta e servida direto pelo servidor web (ver .htaccess da raiz),
+# entao um .php aqui rodaria como codigo do site. Reforco para Apache — a regra que
+# vale em producao (OpenLiteSpeed) e o RewriteRule de media/ no .htaccess da raiz.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule \.(php\d?|phtml|phps|phar|pht|cgi|pl|py|rb|sh|exe|html?|svg|xml)$ - [F,L]
+</IfModule>
+<FilesMatch "\.(php\d?|phtml|phps|phar|pht|cgi|pl|py|rb|sh|exe|html?|svg|xml)$">
+    Require all denied
+</FilesMatch>
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+Options -ExecCGI -Indexes
+AddType text/plain .php .phtml .phar .cgi .pl .py

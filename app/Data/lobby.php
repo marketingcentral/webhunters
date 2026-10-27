@@ -35,7 +35,7 @@ return [
     'chat_send'  => 'Enviar mensagem',
     'news_title' => 'BOLETINS E ATUALIZAÇÕES',
     'news_slides' => [
-        ['title' => 'ATIVIDADE BIOLÓGICA AUMENTA NO NORTE', 'desc' => 'Relatórios do Icarus indicam movimentação subterrânea próxima ao Setor K-07.', 'image' => 'maps/vale-do-eco.jpg', 'href' => 'noticias'],
+        ['title' => 'O CORO SE AGITA NO NORTE', 'desc' => 'Sensores do Icarus registram pulsos no micélio perto do Setor K-07, mais fortes a cada noite.', 'image' => 'maps/vale-do-eco.jpg', 'href' => 'noticias'],
         ['title' => 'AEGIS REFORÇA A PONTE LESTE',          'desc' => 'Blindados cruzando a estrada leste. Mercenários relatam patrulhas dobradas.',  'image' => 'maps/porto-industrial.jpg', 'href' => 'noticias'],
         ['title' => 'PRÓXIMA JANELA LOGÍSTICA CONFIRMADA',  'desc' => 'Comboio de reabastecimento cruza o setor nas próximas horas.',               'image' => 'maps/complexo-militar.jpg', 'href' => 'noticias'],
         ['title' => 'ATUALIZAÇÃO 8.8.1',                    'desc' => 'Correções, desempenho e novo conteúdo já disponíveis.',                      'image' => 'news/news-atualizacao.jpg', 'href' => 'noticias/atualizacao-8-8-1'],

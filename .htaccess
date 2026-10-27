@@ -28,7 +28,35 @@ ServerSignature Off
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # API de gestao (/api/v1): repassa o cabecalho Authorization para o PHP.
+    # Atras de CGI/FastCGI - o caso do OpenLiteSpeed da producao - o servidor REMOVE o
+    # Authorization antes de entregar a requisicao, para um script CGI nao ver credencial de
+    # HTTP Basic sem querer. Consequencia: a chave da API sumiria no caminho e TODA chamada
+    # responderia 401 em producao, funcionando so no Apache do WAMP. Esta linha reinjeta o
+    # valor como variavel de ambiente; o PHP a recebe em REDIRECT_HTTP_AUTHORIZATION, que
+    # App\Core\Api\Requisicao::chaveApresentada() le junto com HTTP_AUTHORIZATION.
+    # E RewriteRule (e nao SetEnvIf) porque no OLS so as regras de rewrite valem - ver a nota
+    # no topo deste arquivo.
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
     RewriteRule ^(app|tools|captures|db|docs|O-QUE-VAMOS-CRIAR)(/|$) - [F,L]
+
+    # media/ NAO EXECUTA NADA.
+    # Esta pasta e a unica do site em que um operador do painel grava arquivo (/admin/upload
+    # escreve em media/uploads/<entidade>/). E media/ e servida DIRETO: a regra "-f serve o
+    # arquivo" la embaixo entrega qualquer arquivo existente sem passar pelo index.php. Logo,
+    # um .php que conseguisse aterrissar aqui nao seria uma imagem quebrada - seria codigo
+    # rodando com as permissoes do site. O UploadController ja recusa pelo conteudo real
+    # (getimagesize + finfo); esta linha e a segunda tranca, para o dia em que a primeira
+    # falhar. Tem de ser RewriteRule porque <FilesMatch> e php_flag sao IGNORADOS pelo
+    # OpenLiteSpeed da producao (ver nota no topo deste arquivo).
+    # .html/.svg/.xml entram na lista porque sao executados pelo NAVEGADOR: SVG e XML e aceita
+    # <script>, e um HTML servido do mesmo dominio rouba a sessao do painel.
+    # [NC] porque no Windows e no OLS "foto.PHP" e "foto.php" sao o MESMO arquivo: sem isso a
+    # regra cairia com uma letra maiuscula. Conferido: hoje nao existe nenhum .svg/.html/.xml
+    # legitimo dentro de media/ (so imagem raster), entao a lista nao derruba nada do jogo.
+    RewriteRule ^media/.*\.(php\d?|phtml|phps|phar|pht|cgi|pl|py|rb|sh|exe|htm|html|svg|xml|htaccess)$ - [F,NC,L]
 
     # Arquivos ocultos: .env, .git*, .htaccess, .DS_Store...
     # Isto E o bloqueio - o <FilesMatch> la embaixo nao vale no OpenLiteSpeed.

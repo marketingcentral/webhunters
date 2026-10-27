@@ -1,0 +1,121 @@
+/* ==========================================================================
+   ADMIN · CRIAR PONTOS NO MAPA (/admin/mapas/pontos)
+   Só o que é desta tela. Cartão, formulário, botão e tabela vêm de admin.css.
+   ========================================================================== */
+
+/* ------------------------------------------------------------- o catálogo */
+.mpt-intro{ max-width:72ch; margin-bottom:1rem }
+
+.mpt-group + .mpt-group{ margin-top:1.35rem }
+.mpt-group__title{
+  display:flex; align-items:center; gap:.5rem;
+  margin:0 0 .6rem;
+  font-family:var(--font-cond);
+  font-size:.8125rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--c-text-2);
+}
+.mpt-group__n{
+  min-width:1.4rem; padding:0 .35rem;
+  border:1px solid var(--adm-line); border-radius:999px;
+  font-size:.6875rem; line-height:1.3; text-align:center;
+  color:var(--c-muted);
+}
+
+.mpt-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(13.5rem, 1fr));
+  gap:.5rem;
+}
+.mpt-card{
+  position:relative;
+  display:flex; align-items:center; gap:.7rem;
+  padding:.6rem .7rem;
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface-2, transparent);
+  color:var(--c-text);
+  text-decoration:none;
+  transition:border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease),
+             transform var(--t-fast) var(--ease);
+}
+.mpt-card:hover{
+  border-color:var(--c-lime-dim);
+  background:var(--adm-hover);
+  transform:translateY(-1px);
+}
+.mpt-card__txt{ display:grid; gap:.15rem; min-width:0; flex:1 1 auto }
+.mpt-card__name{
+  font-size:.875rem; font-weight:500; line-height:1.15;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.mpt-card__kind{
+  font-family:var(--font-mono);
+  font-size:.6875rem; line-height:1;
+  color:var(--c-muted);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+/* quantos marcadores do mundo usam este ponto: é o número que diz se apagá-lo
+   é inofensivo ou se vai desenhar 12 pontos de outro jeito */
+.mpt-card__use{
+  flex:0 0 auto;
+  min-width:1.6rem; padding:.1rem .35rem;
+  border-radius:var(--adm-r-sm);
+  background:rgba(155,224,74,.12);
+  color:var(--c-lime);
+  font-size:.75rem; text-align:center;
+}
+.mpt-card__use.is-zero{ background:transparent; color:var(--c-muted) }
+.mpt-card__lock{
+  position:absolute; top:.3rem; right:.35rem;
+  font-size:.8rem; color:var(--c-muted); line-height:1;
+}
+.mpt-card__lock .ms{ font-size:.8rem }
+.mpt-card.is-system{ border-style:dashed }
+
+/* ------------------------------------------------------------ o formulário */
+.mpt-form__body{
+  display:grid;
+  grid-template-columns:11rem minmax(0,1fr);
+  gap:1.5rem;
+  align-items:start;
+}
+@media (max-width:860px){
+  .mpt-form__body{ grid-template-columns:minmax(0,1fr) }
+}
+
+.mpt-preview{
+  display:grid; justify-items:center; gap:.5rem;
+  padding:1.1rem .8rem;
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+  text-align:center;
+  position:sticky; top:1rem;
+}
+.mpt-preview__box{
+  display:grid; place-items:center;
+  width:5rem; height:5rem;
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r-sm);
+  /* xadrez discreto: uma arte enviada com fundo transparente precisa PARECER
+     transparente aqui, senão o operador só descobre o furo no mapa do jogador */
+  background-image:
+    linear-gradient(45deg, rgba(255,255,255,.035) 25%, transparent 25%, transparent 75%, rgba(255,255,255,.035) 75%),
+    linear-gradient(45deg, rgba(255,255,255,.035) 25%, transparent 25%, transparent 75%, rgba(255,255,255,.035) 75%);
+  background-size:14px 14px;
+  background-position:0 0, 7px 7px;
+}
+.mpt-preview__name{
+  font-family:var(--font-cond);
+  font-size:.8125rem; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--c-text);
+  overflow-wrap:anywhere;
+}
+.mpt-preview__hint{ font-size:.6875rem; line-height:1.35; color:var(--c-muted) }
+
+.mpt-fields{ display:grid; gap:0 }
+.mpt-icon{ min-width:0 }
+/* os três campos ocupam a MESMA linha da grade: trocar a origem não pode mudar
+   a altura do formulário, ou o botão de salvar pula de lugar a cada troca */
+.mpt-icon__campo{ min-width:0 }

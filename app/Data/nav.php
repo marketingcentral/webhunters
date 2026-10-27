@@ -9,4 +9,5 @@ return [
     ['slug' => 'mapa',        'label' => 'MAPA',        'route' => 'mapa'],
     ['slug' => 'missoes',     'label' => 'MISSÕES',     'route' => 'missoes'],
     ['slug' => 'conquistas',  'label' => 'CONQUISTAS',  'route' => 'conquistas'],
+    ['slug' => 'bestiario',   'label' => 'BESTIÁRIO',   'route' => 'bestiario'],
 ];

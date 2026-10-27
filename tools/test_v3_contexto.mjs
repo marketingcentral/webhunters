@@ -115,7 +115,7 @@ for (const rota of P0) {
   check('mapa: CAPACIDADE OPERACIONAL 20 (não "jogadores máx.")', r.main.includes('CAPACIDADE OPERACIONAL') && !r.main.includes('JOGADORES MÁX'));
   const mp = await page.evaluate(() => ({
     gov: document.querySelectorAll('#map3d-layer .mk[data-kind="gov_base"]').length,
-    chips: [...document.querySelectorAll('[data-map-filters] .mlayer')].map((c) => c.textContent.trim().toUpperCase()),
+    chips: [...document.querySelectorAll('[data-map-filters] .mlayer')].map((c) => (c.querySelector('.mlegend__label') || c).textContent.trim().toUpperCase()),
     sites: document.querySelectorAll('.rbase--aegis, .rbase--frontier').length,
     tipos: [...document.querySelectorAll('.rext__t')].map((e) => e.textContent.trim().toUpperCase()),
     vagas: /\b\d+\s*\/\s*4\b/.test(document.querySelector('.rbases')?.innerText ?? ''),
@@ -123,8 +123,12 @@ for (const rota of P0) {
   check('mapa: 3 Bases Hunter com estado', mp.gov === 3 && r.main.includes('OPERACIONAL'), `gov_base=${mp.gov}`);
   check('mapa: sem vagas exatas nas bases', !mp.vagas);
   check('mapa: instalações Aegis/Frontier com status', mp.sites >= 2 && /NEUTRA|ALIADA|HOSTIL|BLOQUEADA/.test(r.main), `sites=${mp.sites}`);
-  check('mapa: camadas TODOS · HUNTER · FACÇÕES · VEYRA · BASES · EXTRAÇÕES · EVENTOS',
-    JSON.stringify(mp.chips) === JSON.stringify(['TODOS', 'HUNTER', 'FACÇÕES', 'VEYRA', 'BASES', 'EXTRAÇÕES', 'EVENTOS']), mp.chips.join(','));
+  // a legenda virou o filtro: cada linha é uma camada clicável, inclusive os serviços civis
+  const CAMADAS = ['TODOS', 'EXTRAÇÃO', 'BASE HUNTER', 'POSTO AVANÇADO', 'SAFE ZONE', 'AEGIS', 'FRONTIER',
+                   'BASE DE CAMPO', 'MERCADO', 'COMBUSTÍVEL', 'HOSPITAL', 'NINHO VEYRA', 'CONTAMINAÇÃO',
+                   'ATIV. HUMANA', 'LOGÍSTICA', 'EVENTO', 'RECURSOS'];
+  check('mapa: camadas clicáveis (legenda = filtro, com serviços civis)',
+    JSON.stringify(mp.chips) === JSON.stringify(CAMADAS), mp.chips.join(','));
   check('mapa: extrações tipadas (EVAC HUNTER / PÚBLICA / TRANSPORTE AEGIS / ROTA FRONTIER)',
     ['EVAC HUNTER', 'PÚBLICA', 'TRANSPORTE AEGIS', 'ROTA FRONTIER'].every((t) => mp.tipos.includes(t)), mp.tipos.join(','));
 

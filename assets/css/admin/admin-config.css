@@ -1,0 +1,321 @@
+/* ==========================================================================
+   EXTRACT HUNTERS — ADMIN · CONFIGURAÇÕES DO JOGO (/admin/configuracoes)
+
+   Carregado sozinho pelo slug da página (layouts/admin.php monta
+   `css/admin/<slug>.css`), depois de admin.css — por isso aqui só existe o que
+   é DESTA tela. Nada de .adm-* redefinido: o sistema é do painel inteiro.
+
+   A geometria de tudo é uma grade de três colunas por parâmetro:
+
+       [ identidade ............ ][ campo ...... ][ procedência ]
+       rótulo + chave + dica       o widget        tipo, quando,
+                                                   valor anterior
+
+   Ela existe porque as três perguntas são feitas nesta ordem: "o que é isto?",
+   "qual é o valor?", "quem mexeu e no que era?". Colunas de largura fixa nas
+   pontas e `minmax(0,…)` no meio garantem que o campo largo (JSON) encolha em
+   vez de empurrar a coluna da direita para fora — é o que mata a rolagem
+   horizontal em 1366px.
+
+   Abaixo de 1180px a grade vira uma coluna só e a procedência passa a ser uma
+   linha de rodapé do item: em telas estreitas, três colunas de 12px de texto
+   são três colunas ilegíveis.
+   ========================================================================== */
+
+/* Esta tela ROLA: é um formulário longo por natureza, ao contrário do
+   dashboard, que cabe fechado numa tela. O que não pode é rolar de lado. */
+.page-admin-config .adm-content{ overflow-x:hidden }
+
+/* ---- resumo do topo ----------------------------------------------------- */
+.cfg-kpis .adm-kpi__value{ font-size:1.5rem }
+/* A data não é um número que se compara: cabe menor, sem a fonte tabular
+   gritar no meio da faixa. */
+.cfg-kpi-data{ font-size:1.05rem !important; font-family:var(--font-mono); letter-spacing:-.01em }
+.cfg-kpis .adm-kpi__delta{ font-size:.72rem; color:var(--c-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+
+/* ---- barra de filtros --------------------------------------------------- */
+.cfg-filtro{ display:grid; gap:.25rem; min-width:0 }
+.cfg-filtro__lbl{
+  font-family:var(--font-cond);
+  font-size:.68rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  line-height:1;
+}
+.cfg-filtro .adm-select{ min-height:2.4rem; font-size:.85rem; max-width:15rem }
+
+.cfg-contagem{
+  padding:.6rem 1rem .75rem;
+  font-size:.82rem;
+  color:var(--c-muted);
+  line-height:1.4;
+}
+.cfg-contagem strong{ color:var(--c-lime) }
+
+/* ---- cartão de um grupo ------------------------------------------------- */
+.cfg-grupo__ico{
+  display:grid; place-items:center;
+  width:2.25rem; height:2.25rem;
+  flex-shrink:0;
+  border-radius:var(--adm-r-sm);
+  background:rgba(var(--c-lime-rgb),.10);
+  color:var(--c-lime);
+}
+.cfg-grupo__ico .ms{ font-size:1.3rem }
+.cfg-grupo__conta{
+  font-family:var(--font-mono);
+  font-size:.75rem;
+  color:var(--c-dim);
+  white-space:nowrap;
+}
+
+.cfg-lista{ display:flex; flex-direction:column; padding:0 }
+
+/* ---- um parâmetro ------------------------------------------------------- */
+.cfg-item{
+  display:grid;
+  grid-template-columns:minmax(13rem,20rem) minmax(0,1fr) minmax(11rem,14rem);
+  gap:1rem 1.25rem;
+  align-items:start;
+  padding:1rem;
+  border-top:1px solid var(--adm-line);
+  min-width:0;
+}
+.cfg-item:first-child{ border-top:0 }
+.cfg-item:hover{ background:rgba(255,255,255,.012) }
+
+/* Texto e JSON precisam da largura inteira para não virarem uma fresta: o
+   widget passa a ocupar as duas primeiras colunas e a identidade sobe. */
+.cfg-item--largo{ grid-template-columns:minmax(0,1fr) minmax(11rem,14rem) }
+.cfg-item--largo .cfg-item__id{ grid-column:1 }
+.cfg-item--largo .cfg-item__campo{ grid-column:1; grid-row:2 }
+.cfg-item--largo .cfg-item__meta{ grid-column:2; grid-row:1 / span 2 }
+
+/* Parâmetro que derruba jogador (manutenção) ou reposiciona progresso (XP):
+   o aviso é uma faixa lateral âmbar, não uma cor de fundo — o item continua
+   legível e a diferença sobrevive à impressão pela borda grossa. */
+.cfg-item--perigo{ border-left:3px solid rgba(var(--c-amber-rgb),.55); padding-left:calc(1rem - 3px) }
+
+.cfg-item.is-invalid{ background:rgba(var(--c-red-rgb),.05) }
+.cfg-item.is-invalid .cfg-item__chave{ color:#ff8f92; border-color:rgba(var(--c-red-rgb),.35) }
+
+/* coluna 1 — identidade */
+.cfg-item__id{ display:grid; gap:.3rem; min-width:0 }
+.cfg-item__label{ line-height:1.25 }
+.cfg-item__chave{
+  justify-self:start;
+  max-width:100%;
+  padding:.1rem .35rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:3px;
+  background:var(--adm-bg);
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  color:var(--c-muted);
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.cfg-item__dica{ line-height:1.45; max-width:34rem }
+
+/* coluna 2 — o widget */
+.cfg-item__campo{ display:grid; gap:.4rem; min-width:0 }
+
+.cfg-switch{ height:2.5rem }
+.cfg-switch__txt{
+  font-family:var(--font-cond);
+  font-size:.82rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+/* Estado com COR E TEXTO: sem a palavra, o interruptor sozinho obriga a
+   adivinhar de que lado é "ligado". */
+.cfg-switch__txt--on{ color:var(--c-lime) }
+.cfg-switch__txt--off{ color:var(--c-muted) }
+
+.cfg-num{ display:flex; align-items:center; gap:.5rem; min-width:0 }
+/* Número alinhado à direita e em fonte tabular: é assim que dois campos
+   empilhados podem ser comparados de relance. */
+.cfg-num__in{
+  max-width:9rem;
+  text-align:right;
+  font-family:var(--font-mono);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:.02em;
+}
+.cfg-num__un{
+  font-family:var(--font-cond);
+  font-size:.78rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  white-space:nowrap;
+}
+.cfg-faixa{ font-variant-numeric:tabular-nums }
+
+.cfg-json{
+  font-family:var(--font-mono);
+  font-size:.82rem;
+  line-height:1.5;
+  min-height:9rem;
+  /* Documento longo rola DENTRO da caixa; a página nunca ganha barra lateral. */
+  white-space:pre;
+  overflow:auto;
+  tab-size:2;
+}
+/* Marca do editor: JSON quebrado enquanto se digita é aviso, não erro — o
+   veredito continua sendo o do servidor, depois de salvar. */
+.cfg-json.is-quebrado{ border-color:rgba(var(--c-amber-rgb),.6) }
+.cfg-json-aviso{
+  display:flex; align-items:center; gap:.3rem;
+  font-family:var(--font-cond);
+  font-size:.78rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--c-amber);
+}
+
+/* coluna 3 — procedência */
+.cfg-item__meta{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:.4rem;
+  min-width:0;
+  max-width:100%;
+}
+.cfg-item__meta > *{ max-width:100% }
+
+.cfg-tipo{ font-size:.68rem; height:1.4rem }
+.cfg-tipo--int .ms,.cfg-tipo--int{ color:var(--c-cyan) }
+.cfg-tipo--bool .ms,.cfg-tipo--bool{ color:var(--c-lime) }
+.cfg-tipo--json .ms,.cfg-tipo--json{ color:var(--c-purple) }
+.cfg-tipo--string .ms,.cfg-tipo--string{ color:var(--c-muted) }
+
+.cfg-meta__linha{
+  display:flex; align-items:center; gap:.3rem;
+  font-size:.75rem;
+  color:var(--c-muted);
+  line-height:1.3;
+  min-width:0;
+}
+.cfg-meta__linha .ms{ font-size:.95rem; color:var(--c-dim); flex-shrink:0 }
+.cfg-meta__linha--semente{ color:var(--c-dim) }
+.cfg-meta__linha--lock{ color:var(--c-dim) }
+
+.cfg-antes{
+  display:flex; align-items:center; gap:.3rem;
+  font-size:.75rem;
+  color:var(--c-amber);
+  min-width:0;
+}
+.cfg-antes .ms{ font-size:.95rem; flex-shrink:0 }
+
+.cfg-code{
+  padding:.05rem .3rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:3px;
+  background:var(--adm-bg);
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  color:var(--c-text-2);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  max-width:100%;
+}
+
+.cfg-remover{
+  display:flex; align-items:center; gap:.25rem;
+  font-family:var(--font-cond);
+  font-size:.75rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  transition:color var(--t-fast) var(--ease);
+}
+.cfg-remover .ms{ font-size:1rem }
+.cfg-remover:hover{ color:#ff8f92 }
+
+/* ---- rodapé do grupo ---------------------------------------------------- */
+.cfg-foot{ justify-content:space-between; flex-wrap:wrap }
+.cfg-foot__aviso{
+  display:flex; align-items:center; gap:.35rem;
+  font-size:.78rem;
+  color:var(--c-dim);
+  min-width:0;
+}
+.cfg-foot__aviso .ms{ font-size:1rem }
+/* O botão só ganha peso quando há o que salvar (marcado pelo JS da tela).
+   Sem JS ele fica sempre ativo — a decisão real continua sendo do servidor,
+   que ignora envio sem mudança. */
+.cfg-foot .adm-btn[data-cfg-salvar].is-limpo{ opacity:.5 }
+
+/* ---- confirmação de exclusão -------------------------------------------- */
+.cfg-confirma{ border-color:rgba(var(--c-red-rgb),.45) }
+.cfg-confirma .adm-card__head{ border-bottom-color:rgba(var(--c-red-rgb),.3) }
+.cfg-confirma__ico{ font-size:1.5rem; color:#ff8f92 }
+.cfg-confirma--bloqueada{ border-color:rgba(var(--c-amber-rgb),.45) }
+.cfg-confirma--bloqueada .cfg-confirma__ico{ color:var(--c-amber) }
+.cfg-confirma--bloqueada .adm-card__head{ border-bottom-color:rgba(var(--c-amber-rgb),.3) }
+.cfg-confirma__txt{
+  font-size:.9rem;
+  color:var(--c-text-2);
+  line-height:1.55;
+  max-width:60rem;
+  margin-bottom:1rem;
+}
+
+/* ---- criar chave -------------------------------------------------------- */
+.cfg-nova > details > summary{ cursor:pointer; list-style:none }
+.cfg-nova > details > summary::-webkit-details-marker{ display:none }
+.cfg-nova > details:not([open]) .adm-card__head{ border-bottom:0 }
+.cfg-nova__ico{ font-size:1.4rem; color:var(--c-lime) }
+.cfg-nova__chev{
+  margin-left:auto;
+  color:var(--c-muted);
+  transition:transform var(--t-fast) var(--ease);
+}
+.cfg-nova > details[open] .cfg-nova__chev{ transform:rotate(180deg) }
+.cfg-nova__valor{ font-family:var(--font-mono); font-size:.85rem; min-height:5rem }
+.cfg-nova .adm-form__actions .adm-hint{ text-align:right }
+
+/* ---- paginação ---------------------------------------------------------- */
+.cfg-pager .adm-card__body{ padding:.75rem 1rem }
+
+/* ==========================================================================
+   RESPONSIVO
+   ========================================================================== */
+
+/* Notebook 1366×768: a coluna da identidade encolhe antes do campo — ler o
+   rótulo em duas linhas custa menos do que digitar num campo espremido. */
+@media (max-width:1500px){
+  .cfg-item{ grid-template-columns:minmax(11rem,16rem) minmax(0,1fr) minmax(10rem,12rem) }
+}
+
+/* Abaixo disto as três colunas deixam de caber sem truncar texto: o item vira
+   uma coluna só e a procedência desce para um rodapé horizontal. */
+@media (max-width:1180px){
+  .cfg-item,
+  .cfg-item--largo{ grid-template-columns:minmax(0,1fr) }
+  .cfg-item--largo .cfg-item__id,
+  .cfg-item--largo .cfg-item__campo,
+  .cfg-item--largo .cfg-item__meta{ grid-column:1; grid-row:auto }
+  .cfg-item__meta{
+    flex-direction:row;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:.5rem .75rem;
+    padding-top:.25rem;
+    border-top:1px dashed var(--adm-line);
+  }
+  .cfg-item__dica{ max-width:none }
+  .cfg-filtro .adm-select{ max-width:none }
+}
+
+@media (max-width:900px){
+  .cfg-kpis{ --adm-cols:2 }
+  /* A busca passa a ocupar a linha inteira antes de os selects se empilharem:
+     é o campo em que se digita, e é o primeiro que fica curto demais. */
+  .page-admin-config .adm-toolbar__grow{ flex-basis:100% }
+}

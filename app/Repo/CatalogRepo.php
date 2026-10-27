@@ -161,11 +161,23 @@ final class CatalogRepo
         return self::cached('skills', static fn(): array => Database::all('SELECT * FROM skills ORDER BY category, tier, col'));
     }
 
-    /** @return list<array<string,mixed>> */
+    /**
+     * Notícias PUBLICADAS, na ordem da vitrine.
+     *
+     * O filtro por `published` existe porque o painel (/admin/eventos, aba Notícias) chama
+     * de RASCUNHO a notícia sem data e diz isso na tela ao salvar. Sem o filtro aqui, o
+     * rascunho já estava no ar para o jogador e "publicar" não significava nada — o texto
+     * aparecia no instante em que era digitado. Data futura também espera a sua vez.
+     *
+     * @return list<array<string,mixed>>
+     */
     public static function news(): array
     {
         return self::cached('news', static function (): array {
-            $rows = Database::all('SELECT * FROM news ORDER BY sort_order, id');
+            $rows = Database::all(
+                'SELECT * FROM news WHERE published IS NOT NULL AND published <= CURDATE()
+                  ORDER BY sort_order, id'
+            );
             foreach ($rows as &$n) {
                 $b = json_decode((string)($n['body'] ?? 'null'), true);
                 $n['body'] = is_array($b) ? $b : (($n['body'] ?? '') !== '' ? [(string)$n['body']] : []);

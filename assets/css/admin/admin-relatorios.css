@@ -1,0 +1,418 @@
+/* ==========================================================================
+   ADMIN · RELATÓRIOS (/admin/relatorios)
+
+   Só o que é DESTA tela. Cartão, tabela, chip de estado, botão, formulário,
+   vazio e paginador vêm de admin.css (.adm-*) — aqui não se redesenha
+   primitivo, só se compõe.
+
+   Carregado por app/Views/layouts/admin.php pelo slug da página
+   (assets/css/admin/admin-relatorios.css), depois de admin.css.
+
+   Namespace .rel-.
+
+   REGRA DE ALTURA: a PÁGINA não rola. A tela é uma fila de trabalho — lista à
+   esquerda, leitura à direita — e as duas precisam estar visíveis ao mesmo
+   tempo para o operador comparar. Quem rola é o corpo da lista e o corpo do
+   detalhe, cada um dentro do seu cartão; a barra de filtros, os chips, o
+   paginador e os botões de estado ficam SEMPRE em tela.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. ESQUELETO
+   ========================================================================== */
+.rel{
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  gap:var(--adm-gap);
+  /* Altura DEFINIDA (não min-height): é ela que faz a faixa `1fr` distribuir o
+     espaço em vez de crescer com o conteúdo. O piso em rem é o limite — numa
+     tela baixa demais, aí sim a página rola. */
+  height:100%;
+  min-height:34rem;
+}
+
+/* A coluna de leitura é FIXA em 24rem: o texto do jogador tem sempre a mesma
+   medida (linha longa demais é ilegível), e quem cresce com o monitor é a
+   tabela, que é onde as colunas espremem. */
+.rel__grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 24rem;
+  gap:var(--adm-gap);
+  min-height:0;
+  min-width:0;
+}
+
+/* ==========================================================================
+   2. ABAS — bugs / suporte
+   ========================================================================== */
+.rel-tabs{
+  display:flex;
+  align-items:stretch;
+  gap:.4rem;
+  padding:.3rem;
+  background:var(--adm-surface);
+  border:1px solid var(--adm-line);
+  border-radius:var(--adm-r);
+}
+.rel-tab{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.5rem .9rem;
+  border-radius:var(--adm-r-sm);
+  border:1px solid transparent;
+  color:var(--c-text-2);
+  font-family:var(--font-cond);
+  font-size:.9rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  line-height:1;
+  transition:background var(--t-fast) var(--ease), color var(--t-fast) var(--ease),
+             border-color var(--t-fast) var(--ease);
+}
+.rel-tab__ico{ font-size:1.2rem; color:var(--c-muted) }
+.rel-tab:hover{ background:var(--adm-hover); color:var(--c-text) }
+.rel-tab:focus-visible{ outline:none; box-shadow:var(--adm-ring) }
+.rel-tab.is-active{
+  background:rgba(var(--c-lime-rgb),.12);
+  border-color:var(--adm-line-lime);
+  color:var(--c-lime);
+}
+.rel-tab.is-active .rel-tab__ico{ color:var(--c-lime) }
+
+/* O número da aba é a FILA daquela tabela. Zero fica apagado de propósito:
+   "nada pendente aqui" é uma informação, e não pode ter o mesmo peso visual
+   de uma fila com trabalho dentro. */
+.rel-tab__n{
+  min-width:1.5rem;
+  padding:0 .35rem;
+  border-radius:999px;
+  background:var(--adm-surface-3);
+  color:var(--c-dim);
+  font-size:.78rem;
+  text-align:center;
+  line-height:1.35rem;
+}
+.rel-tab__n.is-hot{ background:rgba(var(--c-amber-rgb),.16); color:var(--c-amber) }
+.rel-tab.is-active .rel-tab__n.is-hot{ background:rgba(var(--c-amber-rgb),.22) }
+
+/* ==========================================================================
+   3. LISTA
+   ========================================================================== */
+.rel-list{ min-width:0; min-height:0 }
+
+/* Barra de filtros: os três seletores têm largura própria e não encolhem até
+   o rótulo virar reticência — quem cede espaço é a busca, que tem placeholder
+   e ainda se explica com meia largura. */
+.rel-bar{ flex-wrap:wrap }
+.rel-bar__sel{ display:block; flex:0 0 auto; min-width:0 }
+.rel-bar__sel .adm-select{ min-width:10.5rem; height:2.4rem; min-height:2.4rem; font-size:.82rem }
+.rel-bar .adm-input{ height:2.4rem; min-height:2.4rem }
+
+/* ---- chips de estado ---------------------------------------------------- */
+.rel-chips{
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  flex-wrap:wrap;
+  padding:.6rem 1rem;
+  border-bottom:1px solid var(--adm-line);
+}
+.rel-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
+  height:1.9rem;
+  padding:0 .5rem 0 .65rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:999px;
+  background:var(--adm-surface-2);
+  color:var(--c-text-2);
+  font-family:var(--font-cond);
+  font-size:.75rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  line-height:1;
+  white-space:nowrap;
+  transition:border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease),
+             background var(--t-fast) var(--ease);
+}
+.rel-chip b{
+  min-width:1.35rem;
+  padding:0 .3rem;
+  border-radius:999px;
+  background:rgba(255,255,255,.06);
+  color:var(--c-text);
+  font-size:.75rem;
+  font-weight:400;
+  text-align:center;
+  line-height:1.3rem;
+}
+.rel-chip:hover{ border-color:var(--adm-line-lime); color:var(--c-text) }
+.rel-chip:focus-visible{ outline:none; box-shadow:var(--adm-ring) }
+
+/* A cor do chip é a cor do ESTADO — a mesma do selo na linha da tabela, para
+   o olho ligar filtro e resultado sem ler duas vezes. */
+.rel-chip--ok{     color:var(--c-lime) }
+.rel-chip--warn{   color:var(--c-amber) }
+.rel-chip--info{   color:var(--c-cyan) }
+.rel-chip--danger{ color:#ff8f92 }
+.rel-chip--gold{   color:var(--c-gold) }
+.rel-chip--muted{  color:var(--c-muted) }
+
+.rel-chip.is-active{
+  border-color:currentColor;
+  background:color-mix(in srgb, currentColor 14%, transparent);
+}
+.rel-chip.is-active b{ background:color-mix(in srgb, currentColor 22%, transparent); color:currentColor }
+/* Zero no recorte atual: continua clicável (o operador precisa poder tentar),
+   mas não disputa atenção com os estados que têm fila. */
+.rel-chip.is-zero{ opacity:.5 }
+.rel-chip.is-zero:hover{ opacity:1 }
+
+/* ---- corpo rolante ------------------------------------------------------ */
+.rel-list__body{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+.rel-list__body .adm-tablewrap{ flex:1 1 auto; min-height:0 }
+.rel-list__body .adm-empty{ margin:auto }
+
+/* ---- tabela ------------------------------------------------------------- */
+/* Larguras declaradas nas colunas de tamanho previsível; a coluna do título
+   fica com todo o resto. Sem isso o navegador dá metade da tabela para a
+   coluna de estado e o título — que é o que se lê — sai truncado. */
+/* Cinco colunas: código, relatório, gravidade, estado, idade. Todas as de
+   tamanho previsível são declaradas; o que sobra é do TÍTULO, que é a única
+   coluna cujo conteúdo não tem tamanho conhecido — e a única que se lê para
+   decidir o que abrir. Não existe coluna de CATEGORIA: medida em tela ela
+   custava ~170px e era justamente o que faltava para os títulos caberem
+   inteiros em 1600×900; a categoria vive na linha de apoio de cada relatório. */
+.rel-table{ table-layout:fixed; width:100% }
+.rel-table th:nth-child(1),.rel-table td:nth-child(1){ width:6.5rem }
+.rel-table th:nth-child(3),.rel-table td:nth-child(3){ width:7.75rem }
+.rel-table th:nth-child(4),.rel-table td:nth-child(4){ width:8.25rem }
+.rel-table th:nth-child(5),.rel-table td:nth-child(5){ width:6.5rem }
+.rel-table td{ overflow:hidden; text-overflow:ellipsis }
+.rel-row__grupo{ text-transform:uppercase; letter-spacing:.06em }
+
+.rel-row__link{
+  display:inline-flex;
+  align-items:center;
+  color:var(--c-lime);
+  font-size:.85rem;
+  letter-spacing:.04em;
+}
+.rel-row__link:hover{ text-decoration:underline }
+.rel-row__link:focus-visible{ outline:none; box-shadow:var(--adm-ring); border-radius:2px }
+
+/* Título + jogador na mesma célula: duas linhas, a segunda menor. A elipse
+   está no título, e o title="" do HTML guarda a frase inteira. */
+.rel-row__what{ min-width:0 }
+.rel-row__what strong{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.rel-row__what small{
+  display:flex;
+  align-items:center;
+  gap:.25rem;
+  margin-top:.1rem;
+  color:var(--c-dim);
+  font-size:.75rem;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.rel-row__ico{ font-size:.95rem }
+
+/* A linha aberta no painel de leitura fica marcada na tabela — sem isso, o
+   operador perde de vista qual das vinte linhas é a que ele está lendo. */
+.rel-row.is-open{ background:rgba(var(--c-lime-rgb),.10) }
+.rel-row.is-open td:first-child{ box-shadow:inset 3px 0 0 var(--c-lime) }
+.rel-table tbody tr.rel-row.is-open:hover{ background:rgba(var(--c-lime-rgb),.14) }
+
+.rel-foot{ padding:.6rem 1rem }
+.rel-foot .adm-pager{ width:100% }
+
+/* ==========================================================================
+   4. DETALHE
+   ========================================================================== */
+.rel-detail{ min-height:0 }
+.rel-detail__none{ margin:auto; padding:2rem 1.25rem }
+
+.rel-detail__head .adm-card__title .num{ font-size:1rem; letter-spacing:.04em }
+.rel-detail__body{
+  flex:1 1 auto;
+  min-height:0;
+  display:block;
+}
+.rel-detail__title{
+  font-family:var(--font-cond);
+  font-size:1.05rem;
+  font-weight:500;
+  line-height:1.25;
+  color:var(--c-text);
+  margin-bottom:.85rem;
+}
+.rel-detail__meta{ margin-bottom:1rem }
+.rel-detail__meta dd{ min-width:0; overflow-wrap:anywhere }
+.rel-detail__meta dd small{ margin-left:.25rem }
+
+.rel-detail__lbl{
+  font-family:var(--font-cond);
+  font-size:.75rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--c-dim);
+  margin:.9rem 0 .3rem;
+  padding-top:.75rem;
+  border-top:1px solid var(--adm-line);
+}
+/* O texto é do JOGADOR: as quebras de linha que ele digitou são o passo a
+   passo do bug e não podem virar um parágrafo corrido. */
+.rel-detail__txt{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font-size:.875rem;
+  line-height:1.55;
+  color:var(--c-text-2);
+}
+.rel-detail__txt.is-void{ color:var(--c-dim); font-style:italic }
+
+/* ---- rodapé de ação ----------------------------------------------------- */
+.rel-detail__foot{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:.75rem;
+}
+.rel-move__set{ border:0; padding:0; margin:0; display:grid; gap:.5rem }
+.rel-move__set .adm-label{ padding:0 }
+/* O grupo inteiro é o campo: quando a gravação foi recusada, quem fica marcado
+   é ele — não existe um <input> para pintar de vermelho. */
+.rel-move__set.is-invalid .adm-label{ color:var(--c-red) }
+.rel-move__set.is-invalid .rel-move__opts{
+  padding:.4rem;
+  margin:-.4rem;
+  border-radius:var(--adm-r-sm);
+  box-shadow:0 0 0 1px rgba(var(--c-red-rgb),.45);
+}
+.rel-move__opts{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.4rem;
+}
+.rel-move__op{
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  height:2.1rem;
+  padding:0 .6rem;
+  border:1px solid var(--adm-line-2);
+  border-radius:var(--adm-r-sm);
+  background:var(--adm-surface-2);
+  color:var(--c-text-2);
+  font-family:var(--font-cond);
+  font-size:.78rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  line-height:1;
+  cursor:pointer;
+  min-width:0;
+  transition:border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease),
+             color var(--t-fast) var(--ease);
+}
+.rel-move__op .ms{ font-size:1.05rem; flex-shrink:0 }
+.rel-move__op span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.rel-move__op:hover{ background:var(--adm-surface-3); border-color:currentColor }
+.rel-move__op:focus-visible{ outline:none; box-shadow:var(--adm-ring) }
+
+.rel-move__op--ok{     color:var(--c-lime) }
+.rel-move__op--warn{   color:var(--c-amber) }
+.rel-move__op--info{   color:var(--c-cyan) }
+.rel-move__op--danger{ color:#ff8f92 }
+.rel-move__op--gold{   color:var(--c-gold) }
+.rel-move__op--muted{  color:var(--c-muted) }
+
+/* O estado atual não é um botão morto: é o "você está aqui". Fica marcado,
+   com a cor cheia, e desabilitado — clicar nele não teria efeito nenhum e a
+   tela responderia com uma mensagem de erro que o operador não provocou. */
+.rel-move__op.is-current{
+  background:color-mix(in srgb, currentColor 16%, transparent);
+  border-color:currentColor;
+  opacity:1;
+  cursor:default;
+}
+.rel-move__op[disabled]{ pointer-events:none }
+
+.rel-detail__danger{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  flex-wrap:wrap;
+  padding-top:.7rem;
+  border-top:1px solid var(--adm-line);
+}
+.rel-detail__lock{ display:inline-flex; align-items:center; gap:.25rem; min-width:0 }
+.rel-detail__lock .ms{ font-size:.95rem }
+
+/* ---- confirmação de exclusão (segunda requisição) ----------------------- */
+.rel-danger{
+  display:grid;
+  gap:.6rem;
+  padding:.75rem;
+  border:1px solid rgba(var(--c-red-rgb),.4);
+  border-radius:var(--adm-r-sm);
+  background:rgba(var(--c-red-rgb),.08);
+}
+.rel-danger__ask{
+  display:flex;
+  align-items:flex-start;
+  gap:.45rem;
+  font-size:.875rem;
+  line-height:1.4;
+  color:var(--c-text);
+}
+.rel-danger__ask .ms{ font-size:1.15rem; color:var(--c-red); flex-shrink:0 }
+.rel-danger__note{ font-size:.78rem; line-height:1.45; color:var(--c-muted) }
+
+/* ==========================================================================
+   5. RESPONSIVO
+   ========================================================================== */
+
+/* Notebook de 1366px: a coluna de leitura cede três rem para a tabela, e os
+   seletores da barra encolhem antes de a lista começar a espremer. */
+@media (max-width:1440px){
+  .rel__grid{ grid-template-columns:minmax(0,1fr) 21rem }
+  .rel-bar__sel .adm-select{ min-width:9rem }
+}
+
+/* Duas colunas não cabem mais sem espremer as duas: a leitura passa para
+   baixo da lista e a página volta a rolar — de propósito, porque aqui a
+   alternativa seria uma tabela ilegível. */
+@media (max-width:1180px){
+  .rel{ height:auto; min-height:0 }
+  .rel__grid{ grid-template-columns:minmax(0,1fr) }
+  .rel-list__body .adm-tablewrap{ max-height:28rem }
+  .rel-detail__body{ max-height:32rem }
+}
+
+/* Notebook baixo (768px de altura): a lista fica com menos linhas visíveis,
+   mas nem o paginador nem os botões de estado saem de tela. */
+@media (max-height:820px){
+  .rel{ min-height:30rem }
+  .rel-chips{ padding:.45rem 1rem }
+  .rel-move__op{ height:1.95rem }
+}
+
+/* A coluna de gravidade é a primeira a sair quando não há largura: o selo de
+   estado e a idade decidem o atendimento, e a gravidade continua no detalhe. */
+@media (max-width:900px){
+  .rel-table th:nth-child(3),.rel-table td:nth-child(3){ display:none }
+  .rel-move__opts{ grid-template-columns:repeat(3,minmax(0,1fr)) }
+}

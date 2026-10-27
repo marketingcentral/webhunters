@@ -1,0 +1,47 @@
+{
+    "brand": {
+        "title": "EXTRACT",
+        "sub": "HUNTERS",
+        "tagline": "SOBREVIVA. EXTRAIA. EVOLUA."
+    },
+    "register": {
+        "title": "CRIAR CONTA",
+        "subtitle": "Junte-se à Resistência e comece sua caçada",
+        "user_label": "NOME DE USUÁRIO",
+        "user_ph": "Escolha seu nome de caçador",
+        "user_hint": "De 3 a 24 caracteres: letras, números e sublinhado (_)",
+        "email_label": "E-MAIL",
+        "email_ph": "Digite seu melhor e-mail",
+        "pass_label": "SENHA",
+        "pass_ph": "Mín. 8 caracteres",
+        "confirm_label": "CONFIRMAR SENHA",
+        "confirm_ph": "Repita a senha",
+        "show_pass": "Mostrar senha",
+        "hide_pass": "Ocultar senha",
+        "strength": {
+            "label": "FORÇA DA SENHA",
+            "levels": [
+                "—",
+                "FRACA",
+                "RAZOÁVEL",
+                "BOA",
+                "FORTE"
+            ]
+        },
+        "terms": "Li e aceito os Termos de Uso e a Política de Privacidade.",
+        "terms_hint": "Ative para continuar",
+        "submit": "CRIAR CONTA",
+        "has_account": "Já tem uma conta?",
+        "login": "ENTRAR",
+        "error_title": "Revise os campos destacados para continuar."
+    },
+    "tips": {
+        "title": "DICAS DE SOBREVIVÊNCIA",
+        "items": [
+            "Escolha um nome de caçador curto: ele aparece no placar de extração.",
+            "Trabalhe em equipe, gerencie seus recursos e esteja sempre preparado.",
+            "Extraia antes do fim do ciclo: o que não sai com você fica no campo.",
+            "Marque os pontos de extração no mapa antes de entrar na zona de risco."
+        ]
+    }
+}

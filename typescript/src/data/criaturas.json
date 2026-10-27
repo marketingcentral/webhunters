@@ -1,0 +1,359 @@
+{
+    "liberar_tudo": true,
+    "grupos": {
+        "infectados": {
+            "nome": "INFECTADOS",
+            "cor": "red",
+            "ms": "coronavirus",
+            "texto": "Pessoas vivas tomadas pelo micélio. O fungo muda o corpo com o tempo — cada classe é um estágio ou um desvio da infecção."
+        },
+        "fauna": {
+            "nome": "FAUNA INFECTADA",
+            "cor": "amber",
+            "ms": "pets",
+            "texto": "Os animais pegaram o fungo antes de qualquer gente perceber. Mantêm o instinto; perderam o medo."
+        },
+        "flora": {
+            "nome": "ECOSSISTEMA ALIENÍGENA",
+            "cor": "purple",
+            "ms": "psychiatry",
+            "texto": "O que veio dentro da rocha e não é fungo de hospedeiro: plantas e estruturas de outro mundo que crescem onde o micélio já cobriu o chão."
+        }
+    },
+    "niveis": {
+        "desconhecido": {
+            "label": "DESCONHECIDO",
+            "texto": "Nenhum registro."
+        },
+        "avistado": {
+            "label": "AVISTADO",
+            "texto": "Imagem e descrição liberadas."
+        },
+        "estudado": {
+            "label": "ESTUDADO",
+            "texto": "Ficha completa: sinal, contra e fraqueza."
+        }
+    },
+    "abordagens": {
+        "sozinho": {
+            "nome": "DÁ SOZINHO",
+            "cor": "lime",
+            "ms": "person",
+            "texto": "Um operador resolve, com calma e sem barulho.",
+            "curto": "Um operador resolve."
+        },
+        "cuidado": {
+            "nome": "COM CUIDADO",
+            "cor": "amber",
+            "ms": "warning",
+            "texto": "Dá sozinho, mas um erro custa caro.",
+            "curto": "Um erro custa caro."
+        },
+        "equipe": {
+            "nome": "EM EQUIPE",
+            "cor": "red",
+            "ms": "groups",
+            "texto": "Sozinho, contorne. Em dupla ou mais, dá.",
+            "curto": "Sozinho, contorne."
+        },
+        "fuja": {
+            "nome": "FUJA",
+            "cor": "purple",
+            "ms": "directions_run",
+            "texto": "Não se enfrenta. Saia do setor.",
+            "curto": "Saia do setor."
+        }
+    },
+    "lista": [
+        {
+            "slug": "errante",
+            "nome": "ERRANTE",
+            "grupo": "infectados",
+            "papel": "MASSA",
+            "porte": "HUMANO · 1,7 m",
+            "ameaca": 25,
+            "linha": "Recém-infectados. Lentos, desorientados e perigosos em grupo.",
+            "texto": "Ainda vestem o que vestiam no dia em que foram mordidos: uniforme de fábrica, jaleco, farda. O fungo não terminou de tomar o sistema nervoso, então andam sem rumo, tropeçam, param. Um Errante sozinho cai com uma faca nas costas. O problema é o tiro que você deu no terceiro, que chama os outros vinte.",
+            "sinal": "Gemido baixo e pés arrastando. Ficam rondando o último ponto de onde veio um som.",
+            "contra": "Abate silencioso por trás. Uma garrafa jogada longe tira o grupo do caminho.",
+            "fraqueza": "Cabeça. Reagem tarde a quem vem por trás.",
+            "contagio": "Mordida.",
+            "habitat": [
+                "floresta-verde",
+                "pantano-cinzento",
+                "montanhas-gelidas",
+                "deserto-abandonado",
+                "zona-industrial"
+            ],
+            "abordagem": "sozinho"
+        },
+        {
+            "slug": "febril",
+            "nome": "FEBRIL",
+            "grupo": "infectados",
+            "papel": "PERSEGUIÇÃO",
+            "porte": "HUMANO · 1,8 m",
+            "ameaca": 55,
+            "linha": "Infectados na fase da febre. Correm em disparada, mas cansam.",
+            "texto": "Entre a segunda e a terceira semana o fungo queima o corpo por dentro, e o Febril corre sem poupar músculo nem pulmão. Depois de uns dez segundos de sprint ele desaba arfando, com vapor saindo da boca. Quem entende isso não foge em linha reta: foge até uma porta, fecha e espera o fôlego dele acabar.",
+            "sinal": "Respiração rasgada e vapor quente saindo da boca, mesmo no calor.",
+            "contra": "Quebre a linha de visão e feche uma porta. Mate quando ele parar para arfar.",
+            "fraqueza": "Exaustão depois do sprint: alguns segundos parado e de guarda aberta.",
+            "contagio": "Arranhão e mordida.",
+            "habitat": [
+                "zona-industrial",
+                "deserto-abandonado",
+                "floresta-verde"
+            ],
+            "abordagem": "cuidado"
+        },
+        {
+            "slug": "vigia",
+            "nome": "VIGIA",
+            "grupo": "infectados",
+            "papel": "ALARME",
+            "porte": "HUMANO · 1,8 m + HASTES",
+            "ameaca": 45,
+            "linha": "Fica imóvel em pontos altos. Se te vê, grita, e o setor inteiro escuta.",
+            "texto": "Hastes de fungo brotam do crânio como antenas, e o Vigia procura lugares altos: telhados, caixas d'água, postes. Passa horas parado, girando a cabeça devagar. Não ataca. Quando avista movimento, solta um grito agudo que puxa todo infectado num raio de centenas de metros. Mapear os Vigias antes de cruzar uma rua é metade da missão.",
+            "sinal": "Silhueta parada no alto e o estalo das hastes quando a cabeça gira.",
+            "contra": "Binóculo antes de avançar. Arma com supressor, ou passe pelo ponto cego dele.",
+            "fraqueza": "Corpo frágil: um tiro certeiro derruba.",
+            "contagio": "Nenhum direto. O perigo é quem ele chama.",
+            "habitat": [
+                "zona-industrial",
+                "deserto-abandonado",
+                "montanhas-gelidas"
+            ],
+            "abordagem": "cuidado"
+        },
+        {
+            "slug": "semeador",
+            "nome": "SEMEADOR",
+            "grupo": "infectados",
+            "papel": "CONTAMINAÇÃO",
+            "porte": "HUMANO INCHADO · 1,9 m",
+            "ameaca": 50,
+            "linha": "Corpo tomado por bolsas de esporo. Se morrer perto de você, te contamina.",
+            "texto": "O fungo transformou o corpo numa estufa: bolsas amareladas nas costas e no pescoço, pele esticada até rachar. É lento e quase cego, e nem precisa ser rápido. Quando morre, ou quando alguém chega perto demais, as bolsas estouram numa nuvem que contamina sem mordida nenhuma. Ir de faca é a pior ideia possível.",
+            "sinal": "Chiado úmido das bolsas e um rastro de pó amarelo no chão.",
+            "contra": "Mate de longe e espere a nuvem baixar. Se precisar atravessar, use respirador.",
+            "fraqueza": "Fogo queima a nuvem antes de ela se espalhar.",
+            "contagio": "Nuvem de esporos (inalação).",
+            "habitat": [
+                "pantano-cinzento",
+                "zona-industrial"
+            ],
+            "abordagem": "sozinho"
+        },
+        {
+            "slug": "rastejante",
+            "nome": "RASTEJANTE",
+            "grupo": "infectados",
+            "papel": "EMBOSCADA",
+            "porte": "RENTE AO CHÃO · 1,5 m",
+            "ameaca": 50,
+            "linha": "Esconde-se sob carros e escombros e agarra o tornozelo de quem passa.",
+            "texto": "Nem todo corpo aguentou a infecção inteira. O Rastejante perdeu as pernas, ou o fungo as fundiu ao tronco, e aprendeu a esperar: debaixo de carro, em vala, sob lona. Ele não persegue. Agarra o tornozelo, derruba e morde enquanto você tenta se soltar. Sozinho, ser agarrado vira uma luta. Em esquadrão, é um segundo até alguém atirar.",
+            "sinal": "Brilho úmido do micélio sob a lanterna e marcas de arrasto na poeira.",
+            "contra": "Lanterna nos vãos. Nunca passe colado a um carro parado.",
+            "fraqueza": "Lento e exposto quando sai do esconderijo.",
+            "contagio": "Mordida.",
+            "habitat": [
+                "zona-industrial",
+                "deserto-abandonado"
+            ],
+            "abordagem": "cuidado"
+        },
+        {
+            "slug": "couracado",
+            "nome": "COURAÇADO",
+            "grupo": "infectados",
+            "papel": "QUEBRA DE LINHA",
+            "porte": "ROBUSTO · 2,2 m",
+            "ameaca": 75,
+            "linha": "O fungo virou placas duras na frente do corpo. Só morre pelas costas.",
+            "texto": "Depois de anos de infecção, o micélio endureceu em placas cinzentas, grossas como casca de árvore, cobrindo peito, braços e rosto. O Couraçado é lento e não para: atravessa portas, derruba barricadas e aguenta um carregador inteiro de frente. As costas ficaram descobertas, porque é por ali que o fungo respira. Um operador chama a atenção dele e o outro dá a volta.",
+            "sinal": "Passos pesados e o barulho das placas raspando nas paredes.",
+            "contra": "Um atrai, o outro flanqueia. Atire nas costas, onde a carapaça não fechou.",
+            "fraqueza": "Costas abertas e giro lento.",
+            "contagio": "Golpe que abre ferida.",
+            "habitat": [
+                "zona-industrial",
+                "montanhas-gelidas"
+            ],
+            "abordagem": "equipe"
+        },
+        {
+            "slug": "eco",
+            "nome": "ECO",
+            "grupo": "infectados",
+            "papel": "ENGANO",
+            "porte": "HUMANO · 1,7 m",
+            "ameaca": 60,
+            "linha": "Repete vozes que ouviu. Pede socorro com a voz de alguém do seu esquadrão.",
+            "texto": "O fungo guarda pedaços do que o hospedeiro ouviu nos últimos dias e os devolve aos gritos, no escuro: \"socorro\", \"aqui\", um nome, um código de rádio. O Eco é fraco e não aguenta briga. A arma dele é fazer você ir até lá. O esquadrão que confirma posição pelo rádio antes de correr atrás de um grito não perde ninguém para um Eco.",
+            "sinal": "Uma voz que repete a mesma frase, com a mesma entonação, de um ponto que não se move.",
+            "contra": "Confirme pelo rádio antes de ir. Combine um código: quem chama sem dizer o código não é do seu esquadrão.",
+            "fraqueza": "Corpo frágil. Desvendado, é o alvo mais fácil do setor.",
+            "contagio": "Mordida.",
+            "habitat": [
+                "floresta-verde",
+                "pantano-cinzento"
+            ],
+            "abordagem": "cuidado"
+        },
+        {
+            "slug": "amalgama",
+            "nome": "AMÁLGAMA",
+            "grupo": "infectados",
+            "papel": "RESPOSTA EXTREMA",
+            "porte": "MASSA FUNDIDA · ~4 m",
+            "ameaca": 95,
+            "linha": "Vários corpos fundidos pelo micélio. Aparece quando um setor entra em Surto.",
+            "texto": "Quando a infestação passa do limite, com combate demais e corpos demais no mesmo setor, o fungo junta o que tem à mão: três, cinco, oito hospedeiros costurados pelo micélio numa massa só, com braços e bocas demais. É lento, mas varre corredores inteiros e contamina tudo o que toca. Não é chefe para farmar. É o aviso de que aquele setor acabou por hoje.",
+            "sinal": "O mapa marca SURTO. Antes de ver, você ouve vozes demais vindo de um lugar só.",
+            "contra": "Não se enfrenta. Chame a extração e saia pelo lado oposto.",
+            "fraqueza": "Fogo concentrado o atrasa. Não o mata.",
+            "contagio": "Contato e nuvem constante de esporos.",
+            "habitat": [
+                "zona-industrial"
+            ],
+            "abordagem": "fuja"
+        },
+        {
+            "slug": "lobo-cinza",
+            "nome": "LOBO-CINZA",
+            "grupo": "fauna",
+            "papel": "MATILHA",
+            "porte": "CÃO GRANDE · 0,9 m",
+            "ameaca": 55,
+            "linha": "Cães e lobos infectados. Caçam em matilha e cercam quem anda sozinho.",
+            "texto": "Os animais pegaram o fungo antes de qualquer gente perceber, comendo o que caiu da cratera. O Lobo-cinza manteve o instinto de matilha: cerca, testa, recua e volta pelo outro lado. Tem o pelo caindo em tufos e micélio nas gengivas. Fogo e luz forte quebram o cerco, e um sinalizador aceso dá à matilha tempo para desistir.",
+            "sinal": "Uivos curtos em sequência, vindos de pontos diferentes do mato.",
+            "contra": "Costas na parede e sinalizador no chão. Mate o primeiro que avançar e o resto hesita.",
+            "fraqueza": "Fogo e luz forte.",
+            "contagio": "Mordida.",
+            "habitat": [
+                "floresta-verde",
+                "montanhas-gelidas"
+            ],
+            "abordagem": "cuidado"
+        },
+        {
+            "slug": "varrao",
+            "nome": "VARRÃO",
+            "grupo": "fauna",
+            "papel": "INVESTIDA",
+            "porte": "JAVALI · 1,2 m · 200 kg",
+            "ameaca": 50,
+            "linha": "Javali infectado e territorial. Não caça, mas investe contra quem entra na área dele.",
+            "texto": "Presas cobertas por crostas de fungo e um couro que já era duro antes da infecção. O Varrão não persegue ninguém fora do território: fuça o pântano, cava raízes e marca árvores. Quem chega perto demais leva uma investida de duzentos quilos em linha reta. É linha reta mesmo: saia do caminho no último segundo e ele passa direto.",
+            "sinal": "Árvores raspadas e terra revirada. Um bufo grave antes da investida.",
+            "contra": "Contorne o território. Se ele investir, pule para o lado e atire no flanco.",
+            "fraqueza": "Não consegue mudar de direção no meio da investida.",
+            "contagio": "Ferida aberta pelas presas.",
+            "habitat": [
+                "pantano-cinzento",
+                "floresta-verde"
+            ],
+            "abordagem": "cuidado"
+        },
+        {
+            "slug": "revoada",
+            "nome": "REVOADA",
+            "grupo": "fauna",
+            "papel": "SENTINELA",
+            "porte": "BANDO · 0,4 m cada",
+            "ameaca": 30,
+            "linha": "Corvos e urubus infectados. Não matam, mas denunciam onde você está.",
+            "texto": "Foram as aves que levaram o fungo para fora da ilha, antes de qualquer avião. Hoje a Revoada pousa em carcaças e telhados e levanta voo gritando quando alguém se aproxima. Todo infectado e todo operador do setor sabe o que um bando desses no céu quer dizer. Para quem sabe ler, também é aviso: bando circulando indica carcaça fresca, e alguém a deixou ali.",
+            "sinal": "Bando circulando baixo sobre o mesmo ponto.",
+            "contra": "Ande devagar perto de pousos. Não atire: o tiro faz mais barulho que o bando.",
+            "fraqueza": "Se espanta à toa. O problema é o barulho, não as aves.",
+            "contagio": "Fezes e penas em lugar fechado (inalação leve).",
+            "habitat": [
+                "deserto-abandonado",
+                "zona-industrial",
+                "pantano-cinzento"
+            ],
+            "abordagem": "sozinho"
+        },
+        {
+            "slug": "soprador",
+            "nome": "SOPRADOR",
+            "grupo": "flora",
+            "papel": "NEGAÇÃO DE ÁREA",
+            "porte": "PLANTA · 1,2 m",
+            "ameaca": 35,
+            "linha": "Planta alienígena que solta uma baforada de gás amarelo quando algo passa perto.",
+            "texto": "Cresce em touceiras onde o micélio já cobriu o chão: bulbos carnudos que incham devagar e esvaziam de uma vez quando sentem vibração. O gás arde nos olhos e faz tossir, e tosse é barulho. Não persegue, não morde, não pensa. Só ocupa os caminhos mais curtos entre dois pontos e cobra de quem está com pressa.",
+            "sinal": "Bulbos amarelos pulsando e um anel de capim morto em volta.",
+            "contra": "Contorne. Ou atire de longe para esvaziar o bulbo e passe enquanto ele enche de novo.",
+            "fraqueza": "Fogo. E leva quase um minuto para encher de novo.",
+            "contagio": "Gás (inalação). A tosse denuncia a sua posição.",
+            "habitat": [
+                "pantano-cinzento",
+                "floresta-verde"
+            ],
+            "abordagem": "sozinho"
+        },
+        {
+            "slug": "veu",
+            "nome": "VÉU",
+            "grupo": "flora",
+            "papel": "ARMADILHA",
+            "porte": "CORTINA · ATÉ 4 m",
+            "ameaca": 30,
+            "linha": "Fios pegajosos pendurados em portas e túneis. Encostou, a colônia fica sabendo.",
+            "texto": "Fios translúcidos, finos como teia, pendurados do teto de túneis, galpões e corredores. O Véu não prende ninguém: ele avisa. Cada fio rompido manda um pulso pelo micélio, e os infectados por perto se viram para aquele lado. Cortado devagar, com lâmina, não avisa nada. Atravessado na correria, denuncia você.",
+            "sinal": "Fios brilhando na luz da lanterna, na altura do rosto.",
+            "contra": "Lâmina e calma. Ou fogo, que avisa, mas limpa o caminho inteiro.",
+            "fraqueza": "Lâmina e fogo.",
+            "contagio": "Nenhum. É um alarme.",
+            "habitat": [
+                "montanhas-gelidas",
+                "zona-industrial"
+            ],
+            "abordagem": "sozinho"
+        },
+        {
+            "slug": "farol",
+            "nome": "FAROL",
+            "grupo": "flora",
+            "papel": "EXPOSIÇÃO",
+            "porte": "CACHO · 0,5 m",
+            "ameaca": 25,
+            "linha": "Bulbos que brilham quando alguém passa. À noite, entregam você.",
+            "texto": "De dia parecem cogumelos opacos grudados em troncos e paredes. À noite, qualquer calor que passe a poucos metros acende o cacho em verde vivo por meio minuto, e essa luz é vista de longe, por infectados e por gente. Esquadrões experientes usam os Faróis como alarme do próprio perímetro. Esquadrões novos descobrem que estavam iluminados quando chega o primeiro tiro.",
+            "sinal": "Cogumelos opacos em grupo, na altura do ombro, ao longo das trilhas.",
+            "contra": "Passe longe ou esmague de dia. À noite, use-os a seu favor como sensor.",
+            "fraqueza": "Morre com um golpe. O difícil é lembrar dele antes de escurecer.",
+            "contagio": "Nenhum.",
+            "habitat": [
+                "floresta-verde",
+                "pantano-cinzento"
+            ],
+            "abordagem": "sozinho"
+        },
+        {
+            "slug": "matriz",
+            "nome": "MATRIZ",
+            "grupo": "flora",
+            "papel": "NINHO",
+            "porte": "ESTRUTURA · ~3 m",
+            "ameaca": 70,
+            "linha": "Um infectado fundido à parede e transformado em colônia. Enquanto ela existir, o setor não fica limpo.",
+            "texto": "É o fim da linha de um hospedeiro: preso a uma parede ou a uma árvore, o corpo vira raiz e o micélio se espalha em leque à sua volta. A Matriz não anda. Ela alimenta tudo num raio de cem metros (Véus, Sopradores, Faróis) e atrai Errantes como um farol de cheiro. Destruir uma Matriz é a missão que de fato devolve território: o micélio seca em poucos dias e a infestação do setor cai.",
+            "sinal": "Micélio em leque cobrindo chão e paredes, e Errantes parados em volta, imóveis.",
+            "contra": "Elimine a guarda primeiro, em silêncio. Fogo ou explosivo no núcleo, e saia antes do estouro de esporos.",
+            "fraqueza": "Fogo no núcleo.",
+            "contagio": "Estouro de esporos ao ser destruída.",
+            "habitat": [
+                "zona-industrial",
+                "pantano-cinzento"
+            ],
+            "abordagem": "equipe"
+        }
+    ]
+}

@@ -18,12 +18,12 @@
 return [
     'title'         => 'MAPA DO MUNDO',
     'regions_title' => 'REGIÕES',
-    'map_image'     => 'bg/map-island-hud.jpg',
-    'map_alt'       => 'Mapa do mundo — ilha da Floresta Verde vista de cima',
+    'map_image'     => 'bg/map-world.webp',
+    'map_alt'       => 'Mapa do mundo — a ilha inteira com suas regiões',
     'level_label'   => 'NÍVEL RECOMENDADO:',
     'regions' => [
         ['slug' => 'floresta-verde',     'name' => 'FLORESTA VERDE',     'level' => '1-10',  'icon' => 'pine',      'locked' => false, 'image' => 'regions/region-floresta-verde.jpg',
-            'desc' => 'Uma vasta floresta temperada onde a Veyra refez rios e trilhas. Ato I da campanha: uma estação militar silenciou e há interferência humana no sinal.',
+            'desc' => 'Uma vasta floresta temperada onde o micélio da Veyra refez rios e trilhas. Ato I da campanha: uma estação militar silenciou e há interferência humana no sinal.',
             'info' => [
                 ['label' => 'NÍVEL RECOMENDADO',      'value' => '1-10', 'cls' => 'lime'],
                 ['label' => 'CAPACIDADE OPERACIONAL', 'value' => '20', 'tip' => 'Até 12 Hunters e 8 Mercenários. Sobreviventes ocupam vagas existentes.'],
@@ -40,7 +40,7 @@ return [
             'state' => ['persistent' => true, 'capacity' => ['total' => 20, 'hunters' => 12, 'mercenaries' => 8], 'infestation' => 42, 'veyra_activity' => 'MODERADA', 'human_activity' => 'ELEVADA', 'weather' => 'Variável', 'sector_state' => 'ATIVO'],
         ],
         ['slug' => 'pantano-cinzento',   'name' => 'PÂNTANO CINZENTO',   'level' => '10-20', 'icon' => 'swamp',     'locked' => true, 'image' => 'regions/region-pantano-cinzento.jpg',
-            'desc' => 'Águas paradas, esporos e túneis. As colônias daqui compartilham respostas: o que funcionou uma vez não funciona duas.',
+            'desc' => 'Águas paradas, névoa amarela e Semeadores. As colônias daqui conversam pelo Coro: barulho num canto do pântano acorda o outro.',
             'info' => [
                 ['label' => 'NÍVEL RECOMENDADO',      'value' => '10-20', 'cls' => 'lime'],
                 ['label' => 'CAPACIDADE OPERACIONAL', 'value' => '20', 'tip' => 'Até 12 Hunters e 8 Mercenários.'],
@@ -56,7 +56,7 @@ return [
             'state' => ['persistent' => true, 'capacity' => ['total' => 20, 'hunters' => 12, 'mercenaries' => 8], 'infestation' => 58, 'veyra_activity' => 'ELEVADA', 'human_activity' => 'MODERADA', 'weather' => 'Neblina', 'sector_state' => 'ATIVO'],
         ],
         ['slug' => 'montanhas-gelidas',  'name' => 'MONTANHAS GÉLIDAS',  'level' => '20-30', 'icon' => 'mountain',  'locked' => true, 'image' => 'regions/region-montanhas-gelidas.jpg',
-            'desc' => 'Picos congelados e uma instalação Axiom sob a neve. Ato II: os Arquivos Vesper exigem um contrato de facção para avançar.',
+            'desc' => 'Picos congelados e uma instalação Axiom sob a neve, onde a empresa guardava o que sabia dos fragmentos. Ato II: os Arquivos Vesper exigem um contrato de facção para avançar.',
             'info' => [
                 ['label' => 'NÍVEL RECOMENDADO',      'value' => '20-30', 'cls' => 'lime'],
                 ['label' => 'CAPACIDADE OPERACIONAL', 'value' => '20', 'tip' => 'Até 12 Hunters e 8 Mercenários.'],
@@ -86,7 +86,7 @@ return [
             'state' => ['persistent' => true, 'capacity' => ['total' => 20, 'hunters' => 12, 'mercenaries' => 8], 'infestation' => 27, 'veyra_activity' => 'BAIXA', 'human_activity' => 'CRÍTICA', 'weather' => 'Tempestade', 'sector_state' => 'DISPUTADO'],
         ],
         ['slug' => 'zona-industrial',    'name' => 'ZONA INDUSTRIAL',    'level' => '40+',   'icon' => 'factory',   'locked' => true, 'image' => 'regions/region-zona-industrial.jpg',
-            'desc' => 'Fábricas, depósitos e o Núcleo Negro. Ato IV: Operação BLACK VEIL, o maior Surto da campanha.',
+            'desc' => 'Fábricas, depósitos e a cratera: o Núcleo Negro, corpo do meteoro Vesper, está enterrado aqui. Ato IV: Operação BLACK VEIL, o maior Surto da campanha.',
             'info' => [
                 ['label' => 'NÍVEL RECOMENDADO',      'value' => '40+', 'cls' => 'lime'],
                 ['label' => 'CAPACIDADE OPERACIONAL', 'value' => '20', 'tip' => 'Até 12 Hunters e 8 Mercenários.'],
@@ -103,35 +103,39 @@ return [
     ],
 
     /* --- camadas (filtros) — chips, sem painel novo (PRD §23.9) ------------- */
-    'filters_title' => 'CAMADAS',
-    'filters' => [
-        ['slug' => 'todos',      'label' => 'TODOS'],
-        ['slug' => 'hunter',     'label' => 'HUNTER'],
-        ['slug' => 'faccoes',    'label' => 'FACÇÕES'],
-        ['slug' => 'veyra',      'label' => 'VEYRA'],
-        ['slug' => 'bases',      'label' => 'BASES'],
-        ['slug' => 'extracoes',  'label' => 'EXTRAÇÕES'],
-        ['slug' => 'eventos',    'label' => 'EVENTOS'],
+    /* Nomes das regiões desenhados sobre o terreno (posições em % da arte 1672x941). */
+    /* Medidos sobre a arte nova (bg/map-world.webp, 941x1672 em pé). x/y em % da imagem. */
+    'world_labels' => [
+        ['name' => 'MONTANHAS GÉLIDAS',  'tag' => 'BELEZA MATA',           'x' => 62.0, 'y' =>  8.0],
+        ['name' => 'FLORESTA VERDE',     'tag' => 'VIDA AINDA RESISTE',    'x' => 80.0, 'y' => 26.0],
+        ['name' => 'DESERTO ABANDONADO', 'tag' => 'TUDO O QUE FICOU',      'x' => 15.0, 'y' => 27.0],
+        ['name' => 'ZONA INDUSTRIAL',    'tag' => 'CINZAS DO PROGRESSO',   'x' => 23.0, 'y' => 44.5],
+        ['name' => 'PÂNTANO CINZENTO',   'tag' => 'ONDE A TERRA APODRECE', 'x' => 82.0, 'y' => 43.0],
+        ['name' => 'COSTA / PORTO',      'tag' => 'EXTRAÇÃO É LIBERDADE',  'x' => 60.0, 'y' => 66.0],
     ],
 
-    /* --- legenda (PRD §23.4–§23.8) ------------------------------------------- */
-    'legend_title' => 'LEGENDA',
+    /* A legenda É o filtro: cada linha liga/desliga a sua camada no mapa (view: .mlayer).
+       Por isso não existe mais uma fila separada de chips "CAMADAS". */
+    'legend_title' => 'CAMADAS',
+    'legend_all'   => 'TODOS',
     'legend' => [
-        // duas colunas na view: rótulos curtos
-        ['glyph' => 'extraction',   'label' => 'EXTRAÇÃO',        'color' => 'lime'],
-        ['glyph' => 'gov-base',     'label' => 'BASE HUNTER',     'color' => 'lime'],
-        ['glyph' => 'base',         'label' => 'POSTO AVANÇADO',  'color' => 'lime'],
-        ['glyph' => 'aegis',        'label' => 'AEGIS',           'color' => 'cyan'],
-        ['glyph' => 'frontier',     'label' => 'FRONTIER',        'color' => 'amber'],
-        ['glyph' => 'safe-zone',    'label' => 'SAFE ZONE',       'color' => 'lime'],
-        ['glyph' => 'field-base',   'label' => 'BASE DE CAMPO',   'color' => 'white'],
-        ['glyph' => 'nest',         'label' => 'NINHO VEYRA',     'color' => 'red'],
-        ['glyph' => 'contaminated', 'label' => 'CONTAMINAÇÃO',    'color' => 'purple'],
-        ['glyph' => 'human',        'label' => 'ATIV. HUMANA',    'color' => 'amber'],
-        ['glyph' => 'convoy',       'label' => 'LOGÍSTICA',       'color' => 'cyan'],
-        ['glyph' => 'event',        'label' => 'EVENTO',          'color' => 'purple'],
-        ['glyph' => 'loot',         'label' => 'RECURSOS',        'color' => 'white'],
-        ['glyph' => 'risk',         'label' => 'ZONA DE RISCO',   'color' => 'red'],
+        ['layer' => 'missoes',      'glyph' => 'mission',      'label' => 'MISSÕES',        'color' => 'gold'],
+        ['layer' => 'extracao',     'glyph' => 'extraction',   'label' => 'EXTRAÇÃO',       'color' => 'lime'],
+        ['layer' => 'hunter',       'glyph' => 'gov-base',     'label' => 'BASE HUNTER',    'color' => 'lime'],
+        ['layer' => 'posto',        'glyph' => 'base',         'label' => 'POSTO AVANÇADO', 'color' => 'lime'],
+        ['layer' => 'safe-zone',    'glyph' => 'safe-zone',    'label' => 'SAFE ZONE',      'color' => 'lime'],
+        ['layer' => 'aegis',        'glyph' => 'aegis',        'label' => 'AEGIS',          'color' => 'cyan'],
+        ['layer' => 'frontier',     'glyph' => 'frontier',     'label' => 'FRONTIER',       'color' => 'amber'],
+        ['layer' => 'base-campo',   'glyph' => 'field-base',   'label' => 'BASE DE CAMPO',  'color' => 'white'],
+        ['layer' => 'mercado',      'glyph' => 'market',       'label' => 'MERCADO',        'color' => 'gold'],
+        ['layer' => 'gasolina',     'glyph' => 'fuel',         'label' => 'COMBUSTÍVEL',    'color' => 'amber'],
+        ['layer' => 'hospital',     'glyph' => 'hospital',     'label' => 'HOSPITAL',       'color' => 'white'],
+        ['layer' => 'veyra',        'glyph' => 'nest',         'label' => 'NINHO VEYRA',    'color' => 'red'],
+        ['layer' => 'contaminacao', 'glyph' => 'contaminated', 'label' => 'CONTAMINAÇÃO',   'color' => 'purple'],
+        ['layer' => 'humana',       'glyph' => 'human',        'label' => 'ATIV. HUMANA',   'color' => 'amber'],
+        ['layer' => 'logistica',    'glyph' => 'convoy',       'label' => 'LOGÍSTICA',      'color' => 'cyan'],
+        ['layer' => 'evento',       'glyph' => 'event',        'label' => 'EVENTO',         'color' => 'purple'],
+        ['layer' => 'recursos',     'glyph' => 'loot',         'label' => 'RECURSOS',       'color' => 'white'],
     ],
     'legend_toggle' => ['label' => 'OCULTAR LEGENDA', 'label_off' => 'MOSTRAR LEGENDA', 'key' => 'X'],
     'controls' => [
@@ -145,7 +149,7 @@ return [
     'markers' => [
         'floresta-verde' => [
             ['id' => 'acampamento-lenhador',   'kind' => 'camp',       'glyph' => 'camp',       'color' => 'lime',   'name' => 'ACAMPAMENTO LENHADOR',      'x' => 35.8, 'y' => 11.0, 'label' => 'below'],
-            ['id' => 'ninho-norte',            'kind' => 'nest',       'glyph' => 'nest',       'color' => 'red',    'name' => 'NINHO · BURROWERS',         'x' => 67.7, 'y' => 11.9, 'label' => 'right', 'narrow' => true, 'pulse' => true,
+            ['id' => 'ninho-norte',            'kind' => 'nest',       'glyph' => 'nest',       'color' => 'red',    'name' => 'NINHO · ERRANTES',          'x' => 67.7, 'y' => 11.9, 'label' => 'right', 'narrow' => true, 'pulse' => true, 'caste' => 'errante',
                 'risk' => ['x' => 68.6, 'y' => 14.2, 'rx' => 8.4]],
             ['id' => 'saque-norte',            'kind' => 'loot',       'glyph' => 'loot',       'color' => 'white',  'name' => 'ÁREA DE RECURSOS',          'x' => 51.8, 'y' => 20.5, 'label' => false],
             ['id' => 'posto-avancado-norte',   'kind' => 'base',       'glyph' => 'base',       'color' => 'lime',   'name' => 'POSTO AVANÇADO NORTE',      'x' => 15.5, 'y' => 31.1, 'label' => 'below'],
@@ -156,7 +160,7 @@ return [
             ['id' => 'acamp-frontier',         'kind' => 'frontier',   'glyph' => 'frontier',   'color' => 'amber',  'name' => 'ACAMPAMENTO DOS CAÇADORES · FRONTIER', 'x' => 15.5, 'y' => 43.0, 'label' => 'below', 'faction' => 'frontier'],
             ['id' => 'tiros-detectados',       'kind' => 'human_activity', 'glyph' => 'human',  'color' => 'amber',  'name' => 'TIROS DETECTADOS',          'x' => 52.0, 'y' => 46.0, 'label' => 'below', 'narrow' => true, 'ttl_min' => 25],
             ['id' => 'vila-abandonada',        'kind' => 'village',    'glyph' => 'village',    'color' => 'white',  'name' => 'VILA ABANDONADA',           'x' => 46.3, 'y' => 68.1, 'label' => 'below'],
-            ['id' => 'area-contaminada',       'kind' => 'contaminated','glyph' => 'contaminated','color' => 'purple','name' => 'ÁREA CONTAMINADA · SPORECASTERS', 'x' => 63.0, 'y' => 69.0, 'label' => false],
+            ['id' => 'area-contaminada',       'kind' => 'contaminated','glyph' => 'contaminated','color' => 'purple','name' => 'ÁREA CONTAMINADA · SOPRADORES', 'x' => 63.0, 'y' => 69.0, 'label' => false, 'caste' => 'soprador'],
             ['id' => 'plataforma-de-extracao', 'kind' => 'extraction', 'glyph' => 'extraction', 'color' => 'lime',   'name' => 'PLATAFORMA NORTE',          'x' => 29.2, 'y' => 78.5, 'label' => 'below'],
             ['id' => 'comboio-aegis',          'kind' => 'convoy',     'glyph' => 'convoy',     'color' => 'cyan',   'name' => 'COMBOIO AEGIS · JANELA LOGÍSTICA', 'x' => 74.0, 'y' => 42.0, 'label' => 'below'],
             ['id' => 'base-de-campo',          'kind' => 'field_base', 'glyph' => 'field-base', 'color' => 'muted',  'name' => 'BASE DE CAMPO DESCONHECIDA','x' => 56.0, 'y' => 82.0, 'label' => 'below'],

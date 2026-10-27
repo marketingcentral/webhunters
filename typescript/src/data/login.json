@@ -1,0 +1,33 @@
+{
+    "brand": {
+        "title": "EXTRACT",
+        "sub": "HUNTERS",
+        "tagline": "SOBREVIVA. EXTRAIA. EVOLUA."
+    },
+    "login": {
+        "title": "ENTRAR NA CONTA",
+        "subtitle": "Acesse sua conta para continuar sua jornada",
+        "user_label": "E-MAIL OU NOME DE USUÁRIO",
+        "user_ph": "Digite seu e-mail ou usuário",
+        "pass_label": "SENHA",
+        "pass_ph": "Digite sua senha",
+        "forgot": "Esqueceu sua senha?",
+        "submit": "ENTRAR",
+        "or": "OU",
+        "steam": "ENTRAR COM STEAM",
+        "steam_tip": "Login com Steam disponível na versão completa.",
+        "no_account": "Não tem uma conta?",
+        "create": "CRIAR CONTA",
+        "show_pass": "Mostrar senha",
+        "hide_pass": "Ocultar senha"
+    },
+    "tips": {
+        "title": "DICAS DE SOBREVIVÊNCIA",
+        "items": [
+            "Trabalhe em equipe, gerencie seus recursos e esteja sempre preparado.",
+            "Extraia antes do fim do ciclo: o que não sai com você fica no campo.",
+            "Marque os pontos de extração no mapa antes de entrar na zona de risco.",
+            "Bandagens param sangramentos; kits médicos restauram a sua saúde."
+        ]
+    }
+}

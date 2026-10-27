@@ -6,7 +6,7 @@
   /* escala: a referência é 1672×941; 1rem = 16px nesse tamanho, proporcional em qualquer viewport 16:9 */
   font-size: clamp(9px, min(0.95694vw, 1.70032vh), 24px);
 
-  --c-bg:#070907; --c-bg-2:#0b0f0b; --c-panel:rgba(8,12,8,.78); --c-panel-2:rgba(14,19,14,.86); --c-panel-solid:#0c110c;
+  --c-bg:#070907; --c-bg-2:#0b0f0b; --c-panel:rgba(0, 0, 0, 0.48); --c-panel-2:rgba(0, 0, 0, 0.48); --c-panel-solid:#0c110c;
   --c-line:rgba(150,190,100,.22); --c-line-2:rgba(150,190,100,.12); --c-line-hot:#9be04a;
   --c-lime:#9be04a; --c-lime-2:#b6f25a; --c-lime-dim:#6f9f34; --c-green-btn:#3f6b1f; --c-green-btn-2:#2c4d15;
   --c-cyan:#3ec9f0; --c-amber:#f5a623; --c-gold:#f5c518; --c-red:#e5484d; --c-purple:#a855f7; --c-blue:#4c8dff;

@@ -25,7 +25,10 @@ $importmap = View::importMap();
 $preloadFonts = ['barlow-condensed-5.woff2', 'barlow-2.woff2', 'share-tech-mono-0.woff2', 'material-symbols-0.woff2', 'anton-2.woff2'];
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<?php /* A classe da página vai TAMBÉM no <html>, e não só no <body>: `font-size` de raiz só
+         se declara no elemento raiz, e a alternativa — `html:has(body.page-x)` — é descartada
+         pelo CEF da Unreal (Chromium 90; `:has()` chegou no 105). Ver tools/varrer_cef90.php. */ ?>
+<html lang="pt-BR" class="page-<?= e($slug) ?>">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

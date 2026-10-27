@@ -1,0 +1,399 @@
+/* ==========================================================================
+   ADMIN · TRANSAÇÕES (/admin/transacoes)
+
+   Só o que é DESTA tela. Cartão, tabela, selo, botão, formulário, vazio e
+   paginação vêm de admin.css (.adm-*) — aqui não se redesenha primitivo.
+
+   Carregado por app/Views/layouts/admin.php pelo slug da página
+   (assets/css/admin/admin-transacoes.css), depois de admin.css.
+
+   Namespace .txn-.
+
+   REGRA DE ALTURA DESTA TELA — o oposto da do dashboard: aqui a página ROLA.
+   Um relatório é uma lista, e lista com paginação de 25 linhas não cabe (nem
+   deve caber) em 768px de altura. O que NUNCA rola é a horizontal: a tabela
+   tem o próprio .adm-tablewrap com overflow-x, e todo o resto encolhe.
+   ========================================================================== */
+
+.txn{
+  display:grid;
+  gap:var(--adm-gap);
+  min-width:0;
+}
+
+/* As duas faixas de dois painéis. A quebra é em 1180px de CONTEÚDO — abaixo
+   disso o gráfico de 7 colunas e o quadro de moedas passam a brigar pelo
+   mesmo palmo e a régua do eixo come metade da largura útil. */
+.txn-row{
+  display:grid;
+  gap:var(--adm-gap);
+  min-width:0;
+}
+.txn-row--grafico{ grid-template-columns:minmax(0,1fr) 21rem }
+.txn-row--tops{ grid-template-columns:repeat(2,minmax(0,1fr)) }
+
+@media (max-width:1180px){
+  .txn-row--grafico,
+  .txn-row--tops{ grid-template-columns:minmax(0,1fr) }
+}
+
+/* Painéis desta tela: cabeçalho de altura fechada e igual, para que dois
+   cartões vizinhos comecem o conteúdo no mesmo eixo. */
+.txn-panel{ display:flex; flex-direction:column; min-width:0 }
+.txn-panel .adm-card__head{
+  height:2.75rem;
+  min-height:2.75rem;
+  padding:0 .9rem;
+  gap:.6rem;
+  flex-wrap:nowrap;
+  align-items:center;
+}
+.txn-panel .adm-card__title{
+  font-size:.92rem;
+  min-width:0;
+  display:flex;
+  align-items:baseline;
+  gap:.45rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+/* O subtítulo divide a linha do título em vez de abrir uma segunda — é ele
+   que desalinharia os dois cabeçalhos da faixa. */
+.txn-panel .adm-card__title small{
+  display:inline;
+  margin-top:0;
+  font-size:.7rem;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.txn-panel .adm-card__body{ flex:1 1 auto; min-height:0 }
+
+/* ==========================================================================
+   1. FILTROS
+   ========================================================================== */
+
+.txn-filtros{ overflow:visible }
+
+/* A barra de controles herda .adm-toolbar; o que muda é que os campos de data
+   e de moeda são pequenos e de largura FIXA — deixados em `1fr` eles ficavam
+   do tamanho do campo de busca e o formulário parecia ter quatro buscas. */
+.txn-form{ align-items:flex-end }
+.txn-field{
+  display:grid;
+  gap:.25rem;
+  min-width:0;
+  flex:0 0 auto;
+}
+.txn-field .adm-label{ font-size:.7rem; letter-spacing:.09em }
+.txn-field .adm-input[type="date"]{ width:9.5rem; min-height:2.4rem }
+.txn-field .adm-select{ width:10rem; min-height:2.4rem }
+/* O input date do Chrome traz um ícone de calendário quase preto sobre fundo
+   quase preto: sem isto, o botão do seletor some. */
+.txn-field .adm-input[type="date"]::-webkit-calendar-picker-indicator{
+  filter:invert(72%) sepia(9%) saturate(280%) hue-rotate(46deg);
+  cursor:pointer;
+}
+.txn-form .adm-btn{ height:2.4rem }
+/* A mensagem de erro sai do fluxo da linha: dentro dela, empurrava a barra
+   inteira 1rem para baixo e desalinhava os botões. */
+.txn-field .adm-error{ margin-top:.1rem; white-space:normal; line-height:1.25 }
+
+/* segunda linha: período, janela, aviso de moeda e export */
+.txn-bar{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  flex-wrap:wrap;
+  padding:.6rem 1rem;
+}
+.txn-bar__janela,
+.txn-bar__aviso{
+  display:flex;
+  align-items:center;
+  gap:.35rem;
+  min-width:0;
+  font-size:.8rem;
+  color:var(--c-muted);
+  line-height:1.3;
+}
+.txn-bar__janela{ font-family:var(--font-mono); white-space:nowrap }
+.txn-bar__janela .ms,
+.txn-bar__aviso .ms{ font-size:1rem; color:var(--c-dim); flex-shrink:0 }
+/* O aviso de moeda de jogo é o texto que pode encolher: ele é contexto, não
+   dado, e é o único da linha que aceita reticências. */
+.txn-bar__aviso{ flex:1 1 14rem; min-width:0 }
+.txn-bar__aviso span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.txn-bar__csv{ margin-left:auto; flex-shrink:0 }
+/* O aviso de recorte recusado não pode encolher nem ser cortado: ele é a razão de
+   os números da tela não serem os do período digitado. */
+.txn-bar__recusa{ flex-shrink:0; white-space:nowrap }
+
+/* seletor de período — links de verdade (?periodo=N), sem JavaScript */
+.txn-seg{
+  display:inline-flex;
+  border:1px solid var(--adm-line-2);
+  border-radius:var(--adm-r-sm);
+  overflow:hidden;
+  flex-shrink:0;
+}
+.txn-seg__op{
+  padding:.35rem .7rem;
+  font-family:var(--font-cond);
+  font-size:.78rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  border-left:1px solid var(--adm-line-2);
+  background:transparent;
+  transition:background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.txn-seg__op:first-child{ border-left:0 }
+.txn-seg__op:hover{ background:var(--adm-hover); color:var(--c-text) }
+.txn-seg__op.is-active{ background:rgba(var(--c-lime-rgb),.14); color:var(--c-lime) }
+
+/* ==========================================================================
+   2. KPIs
+   ========================================================================== */
+
+/* Ticket médio com mais de uma moeda não é número: o cartão troca o dígito
+   grande por uma nota do mesmo tamanho de linha, para a faixa não ganhar um
+   buraco onde antes havia um valor. */
+.txn-kpi__nota{
+  font-family:var(--font-cond);
+  font-size:1.05rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--c-muted);
+  align-self:center;
+  cursor:help;
+}
+.txn-kpis .adm-kpi__value{ font-variant-numeric:tabular-nums }
+
+/* ==========================================================================
+   3. GRÁFICO
+   ========================================================================== */
+
+.txn-plot{
+  display:grid;
+  gap:.9rem;
+  align-content:start;
+  padding:.85rem .9rem;
+}
+.txn-serie{ display:grid; gap:.3rem; min-width:0 }
+.txn-serie__head{
+  display:flex;
+  align-items:baseline;
+  gap:.5rem;
+  min-width:0;
+}
+.txn-serie__total{
+  font-size:1rem;
+  color:var(--c-text);
+  font-variant-numeric:tabular-nums;
+}
+.txn-serie__total small{ font-size:.7em; color:var(--c-muted); margin-left:.2rem }
+.txn-serie__pico{
+  margin-left:auto;
+  font-size:.75rem;
+  color:var(--c-dim);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+
+/* O SVG tem altura fixa por faixa: com altura automática, uma tela com três
+   moedas empilhava três gráficos de 300px e o cartão passava de dois metros. */
+.txn-chart{ display:block; width:100%; height:9.5rem; overflow:visible }
+.txn-chart__grid{ stroke:rgba(255,255,255,.07); stroke-width:1 }
+.txn-chart__tick{
+  fill:var(--c-muted);
+  font-family:var(--font-mono, monospace);
+  font-size:11px;
+}
+.txn-chart__bar{ transition:fill var(--t-fast) var(--ease) }
+.txn-chart__bar--lime{  fill:var(--c-lime-dim) }
+.txn-chart__bar--cyan{  fill:rgba(var(--c-cyan-rgb),.55) }
+.txn-chart__bar--amber{ fill:rgba(var(--c-amber-rgb),.55) }
+.txn-chart__bar--muted{ fill:rgba(255,255,255,.24) }
+.txn-chart__bar--lime:hover{  fill:var(--c-lime) }
+.txn-chart__bar--cyan:hover{  fill:var(--c-cyan) }
+.txn-chart__bar--amber:hover{ fill:var(--c-amber) }
+.txn-chart__bar--muted:hover{ fill:rgba(255,255,255,.45) }
+/* Dia sem venda: marca de 1px na linha de base, quase apagada. Ela existe para
+   dizer "este dia está no período e não vendeu" — apagá-la de todo faria o
+   gráfico parecer ter menos dias do que tem. */
+.txn-chart__bar.is-zero{ fill:rgba(255,255,255,.10) }
+
+/* ==========================================================================
+   4. TOTAL POR MOEDA
+   ========================================================================== */
+
+.txn-moedas{ display:flex; flex-direction:column }
+.txn-moeda{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:center;
+  gap:.6rem;
+  padding:.6rem .9rem;
+  border-top:1px solid var(--adm-line);
+  border-left:2px solid transparent;
+}
+.txn-moeda:first-child{ border-top:0 }
+.txn-moeda--lime{  border-left-color:var(--c-lime) }
+.txn-moeda--cyan{  border-left-color:var(--c-cyan) }
+.txn-moeda--amber{ border-left-color:var(--c-amber) }
+.txn-moeda--muted{ border-left-color:var(--c-dim) }
+
+.txn-moeda__nome{
+  display:grid;
+  gap:.1rem;
+  min-width:0;
+  font-size:.9rem;
+  color:var(--c-text);
+}
+.txn-moeda__nome small{
+  font-size:.74rem;
+  color:var(--c-dim);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.txn-moeda__val{
+  display:grid;
+  gap:.1rem;
+  justify-items:end;
+  text-align:right;
+  font-size:1.05rem;
+  color:var(--c-text);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+.txn-moeda__val small{ font-size:.62em; color:var(--c-muted); margin-left:.2rem }
+.txn-moeda__ticket{ font-size:.72rem !important; color:var(--c-dim) !important; margin:0 !important; cursor:help }
+
+.txn-delta{
+  display:inline-flex;
+  align-items:center;
+  gap:.15rem;
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  white-space:nowrap;
+}
+.txn-delta .ms{ font-size:1rem }
+.txn-delta.is-up{ color:var(--c-lime) }
+.txn-delta.is-down{ color:var(--c-red) }
+.txn-delta.is-void{ color:var(--c-dim); cursor:help }
+
+/* ==========================================================================
+   5. LISTAS "TOP"
+   ========================================================================== */
+
+.txn-top{ display:flex; flex-direction:column }
+.txn-top__row{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:center;
+  gap:.6rem;
+  padding:.5rem .9rem;
+  border-top:1px solid var(--adm-line);
+  isolation:isolate;
+}
+.txn-top__row:first-child{ border-top:0 }
+/* A barra é FUNDO, não coluna: como coluna, ela roubava 6rem da largura do
+   nome e os títulos de item saíam truncados em três letras. */
+.txn-top__bar{
+  position:absolute;
+  inset:0 auto 0 0;
+  z-index:-1;
+  width:var(--v,0%);
+  background:linear-gradient(90deg, rgba(var(--c-lime-rgb),.13), rgba(var(--c-lime-rgb),.03));
+}
+.txn-top__nome{
+  display:grid;
+  gap:.05rem;
+  min-width:0;
+  font-size:.88rem;
+  color:var(--c-text);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.txn-top__nome small{ font-size:.72rem; color:var(--c-red); cursor:help }
+.txn-top__n{
+  font-size:.78rem;
+  color:var(--c-muted);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+.txn-top__v{
+  min-width:5.5rem;
+  text-align:right;
+  font-size:.9rem;
+  color:var(--c-text);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+.txn-top__v small{ font-size:.66em; color:var(--c-muted); margin-left:.2rem }
+
+/* ==========================================================================
+   6. TABELA
+   ========================================================================== */
+
+/* Números em fonte tabular: sem isto, uma coluna de totais com 2.100 e 48.500
+   não compartilha eixo nenhum e a leitura de coluna deixa de funcionar. */
+.txn-table .num{ font-family:var(--font-mono); font-variant-numeric:tabular-nums }
+.txn-table .txn-id{ color:var(--c-dim) }
+.txn-table .txn-total{ color:var(--c-text); font-size:.9rem }
+/* Só o nome do item pode quebrar a régua de largura da tabela; ele é o único
+   texto livre da linha e recebe um teto próprio em vez de esticar a tabela
+   até nascer rolagem horizontal. */
+.txn-table td strong{ display:inline-block; max-width:18rem; overflow:hidden; text-overflow:ellipsis; vertical-align:bottom }
+.txn-table .txn-cat{
+  display:block;
+  font-size:.72rem;
+  color:var(--c-dim);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.txn-table .txn-mini{ height:1.25rem; font-size:.65rem; margin-left:.35rem }
+.txn-sumido{ color:var(--c-dim); font-style:italic; cursor:help }
+
+/* cabeçalho ordenável */
+.txn-sort{
+  display:inline-flex;
+  align-items:center;
+  gap:.2rem;
+  color:inherit;
+  white-space:nowrap;
+}
+.txn-sort:hover{ color:var(--c-text) }
+.txn-sort__ic{ font-size:.95rem; opacity:.35 }
+.txn-sort:hover .txn-sort__ic{ opacity:.7 }
+.adm-table th.is-sorted{ color:var(--c-lime) }
+.adm-table th.is-sorted .txn-sort__ic{ opacity:1 }
+
+/* A lista é o objeto principal da tela: a rolagem dela é a da PÁGINA, não uma
+   segunda barra dentro do cartão. A rolagem horizontal continua confinada ao
+   .adm-tablewrap, que é o que impede a página de rolar de lado. */
+.txn-lista .adm-tablewrap{ max-height:none }
+
+/* ==========================================================================
+   7. TELAS ESTREITAS (1366×768 e abaixo)
+   ========================================================================== */
+
+@media (max-width:1400px){
+  /* Em 1366 a coluna de categoria do item e o aviso longo competem pela mesma
+     linha: o aviso vira uma linha inteira em vez de encolher até sumir. */
+  .txn-bar__aviso{ flex:1 1 100%; order:5 }
+  .txn-bar__csv{ order:4 }
+  .txn-table td strong{ max-width:12rem }
+}
+
+@media (max-width:1100px){
+  .txn-form{ align-items:stretch }
+  .txn-field .adm-input[type="date"],
+  .txn-field .adm-select{ width:100% }
+  .txn-field{ flex:1 1 8rem }
+}

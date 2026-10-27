@@ -75,12 +75,11 @@ foreach ($newsPages as $pageItems) {
 <?php foreach ($menu as $item): ?>
 <?php
       $mSlug  = (string)($item['slug'] ?? '');
-      /* o emblema de JOGAR SOLO da referência (duas cristas, 38x37 de tinta) não
-         existe no Material Symbols nem no sprite: é desenhado aqui. */
+      /* ENTRAR EM OPERAÇÃO usa a tag do Hunter (assets/img/icons/Tag_hunter). */
       $mIcon  = ($item['emblem'] ?? '') === 'mountain'
         ? '<span class="menu-btn__icon menu-btn__icon--emblem" aria-hidden="true">'
-          . '<svg viewBox="0 0 38 37" class="ic"><path fill="currentColor" fill-rule="evenodd"'
-          . ' d="M23.6 1.8 37.6 35.6H12.8Z M10.2 12.4 19.4 35.6H.6Z M23.6 9.2 27.6 18.4 25.2 16.6 23.4 19 21.4 16.4 19.5 18.2Z"/></svg></span>'
+          . '<picture><source srcset="' . e(asset("img/icons/Tag_hunter.webp")) . '" type="image/webp">'
+          . '<img src="' . e(asset("img/icons/Tag_hunter.png")) . '" alt="" decoding="async"></picture></span>'
         : icon((string)($item['icon'] ?? 'chevron_right'), 'menu-btn__icon' . (!empty($item['icon_fill']) ? ' fill' : ''));
       $mInner = $mIcon
         . '<span class="menu-btn__text"><strong>' . e((string)($item['title'] ?? '')) . '</strong><small>' . e((string)($item['desc'] ?? '')) . '</small></span>'

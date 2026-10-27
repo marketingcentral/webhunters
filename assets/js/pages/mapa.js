@@ -34,12 +34,33 @@ if (page && page.dataset.page === 'mapa') {
   const layers = $('[data-map-filters]');
   if (layers) {
     const nodes = Array.from(document.querySelectorAll('#map3d-layer [data-layer]'));
-    const apply = (slug) => {
-      const all = !slug || slug === 'todos';
-      nodes.forEach((n) => n.classList.toggle('is-filtered', !all && n.dataset.layer !== slug));
-      document.getElementById('map3d')?.setAttribute('data-layer-filter', all ? '' : slug);
+    const chips = Array.from(layers.querySelectorAll('.mlayer'));
+    const chipTodos = chips.find((c) => c.dataset.value === 'todos');
+
+    /* Multi-seleção: cada chip liga/desliga a sua camada, então dá para pedir
+       "só Veyra e extrações". TODOS é o atalho de voltar a ver o mapa inteiro;
+       nenhum chip marcado também mostra tudo, para nunca sobrar um mapa vazio. */
+    const marcar = (chip, on) => {
+      chip.classList.toggle('is-active', on);
+      chip.setAttribute('aria-pressed', on ? 'true' : 'false');
     };
-    layers.addEventListener('select:change', (e) => apply(e.detail?.value));
+    const aplicar = () => {
+      const on = chips.filter((c) => c !== chipTodos && c.classList.contains('is-active'))
+                      .map((c) => c.dataset.value);
+      const tudo = on.length === 0;
+      if (chipTodos) marcar(chipTodos, tudo);
+      nodes.forEach((n) => n.classList.toggle('is-filtered', !tudo && !on.includes(n.dataset.layer)));
+      document.getElementById('map3d')?.setAttribute('data-layer-filter', tudo ? '' : on.join(' '));
+    };
+
+    layers.addEventListener('click', (ev) => {
+      const chip = ev.target.closest('.mlayer');
+      if (!chip) return;
+      if (chip === chipTodos) chips.forEach((c) => marcar(c, c === chipTodos));
+      else marcar(chip, !chip.classList.contains('is-active'));
+      aplicar();
+    });
+    aplicar();
   }
 
   /* ---- sinais de atividade humana expiram (§23.8) --------------------------
@@ -84,6 +105,64 @@ if (page && page.dataset.page === 'mapa') {
       mark.setAttribute('aria-pressed', on ? 'true' : 'false');
       mark.classList.toggle('is-on', on);
       if (txt) txt.textContent = on ? (mark.dataset.labelOn || '') : (mark.dataset.label || '');
+    });
+  }
+
+  /* ---- opacidade da arte (conforto de leitura, gravado na conta) -----------
+   * O <form> funciona sem este bloco: arrasta, clica em aplicar, a página volta.
+   * O que o script acrescenta é a reação imediata — a arte responde ao arrasto —
+   * e o envio automático, que torna o botão de aplicar desnecessário.
+   *
+   * Por que só grava ao SOLTAR: arrastar de 80% a 40% dispara dezenas de eventos
+   * `input`. Gravar em cada um seria dezenas de escritas no banco para uma decisão
+   * só, e a última a chegar nem sempre é a última arrastada. */
+  const opForm = $('[data-map-opacity]');
+  if (opForm) {
+    const range   = opForm.querySelector('[data-map-opacity-range]');
+    const saida   = opForm.querySelector('[data-map-opacity-out]');
+    const oculto  = opForm.querySelector('[data-map-opacity-payload]');
+    const aplicar = opForm.querySelector('[data-map-opacity-apply]');
+    const voltar  = opForm.querySelector('[data-map-opacity-reset]');
+    const palco   = document.getElementById('map3d');
+    const padrao  = Number(opForm.dataset.padrao) || 65;
+
+    // com script, aplicar é automático — o botão existe para quem está sem ele
+    aplicar?.remove();
+
+    const pintar = (pct) => {
+      if (palco) palco.style.setProperty('--map-art-opacity', String(pct / 100));
+      if (saida) saida.textContent = `${pct}%`;
+      if (oculto) oculto.value = (pct / 100).toFixed(2);
+      voltar?.classList.toggle('is-hidden', pct === padrao);
+    };
+
+    async function gravar(corpo) {
+      try {
+        await fetch(opForm.action, {
+          method: 'POST',
+          headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
+          body: corpo,
+        });
+      } catch {
+        /* Falhar aqui não desfaz o ajuste na tela: o jogador continua vendo o mapa
+           como pediu nesta sessão, e a próxima mudança tenta gravar de novo. */
+      }
+    }
+
+    range?.addEventListener('input', () => pintar(Number(range.value)));
+    range?.addEventListener('change', () => {
+      const corpo = new FormData(opForm);
+      corpo.delete('reset');
+      gravar(corpo);
+    });
+
+    voltar?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      if (range) { range.value = String(padrao); }
+      pintar(padrao);
+      const corpo = new FormData(opForm);
+      corpo.set('reset', '1');
+      gravar(corpo);
     });
   }
 

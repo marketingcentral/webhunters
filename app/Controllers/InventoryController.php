@@ -24,6 +24,7 @@ final class InventoryController extends Controller
 
         $page = $this->page('inventario', 'Inventário', [
             'bg'  => 'bg/inventario.jpg',
+            'js'  => ['three/inventory-character.js'],
         ]);
         return $this->render('inventario', $page, $data);
     }

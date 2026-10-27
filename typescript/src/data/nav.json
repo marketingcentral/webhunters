@@ -1,0 +1,42 @@
+[
+    {
+        "slug": "inicio",
+        "label": "INÍCIO",
+        "route": "inicio"
+    },
+    {
+        "slug": "inventario",
+        "label": "INVENTÁRIO",
+        "route": "inventario"
+    },
+    {
+        "slug": "saude",
+        "label": "SAÚDE",
+        "route": "saude"
+    },
+    {
+        "slug": "habilidades",
+        "label": "HABILIDADES",
+        "route": "habilidades"
+    },
+    {
+        "slug": "mapa",
+        "label": "MAPA",
+        "route": "mapa"
+    },
+    {
+        "slug": "missoes",
+        "label": "MISSÕES",
+        "route": "missoes"
+    },
+    {
+        "slug": "conquistas",
+        "label": "CONQUISTAS",
+        "route": "conquistas"
+    },
+    {
+        "slug": "bestiario",
+        "label": "BESTIÁRIO",
+        "route": "bestiario"
+    }
+]

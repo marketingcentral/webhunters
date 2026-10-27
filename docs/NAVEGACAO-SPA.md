@@ -53,7 +53,7 @@ Nada. `View::pageAssets()` deriva `css/pages/<slug>.css` e `js/pages/<slug>.js` 
   aoSair(() => renderer.dispose());
   ```
 
-  Timers, `requestAnimationFrame` e listeners em `window`/`document` **não** precisam disso —
+  Timers, `requestAnimationFrame` e ouvintes de evento em `window`/`document` **não** precisam disso —
   a varredura de época cuida deles. Ver `assets/js/three/map3d.js` e
   `assets/js/pages/jogar.js` como exemplo.
 

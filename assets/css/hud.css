@@ -18,7 +18,6 @@
   height:100%;
   object-fit:cover;
   object-position:var(--bg-pos,center);
-  filter:saturate(.92) contrast(1.04);
   transform:scale(1.015);              /* hides edge bleed from grain/parallax */
 }
 .bg__overlay{
@@ -57,7 +56,13 @@
   z-index:var(--z-hud);
   display:grid;
   grid-template-rows:auto minmax(0,1fr) auto;
+  /* O CEF da Unreal é Chromium 90 e DESCARTA `dvh` (chegou no 108). Sem esta dupla a
+     HUD fica sem altura lá dentro: as linhas da grade passam a medir o conteúdo, a
+     página cresce além da janela e o rodapé e o pé do mapa somem cortados. `vh` antes,
+     `dvh` depois — cada motor fica com a última que entende. */
+  height:100vh;
   height:100dvh;
+  min-height:100vh;
   min-height:100dvh;
 }
 .hud-main{

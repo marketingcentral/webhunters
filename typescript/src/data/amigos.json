@@ -1,0 +1,324 @@
+{
+    "title": "AMIGOS",
+    "subtitle": "Convide sua equipe para o lobby ou envie uma mensagem direta.",
+    "online": 8,
+    "total": 14,
+    "search_ph": "Buscar por nome...",
+    "search_label": "Buscar amigo",
+    "tabs": [
+        {
+            "slug": "online",
+            "label": "ONLINE",
+            "count": 8
+        },
+        {
+            "slug": "offline",
+            "label": "OFFLINE",
+            "count": 6
+        },
+        {
+            "slug": "pedidos",
+            "label": "PEDIDOS",
+            "count": 3
+        }
+    ],
+    "items": [
+        {
+            "name": "CaçadorXP",
+            "level": 18,
+            "class": "BATEDOR",
+            "class_icon": "class-scout",
+            "avatar": "portraits/op-scout.jpg",
+            "status": "ingame",
+            "activity": "Vale do Eco · Extração",
+            "meta": "HÁ 12 MIN",
+            "seen_min": 12,
+            "matches": 143
+        },
+        {
+            "name": "Ghost_BR",
+            "level": 16,
+            "class": "SUPORTE",
+            "class_icon": "class-support",
+            "avatar": "portraits/op-support.jpg",
+            "status": "ingame",
+            "activity": "Porto Industrial · Assalto",
+            "meta": "HÁ 6 MIN",
+            "seen_min": 6,
+            "matches": 88
+        },
+        {
+            "name": "Kira_Sul",
+            "level": 9,
+            "class": "SUPORTE",
+            "class_icon": "class-support",
+            "avatar": "portraits/op-support.jpg",
+            "status": "ingame",
+            "activity": "Cidade em Ruínas · Resgate",
+            "meta": "HÁ 21 MIN",
+            "seen_min": 21,
+            "matches": 37
+        },
+        {
+            "name": "Montanha_7",
+            "level": 20,
+            "class": "FRANCO-ATIRADOR",
+            "class_icon": "class-sniper",
+            "avatar": "portraits/op-sniper.jpg",
+            "status": "lobby",
+            "activity": "Lobby de SOBREVIVENTE_B1",
+            "meta": "4 / 5",
+            "seen_min": 1,
+            "matches": 112,
+            "party": "4 / 5"
+        },
+        {
+            "name": "Raposa_Norte",
+            "level": 31,
+            "class": "BATEDOR",
+            "class_icon": "class-scout",
+            "avatar": "portraits/op-scout.jpg",
+            "status": "lobby",
+            "activity": "Lobby público · Fábrica",
+            "meta": "3 / 5",
+            "seen_min": 1,
+            "matches": 260,
+            "party": "3 / 5"
+        },
+        {
+            "name": "Tenente_Kz",
+            "level": 40,
+            "class": "ASSALTO",
+            "class_icon": "class-assault",
+            "avatar": "portraits/op-assault.jpg",
+            "status": "online",
+            "activity": "Menu principal",
+            "meta": "HÁ 2 MIN",
+            "seen_min": 2,
+            "matches": 391
+        },
+        {
+            "name": "DocSilva",
+            "level": 27,
+            "class": "SUPORTE",
+            "class_icon": "class-support",
+            "avatar": "portraits/op-support.jpg",
+            "status": "online",
+            "activity": "Navegando na loja",
+            "meta": "HÁ 9 MIN",
+            "seen_min": 9,
+            "matches": 210
+        },
+        {
+            "name": "Sombra_22",
+            "level": 12,
+            "class": "FRANCO-ATIRADOR",
+            "class_icon": "class-sniper",
+            "avatar": "portraits/op-sniper.jpg",
+            "status": "online",
+            "activity": "Ajustando equipamento",
+            "meta": "HÁ 15 MIN",
+            "seen_min": 15,
+            "matches": 54
+        },
+        {
+            "name": "Bruxo_do_Mato",
+            "level": 35,
+            "class": "BATEDOR",
+            "class_icon": "class-scout",
+            "avatar": "portraits/op-scout.jpg",
+            "status": "offline",
+            "activity": "Visto há 2 horas",
+            "meta": "128 PARTIDAS",
+            "seen_min": 120,
+            "matches": 128
+        },
+        {
+            "name": "Patrulha_09",
+            "level": 22,
+            "class": "ASSALTO",
+            "class_icon": "class-assault",
+            "avatar": "portraits/op-assault.jpg",
+            "status": "offline",
+            "activity": "Visto há 5 horas",
+            "meta": "96 PARTIDAS",
+            "seen_min": 300,
+            "matches": 96
+        },
+        {
+            "name": "Vigia_Leste",
+            "level": 14,
+            "class": "FRANCO-ATIRADOR",
+            "class_icon": "class-sniper",
+            "avatar": "portraits/op-sniper.jpg",
+            "status": "offline",
+            "activity": "Visto ontem",
+            "meta": "41 PARTIDAS",
+            "seen_min": 1500,
+            "matches": 41
+        },
+        {
+            "name": "Corvo_do_Norte",
+            "level": 29,
+            "class": "SUPORTE",
+            "class_icon": "class-support",
+            "avatar": "portraits/op-support.jpg",
+            "status": "offline",
+            "activity": "Visto há 3 dias",
+            "meta": "204 PARTIDAS",
+            "seen_min": 4320,
+            "matches": 204
+        },
+        {
+            "name": "Lobo_Cinza",
+            "level": 44,
+            "class": "ASSALTO",
+            "class_icon": "class-assault",
+            "avatar": "portraits/op-assault.jpg",
+            "status": "offline",
+            "activity": "Visto há 6 dias",
+            "meta": "317 PARTIDAS",
+            "seen_min": 8640,
+            "matches": 317
+        },
+        {
+            "name": "Anja_Medic",
+            "level": 19,
+            "class": "SUPORTE",
+            "class_icon": "class-support",
+            "avatar": "portraits/op-support.jpg",
+            "status": "offline",
+            "activity": "Visto há 12 dias",
+            "meta": "73 PARTIDAS",
+            "seen_min": 17280,
+            "matches": 73
+        }
+    ],
+    "pending": [
+        {
+            "name": "Corvo_Negro",
+            "level": 15,
+            "class": "FRANCO-ATIRADOR",
+            "class_icon": "class-sniper",
+            "avatar": "portraits/op-sniper.jpg",
+            "direction": "in",
+            "activity": "Jogaram juntos em Vale do Eco",
+            "meta": "HÁ 2 H",
+            "seen_min": 120,
+            "matches": 61
+        },
+        {
+            "name": "Lince_77",
+            "level": 28,
+            "class": "BATEDOR",
+            "class_icon": "class-scout",
+            "avatar": "portraits/op-scout.jpg",
+            "direction": "in",
+            "activity": "3 amigos em comum",
+            "meta": "HÁ 9 H",
+            "seen_min": 540,
+            "matches": 174
+        },
+        {
+            "name": "Falcao_Z",
+            "level": 33,
+            "class": "ASSALTO",
+            "class_icon": "class-assault",
+            "avatar": "portraits/op-assault.jpg",
+            "direction": "out",
+            "activity": "Convite enviado por você",
+            "meta": "ONTEM",
+            "seen_min": 1500,
+            "matches": 233
+        }
+    ],
+    "status_labels": {
+        "ingame": "EM PARTIDA",
+        "lobby": "NO LOBBY",
+        "online": "ONLINE",
+        "offline": "OFFLINE"
+    },
+    "actions": {
+        "invite": "CONVIDAR",
+        "message": "MENSAGEM",
+        "add": "ADICIONAR AMIGO",
+        "accept": "ACEITAR",
+        "decline": "RECUSAR",
+        "cancel": "CANCELAR"
+    },
+    "add": {
+        "title": "ADICIONAR AMIGO",
+        "label": "NOME DE USUÁRIO OU ID",
+        "placeholder": "ex.: CACADOR#2481",
+        "hint": "O código aparece no perfil do jogador. Convites expiram em 7 dias.",
+        "submit": "ENVIAR CONVITE",
+        "id_label": "SEU ID",
+        "id_suffix": "#7743"
+    },
+    "squad": {
+        "title": "ESQUADRÃO RECENTE",
+        "action": "ABRIR LOBBY",
+        "items": [
+            {
+                "name": "CaçadorXP",
+                "avatar": "portraits/op-scout.jpg",
+                "map": "VALE DO ECO",
+                "result": "EXTRAÍDO",
+                "ok": true,
+                "when": "HÁ 2 H",
+                "played_min": 120
+            },
+            {
+                "name": "Ghost_BR",
+                "avatar": "portraits/op-support.jpg",
+                "map": "PORTO INDUSTRIAL",
+                "result": "EXTRAÍDO",
+                "ok": true,
+                "when": "HÁ 2 H",
+                "played_min": 135
+            },
+            {
+                "name": "Montanha_7",
+                "avatar": "portraits/op-sniper.jpg",
+                "map": "BASE ÁRTICA",
+                "result": "ABATIDO",
+                "ok": false,
+                "when": "ONTEM",
+                "played_min": 1500
+            },
+            {
+                "name": "DocSilva",
+                "avatar": "portraits/op-support.jpg",
+                "map": "FAVELA",
+                "result": "EXTRAÍDO",
+                "ok": true,
+                "when": "ONTEM",
+                "played_min": 1560
+            },
+            {
+                "name": "Tenente_Kz",
+                "avatar": "portraits/op-assault.jpg",
+                "map": "DESERTO SECO",
+                "result": "EXTRAÍDO",
+                "ok": true,
+                "when": "ONTEM",
+                "played_min": 1620
+            },
+            {
+                "name": "Raposa_Norte",
+                "avatar": "portraits/op-scout.jpg",
+                "map": "CIDADE EM RUÍNAS",
+                "result": "ABATIDO",
+                "ok": false,
+                "when": "HÁ 2 DIAS",
+                "played_min": 2880
+            }
+        ]
+    },
+    "empty": {
+        "online": "Nenhum amigo online no momento.",
+        "offline": "Nenhum amigo offline.",
+        "pedidos": "Nenhum pedido pendente.",
+        "search": "Nenhum amigo corresponde à busca."
+    }
+}

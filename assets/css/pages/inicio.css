@@ -715,3 +715,7 @@ body.page-inicio .news__date{margin-top:.2rem}
 body.page-inicio .news__row + .news__row::before{left:4.6rem}
 body.page-inicio .news__list{padding-top:.35rem;padding-bottom:.35rem;gap:.35rem}
 body.page-inicio .news__row + .news__row{padding-top:.35rem}
+
+/* ENTRAR EM OPERAÇÃO: brasão do Hunter Command (arte, não glifo) */
+body.page-inicio .menu-btn__icon--emblem picture,
+body.page-inicio .menu-btn__icon--emblem img{width:100%;height:100%;object-fit:contain;display:block}

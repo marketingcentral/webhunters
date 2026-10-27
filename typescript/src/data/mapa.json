@@ -1,0 +1,691 @@
+{
+    "title": "MAPA DO MUNDO",
+    "regions_title": "REGIÕES",
+    "map_image": "bg/map-world.webp",
+    "map_alt": "Mapa do mundo — a ilha inteira com suas regiões",
+    "level_label": "NÍVEL RECOMENDADO:",
+    "regions": [
+        {
+            "slug": "floresta-verde",
+            "name": "FLORESTA VERDE",
+            "level": "1-10",
+            "icon": "pine",
+            "locked": false,
+            "image": "regions/region-floresta-verde.jpg",
+            "desc": "Uma vasta floresta temperada onde o micélio da Veyra refez rios e trilhas. Ato I da campanha: uma estação militar silenciou e há interferência humana no sinal.",
+            "info": [
+                {
+                    "label": "NÍVEL RECOMENDADO",
+                    "value": "1-10",
+                    "cls": "lime"
+                },
+                {
+                    "label": "CAPACIDADE OPERACIONAL",
+                    "value": "20",
+                    "tip": "Até 12 Hunters e 8 Mercenários. Sobreviventes ocupam vagas existentes."
+                },
+                {
+                    "label": "CLIMA ATUAL",
+                    "value": "Variável",
+                    "icon": "partly_cloudy_day"
+                },
+                {
+                    "label": "MUNDO",
+                    "value": "PERSISTENTE",
+                    "cls": "lime"
+                }
+            ],
+            "extractions": [
+                {
+                    "name": "PLATAFORMA NORTE",
+                    "type": "governamental",
+                    "status": "ATIVA",
+                    "state": "active"
+                },
+                {
+                    "name": "ROTA SUL",
+                    "type": "publica",
+                    "status": "ATIVA",
+                    "state": "active"
+                },
+                {
+                    "name": "TRANSPORTE AEGIS · PONTE LESTE",
+                    "type": "aegis",
+                    "status": "CONDICIONAL",
+                    "state": "conditional"
+                },
+                {
+                    "name": "ROTA FRONTIER · RIO OESTE",
+                    "type": "frontier",
+                    "status": "INATIVA",
+                    "state": "inactive"
+                }
+            ],
+            "event": {
+                "name": "ENTREGA AÉREA",
+                "ends_label": "TERMINA EM",
+                "ends_in": "12:34"
+            },
+            "state": {
+                "persistent": true,
+                "capacity": {
+                    "total": 20,
+                    "hunters": 12,
+                    "mercenaries": 8
+                },
+                "infestation": 42,
+                "veyra_activity": "MODERADA",
+                "human_activity": "ELEVADA",
+                "weather": "Variável",
+                "sector_state": "ATIVO"
+            }
+        },
+        {
+            "slug": "pantano-cinzento",
+            "name": "PÂNTANO CINZENTO",
+            "level": "10-20",
+            "icon": "swamp",
+            "locked": true,
+            "image": "regions/region-pantano-cinzento.jpg",
+            "desc": "Águas paradas, névoa amarela e Semeadores. As colônias daqui conversam pelo Coro: barulho num canto do pântano acorda o outro.",
+            "info": [
+                {
+                    "label": "NÍVEL RECOMENDADO",
+                    "value": "10-20",
+                    "cls": "lime"
+                },
+                {
+                    "label": "CAPACIDADE OPERACIONAL",
+                    "value": "20",
+                    "tip": "Até 12 Hunters e 8 Mercenários."
+                },
+                {
+                    "label": "CLIMA ATUAL",
+                    "value": "Neblina",
+                    "icon": "foggy"
+                },
+                {
+                    "label": "MUNDO",
+                    "value": "PERSISTENTE",
+                    "cls": "lime"
+                }
+            ],
+            "extractions": [
+                {
+                    "name": "PLATAFORMA NORTE",
+                    "type": "governamental",
+                    "status": "ATIVA",
+                    "state": "active"
+                },
+                {
+                    "name": "BALSA DO PÂNTANO",
+                    "type": "frontier",
+                    "status": "CONDICIONAL",
+                    "state": "conditional"
+                },
+                {
+                    "name": "ROTA SUL",
+                    "type": "publica",
+                    "status": "INATIVA",
+                    "state": "inactive"
+                }
+            ],
+            "event": null,
+            "state": {
+                "persistent": true,
+                "capacity": {
+                    "total": 20,
+                    "hunters": 12,
+                    "mercenaries": 8
+                },
+                "infestation": 58,
+                "veyra_activity": "ELEVADA",
+                "human_activity": "MODERADA",
+                "weather": "Neblina",
+                "sector_state": "ATIVO"
+            }
+        },
+        {
+            "slug": "montanhas-gelidas",
+            "name": "MONTANHAS GÉLIDAS",
+            "level": "20-30",
+            "icon": "mountain",
+            "locked": true,
+            "image": "regions/region-montanhas-gelidas.jpg",
+            "desc": "Picos congelados e uma instalação Axiom sob a neve, onde a empresa guardava o que sabia dos fragmentos. Ato II: os Arquivos Vesper exigem um contrato de facção para avançar.",
+            "info": [
+                {
+                    "label": "NÍVEL RECOMENDADO",
+                    "value": "20-30",
+                    "cls": "lime"
+                },
+                {
+                    "label": "CAPACIDADE OPERACIONAL",
+                    "value": "20",
+                    "tip": "Até 12 Hunters e 8 Mercenários."
+                },
+                {
+                    "label": "CLIMA ATUAL",
+                    "value": "Nevasca",
+                    "icon": "weather_snowy"
+                },
+                {
+                    "label": "MUNDO",
+                    "value": "PERSISTENTE",
+                    "cls": "lime"
+                }
+            ],
+            "extractions": [
+                {
+                    "name": "TELEFÉRICO DO PICO",
+                    "type": "aegis",
+                    "status": "ATIVA",
+                    "state": "active"
+                },
+                {
+                    "name": "HELIPONTO LESTE",
+                    "type": "governamental",
+                    "status": "CONDICIONAL",
+                    "state": "conditional"
+                }
+            ],
+            "event": null,
+            "state": {
+                "persistent": true,
+                "capacity": {
+                    "total": 20,
+                    "hunters": 12,
+                    "mercenaries": 8
+                },
+                "infestation": 35,
+                "veyra_activity": "BAIXA",
+                "human_activity": "ELEVADA",
+                "weather": "Nevasca",
+                "sector_state": "ATIVO"
+            }
+        },
+        {
+            "slug": "deserto-abandonado",
+            "name": "DESERTO ABANDONADO",
+            "level": "30-40",
+            "icon": "cactus",
+            "locked": true,
+            "image": "regions/region-deserto-abandonado.jpg",
+            "desc": "Dunas, poços e combustível. Ato III: Aegis e Frontier travam uma guerra econômica e cada facção tem só metade da verdade.",
+            "info": [
+                {
+                    "label": "NÍVEL RECOMENDADO",
+                    "value": "30-40",
+                    "cls": "lime"
+                },
+                {
+                    "label": "CAPACIDADE OPERACIONAL",
+                    "value": "20",
+                    "tip": "Até 12 Hunters e 8 Mercenários."
+                },
+                {
+                    "label": "CLIMA ATUAL",
+                    "value": "Tempestade",
+                    "icon": "air"
+                },
+                {
+                    "label": "MUNDO",
+                    "value": "PERSISTENTE",
+                    "cls": "lime"
+                }
+            ],
+            "extractions": [
+                {
+                    "name": "OÁSIS DO NORTE",
+                    "type": "publica",
+                    "status": "ATIVA",
+                    "state": "active"
+                },
+                {
+                    "name": "COMBOIO DE CARGA",
+                    "type": "aegis",
+                    "status": "INATIVA",
+                    "state": "inactive"
+                }
+            ],
+            "event": null,
+            "state": {
+                "persistent": true,
+                "capacity": {
+                    "total": 20,
+                    "hunters": 12,
+                    "mercenaries": 8
+                },
+                "infestation": 27,
+                "veyra_activity": "BAIXA",
+                "human_activity": "CRÍTICA",
+                "weather": "Tempestade",
+                "sector_state": "DISPUTADO"
+            }
+        },
+        {
+            "slug": "zona-industrial",
+            "name": "ZONA INDUSTRIAL",
+            "level": "40+",
+            "icon": "factory",
+            "locked": true,
+            "image": "regions/region-zona-industrial.jpg",
+            "desc": "Fábricas, depósitos e a cratera: o Núcleo Negro, corpo do meteoro Vesper, está enterrado aqui. Ato IV: Operação BLACK VEIL, o maior Surto da campanha.",
+            "info": [
+                {
+                    "label": "NÍVEL RECOMENDADO",
+                    "value": "40+",
+                    "cls": "lime"
+                },
+                {
+                    "label": "CAPACIDADE OPERACIONAL",
+                    "value": "20",
+                    "tip": "Até 12 Hunters e 8 Mercenários."
+                },
+                {
+                    "label": "CLIMA ATUAL",
+                    "value": "Chuva ácida",
+                    "icon": "rainy"
+                },
+                {
+                    "label": "MUNDO",
+                    "value": "PERSISTENTE",
+                    "cls": "lime"
+                }
+            ],
+            "extractions": [
+                {
+                    "name": "TÚNEL DE CARGA",
+                    "type": "frontier",
+                    "status": "CONDICIONAL",
+                    "state": "conditional"
+                },
+                {
+                    "name": "PÁTIO FERROVIÁRIO",
+                    "type": "governamental",
+                    "status": "INATIVA",
+                    "state": "inactive"
+                }
+            ],
+            "event": null,
+            "state": {
+                "persistent": true,
+                "capacity": {
+                    "total": 20,
+                    "hunters": 12,
+                    "mercenaries": 8
+                },
+                "infestation": 88,
+                "veyra_activity": "CRÍTICA",
+                "human_activity": "ELEVADA",
+                "weather": "Chuva ácida",
+                "sector_state": "SURTO"
+            }
+        }
+    ],
+    "world_labels": [
+        {
+            "name": "MONTANHAS GÉLIDAS",
+            "tag": "BELEZA MATA",
+            "x": 62,
+            "y": 8
+        },
+        {
+            "name": "FLORESTA VERDE",
+            "tag": "VIDA AINDA RESISTE",
+            "x": 80,
+            "y": 26
+        },
+        {
+            "name": "DESERTO ABANDONADO",
+            "tag": "TUDO O QUE FICOU",
+            "x": 15,
+            "y": 27
+        },
+        {
+            "name": "ZONA INDUSTRIAL",
+            "tag": "CINZAS DO PROGRESSO",
+            "x": 23,
+            "y": 44.5
+        },
+        {
+            "name": "PÂNTANO CINZENTO",
+            "tag": "ONDE A TERRA APODRECE",
+            "x": 82,
+            "y": 43
+        },
+        {
+            "name": "COSTA / PORTO",
+            "tag": "EXTRAÇÃO É LIBERDADE",
+            "x": 60,
+            "y": 66
+        }
+    ],
+    "legend_title": "CAMADAS",
+    "legend_all": "TODOS",
+    "legend": [
+        {
+            "layer": "missoes",
+            "glyph": "mission",
+            "label": "MISSÕES",
+            "color": "gold"
+        },
+        {
+            "layer": "extracao",
+            "glyph": "extraction",
+            "label": "EXTRAÇÃO",
+            "color": "lime"
+        },
+        {
+            "layer": "hunter",
+            "glyph": "gov-base",
+            "label": "BASE HUNTER",
+            "color": "lime"
+        },
+        {
+            "layer": "posto",
+            "glyph": "base",
+            "label": "POSTO AVANÇADO",
+            "color": "lime"
+        },
+        {
+            "layer": "safe-zone",
+            "glyph": "safe-zone",
+            "label": "SAFE ZONE",
+            "color": "lime"
+        },
+        {
+            "layer": "aegis",
+            "glyph": "aegis",
+            "label": "AEGIS",
+            "color": "cyan"
+        },
+        {
+            "layer": "frontier",
+            "glyph": "frontier",
+            "label": "FRONTIER",
+            "color": "amber"
+        },
+        {
+            "layer": "base-campo",
+            "glyph": "field-base",
+            "label": "BASE DE CAMPO",
+            "color": "white"
+        },
+        {
+            "layer": "mercado",
+            "glyph": "market",
+            "label": "MERCADO",
+            "color": "gold"
+        },
+        {
+            "layer": "gasolina",
+            "glyph": "fuel",
+            "label": "COMBUSTÍVEL",
+            "color": "amber"
+        },
+        {
+            "layer": "hospital",
+            "glyph": "hospital",
+            "label": "HOSPITAL",
+            "color": "white"
+        },
+        {
+            "layer": "veyra",
+            "glyph": "nest",
+            "label": "NINHO VEYRA",
+            "color": "red"
+        },
+        {
+            "layer": "contaminacao",
+            "glyph": "contaminated",
+            "label": "CONTAMINAÇÃO",
+            "color": "purple"
+        },
+        {
+            "layer": "humana",
+            "glyph": "human",
+            "label": "ATIV. HUMANA",
+            "color": "amber"
+        },
+        {
+            "layer": "logistica",
+            "glyph": "convoy",
+            "label": "LOGÍSTICA",
+            "color": "cyan"
+        },
+        {
+            "layer": "evento",
+            "glyph": "event",
+            "label": "EVENTO",
+            "color": "purple"
+        },
+        {
+            "layer": "recursos",
+            "glyph": "loot",
+            "label": "RECURSOS",
+            "color": "white"
+        }
+    ],
+    "legend_toggle": {
+        "label": "OCULTAR LEGENDA",
+        "label_off": "MOSTRAR LEGENDA",
+        "key": "X"
+    },
+    "controls": [
+        {
+            "action": "zoom-in",
+            "icon": "add",
+            "label": "Aproximar o mapa"
+        },
+        {
+            "action": "zoom-out",
+            "icon": "remove",
+            "label": "Afastar o mapa"
+        },
+        {
+            "action": "center",
+            "icon": "my_location",
+            "label": "Centralizar o mapa"
+        }
+    ],
+    "compass": {
+        "n": "N",
+        "label": "Rosa dos ventos — norte para cima"
+    },
+    "markers": {
+        "floresta-verde": [
+            {
+                "id": "acampamento-lenhador",
+                "kind": "camp",
+                "glyph": "camp",
+                "color": "lime",
+                "name": "ACAMPAMENTO LENHADOR",
+                "x": 35.8,
+                "y": 11,
+                "label": "below"
+            },
+            {
+                "id": "ninho-norte",
+                "kind": "nest",
+                "glyph": "nest",
+                "color": "red",
+                "name": "NINHO · ERRANTES",
+                "x": 67.7,
+                "y": 11.9,
+                "label": "right",
+                "narrow": true,
+                "pulse": true,
+                "caste": "errante",
+                "risk": {
+                    "x": 68.6,
+                    "y": 14.2,
+                    "rx": 8.4
+                }
+            },
+            {
+                "id": "saque-norte",
+                "kind": "loot",
+                "glyph": "loot",
+                "color": "white",
+                "name": "ÁREA DE RECURSOS",
+                "x": 51.8,
+                "y": 20.5,
+                "label": false
+            },
+            {
+                "id": "posto-avancado-norte",
+                "kind": "base",
+                "glyph": "base",
+                "color": "lime",
+                "name": "POSTO AVANÇADO NORTE",
+                "x": 15.5,
+                "y": 31.1,
+                "label": "below"
+            },
+            {
+                "id": "evento-entrega-aerea",
+                "kind": "event",
+                "glyph": "event",
+                "color": "purple",
+                "name": "EVENTO DE MUNDO",
+                "x": 33,
+                "y": 31,
+                "label": false,
+                "pulse": true
+            },
+            {
+                "id": "base-vigia",
+                "kind": "gov_base",
+                "glyph": "gov-base",
+                "color": "lime",
+                "name": "BASE VIGIA · HUNTER COMMAND",
+                "x": 45.4,
+                "y": 41.5,
+                "label": "right",
+                "status": "OPERACIONAL"
+            },
+            {
+                "id": "estacao-de-radio",
+                "kind": "radio",
+                "glyph": "radio",
+                "color": "white",
+                "name": "ESTAÇÃO DE RÁDIO",
+                "x": 76.2,
+                "y": 39.4,
+                "label": "below"
+            },
+            {
+                "id": "base-alfa-aegis",
+                "kind": "aegis",
+                "glyph": "aegis",
+                "color": "cyan",
+                "name": "BASE ALFA · AEGIS",
+                "x": 80,
+                "y": 56,
+                "label": "below",
+                "faction": "aegis"
+            },
+            {
+                "id": "acamp-frontier",
+                "kind": "frontier",
+                "glyph": "frontier",
+                "color": "amber",
+                "name": "ACAMPAMENTO DOS CAÇADORES · FRONTIER",
+                "x": 15.5,
+                "y": 43,
+                "label": "below",
+                "faction": "frontier"
+            },
+            {
+                "id": "tiros-detectados",
+                "kind": "human_activity",
+                "glyph": "human",
+                "color": "amber",
+                "name": "TIROS DETECTADOS",
+                "x": 52,
+                "y": 46,
+                "label": "below",
+                "narrow": true,
+                "ttl_min": 25
+            },
+            {
+                "id": "vila-abandonada",
+                "kind": "village",
+                "glyph": "village",
+                "color": "white",
+                "name": "VILA ABANDONADA",
+                "x": 46.3,
+                "y": 68.1,
+                "label": "below"
+            },
+            {
+                "id": "area-contaminada",
+                "kind": "contaminated",
+                "glyph": "contaminated",
+                "color": "purple",
+                "name": "ÁREA CONTAMINADA · SOPRADORES",
+                "x": 63,
+                "y": 69,
+                "label": false,
+                "caste": "soprador"
+            },
+            {
+                "id": "plataforma-de-extracao",
+                "kind": "extraction",
+                "glyph": "extraction",
+                "color": "lime",
+                "name": "PLATAFORMA NORTE",
+                "x": 29.2,
+                "y": 78.5,
+                "label": "below"
+            },
+            {
+                "id": "comboio-aegis",
+                "kind": "convoy",
+                "glyph": "convoy",
+                "color": "cyan",
+                "name": "COMBOIO AEGIS · JANELA LOGÍSTICA",
+                "x": 74,
+                "y": 42,
+                "label": "below"
+            },
+            {
+                "id": "base-de-campo",
+                "kind": "field_base",
+                "glyph": "field-base",
+                "color": "muted",
+                "name": "BASE DE CAMPO DESCONHECIDA",
+                "x": 56,
+                "y": 82,
+                "label": "below"
+            }
+        ]
+    },
+    "info_title": "INFORMAÇÕES",
+    "state_title": "ESTADO DO SETOR",
+    "bases_title": "BASES E INSTALAÇÕES",
+    "bases_note": "Estado operacional, sem contagem de vagas.",
+    "faction_title": "INSTALAÇÕES DE FACÇÃO",
+    "extractions_title": "EXTRAÇÕES DISPONÍVEIS",
+    "extractions_blocked_title": "EXTRAÇÕES · BLOQUEADAS",
+    "event_title": "EVENTO ATIVO",
+    "locked_note": "REGIÃO TRAVADA",
+    "labels": {
+        "infestation": "INFESTAÇÃO VEYRA",
+        "veyra": "ATIVIDADE VEYRA",
+        "human": "ATIVIDADE HUMANA",
+        "weather": "CLIMA",
+        "sector": "SETOR"
+    },
+    "cta_route": {
+        "label": "DEFINIR ROTA",
+        "key": "F",
+        "href": "jogar"
+    },
+    "cta_mark": {
+        "label": "MARCAR PONTO",
+        "label_on": "PONTO MARCADO",
+        "icon": "star"
+    }
+}

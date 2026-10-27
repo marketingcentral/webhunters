@@ -1,0 +1,256 @@
+{
+    "title": "LOBBY",
+    "subtitle": "ATÉ 3 AMIGOS · 4 HUNTERS",
+    "invite": "CONVIDAR HUNTER",
+    "max_players": 4,
+    "squad": [
+        {
+            "name": "HUNTER_07",
+            "level": 23,
+            "rank": "CABO",
+            "role": "ASSAULT",
+            "readiness": "PRONTO",
+            "portrait": "portraits/op-assault.jpg",
+            "leader": true,
+            "self": true
+        },
+        {
+            "name": "Ghost_BR",
+            "level": 16,
+            "rank": "SOLDADO",
+            "role": "MEDICAL",
+            "readiness": "PRONTO",
+            "portrait": "portraits/op-support.jpg",
+            "leader": false,
+            "self": false
+        },
+        {
+            "name": "CaçadorXP",
+            "level": 18,
+            "rank": "RECRUTA",
+            "role": "RASTREADOR",
+            "readiness": "PREPARANDO",
+            "portrait": "portraits/op-scout.jpg",
+            "leader": false,
+            "self": false
+        }
+    ],
+    "empty_slot": {
+        "title": "CONVIDAR HUNTER",
+        "desc": "Vaga na unidade"
+    },
+    "command_tag": "COMANDO",
+    "command_tip": "Oficial de maior patente presente na unidade.",
+    "readiness_labels": {
+        "PRONTO": "lime",
+        "PREPARANDO": "amber",
+        "NÃO PRONTO": "muted"
+    },
+    "chat": [
+        {
+            "author": "HUNTER_07",
+            "text": "Unidade formada. Base Alpha confirma a janela.",
+            "time": "19:42",
+            "self": true
+        },
+        {
+            "author": "Ghost_BR",
+            "text": "Kits médicos checados. Pronto.",
+            "time": "19:42",
+            "self": false
+        },
+        {
+            "author": "CaçadorXP",
+            "text": "Rádio captou transmissão perto da estação. Não é nossa.",
+            "time": "19:43",
+            "self": false
+        },
+        {
+            "author": "Ghost_BR",
+            "text": "Então tem gente lá antes de nós.",
+            "time": "19:43",
+            "self": false
+        },
+        {
+            "author": "HUNTER_07",
+            "text": "2 min e mobilizamos.",
+            "time": "19:44",
+            "self": true
+        }
+    ],
+    "chat_title": "CHAT DA UNIDADE",
+    "chat_ph": "Digite sua mensagem...",
+    "chat_send": "Enviar mensagem",
+    "news_title": "BOLETINS E ATUALIZAÇÕES",
+    "news_slides": [
+        {
+            "title": "O CORO SE AGITA NO NORTE",
+            "desc": "Sensores do Icarus registram pulsos no micélio perto do Setor K-07, mais fortes a cada noite.",
+            "image": "maps/vale-do-eco.jpg",
+            "href": "noticias"
+        },
+        {
+            "title": "AEGIS REFORÇA A PONTE LESTE",
+            "desc": "Blindados cruzando a estrada leste. Mercenários relatam patrulhas dobradas.",
+            "image": "maps/porto-industrial.jpg",
+            "href": "noticias"
+        },
+        {
+            "title": "PRÓXIMA JANELA LOGÍSTICA CONFIRMADA",
+            "desc": "Comboio de reabastecimento cruza o setor nas próximas horas.",
+            "image": "maps/complexo-militar.jpg",
+            "href": "noticias"
+        },
+        {
+            "title": "ATUALIZAÇÃO 8.8.1",
+            "desc": "Correções, desempenho e novo conteúdo já disponíveis.",
+            "image": "news/news-atualizacao.jpg",
+            "href": "noticias/atualizacao-8-8-1"
+        },
+        {
+            "title": "MANUTENÇÃO PROGRAMADA",
+            "desc": "Servidores offline para manutenção na terça, das 03h às 05h.",
+            "image": "news/news-manutencao.jpg",
+            "href": "noticias/manutencao-programada"
+        },
+        {
+            "title": "PASSE DE OPERAÇÕES 04",
+            "desc": "Cosméticos, dossiês e o boletim Intelligence 24 h antes de todo mundo.",
+            "image": "ui/season-pass.jpg",
+            "href": "loja"
+        }
+    ],
+    "mission": {
+        "panel_title": "OPERAÇÃO SELECIONADA",
+        "title": "SINAL PERDIDO",
+        "subtitle": "HUNTER COMMAND · BASE ALPHA",
+        "image": "ui/mission-sinal-perdido.jpg",
+        "href": "missoes",
+        "origin": "hunter_command",
+        "stats": [
+            {
+                "label": "ORIGEM",
+                "value": "HUNTER COMMAND",
+                "hot": true
+            },
+            {
+                "label": "BASE",
+                "value": "ALPHA",
+                "hot": false
+            },
+            {
+                "label": "AMEAÇA VEYRA",
+                "value": "ALTA",
+                "hot": true
+            },
+            {
+                "label": "ATIVIDADE HUMANA",
+                "value": "DETECTADA",
+                "hot": true
+            },
+            {
+                "label": "ESQUADRÃO",
+                "value": "1–4",
+                "hot": false
+            },
+            {
+                "label": "MUNDO",
+                "value": "PERSISTENTE",
+                "hot": false
+            }
+        ],
+        "objective_title": "ORDEM",
+        "objective": "Restaure a comunicação da estação militar ao norte. Reative o terminal e proteja o técnico durante a sincronização.",
+        "objective_lines": [
+            "Restaure a comunicação da estação militar ao norte.",
+            "Reative o terminal e proteja o técnico durante a sincronização.",
+            "Há corpos com marcas de tiros humanos: alguém chegou antes."
+        ],
+        "rewards_title": "RECOMPENSAS",
+        "rewards": [
+            {
+                "type": "xp",
+                "icon": "xp",
+                "value": 6500,
+                "prefix": "+",
+                "suffix": " XP"
+            },
+            {
+                "type": "cash",
+                "icon": "coin-cash",
+                "value": 2400,
+                "prefix": "+",
+                "suffix": ""
+            },
+            {
+                "type": "points",
+                "icon": "coin-points",
+                "value": 1200,
+                "prefix": "+",
+                "suffix": ""
+            }
+        ],
+        "reward_item": {
+            "name": "AK-103",
+            "desc": "FUZIL DE ASSALTO",
+            "image": "items/ak103.png"
+        }
+    },
+    "settings_title": "CONFIGURAÇÕES DA OPERAÇÃO",
+    "settings": [
+        {
+            "key": "difficulty",
+            "label": "DIFICULDADE DO CONTRATO",
+            "value": "MÉDIA",
+            "type": "stepper",
+            "icon": null,
+            "options": [
+                "FÁCIL",
+                "MÉDIA",
+                "DIFÍCIL",
+                "EXTREMA"
+            ]
+        },
+        {
+            "key": "weather",
+            "label": "CLIMA ATUAL",
+            "value": "NUBLADO",
+            "type": "readonly",
+            "icon": "cloud",
+            "tip": "Clima do mundo persistente. Não é escolha: é previsão."
+        },
+        {
+            "key": "window",
+            "label": "JANELA OPERACIONAL",
+            "value": "PERÍODO ATUAL",
+            "type": "readonly",
+            "icon": "schedule",
+            "tip": "O mundo não tem duração de partida. Você entra no meio de um dia que já estava acontecendo."
+        },
+        {
+            "key": "friendly",
+            "label": "PROTOCOLO DE FOGO AMIGO",
+            "value": "ATIVO · PENALIZADO",
+            "type": "readonly",
+            "icon": "gavel",
+            "tip": "Fogo amigo é possível e tem consequência: quebra de protocolo confirmada revoga o status Hunter."
+        },
+        {
+            "key": "fill",
+            "label": "PREENCHIMENTO DE SQUAD",
+            "value": "NÃO PREENCHER",
+            "type": "stepper",
+            "icon": "groups",
+            "options": [
+                "NÃO PREENCHER",
+                "SÓ AMIGOS",
+                "PREENCHER"
+            ]
+        }
+    ],
+    "cta": "MOBILIZAR ESQUADRÃO",
+    "cta_href": "mapa",
+    "cta_ready": true,
+    "gear_label": "Configurações",
+    "gear_href": "configuracoes/jogabilidade"
+}

@@ -46,7 +46,7 @@ $tileGlyph = static function (string $name): string {
         . $frame . $out . '</svg>';
 };
 ?>
-<form class="set" method="post" action="<?= e($formAction) ?>">
+<form class="set" method="post" action="<?= e($formAction) ?>" data-settings-tab="<?= e($aba) ?>">
   <?php /* Botão padrão do form: o Enter num campo de texto dispara o PRIMEIRO submit do DOM.
            Sem isto o Enter caía no RESTAURAR PADRÕES e apagava as preferências gravadas. */ ?>
   <button type="submit" name="action" value="apply" class="set-default-submit" tabindex="-1" aria-hidden="true"></button>

@@ -17,6 +17,8 @@ tools/node_modules/
 # Intermediários do pipeline de arte (magenta/keyed). 81 MB gerados a partir de
 # assets/assets/ por tools/prep_assets.mjs.
 assets/img/_gen/
+assets/img/criaturas/_orig/
+divulgacao/_arte/
 
 # Capturas de QA visual (tools/capture.mjs). 248 MB de PNG que se refaz a qualquer hora.
 captures/
@@ -24,6 +26,13 @@ tools/captures/
 
 # Dumps de banco. Além de pesados, guardam dados de jogador.
 db/backups/
+
+# Imagens enviadas pelo painel (/admin/upload). São CONTEÚDO do ambiente, não fonte: o que
+# o operador subiu no local não é o que está em produção, e versionar isso faria o repositório
+# engordar a cada envio. O .htaccess que impede execução dentro da pasta FICA no repositório —
+# ele é regra de segurança, e precisa subir junto com o código.
+media/uploads/*
+!media/uploads/.htaccess
 
 # ============================================================== PESSOAL
 # Permissões da máquina de quem está mexendo — não vale para o time.

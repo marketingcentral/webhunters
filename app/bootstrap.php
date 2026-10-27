@@ -48,4 +48,18 @@ set_error_handler(static function (int $severity, string $message, string $file,
     throw new ErrorException($message, 0, $severity, $file, $line);
 });
 
-Security::startSession();
+/**
+ * Sessão para o SITE; nenhuma para a API.
+ *
+ * /api/v1 é servidor-a-servidor: a credencial é o cabeçalho Authorization, conferido a cada
+ * chamada, e nada do estado da requisição sobrevive para a seguinte. Abrir sessão ali só
+ * produziria um arquivo de sessão por chamada no disco e um Set-Cookie que nenhum cliente vai
+ * usar — num integrador que chama em laço, isso é lixo acumulando sem função.
+ *
+ * A guarda é estreita (só o caminho sob /api/v1, ver App\Core\Api\Requisicao::ehChamada):
+ * errar para mais aqui significaria deslogar jogador, então ela casa o prefixo exato e nada
+ * além dele.
+ */
+if (!App\Core\Api\Requisicao::ehChamada()) {
+    Security::startSession();
+}
